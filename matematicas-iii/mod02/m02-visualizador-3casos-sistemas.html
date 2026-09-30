@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de los 3 Casos — Sistemas de Ecuaciones Lineales | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1150px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 620px;
+        }
+
+        /* =========================================
+           PANEL DE CONTROL
+           ========================================= */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+
+        .panel-control h2 {
+            color: var(--color-primario);
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-acento);
+            padding-left: 10px;
+        }
+
+        .seccion-ecuacion {
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .seccion-ecuacion h3 {
+            color: var(--color-primario);
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .seccion-ecuacion.ecuacion-1 h3::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: var(--color-acento);
+            border-radius: 3px;
+        }
+
+        .seccion-ecuacion.ecuacion-2 h3::before {
+            content: "";
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            background-color: var(--color-error);
+            border-radius: 3px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 60px;
+        }
+
+        .input-wrapper label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+
+        input[type="number"] {
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-accion {
+            width: 100%;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-accion:hover { background-color: var(--color-primario); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .botones-ejemplos {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-ejemplo {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        /* =========================================
+           PANEL DE GRÁFICA Y CLASIFICACIÓN
+           ========================================= */
+        .panel-grafica {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--color-blanco);
+        }
+
+        .canvas-wrapper {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 4px rgba(44,73,102,0.06);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .panel-clasificacion {
+            margin-top: 18px;
+            border-radius: var(--radio-borde);
+            padding: 20px;
+            background-color: var(--color-base);
+            border-left: 6px solid var(--color-acento);
+            transition: all 0.3s;
+        }
+
+        .panel-clasificacion.unico {
+            border-left-color: var(--color-exito);
+            background-color: rgba(39, 174, 96, 0.08);
+        }
+
+        .panel-clasificacion.inconsistente {
+            border-left-color: var(--color-error);
+            background-color: rgba(192, 57, 43, 0.08);
+        }
+
+        .panel-clasificacion.indeterminado {
+            border-left-color: var(--color-acento);
+            background-color: rgba(91, 127, 163, 0.1);
+        }
+
+        .clasificacion-titulo {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clasificacion-descripcion {
+            font-size: 0.95rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+        }
+
+        .detalles-tecnicos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detalle-tarjeta {
+            background-color: var(--color-blanco);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--color-acento-suave);
+        }
+
+        .detalle-tarjeta .etiqueta {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin-bottom: 4px;
+        }
+
+        .detalle-tarjeta .valor {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-primario);
+        }
+
+        .detalle-tarjeta.destacado {
+            border-left-color: var(--color-acento);
+        }
+
+        .mensaje-solucion {
+            background-color: var(--color-blanco);
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            font-weight: 600;
+            text-align: center;
+        }
+
+        /* Modo reto */
+        .modo-reto {
+            margin-top: 20px;
+            background-color: var(--color-base);
+            border: 2px dashed var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+        }
+
+        .modo-reto h3 {
+            color: var(--color-primario);
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modo-reto p {
+            font-size: 0.9rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+        }
+
+        .opciones-reto {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .btn-reto {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-reto:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        .btn-reto:disabled {
+            cursor: default;
+            opacity: 0.85;
+        }
+
+        .btn-reto.correcto {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--color-exito);
+            color: var(--color-exito);
+        }
+
+        .btn-reto.incorrecto {
+            background-color: rgba(192, 57, 43, 0.15);
+            border-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .feedback-reto {
+            padding: 12px 15px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            display: none;
+            margin-top: 10px;
+        }
+
+        .feedback-reto.visible { display: block; }
+
+        .feedback-reto.correcto {
+            background-color: rgba(39, 174, 96, 0.15);
+            border-left: 4px solid var(--color-exito);
+            color: var(--color-exito);
+        }
+
+        .feedback-reto.incorrecto {
+            background-color: rgba(192, 57, 43, 0.12);
+            border-left: 4px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .btn-reiniciar-reto {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-reiniciar-reto:hover { background-color: var(--color-primario); }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal {
+                grid-template-columns: 1fr;
+            }
+            .panel-control {
+                border-right: none;
+                border-bottom: 1px solid var(--color-acento-suave);
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            .panel-control, .panel-grafica { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Visualizador de los Tres Casos</h1>
+        <p>Sistemas de Ecuaciones Lineales con Dos Variables | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Coeficientes del sistema</h2>
+
+            <div class="seccion-ecuacion ecuacion-1">
+                <h3>Ecuación 1</h3>
+                <p style="font-size: 0.85rem; color: var(--color-acento); margin-bottom: 8px;">$A_1x + B_1y + C_1 = 0$</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₁</label><input type="number" id="a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>B₁</label><input type="number" id="b1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₁</label><input type="number" id="c1" value="-2" step="any"></div>
+                </div>
+            </div>
+
+            <div class="seccion-ecuacion ecuacion-2">
+                <h3>Ecuación 2</h3>
+                <p style="font-size: 0.85rem; color: var(--color-error); margin-bottom: 8px;">$A_2x + B_2y + C_2 = 0$</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₂</label><input type="number" id="a2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>B₂</label><input type="number" id="b2" value="-1" step="any"></div>
+                    <div class="input-wrapper"><label>C₂</label><input type="number" id="c2" value="-4" step="any"></div>
+                </div>
+            </div>
+
+            <button class="btn-accion" id="btn-actualizar">🔄 Actualizar gráfica</button>
+            <button class="btn-accion btn-secundario" id="btn-intercambiar">⇅ Intercambiar ecuaciones</button>
+
+            <h2 style="margin-top: 25px;">Ejemplos predefinidos</h2>
+            <div class="botones-ejemplos">
+                <button class="btn-ejemplo" data-a1="1" data-b1="1" data-c1="-2" data-a2="1" data-b2="-1" data-c2="-4">
+                    ✅ Caso A: rectas que se intersecan
+                </button>
+                <button class="btn-ejemplo" data-a1="1" data-b1="-1" data-c1="-12" data-a2="1" data-b2="-1" data-c2="2">
+                    ⛔ Caso B: rectas paralelas
+                </button>
+                <button class="btn-ejemplo" data-a1="2" data-b1="1" data-c1="-4" data-a2="4" data-b2="2" data-c2="-8">
+                    ♾️ Caso C: rectas coincidentes
+                </button>
+                <button class="btn-ejemplo" data-a1="3" data-b1="2" data-c1="-6" data-a2="1" data-b2="-2" data-c2="-10">
+                    📐 Ejemplo del módulo (4, -3)
+                </button>
+                <button class="btn-ejemplo" data-a1="1" data-b1="-2" data-c1="-1" data-a2="1" data-b2="-2" data-c2="0">
+                    ⛔ Sistema inconsistente Cramer
+                </button>
+            </div>
+        </div>
+
+        <!-- PANEL DE GRÁFICA Y CLASIFICACIÓN -->
+        <div class="panel-grafica">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="750" height="480"></canvas>
+            </div>
+
+            <div class="panel-clasificacion unico" id="panel-clasificacion">
+                <div class="clasificacion-titulo" id="clasif-titulo">
+                    ✅ Sistema consistente determinado
+                </div>
+                <div class="clasificacion-descripcion" id="clasif-desc">
+                    Las dos rectas se intersecan en un solo punto. Existe una solución única.
+                </div>
+                <div class="mensaje-solucion" id="mensaje-solucion">
+                    Solución: $(3, -1)$
+                </div>
+                <div class="detalles-tecnicos">
+                    <div class="detalle-tarjeta">
+                        <div class="etiqueta">Pendiente m₁</div>
+                        <div class="valor" id="det-m1">—</div>
+                    </div>
+                    <div class="detalle-tarjeta">
+                        <div class="etiqueta">Pendiente m₂</div>
+                        <div class="valor" id="det-m2">—</div>
+                    </div>
+                    <div class="detalle-tarjeta destacado">
+                        <div class="etiqueta">Determinante Δ</div>
+                        <div class="valor" id="det-delta">—</div>
+                    </div>
+                    <div class="detalle-tarjeta">
+                        <div class="etiqueta">Tipo</div>
+                        <div class="valor" id="det-tipo">—</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODO RETO -->
+            <div class="modo-reto">
+                <h3>
+                    🎯 Reto: identifica el tipo de sistema
+                    <button class="btn-reiniciar-reto" id="btn-nuevo-reto">Nuevo sistema</button>
+                </h3>
+                <p id="texto-reto">Observa la gráfica y selecciona el tipo de sistema:</p>
+                <div class="opciones-reto">
+                    <button class="btn-reto" data-respuesta="unico">Consistente determinado (solución única)</button>
+                    <button class="btn-reto" data-respuesta="inconsistente">Inconsistente (sin solución)</button>
+                    <button class="btn-reto" data-respuesta="indeterminado">Indeterminado (infinitas soluciones)</button>
+                </div>
+                <div class="feedback-reto" id="feedback-reto"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Instrucciones:</strong> Modifica los coeficientes $A$, $B$, $C$ de cada ecuación para explorar los tres casos posibles. Observa cómo cambian las gráficas, el determinante $\Delta$ y la clasificación automática del sistema.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN DEL CANVAS
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
+    var ancho = canvas.width;
+    var alto = canvas.height;
+    var origenX = ancho / 2;
+    var origenY = alto / 2;
+    var escala = 30;
+
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+    var COLOR_RECTA_1 = '#5b7fa3';
+    var COLOR_RECTA_2 = '#c0392b';
+    var COLOR_PUNTO = '#27ae60';
+    var COLOR_TEXTO = '#2c4966';
+
+    // Estado actual
+    var coefs = { a1: 1, b1: 1, c1: -2, a2: 1, b2: -1, c2: -4 };
+    var clasificacionActual = 'unico';
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(3)).toString();
+    }
+
+    function aPixelX(x) { return origenX + x * escala; }
+    function aPixelY(y) { return origenY - y * escala; }
+
+    // =========================================
+    // DIBUJAR CUADRÍCULA Y EJES
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+
+        var rangoX = Math.ceil(origenX / escala);
+        var rangoY = Math.ceil(origenY / escala);
+
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, alto);
+            ctx.stroke();
+        }
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(0, py);
+            ctx.lineTo(ancho, py);
+            ctx.stroke();
+        }
+    }
+
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+
+        // Eje X
+        ctx.beginPath();
+        ctx.moveTo(0, origenY);
+        ctx.lineTo(ancho - 5, origenY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ancho - 5, origenY);
+        ctx.lineTo(ancho - 15, origenY - 6);
+        ctx.lineTo(ancho - 15, origenY + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('X', ancho - 20, origenY - 12);
+
+        // Eje Y
+        ctx.beginPath();
+        ctx.moveTo(origenX, alto);
+        ctx.lineTo(origenX, 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origenX, 5);
+        ctx.lineTo(origenX - 6, 15);
+        ctx.lineTo(origenX + 6, 15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('Y', origenX + 12, 18);
+
+        // Marcas en X
+        ctx.font = '11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var rangoX = Math.ceil(origenX / escala);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            if (i === 0) continue;
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, origenY - 4);
+            ctx.lineTo(px, origenY + 4);
+            ctx.stroke();
+            if (i % 3 === 0) ctx.fillText(i.toString(), px, origenY + 18);
+        }
+
+        // Marcas en Y
+        ctx.textAlign = 'right';
+        var rangoY = Math.ceil(origenY / escala);
+        for (var j = -rangoY; j <= rangoY; j++) {
+            if (j === 0) continue;
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(origenX - 4, py);
+            ctx.lineTo(origenX + 4, py);
+            ctx.stroke();
+            if (j % 3 === 0) ctx.fillText(j.toString(), origenX - 8, py + 4);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillText('0', origenX - 6, origenY + 16);
+    }
+
+    // =========================================
+    // DIBUJAR UNA RECTA A PARTIR DE COEFICIENTES Ax + By + C = 0
+    // =========================================
+    function dibujarRecta(a, b, c, color, grosor) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = grosor || 2.5;
+        ctx.setLineDash([]);
+
+        var x_min = -origenX / escala;
+        var x_max = (ancho - origenX) / escala;
+
+        if (Math.abs(b) > 1e-9) {
+            // y = -(a/b) x - (c/b)
+            var m = -a / b;
+            var k = -c / b;
+            var y_min = m * x_min + k;
+            var y_max = m * x_max + k;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(x_min), aPixelY(y_min));
+            ctx.lineTo(aPixelX(x_max), aPixelY(y_max));
+            ctx.stroke();
+        } else if (Math.abs(a) > 1e-9) {
+            // Recta vertical: x = -c/a
+            var xv = -c / a;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(xv), 0);
+            ctx.lineTo(aPixelX(xv), alto);
+            ctx.stroke();
+        }
+    }
+
+    // =========================================
+    // DIBUJAR PUNTO
+    // =========================================
+    function dibujarPunto(x, y) {
+        var px = aPixelX(x);
+        var py = aPixelY(y);
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, 2 * Math.PI);
+        ctx.fillStyle = COLOR_PUNTO;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // =========================================
+    // RENDERIZAR TODO
+    // =========================================
+    function renderizar() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+        dibujarCuadricula();
+        dibujarEjes();
+
+        var a1 = coefs.a1, b1 = coefs.b1, c1 = coefs.c1;
+        var a2 = coefs.a2, b2 = coefs.b2, c2 = coefs.c2;
+
+        // Calcular clasificación
+        var delta = a1 * b2 - a2 * b1;
+        var deltaX = c1 * b2 - c2 * b1;
+        var deltaY = a1 * c2 - a2 * c1;
+
+        // Dibujar rectas
+        dibujarRecta(a1, b1, c1, COLOR_RECTA_1, 3);
+        dibujarRecta(a2, b2, c2, COLOR_RECTA_2, 3);
+
+        // Determinar clasificación
+        var clasificacion, puntoX, puntoY;
+        var tolerancia = 1e-9;
+
+        if (Math.abs(delta) > tolerancia) {
+            clasificacion = 'unico';
+            // Solución única: x = deltaX / delta, y = deltaY / delta
+            // donde deltaX = c1*b2 - c2*b1, deltaY = a1*c2 - a2*c1
+            // Pero cuidado: la regla de Cramer estándar usa la columna de constantes.
+            // Recalcular correctamente:
+            // Sistema: a1 x + b1 y = -c1  ; a2 x + b2 y = -c2
+            var d = a1 * b2 - a2 * b1;
+            var dx = (-c1) * b2 - (-c2) * b1;
+            var dy = a1 * (-c2) - a2 * (-c1);
+            puntoX = dx / d;
+            puntoY = dy / d;
+            dibujarPunto(puntoX, puntoY);
+        } else {
+            // Δ = 0. Verificar si es inconsistente o indeterminado.
+            // Para eso, verificar si las rectas son proporcionales también en C.
+            // Proporción: a1/a2 = b1/b2 = c1/c2 → indeterminado
+            // Proporción: a1/a2 = b1/b2 ≠ c1/c2 → inconsistente
+            var propA = (Math.abs(a2) > tolerancia) ? a1 / a2 : null;
+            var propB = (Math.abs(b2) > tolerancia) ? b1 / b2 : null;
+            var propC = (Math.abs(c2) > tolerancia) ? c1 / c2 : null;
+
+            if (propA !== null && propB !== null && Math.abs(propA - propB) < 1e-6) {
+                if (propC !== null && Math.abs(propA - propC) < 1e-6) {
+                    clasificacion = 'indeterminado';
+                } else {
+                    clasificacion = 'inconsistente';
+                }
+            } else {
+                clasificacion = 'inconsistente';
+            }
+        }
+
+        // Actualizar panel
+        actualizarPanel(clasificacion, puntoX, puntoY, a1, b1, a2, b2, delta);
+    }
+
+    // =========================================
+    // ACTUALIZAR PANEL DE CLASIFICACIÓN
+    // =========================================
+    function actualizarPanel(clasificacion, puntoX, puntoY, a1, b1, a2, b2, delta) {
+        var panel = document.getElementById('panel-clasificacion');
+        var titulo = document.getElementById('clasif-titulo');
+        var desc = document.getElementById('clasif-desc');
+        var mensaje = document.getElementById('mensaje-solucion');
+        var detM1 = document.getElementById('det-m1');
+        var detM2 = document.getElementById('det-m2');
+        var detDelta = document.getElementById('det-delta');
+        var detTipo = document.getElementById('det-tipo');
+
+        panel.classList.remove('unico', 'inconsistente', 'indeterminado');
+        panel.classList.add(clasificacion);
+
+        var m1 = (Math.abs(b1) > 1e-9) ? -a1 / b1 : null;
+        var m2 = (Math.abs(b2) > 1e-9) ? -a2 / b2 : null;
+
+        detM1.textContent = (m1 === null) ? 'Indefinida (vertical)' : formatearNumero(m1);
+        detM2.textContent = (m2 === null) ? 'Indefinida (vertical)' : formatearNumero(m2);
+        detDelta.textContent = formatearNumero(delta);
+
+        if (clasificacion === 'unico') {
+            titulo.textContent = '✅ Sistema consistente determinado';
+            desc.textContent = 'Las dos rectas se intersecan en un solo punto. Existe una solución única.';
+            mensaje.innerHTML = 'Solución: $(' + formatearNumero(puntoX) + ', \\ ' + formatearNumero(puntoY) + ')$';
+            detTipo.textContent = 'Solución única';
+        } else if (clasificacion === 'inconsistente') {
+            titulo.textContent = '⛔ Sistema inconsistente';
+            desc.textContent = 'Las dos rectas son paralelas no coincidentes. Nunca se intersecan.';
+            mensaje.innerHTML = 'Conjunto solución: $\\varnothing$ (vacío)';
+            detTipo.textContent = 'Sin solución';
+        } else if (clasificacion === 'indeterminado') {
+            titulo.textContent = '♾️ Sistema consistente indeterminado';
+            desc.textContent = 'Las dos ecuaciones representan la misma recta. Todos sus puntos son solución.';
+            mensaje.innerHTML = 'Conjunto solución: infinitas soluciones (la recta completa)';
+            detTipo.textContent = 'Infinitas soluciones';
+        }
+
+        clasificacionActual = clasificacion;
+        renderMath(panel);
+    }
+
+    // =========================================
+    // LEER COEFICIENTES DE LOS INPUTS
+    // =========================================
+    function leerCoeficientes() {
+        coefs.a1 = parseFloat(document.getElementById('a1').value) || 0;
+        coefs.b1 = parseFloat(document.getElementById('b1').value) || 0;
+        coefs.c1 = parseFloat(document.getElementById('c1').value) || 0;
+        coefs.a2 = parseFloat(document.getElementById('a2').value) || 0;
+        coefs.b2 = parseFloat(document.getElementById('b2').value) || 0;
+        coefs.c2 = parseFloat(document.getElementById('c2').value) || 0;
+    }
+
+    // =========================================
+    // EVENTOS
+    // =========================================
+    document.getElementById('btn-actualizar').addEventListener('click', function() {
+        leerCoeficientes();
+        renderizar();
+    });
+
+    document.getElementById('btn-intercambiar').addEventListener('click', function() {
+        var tmpA = document.getElementById('a1').value;
+        var tmpB = document.getElementById('b1').value;
+        var tmpC = document.getElementById('c1').value;
+        document.getElementById('a1').value = document.getElementById('a2').value;
+        document.getElementById('b1').value = document.getElementById('b2').value;
+        document.getElementById('c1').value = document.getElementById('c2').value;
+        document.getElementById('a2').value = tmpA;
+        document.getElementById('b2').value = tmpB;
+        document.getElementById('c2').value = tmpC;
+        leerCoeficientes();
+        renderizar();
+    });
+
+    // Escuchar cambios en cualquier input
+    ['a1', 'b1', 'c1', 'a2', 'b2', 'c2'].forEach(function(id) {
+        document.getElementById(id).addEventListener('input', function() {
+            leerCoeficientes();
+            renderizar();
+        });
+    });
+
+    // Botones de ejemplos
+    document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('a1').value = this.dataset.a1;
+            document.getElementById('b1').value = this.dataset.b1;
+            document.getElementById('c1').value = this.dataset.c1;
+            document.getElementById('a2').value = this.dataset.a2;
+            document.getElementById('b2').value = this.dataset.b2;
+            document.getElementById('c2').value = this.dataset.c2;
+            leerCoeficientes();
+            renderizar();
+        });
+    });
+
+    // =========================================
+    // MODO RETO
+    // =========================================
+    var retoActual = null;
+
+    function generarSistemaAleatorio() {
+        // Generar coeficientes pequeños para que las rectas sean visibles
+        var a1 = Math.floor(Math.random() * 5) - 2; if (a1 === 0) a1 = 1;
+        var b1 = Math.floor(Math.random() * 5) - 2; if (b1 === 0) b1 = 1;
+        var c1 = Math.floor(Math.random() * 11) - 5;
+
+        var tipoDeseado = Math.floor(Math.random() * 3);
+        var a2, b2, c2;
+
+        if (tipoDeseado === 0) {
+            // Único
+            a2 = Math.floor(Math.random() * 5) - 2; if (a2 === 0) a2 = 1;
+            b2 = Math.floor(Math.random() * 5) - 2; if (b2 === 0) b2 = 1;
+            c2 = Math.floor(Math.random() * 11) - 5;
+            // Asegurar Δ ≠ 0
+            if (a1 * b2 - a2 * b1 === 0) {
+                a2 = a2 + 1;
+            }
+        } else if (tipoDeseado === 1) {
+            // Inconsistente: misma razón a/b, distinta razón c
+            var k = 2;
+            a2 = a1 * k;
+            b2 = b1 * k;
+            c2 = c1 * k + 3; // distinto c
+        } else {
+            // Indeterminado: proporcional completo
+            var k2 = 2;
+            a2 = a1 * k2;
+            b2 = b1 * k2;
+            c2 = c1 * k2;
+        }
+
+        return { a1: a1, b1: b1, c1: c1, a2: a2, b2: b2, c2: c2 };
+    }
+
+    function nuevoReto() {
+        retoActual = generarSistemaAleatorio();
+        // Cargar en los inputs
+        document.getElementById('a1').value = retoActual.a1;
+        document.getElementById('b1').value = retoActual.b1;
+        document.getElementById('c1').value = retoActual.c1;
+        document.getElementById('a2').value = retoActual.a2;
+        document.getElementById('b2').value = retoActual.b2;
+        document.getElementById('c2').value = retoActual.c2;
+        leerCoeficientes();
+        renderizar();
+
+        // Resetear botones del reto
+        document.querySelectorAll('.btn-reto').forEach(function(b) {
+            b.disabled = false;
+            b.classList.remove('correcto', 'incorrecto');
+        });
+        document.getElementById('feedback-reto').className = 'feedback-reto';
+        document.getElementById('feedback-reto').innerHTML = '';
+    }
+
+    document.getElementById('btn-nuevo-reto').addEventListener('click', nuevoReto);
+
+    document.querySelectorAll('.btn-reto').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var respuesta = this.dataset.respuesta;
+            var feedback = document.getElementById('feedback-reto');
+
+            document.querySelectorAll('.btn-reto').forEach(function(b) {
+                b.disabled = true;
+            });
+
+            if (respuesta === clasificacionActual) {
+                this.classList.add('correcto');
+                feedback.className = 'feedback-reto correcto visible';
+                var textoRespuesta = '';
+                if (clasificacionActual === 'unico') textoRespuesta = 'consistente determinado (solución única)';
+                else if (clasificacionActual === 'inconsistente') textoRespuesta = 'inconsistente (sin solución)';
+                else textoRespuesta = 'indeterminado (infinitas soluciones)';
+                feedback.innerHTML = '✅ ¡Correcto! El sistema es <strong>' + textoRespuesta + '</strong>.';
+            } else {
+                this.classList.add('incorrecto');
+                // Marcar la correcta
+                document.querySelectorAll('.btn-reto').forEach(function(b) {
+                    if (b.dataset.respuesta === clasificacionActual) b.classList.add('correcto');
+                });
+                feedback.className = 'feedback-reto incorrecto visible';
+                var textoCorrecto = '';
+                if (clasificacionActual === 'unico') textoCorrecto = 'consistente determinado (solución única)';
+                else if (clasificacionActual === 'inconsistente') textoCorrecto = 'inconsistente (sin solución)';
+                else textoCorrecto = 'indeterminado (infinitas soluciones)';
+                feedback.innerHTML = '❌ No es correcto. La respuesta correcta es <strong>' + textoCorrecto + '</strong>.';
+            }
+        });
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    leerCoeficientes();
+    renderizar();
+</script>
+
+</body>
+</html>

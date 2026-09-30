@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 2: Sistemas de Ecuaciones Lineales con Dos Variables</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        :root {
+            --color-fondo-pagina: #f0f4f8;
+            --color-contenedor: #ffffff;
+            --color-header: #2d4a66;
+            --color-header-texto: #a9c1d9;
+            --color-titulo: #2d4a66;
+            --color-acento: #5b7fa3;
+            --color-acento-suave: #a9c1d9;
+            --color-base: #e8eef5;
+            --color-texto: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --color-recta1: #c0392b;
+            --color-recta2: #2980b9;
+            --color-interseccion: #27ae60;
+            --radio-borde: 12px;
+            --sombra: 0 4px 20px rgba(44, 73, 102, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-fondo-pagina);
+            color: var(--color-texto);
+            line-height: 1.7;
+            font-size: 1rem;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--color-contenedor);
+            border-radius: var(--radio-borde);
+            box-shadow: var(--sombra);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-header);
+            color: var(--color-contenedor);
+            padding: 35px 40px;
+            text-align: center;
+        }
+
+        header .prepa {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--color-header-texto);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        header h1 {
+            font-size: 1.9rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        header .subtitulo {
+            font-size: 1rem;
+            color: var(--color-header-texto);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 50px;
+            min-height: 480px;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-titulo);
+            font-size: 1.6rem;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .math-block {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.2rem;
+            color: var(--color-titulo);
+        }
+
+        /* === RECUADROS INTERACTIVOS: ALTO AUMENTADO === */
+        .interactive-box {
+            background-color: var(--color-base);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 8px;
+            padding: 35px 30px;
+            margin-top: 42px;
+        }
+
+        .interactive-box h3 {
+            margin-top: 0;
+            color: var(--color-titulo);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 21px;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--color-texto);
+            font-size: 1rem;
+        }
+
+        /* === INPUTS MÁS ALTOS === */
+        .input-group input {
+            width: 110px;
+            min-height: 52px; /* Altura mínima aumentada */
+            padding: 14px 16px; /* Padding aumentado */
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1.1rem; /* Fuente más grande */
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: var(--color-contenedor);
+            line-height: 1.4;
+        }
+
+        .input-group input:focus {
+            border-color: var(--color-acento);
+        }
+
+        .ecuacion-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 21px;
+            padding: 16px;
+            background-color: var(--color-contenedor);
+            border-radius: 6px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .ecuacion-row.recta2 {
+            border-left-color: var(--color-recta2);
+        }
+
+        .ecuacion-label {
+            font-weight: 700;
+            color: var(--color-titulo);
+            min-width: 80px;
+            font-size: 1rem;
+        }
+
+        /* === INPUTS DENTRO DE .ecuacion-row TAMBIÉN MÁS ALTOS === */
+        .ecuacion-row input {
+            width: 110px;
+            min-height: 52px; /* Altura mínima aumentada */
+            padding: 14px 16px; /* Padding aumentado */
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1.1rem; /* Fuente más grande */
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: var(--color-contenedor);
+            line-height: 1.4;
+        }
+
+        .ecuacion-row input:focus {
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            margin-top: 7px;
+        }
+
+        .btn-primario:hover {
+            background-color: var(--color-header);
+        }
+
+        .resultado {
+            margin-top: 21px;
+            padding: 17px 21px;
+            border-radius: 6px;
+            background-color: var(--color-contenedor);
+            border-left: 4px solid transparent;
+            font-size: 1rem;
+            min-height: 28px;
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+        }
+
+        .canvas-container {
+            margin-top: 28px;
+            background-color: var(--color-contenedor);
+            border-radius: 8px;
+            padding: 21px;
+            border: 1px solid var(--color-acento-suave);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            border-radius: 6px;
+            background-color: #fafbfd;
+        }
+
+        .leyenda {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 21px;
+            justify-content: center;
+            margin-top: 21px;
+            font-size: 1rem;
+        }
+
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .leyenda-color {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        .leyenda-punto {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .info-puntos {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 21px;
+            margin-top: 21px;
+            font-size: 1rem;
+        }
+
+        .info-puntos .bloque {
+            background-color: var(--color-contenedor);
+            padding: 14px 17px;
+            border-radius: 6px;
+            border-left: 3px solid var(--color-acento);
+        }
+
+        .info-puntos .bloque.recta2 {
+            border-left-color: var(--color-recta2);
+        }
+
+        .info-puntos strong {
+            color: var(--color-titulo);
+        }
+
+        .navegacion {
+            background-color: var(--color-base);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navegacion button {
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .navegacion button:hover:not(:disabled) {
+            background-color: var(--color-header);
+        }
+
+        .navegacion button:disabled {
+            background-color: var(--color-acento-suave);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .contador {
+            font-weight: 600;
+            color: var(--color-titulo);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px 10px; }
+            header { padding: 25px 20px; }
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; }
+            .navegacion { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+            .input-group input,
+            .ecuacion-row input { width: 100%; }
+            .info-puntos { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="prepa">Preparatoria Abierta</div>
+        <h1>Módulo 2 — Sistemas de Ecuaciones Lineales con Dos Variables</h1>
+        <div class="subtitulo">Matemáticas III | Prepa Abierta 33</div>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <main>
+        <!-- Diapositiva 1: Bienvenida -->
+        <section class="slide active" id="slide-1">
+            <h2>Bienvenida al Módulo 2</h2>
+            <p>En este módulo exploraremos los sistemas de ecuaciones lineales con dos variables, una herramienta fundamental en el álgebra para modelar y resolver problemas donde dos condiciones deben cumplirse simultáneamente.</p>
+            <p>Aprenderemos a identificar el conjunto solución, a interpretar geométricamente las relaciones entre las ecuaciones y a dominar tres métodos de resolución: gráfico, suma o resta, y la Regla de Cramer.</p>
+            
+            <div class="math-block">
+                $$Ax + By + C = 0$$
+            </div>
+            <p>Esta es la forma general de una ecuación lineal con dos variables. Un sistema de dos de estas ecuaciones busca el par ordenado $(x, y)$ que satisface ambas condiciones al mismo tiempo.</p>
+        </section>
+
+        <!-- Diapositiva 2: Conceptos Fundamentales -->
+        <section class="slide" id="slide-2">
+            <h2>1. Conceptos Fundamentales y Tipos de Solución</h2>
+            <p>El <strong>conjunto solución</strong> de un sistema de ecuaciones lineales es la intersección de los conjuntos solución de cada ecuación individual. Geométricamente, cada ecuación representa una línea recta en el plano cartesiano, lo que nos lleva a tres casos posibles:</p>
+            <ul>
+                <li><strong>Solución única:</strong> Las rectas se intersecan en un solo punto. El sistema es consistente y determinado.</li>
+                <li><strong>Sin solución:</strong> Las rectas son paralelas y no coincidentes. El conjunto solución es vacío ($\emptyset$). El sistema es inconsistente.</li>
+                <li><strong>Infinitas soluciones:</strong> Las rectas son coincidentes (son la misma recta). El sistema es consistente e indeterminado.</li>
+            </ul>
+
+            <div class="interactive-box">
+                <h3>🔍 Verificador de Tipo de Sistema</h3>
+                <p>Ingresa los coeficientes de dos ecuaciones en la forma $A_1x + B_1y = C_1$ y $A_2x + B_2y = C_2$ para determinar su tipo de solución.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ecuación 1:</span>
+                    <input type="number" id="s2-a1" placeholder="A₁" step="any">
+                    <input type="number" id="s2-b1" placeholder="B₁" step="any">
+                    <input type="number" id="s2-c1" placeholder="C₁" step="any">
+                </div>
+                <div class="ecuacion-row recta2">
+                    <span class="ecuacion-label">Ecuación 2:</span>
+                    <input type="number" id="s2-a2" placeholder="A₂" step="any">
+                    <input type="number" id="s2-b2" placeholder="B₂" step="any">
+                    <input type="number" id="s2-c2" placeholder="C₂" step="any">
+                </div>
+                <button class="btn-primario" onclick="verificarSistema()">Analizar Sistema</button>
+                <div id="res-s2" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 3: Método Gráfico con Canvas -->
+        <section class="slide" id="slide-3">
+            <h2>2. Método Gráfico</h2>
+            <p>El método gráfico consiste en trazar ambas rectas en un mismo plano cartesiano. La solución del sistema es el par ordenado $(x, y)$ asociado al punto donde las gráficas se intersecan.</p>
+            <p>Para graficar una recta de forma eficiente, se calculan sus intersecciones con los ejes coordenados:</p>
+            <ul>
+                <li><strong>Intersección con el eje Y:</strong> Se hace $x = 0$ y se despeja $y$.</li>
+                <li><strong>Intersección con el eje X:</strong> Se hace $y = 0$ y se despeja $x$.</li>
+            </ul>
+            <div class="math-block">
+                $$3x + 2y = 6 \implies \text{Si } x=0, y=3 \quad \text{Si } y=0, x=2$$
+            </div>
+            <p><em>Nota:</em> Este método es excelente para la comprensión visual, pero su precisión depende de la escala del plano y puede ser aproximado si las soluciones no son números enteros.</p>
+
+            <div class="interactive-box">
+                <h3>📐 Graficador de Sistemas Lineales (Canvas)</h3>
+                <p>Ingresa los coeficientes de dos ecuaciones en la forma $Ax + By = C$. El sistema calculará los puntos de corte, trazará las rectas en el plano cartesiano y determinará el punto de intersección.</p>
+                
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ecuación 1:</span>
+                    <input type="number" id="g-a1" placeholder="A₁" step="any" value="3">
+                    <input type="number" id="g-b1" placeholder="B₁" step="any" value="2">
+                    <input type="number" id="g-c1" placeholder="C₁" step="any" value="6">
+                </div>
+                <div class="ecuacion-row recta2">
+                    <span class="ecuacion-label">Ecuación 2:</span>
+                    <input type="number" id="g-a2" placeholder="A₂" step="any" value="1">
+                    <input type="number" id="g-b2" placeholder="B₂" step="any" value="-1">
+                    <input type="number" id="g-c2" placeholder="C₂" step="any" value="2">
+                </div>
+                <button class="btn-primario" onclick="graficarSistema()">Graficar Sistema</button>
+
+                <div class="canvas-container">
+                    <canvas id="planoCanvas" width="700" height="500"></canvas>
+                    <div class="leyenda">
+                        <div class="leyenda-item">
+                            <div class="leyenda-color" style="background-color: var(--color-recta1);"></div>
+                            <span>Recta 1: $A_1x + B_1y = C_1$</span>
+                        </div>
+                        <div class="leyenda-item">
+                            <div class="leyenda-color" style="background-color: var(--color-recta2);"></div>
+                            <span>Recta 2: $A_2x + B_2y = C_2$</span>
+                        </div>
+                        <div class="leyenda-item">
+                            <div class="leyenda-punto" style="background-color: var(--color-interseccion);"></div>
+                            <span>Punto de intersección</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-puntos" id="info-puntos"></div>
+                <div id="res-s3" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 4: Método de Suma o Resta -->
+        <section class="slide" id="slide-4">
+            <h2>3. Método de Suma o Resta</h2>
+            <p>Este método algebraico elimina una de las incógnitas sumando o restando las ecuaciones. Para lograrlo, se multiplica una o ambas ecuaciones por una constante adecuada, de modo que los coeficientes de una variable queden iguales pero con signo contrario.</p>
+            <h3>Ejemplo Resuelto</h3>
+            <p>Resolver el sistema:</p>
+            <div class="math-block">
+                $$
+                \begin{cases}
+                3x + 2y = 5 \quad (1)\\
+                x + 3y = 4 \quad (2)
+                \end{cases}
+                $$
+            </div>
+            <p>1. Multiplicamos la ecuación (2) por $-3$ para eliminar $x$: $-3x - 9y = -12$</p>
+            <p>2. Sumamos a la ecuación (1): $(3x + 2y) + (-3x - 9y) = 5 + (-12) \implies -7y = -7 \implies y = 1$</p>
+            <p>3. Sustituimos $y = 1$ en (2): $x + 3(1) = 4 \implies x = 1$.</p>
+            <p>La solución es el par ordenado $(1, 1)$.</p>
+
+            <div class="interactive-box">
+                <h3>⚖️ Resolvedor por Suma o Resta</h3>
+                <p>Ingresa los coeficientes del sistema $A_1x + B_1y = C_1$ y $A_2x + B_2y = C_2$.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ecuación 1:</span>
+                    <input type="number" id="s4-a1" placeholder="A₁" step="any">
+                    <input type="number" id="s4-b1" placeholder="B₁" step="any">
+                    <input type="number" id="s4-c1" placeholder="C₁" step="any">
+                </div>
+                <div class="ecuacion-row recta2">
+                    <span class="ecuacion-label">Ecuación 2:</span>
+                    <input type="number" id="s4-a2" placeholder="A₂" step="any">
+                    <input type="number" id="s4-b2" placeholder="B₂" step="any">
+                    <input type="number" id="s4-c2" placeholder="C₂" step="any">
+                </div>
+                <button class="btn-primario" onclick="resolverSumaResta()">Resolver Sistema</button>
+                <div id="res-s4" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 5: Método de Cramer -->
+        <section class="slide" id="slide-5">
+            <h2>4. Método de Cramer (Regla de Cramer)</h2>
+            <p>La Regla de Cramer utiliza determinantes para resolver sistemas lineales. Para un sistema $2 \times 2$, se definen tres determinantes:</p>
+            <div class="math-block">
+                $$\Delta = \begin{vmatrix} A_1 & B_1 \\ A_2 & B_2 \end{vmatrix} = A_1B_2 - A_2B_1$$
+                $$\Delta_x = \begin{vmatrix} C_1 & B_1 \\ C_2 & B_2 \end{vmatrix} = C_1B_2 - C_2B_1$$
+                $$\Delta_y = \begin{vmatrix} A_1 & C_1 \\ A_2 & C_2 \end{vmatrix} = A_1C_2 - A_2C_1$$
+            </div>
+            <p>Si $\Delta \neq 0$, el sistema tiene solución única dada por:</p>
+            <div class="math-block">
+                $$x = \frac{\Delta_x}{\Delta}, \quad y = \frac{\Delta_y}{\Delta}$$
+            </div>
+            <p>Si $\Delta = 0$ y $\Delta_x \neq 0$ o $\Delta_y \neq 0$, el sistema es inconsistente (sin solución). Si todos son cero, hay infinitas soluciones.</p>
+
+            <div class="interactive-box">
+                <h3>🧮 Calculadora de Determinantes (Cramer)</h3>
+                <p>Ingresa los coeficientes para calcular $\Delta, \Delta_x, \Delta_y$ y la solución.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ecuación 1:</span>
+                    <input type="number" id="s5-a1" placeholder="A₁" step="any">
+                    <input type="number" id="s5-b1" placeholder="B₁" step="any">
+                    <input type="number" id="s5-c1" placeholder="C₁" step="any">
+                </div>
+                <div class="ecuacion-row recta2">
+                    <span class="ecuacion-label">Ecuación 2:</span>
+                    <input type="number" id="s5-a2" placeholder="A₂" step="any">
+                    <input type="number" id="s5-b2" placeholder="B₂" step="any">
+                    <input type="number" id="s5-c2" placeholder="C₂" step="any">
+                </div>
+                <button class="btn-primario" onclick="calcularCramer()">Calcular Determinantes</button>
+                <div id="res-s5" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 6: Resumen -->
+        <section class="slide" id="slide-6">
+            <h2>Resumen y Cierre</h2>
+            <p>¡Felicidades! Has completado el estudio de los sistemas de ecuaciones lineales con dos variables. A continuación, se sintetizan las ideas clave de este módulo:</p>
+            <ul>
+                <li>Un sistema de ecuaciones lineales busca el punto de intersección común a dos rectas.</li>
+                <li>Los sistemas pueden tener una solución única, ninguna solución (paralelas) o infinitas soluciones (coincidentes).</li>
+                <li>El <strong>método gráfico</strong> ofrece una comprensión visual, mientras que los métodos de <strong>suma/resta</strong> y <strong>Cramer</strong> proporcionan precisión algebraica.</li>
+                <li>La Regla de Cramer es altamente eficiente para sistemas $2 \times 2$ y $3 \times 3$, utilizando el determinante principal $\Delta$ para clasificar y resolver el sistema.</li>
+            </ul>
+            <div class="math-block" style="background-color: var(--color-base); padding: 28px; border-radius: 8px; border-left: 5px solid var(--color-exito);">
+                <p style="text-align: center; margin: 0; font-weight: bold; color: var(--color-titulo);">
+                    "El álgebra es la herramienta que nos permite traducir problemas del mundo real a un lenguaje de relaciones precisas y resolubles."
+                </p>
+            </div>
+            <p style="text-align: center; margin-top: 42px; font-size: 1.2rem; color: var(--color-acento);">
+                ¡Excelente trabajo! Continúa practicando con los reactivos de tu material de estudio.
+            </p>
+        </section>
+    </main>
+
+    <div class="navegacion">
+        <button id="btnPrev" onclick="cambiarSlide(-1)">← Anterior</button>
+        <span class="contador" id="contador">Diapositiva 1 de 6</span>
+        <button id="btnNext" onclick="cambiarSlide(1)">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    let slideActual = 1;
+    const totalSlides = 6;
+
+    function actualizarNavegacion() {
+        document.querySelectorAll('.slide').forEach((slide, index) => {
+            slide.classList.toggle('active', index + 1 === slideActual);
+        });
+        
+        document.getElementById('contador').textContent = `Diapositiva ${slideActual} de ${totalSlides}`;
+        document.getElementById('btnPrev').disabled = slideActual === 1;
+        document.getElementById('btnNext').disabled = slideActual === totalSlides;
+        document.getElementById('btnNext').textContent = slideActual === totalSlides - 1 ? 'Fin' : 'Siguiente →';
+        
+        const progreso = ((slideActual - 1) / (totalSlides - 1)) * 100;
+        document.getElementById('progressBar').style.width = `${progreso}%`;
+    }
+
+    function cambiarSlide(direccion) {
+        if (direccion === 1 && slideActual < totalSlides) {
+            slideActual++;
+        } else if (direccion === -1 && slideActual > 1) {
+            slideActual--;
+        }
+        actualizarNavegacion();
+    }
+
+    function mostrarResultado(elementId, mensaje, esExito) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = mensaje;
+        el.className = `resultado ${esExito ? 'exito' : 'error'}`;
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([el]).catch(err => console.error('MathJax error:', err));
+        }
+    }
+
+    // Lógica Interactiva Slide 2
+    function verificarSistema() {
+        const a1 = parseFloat(document.getElementById('s2-a1').value);
+        const b1 = parseFloat(document.getElementById('s2-b1').value);
+        const c1 = parseFloat(document.getElementById('s2-c1').value);
+        const a2 = parseFloat(document.getElementById('s2-a2').value);
+        const b2 = parseFloat(document.getElementById('s2-b2').value);
+        const c2 = parseFloat(document.getElementById('s2-c2').value);
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
+            mostrarResultado('res-s2', '⚠️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        const det = a1 * b2 - a2 * b1;
+        const detX = c1 * b2 - c2 * b1;
+
+        if (det !== 0) {
+            mostrarResultado('res-s2', '✅ <strong>Solución Única:</strong> Las rectas se intersecan en un solo punto. El sistema es consistente y determinado.', true);
+        } else if (detX !== 0) {
+            mostrarResultado('res-s2', '❌ <strong>Sin Solución:</strong> Las rectas son paralelas y no coincidentes. El sistema es inconsistente.', false);
+        } else {
+            mostrarResultado('res-s2', '♾️ <strong>Infinitas Soluciones:</strong> Las rectas son coincidentes. El sistema es consistente e indeterminado.', true);
+        }
+    }
+
+    // Lógica Interactiva Slide 3: Graficador con Canvas
+    function graficarSistema() {
+        const a1 = parseFloat(document.getElementById('g-a1').value);
+        const b1 = parseFloat(document.getElementById('g-b1').value);
+        const c1 = parseFloat(document.getElementById('g-c1').value);
+        const a2 = parseFloat(document.getElementById('g-a2').value);
+        const b2 = parseFloat(document.getElementById('g-b2').value);
+        const c2 = parseFloat(document.getElementById('g-c2').value);
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
+            mostrarResultado('res-s3', '⚠️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        if (a1 === 0 && b1 === 0) {
+            mostrarResultado('res-s3', '⚠️ La Ecuación 1 no es válida (A₁ y B₁ no pueden ser ambos cero).', false);
+            return;
+        }
+        if (a2 === 0 && b2 === 0) {
+            mostrarResultado('res-s3', '️ La Ecuación 2 no es válida (A₂ y B₂ no pueden ser ambos cero).', false);
+            return;
+        }
+
+        const corteX1 = a1 !== 0 ? c1 / a1 : null;
+        const corteY1 = b1 !== 0 ? c1 / b1 : null;
+        const corteX2 = a2 !== 0 ? c2 / a2 : null;
+        const corteY2 = b2 !== 0 ? c2 / b2 : null;
+
+        const det = a1 * b2 - a2 * b1;
+        let interseccion = null;
+        let tipoSistema = '';
+
+        if (det !== 0) {
+            const xInt = (c1 * b2 - c2 * b1) / det;
+            const yInt = (a1 * c2 - a2 * c1) / det;
+            interseccion = { x: xInt, y: yInt };
+            tipoSistema = 'Solución única (rectas secantes)';
+        } else {
+            const detX = c1 * b2 - c2 * b1;
+            if (detX !== 0) {
+                tipoSistema = 'Sin solución (rectas paralelas)';
+            } else {
+                tipoSistema = 'Infinitas soluciones (rectas coincidentes)';
+            }
+        }
+
+        dibujarPlanoCanvas(a1, b1, c1, a2, b2, c2, interseccion);
+
+        const infoHTML = `
+            <div class="bloque">
+                <strong>Recta 1:</strong> $${a1}x + ${b1}y = ${c1}$<br>
+                ${corteX1 !== null ? `Corte eje X: <strong>(${corteX1.toFixed(2)}, 0)</strong><br>` : 'Sin corte eje X (recta horizontal)<br>'}
+                ${corteY1 !== null ? `Corte eje Y: <strong>(0, ${corteY1.toFixed(2)})</strong>` : 'Sin corte eje Y (recta vertical)'}
+            </div>
+            <div class="bloque recta2">
+                <strong>Recta 2:</strong> $${a2}x + ${b2}y = ${c2}$<br>
+                ${corteX2 !== null ? `Corte eje X: <strong>(${corteX2.toFixed(2)}, 0)</strong><br>` : 'Sin corte eje X (recta horizontal)<br>'}
+                ${corteY2 !== null ? `Corte eje Y: <strong>(0, ${corteY2.toFixed(2)})</strong>` : 'Sin corte eje Y (recta vertical)'}
+            </div>
+        `;
+        document.getElementById('info-puntos').innerHTML = infoHTML;
+
+        if (interseccion) {
+            mostrarResultado('res-s3', 
+                `✅ <strong>Punto de intersección calculado algebraicamente:</strong><br>
+                $$(x, y) = (${interseccion.x.toFixed(3)}, ${interseccion.y.toFixed(3)})$$
+                <br><em>Tipo de sistema: ${tipoSistema}</em>`, true);
+        } else {
+            mostrarResultado('res-s3', 
+                `⚠️ <strong>${tipoSistema}</strong><br>No existe un punto de intersección único.`, false);
+        }
+
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([document.getElementById('info-puntos'), document.getElementById('res-s3')])
+                .catch(err => console.error('MathJax error:', err));
+        }
+    }
+
+    function dibujarPlanoCanvas(a1, b1, c1, a2, b2, c2, interseccion) {
+        const canvas = document.getElementById('planoCanvas');
+        const ctx = canvas.getContext('2d');
+        const width = canvas.width;
+        const height = canvas.height;
+
+        ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = '#fafbfd';
+        ctx.fillRect(0, 0, width, height);
+
+        const puntos = [];
+        const corteX1 = a1 !== 0 ? c1 / a1 : null;
+        const corteY1 = b1 !== 0 ? c1 / b1 : null;
+        const corteX2 = a2 !== 0 ? c2 / a2 : null;
+        const corteY2 = b2 !== 0 ? c2 / b2 : null;
+
+        if (corteX1 !== null) puntos.push(corteX1);
+        if (corteY1 !== null) puntos.push(corteY1);
+        if (corteX2 !== null) puntos.push(corteX2);
+        if (corteY2 !== null) puntos.push(corteY2);
+        if (interseccion) {
+            puntos.push(interseccion.x);
+            puntos.push(interseccion.y);
+        }
+
+        let minX = -10, maxX = 10, minY = -10, maxY = 10;
+        if (puntos.length > 0) {
+            const minP = Math.min(...puntos);
+            const maxP = Math.max(...puntos);
+            const rango = Math.max(Math.abs(maxP - minP), 10);
+            minX = minP - rango * 0.3;
+            maxX = maxP + rango * 0.3;
+            minY = minP - rango * 0.3;
+            maxY = maxP + rango * 0.3;
+        }
+
+        const xToCanvas = (x) => ((x - minX) / (maxX - minX)) * width;
+        const yToCanvas = (y) => height - ((y - minY) / (maxY - minY)) * height;
+
+        ctx.strokeStyle = '#e0e8f0';
+        ctx.lineWidth = 1;
+        const stepX = calcularPaso(maxX - minX);
+        const stepY = calcularPaso(maxY - minY);
+
+        for (let x = Math.ceil(minX / stepX) * stepX; x <= maxX; x += stepX) {
+            const cx = xToCanvas(x);
+            ctx.beginPath();
+            ctx.moveTo(cx, 0);
+            ctx.lineTo(cx, height);
+            ctx.stroke();
+        }
+        for (let y = Math.ceil(minY / stepY) * stepY; y <= maxY; y += stepY) {
+            const cy = yToCanvas(y);
+            ctx.beginPath();
+            ctx.moveTo(0, cy);
+            ctx.lineTo(width, cy);
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = '#2d4a66';
+        ctx.lineWidth = 2;
+        const origenX = xToCanvas(0);
+        const origenY = yToCanvas(0);
+
+        if (origenY >= 0 && origenY <= height) {
+            ctx.beginPath();
+            ctx.moveTo(0, origenY);
+            ctx.lineTo(width, origenY);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(width - 10, origenY - 5);
+            ctx.lineTo(width, origenY);
+            ctx.lineTo(width - 10, origenY + 5);
+            ctx.stroke();
+            ctx.fillStyle = '#2d4a66';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('X', width - 20, origenY - 10);
+        }
+
+        if (origenX >= 0 && origenX <= width) {
+            ctx.beginPath();
+            ctx.moveTo(origenX, height);
+            ctx.lineTo(origenX, 0);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(origenX - 5, 10);
+            ctx.lineTo(origenX, 0);
+            ctx.lineTo(origenX + 5, 10);
+            ctx.stroke();
+            ctx.fillStyle = '#2d4a66';
+            ctx.font = 'bold 14px Segoe UI';
+            ctx.fillText('Y', origenX + 10, 15);
+        }
+
+        ctx.fillStyle = '#5b7fa3';
+        ctx.font = '11px Segoe UI';
+        ctx.textAlign = 'center';
+        for (let x = Math.ceil(minX / stepX) * stepX; x <= maxX; x += stepX) {
+            if (Math.abs(x) < 0.001) continue;
+            const cx = xToCanvas(x);
+            const cy = yToCanvas(0);
+            const labelY = (cy >= 0 && cy <= height) ? cy + 15 : height - 5;
+            ctx.fillText(formatNum(x), cx, labelY);
+        }
+        ctx.textAlign = 'right';
+        for (let y = Math.ceil(minY / stepY) * stepY; y <= maxY; y += stepY) {
+            if (Math.abs(y) < 0.001) continue;
+            const cx = xToCanvas(0);
+            const cy = yToCanvas(y);
+            const labelX = (cx >= 0 && cx <= width) ? cx - 8 : 15;
+            ctx.fillText(formatNum(y), labelX, cy + 4);
+        }
+
+        function trazarRecta(A, B, C, color, grosor) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = grosor;
+            ctx.beginPath();
+
+            let xInicio, yInicio, xFin, yFin;
+
+            if (B === 0) {
+                const x = C / A;
+                xInicio = xFin = xToCanvas(x);
+                yInicio = 0;
+                yFin = height;
+            } else if (A === 0) {
+                const y = C / B;
+                yInicio = yFin = yToCanvas(y);
+                xInicio = 0;
+                xFin = width;
+            } else {
+                xInicio = minX;
+                yInicio = (C - A * xInicio) / B;
+                xFin = maxX;
+                yFin = (C - A * xFin) / B;
+            }
+
+            ctx.moveTo(xToCanvas(xInicio), yToCanvas(yInicio));
+            ctx.lineTo(xToCanvas(xFin), yToCanvas(yFin));
+            ctx.stroke();
+        }
+
+        trazarRecta(a1, b1, c1, '#c0392b', 3);
+        trazarRecta(a2, b2, c2, '#2980b9', 3);
+
+        function marcarPunto(x, y, color) {
+            const cx = xToCanvas(x);
+            const cy = yToCanvas(y);
+            if (cx < 0 || cx > width || cy < 0 || cy > height) return;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        if (corteX1 !== null) marcarPunto(corteX1, 0, '#c0392b');
+        if (corteY1 !== null) marcarPunto(0, corteY1, '#c0392b');
+        if (corteX2 !== null) marcarPunto(corteX2, 0, '#2980b9');
+        if (corteY2 !== null) marcarPunto(0, corteY2, '#2980b9');
+
+        if (interseccion) {
+            const cx = xToCanvas(interseccion.x);
+            const cy = yToCanvas(interseccion.y);
+            
+            ctx.fillStyle = 'rgba(39, 174, 96, 0.2)';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 12, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#27ae60';
+            ctx.beginPath();
+            ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.fillStyle = '#27ae60';
+            ctx.font = 'bold 13px Segoe UI';
+            ctx.textAlign = 'left';
+            ctx.fillText(`(${interseccion.x.toFixed(2)}, ${interseccion.y.toFixed(2)})`, cx + 12, cy - 10);
+        }
+    }
+
+    function calcularPaso(rango) {
+        const pasos = [0.5, 1, 2, 5, 10, 20, 50, 100];
+        const ideal = rango / 8;
+        for (const p of pasos) {
+            if (p >= ideal) return p;
+        }
+        return 100;
+    }
+
+    function formatNum(n) {
+        if (Math.abs(n) < 0.001) return '0';
+        return Number.isInteger(n) ? n.toString() : n.toFixed(1);
+    }
+
+    // Lógica Interactiva Slide 4
+    function resolverSumaResta() {
+        const a1 = parseFloat(document.getElementById('s4-a1').value);
+        const b1 = parseFloat(document.getElementById('s4-b1').value);
+        const c1 = parseFloat(document.getElementById('s4-c1').value);
+        const a2 = parseFloat(document.getElementById('s4-a2').value);
+        const b2 = parseFloat(document.getElementById('s4-b2').value);
+        const c2 = parseFloat(document.getElementById('s4-c2').value);
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
+            mostrarResultado('res-s4', '⚠️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        const det = a1 * b2 - a2 * b1;
+        if (det === 0) {
+            mostrarResultado('res-s4', '⚠️ El determinante es 0. Este sistema no tiene solución única (es paralelo o coincidente). Usa el verificador de la Diapositiva 2 para analizarlo.', false);
+            return;
+        }
+
+        const x = ((c1 * b2 - c2 * b1) / det).toFixed(2);
+        const y = ((a1 * c2 - a2 * c1) / det).toFixed(2);
+
+        mostrarResultado('res-s4', `✅ <strong>Solución del sistema:</strong><br>$$x = ${x}, \\quad y = ${y}$$<br><em>(Par ordenado: $(${x}, ${y})$)</em>`, true);
+    }
+
+    // Lógica Interactiva Slide 5
+    function calcularCramer() {
+        const a1 = parseFloat(document.getElementById('s5-a1').value);
+        const b1 = parseFloat(document.getElementById('s5-b1').value);
+        const c1 = parseFloat(document.getElementById('s5-c1').value);
+        const a2 = parseFloat(document.getElementById('s5-a2').value);
+        const b2 = parseFloat(document.getElementById('s5-b2').value);
+        const c2 = parseFloat(document.getElementById('s5-c2').value);
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(c1) || isNaN(a2) || isNaN(b2) || isNaN(c2)) {
+            mostrarResultado('res-s5', '⚠️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        const det = a1 * b2 - a2 * b1;
+        const detX = c1 * b2 - c2 * b1;
+        const detY = a1 * c2 - a2 * c1;
+
+        let msg = `$$\\Delta = (${a1})(${b2}) - (${a2})(${b1}) = ${det}$$`;
+        
+        if (det === 0) {
+            msg += `<br>⚠️ Como $\\Delta = 0$, el sistema no tiene solución única.`;
+            mostrarResultado('res-s5', msg, false);
+        } else {
+            msg += `$$\\Delta_x = (${c1})(${b2}) - (${c2})(${b1}) = ${detX}$$`;
+            msg += `$$\\Delta_y = (${a1})(${c2}) - (${a2})(${c1}) = ${detY}$$`;
+            const x = (detX / det).toFixed(2);
+            const y = (detY / det).toFixed(2);
+            msg += `<br>✅ <strong>Solución:</strong> $$x = \\frac{\\Delta_x}{\\Delta} = ${x}, \\quad y = \\frac{\\Delta_y}{\\Delta} = ${y}$$`;
+            mostrarResultado('res-s5', msg, true);
+        }
+    }
+
+    actualizarNavegacion();
+</script>
+
+</body>
+</html>

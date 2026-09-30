@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio de Planteo — Sistemas de Ecuaciones Lineales | Matemáticas III</title>
+
+  <script>
+    // IMPORTANTE: se elimina '$' como delimitador de MathJax
+    // para evitar conflicto con los signos de peso.
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      color: var(--color-texto-oscuro);
+      line-height: 1.7;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1000px;
+      background-color: var(--color-blanco);
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 30px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-acento-suave);
+      margin-bottom: 8px;
+    }
+
+    header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+    .barra-progreso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 12px 20px;
+      margin: 20px 25px 0 25px;
+      border-left: 4px solid var(--color-acento);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .barra-progreso .info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+    }
+
+    .barra-progreso .contador {
+      font-weight: 700;
+      color: var(--color-acento);
+    }
+
+    .btn-secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-secundario:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .tarjeta-problema {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 25px;
+      margin: 20px 25px 25px 25px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .meta-problema {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .numero-problema {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-acento);
+    }
+
+    .nivel-problema {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .nivel-problema.basico {
+      background-color: rgba(39, 174, 96, 0.15);
+      color: var(--color-exito);
+    }
+    .nivel-problema.medio {
+      background-color: rgba(91, 127, 163, 0.15);
+      color: var(--color-acento);
+    }
+    .nivel-problema.alto {
+      background-color: rgba(192, 57, 43, 0.15);
+      color: var(--color-error);
+    }
+
+    .enunciado {
+      font-size: 1.05rem;
+      color: var(--color-texto-oscuro);
+      margin-bottom: 20px;
+      line-height: 1.7;
+      text-align: justify;
+      padding: 15px;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .fase {
+      margin-bottom: 20px;
+      padding: 18px;
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+    }
+
+    .fase-titulo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .numero-fase {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .grupo-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 220px;
+    }
+
+    .input-wrapper label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 5px;
+    }
+
+    select.select-opcion {
+      padding: 10px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      width: 100%;
+      transition: border-color 0.3s;
+      font-family: inherit;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, var(--color-acento) 50%),
+                        linear-gradient(135deg, var(--color-acento) 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(50% - 2px),
+                           calc(100% - 15px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding-right: 40px;
+    }
+
+    select.select-opcion:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .select-opcion.pendiente {
+      border-color: var(--color-acento-suave);
+      color: var(--color-acento);
+    }
+
+    .select-opcion.correcto {
+      border-color: var(--color-exito);
+      background-color: rgba(39, 174, 96, 0.08);
+      color: var(--color-exito);
+      font-weight: 600;
+    }
+
+    .select-opcion.incorrecto {
+      border-color: var(--color-error);
+      background-color: rgba(192, 57, 43, 0.08);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .lista-restricciones {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .restriccion-item {
+      background-color: var(--color-base);
+      border-radius: 6px;
+      padding: 12px;
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .restriccion-item .restriccion-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .fila-restriccion {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .fila-restriccion select {
+      padding: 8px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    .fila-restriccion select:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .fila-restriccion select.correcto {
+      border-color: var(--color-exito);
+      background-color: rgba(39, 174, 96, 0.08);
+      color: var(--color-exito);
+      font-weight: 600;
+    }
+
+    .fila-restriccion select.incorrecto {
+      border-color: var(--color-error);
+      background-color: rgba(192, 57, 43, 0.08);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .fila-restriccion select.select-coef {
+      min-width: 80px;
+    }
+
+    .fila-restriccion .separador {
+      font-weight: 700;
+      color: var(--color-acento);
+      font-size: 0.95rem;
+      padding: 0 2px;
+    }
+
+    .btn-primario {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 8px;
+      font-family: inherit;
+    }
+
+    .btn-primario:hover { background-color: var(--color-primario); }
+
+    .btn-pista {
+      background-color: transparent;
+      border: 2px dashed var(--color-acento-suave);
+      color: var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      margin-right: 8px;
+      font-family: inherit;
+    }
+
+    .btn-pista:hover {
+      background-color: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .feedback {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .feedback.visible { display: block; }
+    .feedback.correcto {
+      background-color: rgba(39, 174, 96, 0.12);
+      border-left: 4px solid var(--color-exito);
+      color: var(--color-exito);
+    }
+    .feedback.incorrecto {
+      background-color: rgba(192, 57, 43, 0.12);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .pista-texto {
+      background-color: rgba(91, 127, 163, 0.1);
+      border-left: 4px solid var(--color-acento);
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--color-primario);
+      margin-top: 12px;
+      display: none;
+    }
+    .pista-texto.visible { display: block; }
+
+    .navegacion-problemas {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid var(--color-acento-suave);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .indicador-problema {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-navegacion {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+    .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .footer-info {
+      background-color: var(--color-base);
+      border-top: 1px solid var(--color-acento-suave);
+      padding: 15px 25px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      text-align: center;
+    }
+
+    .footer-info strong { color: var(--color-acento); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2rem; }
+      .tarjeta-problema { padding: 15px; margin: 15px; }
+      .barra-progreso { margin: 15px 15px 0 15px; }
+      .grupo-inputs { flex-direction: column; align-items: stretch; }
+      .navegacion-problemas { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <header>
+    <div class="institucion">Preparatoria Abierta</div>
+    <h1>Laboratorio de Planteo</h1>
+    <p>Sistemas de Ecuaciones Lineales con Dos Variables | Matemáticas III</p>
+  </header>
+
+  <div class="barra-progreso">
+    <div class="info">
+      <span>📊 Progreso:</span>
+      <span class="contador" id="contador-resueltos">0 de 10 resueltos</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-secundario" id="btn-aleatorio">🎲 Problema aleatorio</button>
+      <button class="btn-secundario" id="btn-reiniciar">🔄 Reiniciar progreso</button>
+    </div>
+  </div>
+
+  <div class="tarjeta-problema">
+    <div class="meta-problema">
+      <div class="numero-problema" id="numero-problema">Problema 1 de 10</div>
+      <div class="nivel-problema basico" id="nivel-problema">Básico</div>
+    </div>
+
+    <div class="enunciado" id="enunciado">
+      Cargando problema...
+    </div>
+
+    <!-- FASE 1 -->
+    <div class="fase" id="fase-1">
+      <div class="fase-titulo">
+        <span class="numero-fase">1</span>
+        Identifica las incógnitas
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>¿Qué representa \(x\)?</label>
+          <select class="select-opcion" id="incognita-x">
+            <option value="">— Selecciona una opción —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>¿Qué representa \(y\)?</label>
+          <select class="select-opcion" id="incognita-y">
+            <option value="">— Selecciona una opción —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-1">💡 Pista para las incógnitas</button>
+      <button class="btn-primario" id="btn-verificar-1">Verificar incógnitas</button>
+      <div class="pista-texto" id="pista-1"></div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+
+    <!-- FASE 2 -->
+    <div class="fase" id="fase-2" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">2</span>
+        Construye las ecuaciones
+      </div>
+
+      <div class="lista-restricciones" id="lista-restricciones">
+      </div>
+
+      <button class="btn-pista" id="btn-pista-2">💡 Pista para las ecuaciones</button>
+      <button class="btn-primario" id="btn-verificar-2">Verificar ecuaciones</button>
+      <div class="pista-texto" id="pista-2"></div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+
+    <!-- FASE 3 -->
+    <div class="fase" id="fase-3" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">3</span>
+        Resuelve el sistema
+      </div>
+
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Valor de \(x\):</label>
+          <select class="select-opcion" id="solucion-x">
+            <option value="">— Selecciona el valor —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>Valor de \(y\):</label>
+          <select class="select-opcion" id="solucion-y">
+            <option value="">— Selecciona el valor —</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-pista" id="btn-pista-3">💡 Pista para resolver</button>
+      <button class="btn-primario" id="btn-verificar-3">Verificar solución</button>
+      <div class="pista-texto" id="pista-3"></div>
+      <div class="feedback" id="feedback-3"></div>
+      <div id="info-solucion" style="margin-top: 15px;"></div>
+    </div>
+
+    <div class="navegacion-problemas">
+      <button class="btn-navegacion secundario" id="btn-anterior" disabled>← Anterior</button>
+      <span class="indicador-problema" id="indicador-problema">Problema 1 de 10</span>
+      <button class="btn-navegacion" id="btn-siguiente">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <strong>Objetivo:</strong> Traducir problemas verbales al lenguaje algebraico construyendo el sistema de dos ecuaciones lineales con dos variables, y resolverlo aplicando los métodos del Módulo 2 (gráfico, suma/resta, sustitución, Cramer).
+  </div>
+</div>
+
+<script>
+  // =========================================
+  // BANCO DE PROBLEMAS — SISTEMAS DE ECUACIONES (IGUALDAD)
+  // Nota: los signos de peso se escriben como "pesos" para
+  // evitar cualquier conflicto con los delimitadores de MathJax.
+  // Los delimitadores son \( ... \) y \[ ... \] (NO se usa $).
+  // =========================================
+  var problemas = [
+    {
+      nivel: 'Básico',
+      enunciado: 'En una granja hay gallinas y conejos. El granjero cuenta un total de 20 animales y 56 patas. ¿Cuántas gallinas y cuántos conejos hay en la granja?',
+      incognitaX: 'número de gallinas',
+      incognitaY: 'número de conejos',
+      opcionesX: ['número de gallinas', 'número de conejos', 'número de patas', 'número de animales'],
+      opcionesY: ['número de gallinas', 'número de conejos', 'número de patas', 'número de animales'],
+      pistaIncognitas: 'Asigna \\(x\\) al número de gallinas (2 patas cada una) e \\(y\\) al número de conejos (4 patas cada uno).',
+      ecuaciones: [
+        { a: 1, b: 1, c: 20 },
+        { a: 2, b: 4, c: 56 }
+      ],
+      opcionesCoefA: [1, 2, 3, 4],
+      opcionesCoefB: [1, 2, 3, 4],
+      opcionesCoefC: [20, 30, 40, 50, 56, 60],
+      pistaEcuaciones: 'El total de animales es \\(x + y = 20\\). El total de patas es \\(2x + 4y = 56\\) (gallinas 2 patas, conejos 4 patas).',
+      solucionX: 12,
+      solucionY: 8,
+      opcionesSolucionX: [8, 10, 11, 12, 13, 14],
+      opcionesSolucionY: [6, 7, 8, 9, 10, 11],
+      pistaSolucion: 'Despeja \\(x = 20 - y\\) y sustituye en la segunda ecuación: \\(2(20 - y) + 4y = 56\\). Simplificando: \\(40 + 2y = 56\\), entonces \\(y = 8\\). Finalmente, \\(x = 12\\).'
+    },
+    {
+      nivel: 'Básico',
+      enunciado: 'La suma de dos números es 45 y su diferencia es 13. ¿Cuáles son esos números?',
+      incognitaX: 'número mayor',
+      incognitaY: 'número menor',
+      opcionesX: ['número mayor', 'número menor', 'suma de los números', 'diferencia de los números'],
+      opcionesY: ['número mayor', 'número menor', 'suma de los números', 'diferencia de los números'],
+      pistaIncognitas: 'Asigna \\(x\\) al número mayor e \\(y\\) al número menor.',
+      ecuaciones: [
+        { a: 1, b: 1, c: 45 },
+        { a: 1, b: -1, c: 13 }
+      ],
+      opcionesCoefA: [1, 2, 3, -1],
+      opcionesCoefB: [1, -1, 2, 3],
+      opcionesCoefC: [13, 20, 30, 45, 50, 58],
+      pistaEcuaciones: 'La suma es \\(x + y = 45\\). La diferencia es \\(x - y = 13\\).',
+      solucionX: 29,
+      solucionY: 16,
+      opcionesSolucionX: [16, 20, 25, 29, 32, 35],
+      opcionesSolucionY: [13, 15, 16, 18, 20, 22],
+      pistaSolucion: 'Suma las dos ecuaciones: \\((x + y) + (x - y) = 45 + 13\\), entonces \\(2x = 58\\) y \\(x = 29\\). Finalmente, \\(y = 45 - 29 = 16\\).'
+    },
+    {
+      nivel: 'Básico',
+      enunciado: 'Un estudiante compró cuadernos y lápices. En total compró 5 artículos y gastó 58 pesos. Si cada cuaderno cuesta 16 pesos y cada lápiz cuesta 5 pesos, ¿cuántos cuadernos y cuántos lápices compró?',
+      incognitaX: 'número de cuadernos',
+      incognitaY: 'número de lápices',
+      opcionesX: ['número de cuadernos', 'número de lápices', 'precio de cuadernos', 'precio de lápices'],
+      opcionesY: ['número de cuadernos', 'número de lápices', 'precio de cuadernos', 'precio de lápices'],
+      pistaIncognitas: '\\(x\\) = cantidad de cuadernos; \\(y\\) = cantidad de lápices.',
+      ecuaciones: [
+        { a: 1, b: 1, c: 5 },
+        { a: 16, b: 5, c: 58 }
+      ],
+      opcionesCoefA: [1, 2, 3, 5, 16, 20],
+      opcionesCoefB: [1, 2, 3, 5, 16, 20],
+      opcionesCoefC: [5, 10, 20, 40, 58, 80],
+      pistaEcuaciones: 'El total de artículos es \\(x + y = 5\\). El costo total es \\(16x + 5y = 58\\).',
+      solucionX: 3,
+      solucionY: 2,
+      opcionesSolucionX: [1, 2, 3, 4, 5, 6],
+      opcionesSolucionY: [1, 2, 3, 4, 5, 6],
+      pistaSolucion: 'Despeja \\(y = 5 - x\\) y sustituye: \\(16x + 5(5 - x) = 58\\). Simplificando: \\(16x + 25 - 5x = 58\\), entonces \\(11x = 33\\) y \\(x = 3\\). Finalmente, \\(y = 2\\).'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'El perímetro de un rectángulo mide 26 metros y uno de sus lados es 3 metros más largo que el otro. ¿Cuáles son las dimensiones del rectángulo?',
+      incognitaX: 'longitud del lado menor',
+      incognitaY: 'longitud del lado mayor',
+      opcionesX: ['longitud del lado menor', 'longitud del lado mayor', 'perímetro del rectángulo', 'área del rectángulo'],
+      opcionesY: ['longitud del lado menor', 'longitud del lado mayor', 'perímetro del rectángulo', 'área del rectángulo'],
+      pistaIncognitas: '\\(x\\) = lado menor; \\(y\\) = lado mayor.',
+      ecuaciones: [
+        { a: 2, b: 2, c: 26 },
+        { a: -1, b: 1, c: 3 }
+      ],
+      opcionesCoefA: [1, 2, 3, -1, 4],
+      opcionesCoefB: [1, 2, 3, -1, 4],
+      opcionesCoefC: [3, 5, 10, 20, 26, 30],
+      pistaEcuaciones: 'El perímetro es \\(2x + 2y = 26\\). La relación de lados es \\(y = x + 3\\), que equivale a \\(-x + y = 3\\).',
+      solucionX: 5,
+      solucionY: 8,
+      opcionesSolucionX: [3, 4, 5, 6, 7, 8],
+      opcionesSolucionY: [5, 6, 7, 8, 9, 10],
+      pistaSolucion: 'Sustituye \\(y = x + 3\\) en \\(2x + 2y = 26\\): \\(2x + 2(x + 3) = 26\\). Simplificando: \\(4x + 6 = 26\\), entonces \\(x = 5\\). Finalmente, \\(y = 8\\).'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'Dos inversionistas aportaron capitales distintos para un negocio. La suma de sus aportaciones es de 100,000 pesos. Si uno aportó 20,000 pesos más que el otro, ¿cuánto aportó cada uno?',
+      incognitaX: 'aportación del primer inversionista',
+      incognitaY: 'aportación del segundo inversionista',
+      opcionesX: ['aportación del primer inversionista', 'aportación del segundo inversionista', 'ganancia del negocio', 'total invertido'],
+      opcionesY: ['aportación del primer inversionista', 'aportación del segundo inversionista', 'ganancia del negocio', 'total invertido'],
+      pistaIncognitas: '\\(x\\) = aportación mayor; \\(y\\) = aportación menor (en miles de pesos).',
+      ecuaciones: [
+        { a: 1, b: 1, c: 100 },
+        { a: 1, b: -1, c: 20 }
+      ],
+      opcionesCoefA: [1, 2, -1, 5, 10],
+      opcionesCoefB: [1, 2, -1, 5, 10],
+      opcionesCoefC: [10, 20, 40, 60, 80, 100],
+      pistaEcuaciones: 'La suma es \\(x + y = 100\\). La diferencia es \\(x - y = 20\\) (en miles de pesos).',
+      solucionX: 60,
+      solucionY: 40,
+      opcionesSolucionX: [40, 45, 50, 55, 60, 70],
+      opcionesSolucionY: [30, 35, 40, 45, 50, 60],
+      pistaSolucion: 'Suma las ecuaciones: \\(2x = 120\\), entonces \\(x = 60\\). Finalmente, \\(y = 40\\). Las aportaciones son 60,000 pesos y 40,000 pesos.'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'Un comerciante mezcla café de dos calidades. El café tipo A cuesta 80 pesos por kg y el tipo B cuesta 50 pesos por kg. Si quiere obtener 30 kg de mezcla a 65 pesos por kg, ¿cuántos kg de cada tipo debe usar?',
+      incognitaX: 'kg de café tipo A',
+      incognitaY: 'kg de café tipo B',
+      opcionesX: ['kg de café tipo A', 'kg de café tipo B', 'precio de la mezcla', 'kg totales de mezcla'],
+      opcionesY: ['kg de café tipo A', 'kg de café tipo B', 'precio de la mezcla', 'kg totales de mezcla'],
+      pistaIncognitas: '\\(x\\) = kg de tipo A; \\(y\\) = kg de tipo B.',
+      ecuaciones: [
+        { a: 1, b: 1, c: 30 },
+        { a: 80, b: 50, c: 1950 }
+      ],
+      opcionesCoefA: [1, 2, 50, 65, 80, 100],
+      opcionesCoefB: [1, 2, 50, 65, 80, 100],
+      opcionesCoefC: [30, 500, 1000, 1500, 1950, 2000],
+      pistaEcuaciones: 'El total de mezcla es \\(x + y = 30\\). El costo total es \\(80x + 50y = 1950\\) (porque 30 kg a 65 pesos cada kg dan 1950 pesos).',
+      solucionX: 15,
+      solucionY: 15,
+      opcionesSolucionX: [10, 12, 15, 18, 20, 25],
+      opcionesSolucionY: [5, 10, 12, 15, 18, 20],
+      pistaSolucion: 'Despeja \\(y = 30 - x\\): \\(80x + 50(30 - x) = 1950\\). Simplificando: \\(80x + 1500 - 50x = 1950\\), entonces \\(30x = 450\\) y \\(x = 15\\). Finalmente, \\(y = 15\\).'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Una persona tiene monedas de 5 pesos y de 10 pesos. En total tiene 40 monedas que suman 275 pesos. ¿Cuántas monedas de cada denominación tiene?',
+      incognitaX: 'número de monedas de 5 pesos',
+      incognitaY: 'número de monedas de 10 pesos',
+      opcionesX: ['número de monedas de 5 pesos', 'número de monedas de 10 pesos', 'valor total del dinero', 'total de monedas'],
+      opcionesY: ['número de monedas de 5 pesos', 'número de monedas de 10 pesos', 'valor total del dinero', 'total de monedas'],
+      pistaIncognitas: '\\(x\\) = monedas de 5 pesos; \\(y\\) = monedas de 10 pesos.',
+      ecuaciones: [
+        { a: 1, b: 1, c: 40 },
+        { a: 5, b: 10, c: 275 }
+      ],
+      opcionesCoefA: [1, 2, 5, 10, 20, 40],
+      opcionesCoefB: [1, 2, 5, 10, 20, 40],
+      opcionesCoefC: [40, 100, 200, 275, 300, 400],
+      pistaEcuaciones: 'El total de monedas es \\(x + y = 40\\). El valor total es \\(5x + 10y = 275\\).',
+      solucionX: 25,
+      solucionY: 15,
+      opcionesSolucionX: [15, 18, 20, 22, 25, 30],
+      opcionesSolucionY: [10, 12, 15, 18, 20, 25],
+      pistaSolucion: 'Despeja \\(x = 40 - y\\): \\(5(40 - y) + 10y = 275\\). Simplificando: \\(200 - 5y + 10y = 275\\), entonces \\(5y = 75\\) y \\(y = 15\\). Finalmente, \\(x = 25\\).'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Dos autos salen simultáneamente de dos ciudades separadas por 500 km, uno al encuentro del otro. El auto A viaja a 90 km/h y el auto B a 110 km/h. ¿Cuánto tiempo tardarán en encontrarse y a qué distancia de la ciudad de origen del auto A se cruzarán?',
+      incognitaX: 'tiempo hasta el encuentro (horas)',
+      incognitaY: 'distancia recorrida por el auto A (km)',
+      opcionesX: ['tiempo hasta el encuentro', 'distancia recorrida por el auto A', 'velocidad del auto A', 'distancia recorrida por el auto B'],
+      opcionesY: ['tiempo hasta el encuentro', 'distancia recorrida por el auto A', 'velocidad del auto A', 'distancia recorrida por el auto B'],
+      pistaIncognitas: '\\(x\\) = tiempo en horas; \\(y\\) = distancia recorrida por A en km.',
+      ecuaciones: [
+        { a: 90, b: -1, c: 0 },
+        { a: 90, b: 110, c: 500 }
+      ],
+      opcionesCoefA: [1, 50, 90, 100, 110, 200],
+      opcionesCoefB: [1, 50, 90, 100, 110, 200],
+      opcionesCoefC: [0, 100, 200, 300, 500, 600],
+      pistaEcuaciones: 'El auto A recorre \\(y = 90x\\). La distancia total es \\(90x + 110x = 500\\), es decir, \\(200x = 500\\).',
+      solucionX: 2.5,
+      solucionY: 225,
+      opcionesSolucionX: [1.5, 2, 2.5, 3, 3.5, 4],
+      opcionesSolucionY: [180, 200, 225, 250, 270, 300],
+      pistaSolucion: 'De \\(200x = 500\\), se obtiene \\(x = 2.5\\) horas. La distancia recorrida por A es \\(y = 90 \\times 2.5 = 225\\) km.'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Una empresa produce dos tipos de lámparas. Cada lámpara clásica requiere 3 horas de mano de obra y 2 kg de metal; cada lámpara moderna requiere 2 horas y 4 kg. La empresa dispone exactamente de 120 horas y 160 kg de metal, que se agotan en su totalidad. ¿Cuántas lámparas de cada tipo produce?',
+      incognitaX: 'número de lámparas clásicas',
+      incognitaY: 'número de lámparas modernas',
+      opcionesX: ['número de lámparas clásicas', 'número de lámparas modernas', 'horas de mano de obra', 'kilos de metal'],
+      opcionesY: ['número de lámparas clásicas', 'número de lámparas modernas', 'horas de mano de obra', 'kilos de metal'],
+      pistaIncognitas: '\\(x\\) = lámparas clásicas; \\(y\\) = lámparas modernas.',
+      ecuaciones: [
+        { a: 3, b: 2, c: 120 },
+        { a: 2, b: 4, c: 160 }
+      ],
+      opcionesCoefA: [1, 2, 3, 4, 5, 6],
+      opcionesCoefB: [1, 2, 3, 4, 5, 6],
+      opcionesCoefC: [80, 100, 120, 140, 160, 180],
+      pistaEcuaciones: 'Las horas se agotan: \\(3x + 2y = 120\\). El metal se agota: \\(2x + 4y = 160\\).',
+      solucionX: 20,
+      solucionY: 30,
+      opcionesSolucionX: [15, 18, 20, 22, 25, 30],
+      opcionesSolucionY: [20, 25, 28, 30, 32, 35],
+      pistaSolucion: 'Multiplica la primera ecuación por 2: \\(6x + 4y = 240\\). Resta la segunda: \\(4x = 80\\), entonces \\(x = 20\\). Finalmente, sustituyendo: \\(3(20) + 2y = 120\\), entonces \\(y = 30\\).'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Un químico tiene dos soluciones de ácido: una al 20% y otra al 50%. Necesita preparar 60 litros de una solución al 30%. ¿Cuántos litros de cada solución debe mezclar?',
+      incognitaX: 'litros de solución al 20%',
+      incognitaY: 'litros de solución al 50%',
+      opcionesX: ['litros de solución al 20%', 'litros de solución al 50%', 'litros de mezcla final', 'concentración final'],
+      opcionesY: ['litros de solución al 20%', 'litros de solución al 50%', 'litros de mezcla final', 'concentración final'],
+      pistaIncognitas: '\\(x\\) = litros al 20%; \\(y\\) = litros al 50%.',
+      ecuaciones: [
+        { a: 1, b: 1, c: 60 },
+        { a: 20, b: 50, c: 1800 }
+      ],
+      opcionesCoefA: [1, 2, 20, 30, 50, 60],
+      opcionesCoefB: [1, 2, 20, 30, 50, 60],
+      opcionesCoefC: [30, 60, 600, 1200, 1800, 2000],
+      pistaEcuaciones: 'El total de mezcla es \\(x + y = 60\\). El ácido total es \\(20x + 50y = 1800\\) (porque 60 litros al 30% dan 1800 de ácido total).',
+      solucionX: 40,
+      solucionY: 20,
+      opcionesSolucionX: [20, 25, 30, 35, 40, 45],
+      opcionesSolucionY: [15, 20, 25, 30, 35, 40],
+      pistaSolucion: 'Despeja \\(y = 60 - x\\): \\(20x + 50(60 - x) = 1800\\). Simplificando: \\(20x + 3000 - 50x = 1800\\), entonces \\(-30x = -1200\\) y \\(x = 40\\). Finalmente, \\(y = 20\\).'
+    }
+  ];
+
+  // =========================================
+  // ESTADO
+  // =========================================
+  var indiceActual = 0;
+  var resueltos = JSON.parse(localStorage.getItem('planteo_resueltos') || '[]');
+  var ecuacionesActuales = [];
+
+  // =========================================
+  // UTILIDADES
+  // =========================================
+  function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+    }
+  }
+
+  function mezclar(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function compararEcuacion(estudiante, oficial) {
+    var tol = 1e-6;
+    var coefsE = [estudiante.a, estudiante.b, estudiante.c];
+    var coefsO = [oficial.a, oficial.b, oficial.c];
+
+    var factor = null;
+    for (var i = 0; i < 3; i++) {
+      if (Math.abs(coefsO[i]) > tol) {
+        factor = coefsE[i] / coefsO[i];
+        break;
+      }
+    }
+    if (factor === null) return false;
+
+    for (var j = 0; j < 3; j++) {
+      if (Math.abs(coefsE[j] - factor * coefsO[j]) > 1e-3) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function actualizarContador() {
+    document.getElementById('contador-resueltos').textContent = resueltos.length + ' de ' + problemas.length + ' resueltos';
+  }
+
+  // =========================================
+  // CARGAR PROBLEMA
+  // =========================================
+  function cargarProblema(indice) {
+    indiceActual = indice;
+    var p = problemas[indice];
+
+    document.getElementById('numero-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    var nivelElem = document.getElementById('nivel-problema');
+    nivelElem.textContent = p.nivel;
+    nivelElem.className = 'nivel-problema ' + p.nivel.toLowerCase();
+
+    document.getElementById('enunciado').innerHTML = p.enunciado;
+
+    var selectX = document.getElementById('incognita-x');
+    var selectY = document.getElementById('incognita-y');
+
+    selectX.innerHTML = '<option value="">— Selecciona una opción —</option>';
+    mezclar(p.opcionesX).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectX.appendChild(opt);
+    });
+
+    selectY.innerHTML = '<option value="">— Selecciona una opción —</option>';
+    mezclar(p.opcionesY).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectY.appendChild(opt);
+    });
+
+    selectX.className = 'select-opcion pendiente';
+    selectY.className = 'select-opcion pendiente';
+
+    document.getElementById('feedback-1').className = 'feedback';
+    document.getElementById('pista-1').className = 'pista-texto';
+    document.getElementById('fase-2').style.display = 'none';
+    document.getElementById('fase-3').style.display = 'none';
+
+    ecuacionesActuales = p.ecuaciones.map(function() {
+      return { a: '', b: '', c: '' };
+    });
+    renderizarEcuaciones(p);
+
+    document.getElementById('feedback-2').className = 'feedback';
+    document.getElementById('pista-2').className = 'pista-texto';
+
+    var selectSolX = document.getElementById('solucion-x');
+    var selectSolY = document.getElementById('solucion-y');
+
+    selectSolX.innerHTML = '<option value="">— Selecciona el valor —</option>';
+    mezclar(p.opcionesSolucionX).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectSolX.appendChild(opt);
+    });
+
+    selectSolY.innerHTML = '<option value="">— Selecciona el valor —</option>';
+    mezclar(p.opcionesSolucionY).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectSolY.appendChild(opt);
+    });
+
+    selectSolX.className = 'select-opcion pendiente';
+    selectSolY.className = 'select-opcion pendiente';
+
+    document.getElementById('feedback-3').className = 'feedback';
+    document.getElementById('pista-3').className = 'pista-texto';
+    document.getElementById('info-solucion').innerHTML = '';
+
+    document.getElementById('indicador-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    document.getElementById('btn-anterior').disabled = (indice === 0);
+    document.getElementById('btn-siguiente').disabled = (indice === problemas.length - 1);
+
+    renderMath(document.body);
+  }
+
+  // =========================================
+  // RENDERIZAR ECUACIONES
+  // =========================================
+  function renderizarEcuaciones(p) {
+    var lista = document.getElementById('lista-restricciones');
+    lista.innerHTML = '';
+
+    p.ecuaciones.forEach(function(ec, i) {
+      var div = document.createElement('div');
+      div.className = 'restriccion-item';
+
+      var optsA = mezclar(p.opcionesCoefA).map(function(v) {
+        return '<option value="' + v + '">' + v + '</option>';
+      }).join('');
+
+      var optsB = mezclar(p.opcionesCoefB).map(function(v) {
+        return '<option value="' + v + '">' + v + '</option>';
+      }).join('');
+
+      var optsC = mezclar(p.opcionesCoefC).map(function(v) {
+        return '<option value="' + v + '">' + v + '</option>';
+      }).join('');
+
+      div.innerHTML = '<div class="restriccion-label">Ecuación ' + (i + 1) + '</div>' +
+        '<div class="fila-restriccion">' +
+          '<select class="select-coef" data-idx="' + i + '" data-campo="a">' +
+            '<option value="">a</option>' + optsA +
+          '</select>' +
+          '<span class="separador">x +</span>' +
+          '<select class="select-coef" data-idx="' + i + '" data-campo="b">' +
+            '<option value="">b</option>' + optsB +
+          '</select>' +
+          '<span class="separador">y =</span>' +
+          '<select class="select-coef" data-idx="' + i + '" data-campo="c">' +
+            '<option value="">c</option>' + optsC +
+          '</select>' +
+        '</div>';
+
+      lista.appendChild(div);
+    });
+
+    lista.querySelectorAll('select').forEach(function(sel) {
+      sel.addEventListener('change', function() {
+        var idx = parseInt(this.dataset.idx);
+        var campo = this.dataset.campo;
+        ecuacionesActuales[idx][campo] = this.value;
+        this.classList.remove('correcto', 'incorrecto');
+      });
+    });
+  }
+
+  // =========================================
+  // VERIFICAR FASE 1
+  // =========================================
+  document.getElementById('btn-verificar-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respuestaX = document.getElementById('incognita-x').value;
+    var respuestaY = document.getElementById('incognita-y').value;
+    var feedback = document.getElementById('feedback-1');
+    var selectX = document.getElementById('incognita-x');
+    var selectY = document.getElementById('incognita-y');
+
+    if (!respuestaX || !respuestaY) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar una opción para cada variable.';
+      return;
+    }
+
+    var okX = (respuestaX === p.incognitaX);
+    var okY = (respuestaY === p.incognitaY);
+
+    selectX.className = 'select-opcion ' + (okX ? 'correcto' : 'incorrecto');
+    selectY.className = 'select-opcion ' + (okY ? 'correcto' : 'incorrecto');
+
+    if (okX && okY) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! Las incógnitas están bien identificadas.<br>' +
+        '<strong>\\(x\\):</strong> ' + p.incognitaX + '<br>' +
+        '<strong>\\(y\\):</strong> ' + p.incognitaY;
+      document.getElementById('fase-2').style.display = 'block';
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      var mensaje = '❌ Revisa tus selecciones. ';
+      if (!okX) mensaje += 'La variable \\(x\\) no está bien asignada. ';
+      if (!okY) mensaje += 'La variable \\(y\\) no está bien asignada. ';
+      mensaje += 'Usa el botón de pista si necesitas ayuda.';
+      feedback.innerHTML = mensaje;
+    }
+    renderMath(feedback);
+  });
+
+  document.getElementById('btn-pista-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-1');
+    pista.innerHTML = '💡 ' + p.pistaIncognitas;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 2
+  // =========================================
+  document.getElementById('btn-verificar-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var feedback = document.getElementById('feedback-2');
+    var lista = document.getElementById('lista-restricciones');
+
+    var completas = [];
+    var incompletas = false;
+
+    ecuacionesActuales.forEach(function(r, i) {
+      if (r.a === '' || r.b === '' || r.c === '') {
+        incompletas = true;
+      } else {
+        completas.push({
+          a: parseFloat(r.a),
+          b: parseFloat(r.b),
+          c: parseFloat(r.c),
+          idx: i
+        });
+      }
+    });
+
+    if (incompletas || completas.length !== p.ecuaciones.length) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes completar todas las ecuaciones con coeficientes y término independiente.';
+      return;
+    }
+
+    var aciertos = 0;
+    var detalles = [];
+
+    p.ecuaciones.forEach(function(oficial, i) {
+      var encontrada = false;
+      for (var j = 0; j < completas.length; j++) {
+        if (compararEcuacion(completas[j], oficial)) {
+          encontrada = true;
+          break;
+        }
+      }
+      if (encontrada) {
+        aciertos++;
+        detalles.push('✅ Ecuación ' + (i + 1) + ' correcta.');
+      } else {
+        detalles.push('❌ Ecuación ' + (i + 1) + ' incorrecta.');
+      }
+    });
+
+    lista.querySelectorAll('.restriccion-item').forEach(function(item, i) {
+      var selects = item.querySelectorAll('select');
+      var ec = completas[i];
+      if (!ec) return;
+      var ok = false;
+      for (var k = 0; k < p.ecuaciones.length; k++) {
+        if (compararEcuacion(ec, p.ecuaciones[k])) {
+          ok = true;
+          break;
+        }
+      }
+      selects.forEach(function(sel) {
+        sel.classList.remove('correcto', 'incorrecto');
+        sel.classList.add(ok ? 'correcto' : 'incorrecto');
+      });
+    });
+
+    if (aciertos === p.ecuaciones.length) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Excelente! Todas las ecuaciones están correctamente planteadas.<br>' +
+        '<strong>Ecuaciones del sistema:</strong><br>' +
+        p.ecuaciones.map(function(e, i) {
+          return 'Ecuación ' + (i + 1) + ': \\(' + formatearEcuacion(e) + '\\)';
+        }).join('<br>');
+      document.getElementById('fase-3').style.display = 'block';
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ Aún no están todas las ecuaciones correctas. Has acertado ' + aciertos + ' de ' + p.ecuaciones.length + '.<br>' + detalles.join('<br>');
+    }
+    renderMath(feedback);
+  });
+
+  function formatearEcuacion(e) {
+    var texto = '';
+    if (e.a !== 0) {
+      if (e.a === 1) texto += 'x';
+      else if (e.a === -1) texto += '-x';
+      else texto += e.a + 'x';
+    }
+    if (e.b !== 0) {
+      if (texto !== '') {
+        texto += (e.b > 0 ? ' + ' : ' - ');
+        if (Math.abs(e.b) !== 1) texto += Math.abs(e.b);
+        texto += 'y';
+      } else {
+        if (e.b === 1) texto += 'y';
+        else if (e.b === -1) texto += '-y';
+        else texto += e.b + 'y';
+      }
+    }
+    texto += ' = ' + e.c;
+    return texto;
+  }
+
+  document.getElementById('btn-pista-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-2');
+    pista.innerHTML = '💡 ' + p.pistaEcuaciones;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 3
+  // =========================================
+  document.getElementById('btn-verificar-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respX = document.getElementById('solucion-x').value;
+    var respY = document.getElementById('solucion-y').value;
+    var feedback = document.getElementById('feedback-3');
+    var selectX = document.getElementById('solucion-x');
+    var selectY = document.getElementById('solucion-y');
+
+    if (!respX || !respY) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar un valor para cada variable.';
+      return;
+    }
+
+    var okX = (parseFloat(respX) === p.solucionX);
+    var okY = (parseFloat(respY) === p.solucionY);
+
+    selectX.className = 'select-opcion ' + (okX ? 'correcto' : 'incorrecto');
+    selectY.className = 'select-opcion ' + (okY ? 'correcto' : 'incorrecto');
+
+    if (okX && okY) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! La solución del sistema es \\(x = ' + p.solucionX + '\\), \\(y = ' + p.solucionY + '\\).';
+      document.getElementById('info-solucion').innerHTML =
+        '<div style="background-color: rgba(39, 174, 96, 0.1); border-left: 4px solid #27ae60; padding: 12px 16px; border-radius: 6px; color: #27ae60; font-weight: 600;">' +
+        '✅ <strong>Problema resuelto.</strong> Solución: \\(' + p.solucionX + ', ' + p.solucionY + '\\).' +
+        '</div>';
+
+      if (resueltos.indexOf(indiceActual) === -1) {
+        resueltos.push(indiceActual);
+        localStorage.setItem('planteo_resueltos', JSON.stringify(resueltos));
+        actualizarContador();
+      }
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ La solución no es correcta. Revisa tus cálculos o usa la pista.';
+    }
+    renderMath(feedback);
+  });
+
+  document.getElementById('btn-pista-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-3');
+    pista.innerHTML = '💡 ' + p.pistaSolucion;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // NAVEGACIÓN
+  // =========================================
+  document.getElementById('btn-anterior').addEventListener('click', function() {
+    if (indiceActual > 0) cargarProblema(indiceActual - 1);
+  });
+
+  document.getElementById('btn-siguiente').addEventListener('click', function() {
+    if (indiceActual < problemas.length - 1) cargarProblema(indiceActual + 1);
+  });
+
+  document.getElementById('btn-aleatorio').addEventListener('click', function() {
+    var nuevo;
+    do {
+      nuevo = Math.floor(Math.random() * problemas.length);
+    } while (nuevo === indiceActual && problemas.length > 1);
+    cargarProblema(nuevo);
+  });
+
+  document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres reiniciar tu progreso?')) {
+      resueltos = [];
+      localStorage.removeItem('planteo_resueltos');
+      actualizarContador();
+    }
+  });
+
+  actualizarContador();
+  cargarProblema(0);
+</script>
+
+</body>
+</html>

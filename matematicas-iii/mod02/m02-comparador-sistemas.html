@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparador de Métodos — Sistemas de Ecuaciones 2×2 | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        main {
+            padding: 30px;
+        }
+
+        .panel-entrada {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--color-acento-suave);
+        }
+
+        .panel-entrada h2 {
+            color: var(--color-primario);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--color-acento);
+            padding-left: 10px;
+        }
+
+        .instrucciones {
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .botones-ejemplos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--color-acento-suave);
+        }
+
+        .btn-ejemplo {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        .sistema-actual {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento);
+            border-radius: var(--radio-borde);
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sistema-actual .etiqueta {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .sistema-actual .ecuaciones {
+            font-size: 1.3rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        .tabs-metodos {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--color-acento-suave);
+            margin-bottom: 0;
+            flex-wrap: wrap;
+        }
+
+        .tab-metodo {
+            padding: 14px 22px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 4px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-acento);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-metodo:hover {
+            color: var(--color-primario);
+            background-color: var(--color-base);
+        }
+
+        .tab-metodo.activa {
+            color: var(--color-primario);
+            border-bottom-color: var(--color-acento);
+            background-color: var(--color-blanco);
+        }
+
+        .panel-metodo {
+            display: none;
+            padding: 25px;
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-top: none;
+            border-radius: 0 0 var(--radio-borde) var(--radio-borde);
+            margin-bottom: 20px;
+        }
+
+        .panel-metodo.activo { display: block; }
+
+        .canvas-wrapper {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .paso-metodo {
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 6px;
+            padding: 15px 18px;
+            margin-bottom: 12px;
+        }
+
+        .paso-metodo .paso-numero {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+
+        .paso-metodo .paso-titulo {
+            font-weight: 700;
+            color: var(--color-primario);
+            font-size: 1rem;
+        }
+
+        .paso-metodo .paso-contenido {
+            margin-top: 10px;
+            color: var(--color-texto-oscuro);
+            font-size: 0.98rem;
+        }
+
+        .aviso-especial {
+            background-color: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--color-error);
+            padding: 12px 18px;
+            border-radius: 6px;
+            color: var(--color-error);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .aviso-exito {
+            background-color: rgba(39, 174, 96, 0.1);
+            border-left: 4px solid var(--color-exito);
+            padding: 12px 18px;
+            border-radius: 6px;
+            color: var(--color-exito);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .panel-convergencia {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-convergencia h2 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--color-acento-suave);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .grid-resultados {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .resultado-tarjeta {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 12px 15px;
+            border-left: 3px solid var(--color-acento-suave);
+        }
+
+        .resultado-tarjeta .metodo-nombre {
+            font-size: 0.8rem;
+            color: var(--color-acento-suave);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .resultado-tarjeta .metodo-valor {
+            font-size: 1rem;
+            color: var(--color-blanco);
+            font-weight: 600;
+        }
+
+        .estado-convergencia {
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .estado-convergencia.ok {
+            background-color: rgba(39, 174, 96, 0.3);
+            color: #d5f5e3;
+        }
+
+        .estado-convergencia.error {
+            background-color: rgba(192, 57, 43, 0.3);
+            color: #fadbd8;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            main { padding: 20px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .tab-metodo { padding: 10px 14px; font-size: 0.85rem; }
+            .sistema-actual .ecuaciones { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Comparador de Métodos</h1>
+        <p>Sistemas de Ecuaciones Lineales 2×2 | Matemáticas III</p>
+    </header>
+
+    <main>
+        <div class="panel-entrada">
+            <h2>Coeficientes del sistema</h2>
+            <p class="instrucciones">Introduce un sistema en la forma estándar $a_1x + b_1y = c_1$ y $a_2x + b_2y = c_2$ y observa cómo los cuatro métodos llegan al mismo resultado.</p>
+            <div class="grupo-inputs">
+                <div class="input-wrapper"><label>a₁ =</label><input type="number" id="a1" value="3" step="any"></div>
+                <div class="input-wrapper"><label>b₁ =</label><input type="number" id="b1" value="2" step="any"></div>
+                <div class="input-wrapper"><label>c₁ =</label><input type="number" id="c1" value="5" step="any"></div>
+                <div class="input-wrapper"><label>a₂ =</label><input type="number" id="a2" value="1" step="any"></div>
+                <div class="input-wrapper"><label>b₂ =</label><input type="number" id="b2" value="3" step="any"></div>
+                <div class="input-wrapper"><label>c₂ =</label><input type="number" id="c2" value="4" step="any"></div>
+                <button class="btn-primario" id="btn-comparar">🔍 Comparar métodos</button>
+            </div>
+            <div class="botones-ejemplos">
+                <button class="btn-ejemplo" data-a1="3" data-b1="2" data-c1="5" data-a2="1" data-b2="3" data-c2="4">
+                    Ejemplo 1: (1, 1)
+                </button>
+                <button class="btn-ejemplo" data-a1="4" data-b1="5" data-c1="12" data-a2="3" data-b2="2" data-c2="8">
+                    Ejemplo 2: (16/7, 4/7)
+                </button>
+                <button class="btn-ejemplo" data-a1="3" data-b1="2" data-c1="6" data-a2="1" data-b2="-2" data-c2="10">
+                    Ejemplo 3: (4, -3)
+                </button>
+                <button class="btn-ejemplo" data-a1="1" data-b1="-2" data-c1="1" data-a2="1" data-b2="-2" data-c2="0">
+                    Inconsistente
+                </button>
+                <button class="btn-ejemplo" data-a1="2" data-b1="1" data-c1="4" data-a2="4" data-b2="2" data-c2="8">
+                    Indeterminado
+                </button>
+            </div>
+        </div>
+
+        <div class="sistema-actual">
+            <div class="etiqueta">Sistema a resolver</div>
+            <div class="ecuaciones" id="sistema-ecuaciones">
+                $3x + 2y = 5$ &nbsp;&nbsp;&nbsp; $x + 3y = 4$
+            </div>
+        </div>
+
+        <div class="panel-convergencia">
+            <h2>Convergencia de métodos</h2>
+            <div class="grid-resultados" id="grid-resultados">
+            </div>
+            <div class="estado-convergencia" id="estado-convergencia">
+                Esperando cálculo...
+            </div>
+        </div>
+
+        <div class="tabs-metodos">
+            <button class="tab-metodo activa" data-metodo="grafico">📊 Gráfico</button>
+            <button class="tab-metodo" data-metodo="suma">➕ Suma o Resta</button>
+            <button class="tab-metodo" data-metodo="sustitucion">🔄 Sustitución</button>
+            <button class="tab-metodo" data-metodo="cramer">🧮 Cramer</button>
+        </div>
+
+        <!-- PANEL: GRÁFICO con Canvas -->
+        <div class="panel-metodo activo" id="panel-grafico">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="500"></canvas>
+            </div>
+            <div id="contenido-grafico"></div>
+        </div>
+
+        <div class="panel-metodo" id="panel-suma">
+            <div id="contenido-suma"></div>
+        </div>
+
+        <div class="panel-metodo" id="panel-sustitucion">
+            <div id="contenido-sustitucion"></div>
+        </div>
+
+        <div class="panel-metodo" id="panel-cramer">
+            <div id="contenido-cramer"></div>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comprender que los cuatro métodos algebraicos (gráfico, suma/resta, sustitución y Cramer) son equivalentes: todos llegan a la misma solución del sistema. Explorar cuándo conviene usar cada uno según el tipo de coeficientes.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN DEL CANVAS
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var ancho = canvas.width;
+    var alto = canvas.height;
+    var origenX = ancho / 2;
+    var origenY = alto / 2;
+    var escalaBase = 30;
+
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+    var COLOR_CUADRICULA_FUERTE = '#d0dbe8';
+    var COLOR_RECTA_1 = '#5b7fa3';
+    var COLOR_RECTA_2 = '#c0392b';
+    var COLOR_PUNTO = '#27ae60';
+    var COLOR_TEXTO = '#2c4966';
+
+    // =========================================
+    // ESTADO
+    // =========================================
+    var sistemaActual = { a1: 3, b1: 2, c1: 5, a2: 1, b2: 3, c2: 4 };
+    var escalaActual = escalaBase;
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (!isFinite(n)) return 'Indefinido';
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function aPixelX(x) { return origenX + x * escalaActual; }
+    function aPixelY(y) { return origenY - y * escalaActual; }
+
+    function formatearEcuacion(a, b, c) {
+        var partes = [];
+        if (a !== 0) {
+            if (Math.abs(a) === 1) partes.push((a < 0 ? '-' : '') + 'x');
+            else partes.push(formatearNumero(a) + 'x');
+        }
+        if (b !== 0) {
+            if (partes.length > 0) {
+                partes.push((b > 0 ? '+' : '-') + ' ' + (Math.abs(b) === 1 ? '' : formatearNumero(Math.abs(b))) + 'y');
+            } else {
+                partes.push((b < 0 ? '-' : '') + (Math.abs(b) === 1 ? '' : formatearNumero(Math.abs(b))) + 'y');
+            }
+        }
+        return partes.join(' ') + ' = ' + formatearNumero(c);
+    }
+
+    // =========================================
+    // AUTO-AJUSTE DE ESCALA
+    // =========================================
+    function calcularEscalaOptima() {
+        // Determinar hasta dónde llegan las intersecciones con los ejes
+        // para ajustar la escala si es necesario
+        var maxCoord = 5;
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+
+        var coords = [];
+        if (Math.abs(a1) > 1e-9) coords.push(Math.abs(c1 / a1));
+        if (Math.abs(b1) > 1e-9) coords.push(Math.abs(c1 / b1));
+        if (Math.abs(a2) > 1e-9) coords.push(Math.abs(c2 / a2));
+        if (Math.abs(b2) > 1e-9) coords.push(Math.abs(c2 / b2));
+
+        // Si la solución es única, considerar también el punto de intersección
+        var delta = a1 * b2 - a2 * b1;
+        if (Math.abs(delta) > 1e-9) {
+            var solX = (c1 * b2 - c2 * b1) / delta;
+            var solY = (a1 * c2 - a2 * c1) / delta;
+            coords.push(Math.abs(solX));
+            coords.push(Math.abs(solY));
+        }
+
+        var maxVal = 5;
+        for (var i = 0; i < coords.length; i++) {
+            if (isFinite(coords[i]) && coords[i] > maxVal && coords[i] < 1000) {
+                maxVal = coords[i];
+            }
+        }
+
+        // Ajustar escala: la mitad del canvas debe cubrir maxVal * 1.3 unidades
+        var espacioDisponible = Math.min(origenX, origenY) - 30;
+        var escala = espacioDisponible / (maxVal * 1.3);
+        // Limitar la escala entre 4 y 40
+        escala = Math.max(4, Math.min(40, escala));
+        return escala;
+    }
+
+    // =========================================
+    // DIBUJAR CUADRÍCULA Y EJES
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+
+        var rangoX = Math.ceil(origenX / escalaActual);
+        var rangoY = Math.ceil(origenY / escalaActual);
+
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, alto);
+            ctx.stroke();
+        }
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(0, py);
+            ctx.lineTo(ancho, py);
+            ctx.stroke();
+        }
+    }
+
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+
+        // Eje X
+        ctx.beginPath();
+        ctx.moveTo(0, origenY);
+        ctx.lineTo(ancho - 5, origenY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ancho - 5, origenY);
+        ctx.lineTo(ancho - 15, origenY - 6);
+        ctx.lineTo(ancho - 15, origenY + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('X', ancho - 20, origenY - 12);
+
+        // Eje Y
+        ctx.beginPath();
+        ctx.moveTo(origenX, alto);
+        ctx.lineTo(origenX, 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origenX, 5);
+        ctx.lineTo(origenX - 6, 15);
+        ctx.lineTo(origenX + 6, 15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('Y', origenX + 12, 18);
+
+        // Marcas en X
+        ctx.font = '11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var rangoX = Math.ceil(origenX / escalaActual);
+        var pasoX = (escalaActual < 10) ? 5 : ((escalaActual < 20) ? 2 : 1);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            if (i === 0) continue;
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, origenY - 4);
+            ctx.lineTo(px, origenY + 4);
+            ctx.stroke();
+            if (i % pasoX === 0) ctx.fillText(i.toString(), px, origenY + 18);
+        }
+
+        // Marcas en Y
+        ctx.textAlign = 'right';
+        var rangoY = Math.ceil(origenY / escalaActual);
+        var pasoY = (escalaActual < 10) ? 5 : ((escalaActual < 20) ? 2 : 1);
+        for (var j = -rangoY; j <= rangoY; j++) {
+            if (j === 0) continue;
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(origenX - 4, py);
+            ctx.lineTo(origenX + 4, py);
+            ctx.stroke();
+            if (j % pasoY === 0) ctx.fillText(j.toString(), origenX - 8, py + 4);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillText('0', origenX - 6, origenY + 16);
+    }
+
+    // =========================================
+    // DIBUJAR UNA RECTA Ax + By = C
+    // =========================================
+    function dibujarRecta(a, b, c, color, grosor, punteada) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = grosor || 2.5;
+        if (punteada) ctx.setLineDash([8, 5]);
+        else ctx.setLineDash([]);
+
+        var x_min = -origenX / escalaActual;
+        var x_max = (ancho - origenX) / escalaActual;
+
+        if (Math.abs(b) > 1e-9) {
+            // y = (c - a x) / b
+            var m = -a / b;
+            var k = c / b;
+            var y_min = m * x_min + k;
+            var y_max = m * x_max + k;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(x_min), aPixelY(y_min));
+            ctx.lineTo(aPixelX(x_max), aPixelY(y_max));
+            ctx.stroke();
+        } else if (Math.abs(a) > 1e-9) {
+            // Recta vertical: x = c / a
+            var xv = c / a;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(xv), 0);
+            ctx.lineTo(aPixelX(xv), alto);
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+    }
+
+    // =========================================
+    // DIBUJAR PUNTO DE INTERSECCIÓN
+    // =========================================
+    function dibujarPunto(x, y, etiqueta) {
+        var px = aPixelX(x);
+        var py = aPixelY(y);
+
+        // Sombra circular
+        ctx.beginPath();
+        ctx.arc(px, py, 10, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(39, 174, 96, 0.25)';
+        ctx.fill();
+
+        // Círculo principal
+        ctx.beginPath();
+        ctx.arc(px, py, 7, 0, 2 * Math.PI);
+        ctx.fillStyle = COLOR_PUNTO;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Etiqueta con las coordenadas
+        if (etiqueta) {
+            ctx.font = 'bold 12px Segoe UI, sans-serif';
+            ctx.fillStyle = COLOR_PUNTO;
+            ctx.textAlign = 'left';
+            var offsetX = 12;
+            var offsetY = -10;
+            // Si está muy a la derecha, etiqueta a la izquierda
+            if (px + 100 > ancho) {
+                ctx.textAlign = 'right';
+                offsetX = -12;
+            }
+            if (py - 15 < 0) {
+                offsetY = 20;
+            }
+            ctx.fillText(etiqueta, px + offsetX, py + offsetY);
+        }
+    }
+
+    // =========================================
+    // DIBUJAR LEYENDA
+    // =========================================
+    function dibujarLeyenda() {
+        var x = 15;
+        var y = 20;
+        var lh = 20;
+
+        // Fondo semitransparente
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.strokeStyle = COLOR_CUADRICULA_FUERTE;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.rect(x - 5, y - 12, 200, 58);
+        ctx.fill();
+        ctx.stroke();
+
+        // Recta 1
+        ctx.strokeStyle = COLOR_RECTA_1;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x + 5, y);
+        ctx.lineTo(x + 35, y);
+        ctx.stroke();
+
+        ctx.font = 'bold 12px Segoe UI, sans-serif';
+        ctx.fillStyle = COLOR_TEXTO;
+        ctx.textAlign = 'left';
+        ctx.fillText('Ecuación 1', x + 45, y + 4);
+
+        // Recta 2
+        ctx.strokeStyle = COLOR_RECTA_2;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(x + 5, y + 25);
+        ctx.lineTo(x + 35, y + 25);
+        ctx.stroke();
+
+        ctx.fillStyle = COLOR_TEXTO;
+        ctx.fillText('Ecuación 2', x + 45, y + 29);
+    }
+
+    // =========================================
+    // RENDERIZAR EL CANVAS COMPLETO
+    // =========================================
+    function renderizarCanvas() {
+        // Recalcular escala
+        escalaActual = calcularEscalaOptima();
+
+        // Limpiar
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+
+        // Capas
+        dibujarCuadricula();
+        dibujarEjes();
+
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+
+        // Detectar si son coincidentes para dibujar la segunda recta punteada encima
+        var delta = a1 * b2 - a2 * b1;
+        var esCoincidente = false;
+        if (Math.abs(delta) < 1e-9) {
+            // Verificar si son proporcionales también en c
+            var propA = (Math.abs(a2) > 1e-9) ? a1 / a2 : null;
+            var propB = (Math.abs(b2) > 1e-9) ? b1 / b2 : null;
+            var propC = (Math.abs(c2) > 1e-9) ? c1 / c2 : null;
+            if (propA !== null && propB !== null && Math.abs(propA - propB) < 1e-6) {
+                if (propC !== null && Math.abs(propA - propC) < 1e-6) {
+                    esCoincidente = true;
+                }
+            }
+        }
+
+        // Dibujar recta 1
+        dibujarRecta(a1, b1, c1, COLOR_RECTA_1, 3, false);
+
+        // Dibujar recta 2 (punteada si es coincidente, para que se vea encima)
+        if (esCoincidente) {
+            dibujarRecta(a2, b2, c2, COLOR_RECTA_2, 2, true);
+        } else {
+            dibujarRecta(a2, b2, c2, COLOR_RECTA_2, 3, false);
+        }
+
+        // Dibujar punto de intersección si es único
+        if (Math.abs(delta) > 1e-9) {
+            var solX = (c1 * b2 - c2 * b1) / delta;
+            var solY = (a1 * c2 - a2 * c1) / delta;
+            dibujarPunto(solX, solY, '(' + formatearNumero(solX) + ', ' + formatearNumero(solY) + ')');
+        }
+
+        // Leyenda
+        dibujarLeyenda();
+    }
+
+    // =========================================
+    // LEER SISTEMA
+    // =========================================
+    function leerSistema() {
+        sistemaActual = {
+            a1: parseFloat(document.getElementById('a1').value) || 0,
+            b1: parseFloat(document.getElementById('b1').value) || 0,
+            c1: parseFloat(document.getElementById('c1').value) || 0,
+            a2: parseFloat(document.getElementById('a2').value) || 0,
+            b2: parseFloat(document.getElementById('b2').value) || 0,
+            c2: parseFloat(document.getElementById('c2').value) || 0
+        };
+    }
+
+    // =========================================
+    // CALCULAR SOLUCIÓN
+    // =========================================
+    function calcularSolucion() {
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+
+        var delta = a1 * b2 - a2 * b1;
+        var deltaX = c1 * b2 - c2 * b1;
+        var deltaY = a1 * c2 - a2 * c1;
+
+        var tipo, solX, solY;
+
+        if (Math.abs(delta) > 1e-9) {
+            tipo = 'unico';
+            solX = deltaX / delta;
+            solY = deltaY / delta;
+        } else if (Math.abs(deltaX) > 1e-9 || Math.abs(deltaY) > 1e-9) {
+            tipo = 'inconsistente';
+            solX = null;
+            solY = null;
+        } else {
+            tipo = 'indeterminado';
+            solX = null;
+            solY = null;
+        }
+
+        return { tipo: tipo, x: solX, y: solY, delta: delta, deltaX: deltaX, deltaY: deltaY };
+    }
+
+    // =========================================
+    // ACTUALIZAR SISTEMA MOSTRADO
+    // =========================================
+    function actualizarSistemaMostrado() {
+        var eq1 = formatearEcuacion(sistemaActual.a1, sistemaActual.b1, sistemaActual.c1);
+        var eq2 = formatearEcuacion(sistemaActual.a2, sistemaActual.b2, sistemaActual.c2);
+        document.getElementById('sistema-ecuaciones').innerHTML = '$' + eq1 + '$ &nbsp;&nbsp;&nbsp; $' + eq2 + '$';
+        renderMath(document.getElementById('sistema-ecuaciones'));
+    }
+
+    // =========================================
+    // GENERAR CONTENIDO DEL MÉTODO GRÁFICO
+    // =========================================
+    function generarGrafico() {
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+        var sol = calcularSolucion();
+
+        var html = '';
+
+        // Intersecciones con ejes
+        html += '<div class="paso-metodo">';
+        html += '<span class="paso-numero">1</span>';
+        html += '<span class="paso-titulo">Puntos de la recta 1</span>';
+        html += '<div class="paso-contenido">';
+        html += 'Ecuación: $' + formatearEcuacion(a1, b1, c1) + '$<br>';
+        if (Math.abs(b1) > 1e-9) {
+            var yInt1 = c1 / b1;
+            html += '• Intersección con eje Y ($x = 0$): $y = ' + formatearNumero(yInt1) + '$ → $(0, ' + formatearNumero(yInt1) + ')$<br>';
+        }
+        if (Math.abs(a1) > 1e-9) {
+            var xInt1 = c1 / a1;
+            html += '• Intersección con eje X ($y = 0$): $x = ' + formatearNumero(xInt1) + '$ → $(' + formatearNumero(xInt1) + ', 0)$<br>';
+        }
+        html += '</div></div>';
+
+        html += '<div class="paso-metodo">';
+        html += '<span class="paso-numero">2</span>';
+        html += '<span class="paso-titulo">Puntos de la recta 2</span>';
+        html += '<div class="paso-contenido">';
+        html += 'Ecuación: $' + formatearEcuacion(a2, b2, c2) + '$<br>';
+        if (Math.abs(b2) > 1e-9) {
+            var yInt2 = c2 / b2;
+            html += '• Intersección con eje Y ($x = 0$): $y = ' + formatearNumero(yInt2) + '$ → $(0, ' + formatearNumero(yInt2) + ')$<br>';
+        }
+        if (Math.abs(a2) > 1e-9) {
+            var xInt2 = c2 / a2;
+            html += '• Intersección con eje X ($y = 0$): $x = ' + formatearNumero(xInt2) + '$ → $(' + formatearNumero(xInt2) + ', 0)$<br>';
+        }
+        html += '</div></div>';
+
+        html += '<div class="paso-metodo">';
+        html += '<span class="paso-numero">3</span>';
+        html += '<span class="paso-titulo">Interpretación gráfica</span>';
+        html += '<div class="paso-contenido">';
+
+        if (sol.tipo === 'unico') {
+            html += 'Las dos rectas se intersecan en el punto $(' + formatearNumero(sol.x) + ', ' + formatearNumero(sol.y) + ')$.<br>';
+            html += 'Este punto es la <strong>solución del sistema</strong>.';
+        } else if (sol.tipo === 'inconsistente') {
+            html += '<div class="aviso-especial">Las rectas son paralelas no coincidentes. No se intersecan en ningún punto. El sistema es inconsistente y el conjunto solución es vacío $\\varnothing$.</div>';
+        } else {
+            html += '<div class="aviso-exito">Las dos rectas son coincidentes (la misma recta, la segunda se dibuja punteada encima). Todos sus puntos son solución. El sistema es consistente indeterminado.</div>';
+        }
+        html += '</div></div>';
+
+        document.getElementById('contenido-grafico').innerHTML = html;
+        renderMath(document.getElementById('contenido-grafico'));
+    }
+
+    // =========================================
+    // GENERAR CONTENIDO DEL MÉTODO SUMA/RESTA
+    // =========================================
+    function generarSuma() {
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+        var sol = calcularSolucion();
+
+        var html = '';
+
+        if (sol.tipo === 'unico') {
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">1</span>';
+            html += '<span class="paso-titulo">Sistema original</span>';
+            html += '<div class="paso-contenido">';
+            html += '$$' + formatearEcuacion(a1, b1, c1) + ' \\quad (1)$$';
+            html += '$$' + formatearEcuacion(a2, b2, c2) + ' \\quad (2)$$';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">2</span>';
+            html += '<span class="paso-titulo">Multiplicar para eliminar $y$</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Multiplicamos (1) por $b_2 = ' + formatearNumero(b2) + '$ y (2) por $-b_1 = ' + formatearNumero(-b1) + '$:<br>';
+            html += '$$' + formatearNumero(a1 * b2) + 'x + ' + formatearNumero(b1 * b2) + 'y = ' + formatearNumero(c1 * b2) + '$$';
+            html += '$$' + formatearNumero(-a2 * b1) + 'x - ' + formatearNumero(b2 * b1) + 'y = ' + formatearNumero(-c2 * b1) + '$$';
+            html += '</div></div>';
+
+            var coefX = a1 * b2 - a2 * b1;
+            var coefC = c1 * b2 - c2 * b1;
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">3</span>';
+            html += '<span class="paso-titulo">Sumar y despejar $x$</span>';
+            html += '<div class="paso-contenido">';
+            html += '$$' + formatearNumero(coefX) + 'x = ' + formatearNumero(coefC) + ' \\Rightarrow x = ' + formatearNumero(sol.x) + '$$';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">4</span>';
+            html += '<span class="paso-titulo">Sustituir para obtener $y$</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Sustituimos $x = ' + formatearNumero(sol.x) + '$ en la ecuación (1):<br>';
+            html += '$$' + formatearNumero(a1) + '(' + formatearNumero(sol.x) + ') + ' + formatearNumero(b1) + 'y = ' + formatearNumero(c1) + ' \\Rightarrow y = ' + formatearNumero(sol.y) + '$$';
+            html += '</div></div>';
+
+            html += '<div class="aviso-exito">';
+            html += '✅ <strong>Solución:</strong> $x = ' + formatearNumero(sol.x) + '$, $y = ' + formatearNumero(sol.y) + '$';
+            html += '</div>';
+
+        } else if (sol.tipo === 'inconsistente') {
+            html += '<div class="aviso-especial">';
+            html += 'Al intentar eliminar una variable, las incógnitas desaparecen y queda una igualdad falsa (por ejemplo $0 = k$ con $k \\neq 0$). El sistema es inconsistente: <strong>no tiene solución</strong>. Las rectas son paralelas.';
+            html += '</div>';
+
+        } else {
+            html += '<div class="aviso-exito">';
+            html += 'Al intentar eliminar una variable, ambas se anulan y queda una identidad verdadera (por ejemplo $0 = 0$). El sistema es <strong>consistente indeterminado</strong>: infinitas soluciones. Las rectas son coincidentes.';
+            html += '</div>';
+        }
+
+        document.getElementById('contenido-suma').innerHTML = html;
+        renderMath(document.getElementById('contenido-suma'));
+    }
+
+    // =========================================
+    // GENERAR CONTENIDO DEL MÉTODO SUSTITUCIÓN
+    // =========================================
+    function generarSustitucion() {
+        var sol = calcularSolucion();
+        var html = '';
+
+        if (sol.tipo === 'unico') {
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">1</span>';
+            html += '<span class="paso-titulo">Despejar una variable</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Despejamos una de las variables de una de las ecuaciones (conviene elegir la que tenga coeficiente $\\pm 1$).';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">2</span>';
+            html += '<span class="paso-titulo">Sustituir en la otra ecuación</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Sustituimos la expresión en la otra ecuación. Se obtiene una ecuación con una sola incógnita, que al resolver da el valor numérico correspondiente.';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">3</span>';
+            html += '<span class="paso-titulo">Encontrar la segunda variable</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Sustituimos el valor encontrado en la expresión despejada para obtener la otra variable.';
+            html += '</div></div>';
+
+            html += '<div class="aviso-exito">';
+            html += '✅ <strong>Solución:</strong> $x = ' + formatearNumero(sol.x) + '$, $y = ' + formatearNumero(sol.y) + '$';
+            html += '</div>';
+
+        } else if (sol.tipo === 'inconsistente') {
+            html += '<div class="aviso-especial">';
+            html += 'Al despejar y sustituir, las incógnitas se cancelan y queda una igualdad falsa. El sistema es <strong>inconsistente</strong>: no existe ningún par ordenado que satisfaga ambas ecuaciones.';
+            html += '</div>';
+
+        } else {
+            html += '<div class="aviso-exito">';
+            html += 'Al despejar y sustituir, obtenemos una identidad verdadera como $0 = 0$. El sistema es <strong>consistente indeterminado</strong>: infinitas soluciones. Las dos ecuaciones representan la misma recta.';
+            html += '</div>';
+        }
+
+        document.getElementById('contenido-sustitucion').innerHTML = html;
+        renderMath(document.getElementById('contenido-sustitucion'));
+    }
+
+    // =========================================
+    // GENERAR CONTENIDO DEL MÉTODO CRAMER
+    // =========================================
+    function generarCramer() {
+        var a1 = sistemaActual.a1, b1 = sistemaActual.b1, c1 = sistemaActual.c1;
+        var a2 = sistemaActual.a2, b2 = sistemaActual.b2, c2 = sistemaActual.c2;
+        var sol = calcularSolucion();
+
+        var delta = sol.delta;
+        var deltaX = sol.deltaX;
+        var deltaY = sol.deltaY;
+
+        var html = '';
+
+        html += '<div class="paso-metodo">';
+        html += '<span class="paso-numero">1</span>';
+        html += '<span class="paso-titulo">Calcular el determinante principal $\\Delta$</span>';
+        html += '<div class="paso-contenido">';
+        html += '$$\\Delta = \\begin{vmatrix} ' + formatearNumero(a1) + ' & ' + formatearNumero(b1) + ' \\\\ ' + formatearNumero(a2) + ' & ' + formatearNumero(b2) + ' \\end{vmatrix} = (' + formatearNumero(a1) + ')(' + formatearNumero(b2) + ') - (' + formatearNumero(a2) + ')(' + formatearNumero(b1) + ') = ' + formatearNumero(delta) + '$$';
+        html += '</div></div>';
+
+        if (Math.abs(delta) > 1e-9) {
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">2</span>';
+            html += '<span class="paso-titulo">Calcular $\\Delta_x$</span>';
+            html += '<div class="paso-contenido">';
+            html += '$$\\Delta_x = \\begin{vmatrix} ' + formatearNumero(c1) + ' & ' + formatearNumero(b1) + ' \\\\ ' + formatearNumero(c2) + ' & ' + formatearNumero(b2) + ' \\end{vmatrix} = ' + formatearNumero(deltaX) + '$$';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">3</span>';
+            html += '<span class="paso-titulo">Calcular $\\Delta_y$</span>';
+            html += '<div class="paso-contenido">';
+            html += '$$\\Delta_y = \\begin{vmatrix} ' + formatearNumero(a1) + ' & ' + formatearNumero(c1) + ' \\\\ ' + formatearNumero(a2) + ' & ' + formatearNumero(c2) + ' \\end{vmatrix} = ' + formatearNumero(deltaY) + '$$';
+            html += '</div></div>';
+
+            html += '<div class="paso-metodo">';
+            html += '<span class="paso-numero">4</span>';
+            html += '<span class="paso-titulo">Aplicar la regla de Cramer</span>';
+            html += '<div class="paso-contenido">';
+            html += '$$x = \\frac{\\Delta_x}{\\Delta} = \\frac{' + formatearNumero(deltaX) + '}{' + formatearNumero(delta) + '} = ' + formatearNumero(sol.x) + '$$';
+            html += '$$y = \\frac{\\Delta_y}{\\Delta} = \\frac{' + formatearNumero(deltaY) + '}{' + formatearNumero(delta) + '} = ' + formatearNumero(sol.y) + '$$';
+            html += '</div></div>';
+
+            html += '<div class="aviso-exito">';
+            html += '✅ <strong>Solución:</strong> $x = ' + formatearNumero(sol.x) + '$, $y = ' + formatearNumero(sol.y) + '$';
+            html += '</div>';
+
+        } else {
+            if (sol.tipo === 'inconsistente') {
+                html += '<div class="aviso-especial">';
+                html += 'Como $\\Delta = 0$ y al menos uno de $\\Delta_x$ o $\\Delta_y$ es distinto de cero, el sistema es <strong>inconsistente</strong> (rectas paralelas no coincidentes). Conjunto solución: $\\varnothing$.';
+                html += '</div>';
+            } else {
+                html += '<div class="aviso-exito">';
+                html += 'Como $\\Delta = 0$ y $\\Delta_x = \\Delta_y = 0$, el sistema es <strong>consistente indeterminado</strong> (rectas coincidentes). Infinitas soluciones.';
+                html += '</div>';
+            }
+        }
+
+        document.getElementById('contenido-cramer').innerHTML = html;
+        renderMath(document.getElementById('contenido-cramer'));
+    }
+
+    // =========================================
+    // ACTUALIZAR PANEL DE CONVERGENCIA
+    // =========================================
+    function actualizarConvergencia() {
+        var sol = calcularSolucion();
+        var grid = document.getElementById('grid-resultados');
+        var estado = document.getElementById('estado-convergencia');
+
+        grid.innerHTML = '';
+
+        var resultado = (sol.tipo === 'unico') ? '(' + formatearNumero(sol.x) + ', ' + formatearNumero(sol.y) + ')' : (sol.tipo === 'inconsistente' ? '∅' : 'Infinitas');
+
+        var metodos = [
+            { nombre: '📊 Gráfico', valor: resultado },
+            { nombre: '➕ Suma/Resta', valor: resultado },
+            { nombre: '🔄 Sustitución', valor: resultado },
+            { nombre: '🧮 Cramer', valor: resultado }
+        ];
+
+        metodos.forEach(function(m) {
+            var tarjeta = document.createElement('div');
+            tarjeta.className = 'resultado-tarjeta';
+            tarjeta.innerHTML = '<div class="metodo-nombre">' + m.nombre + '</div><div class="metodo-valor">' + m.valor + '</div>';
+            grid.appendChild(tarjeta);
+        });
+
+        if (sol.tipo === 'unico') {
+            estado.className = 'estado-convergencia ok';
+            estado.innerHTML = '✅ Los cuatro métodos convergen al mismo resultado: $(' + formatearNumero(sol.x) + ', ' + formatearNumero(sol.y) + ')$';
+        } else if (sol.tipo === 'inconsistente') {
+            estado.className = 'estado-convergencia error';
+            estado.innerHTML = '⚠️ Los cuatro métodos coinciden en que el sistema es inconsistente. Conjunto solución vacío ∅.';
+        } else {
+            estado.className = 'estado-convergencia ok';
+            estado.innerHTML = '♾️ Los cuatro métodos coinciden en que el sistema es indeterminado. Infinitas soluciones.';
+        }
+        renderMath(estado);
+    }
+
+    // =========================================
+    // ACTUALIZAR TODO
+    // =========================================
+    function actualizarTodo() {
+        leerSistema();
+        actualizarSistemaMostrado();
+        actualizarConvergencia();
+        renderizarCanvas();
+        generarGrafico();
+        generarSuma();
+        generarSustitucion();
+        generarCramer();
+    }
+
+    // =========================================
+    // EVENTOS
+    // =========================================
+    document.getElementById('btn-comparar').addEventListener('click', actualizarTodo);
+
+    ['a1', 'b1', 'c1', 'a2', 'b2', 'c2'].forEach(function(id) {
+        document.getElementById(id).addEventListener('input', actualizarTodo);
+    });
+
+    document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('a1').value = this.dataset.a1;
+            document.getElementById('b1').value = this.dataset.b1;
+            document.getElementById('c1').value = this.dataset.c1;
+            document.getElementById('a2').value = this.dataset.a2;
+            document.getElementById('b2').value = this.dataset.b2;
+            document.getElementById('c2').value = this.dataset.c2;
+            actualizarTodo();
+        });
+    });
+
+    document.querySelectorAll('.tab-metodo').forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab-metodo').forEach(function(t) { t.classList.remove('activa'); });
+            this.classList.add('activa');
+
+            var metodo = this.dataset.metodo;
+            document.querySelectorAll('.panel-metodo').forEach(function(p) {
+                p.classList.remove('activo');
+            });
+            document.getElementById('panel-' + metodo).classList.add('activo');
+
+            // Re-renderizar canvas cuando se activa el panel gráfico
+            if (metodo === 'grafico') {
+                renderizarCanvas();
+            }
+        });
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    actualizarTodo();
+</script>
+
+</body>
+</html>

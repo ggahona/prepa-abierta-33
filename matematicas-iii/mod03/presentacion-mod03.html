@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 3: Sistemas de Ecuaciones Lineales con Tres Variables</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        :root {
+            --color-fondo-pagina: #f0f4f8;
+            --color-contenedor: #ffffff;
+            --color-header: #2d4a66;
+            --color-header-texto: #a9c1d9;
+            --color-titulo: #2d4a66;
+            --color-acento: #5b7fa3;
+            --color-acento-suave: #a9c1d9;
+            --color-base: #e8eef5;
+            --color-texto: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 12px;
+            --sombra: 0 4px 20px rgba(44, 73, 102, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-fondo-pagina);
+            color: var(--color-texto);
+            line-height: 1.7;
+            font-size: 1rem;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--color-contenedor);
+            border-radius: var(--radio-borde);
+            box-shadow: var(--sombra);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-header);
+            color: var(--color-contenedor);
+            padding: 35px 40px;
+            text-align: center;
+        }
+
+        header .prepa {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--color-header-texto);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        header h1 {
+            font-size: 1.9rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        header .subtitulo {
+            font-size: 1rem;
+            color: var(--color-header-texto);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 50px;
+            min-height: 480px;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-titulo);
+            font-size: 1.6rem;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .math-block {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.2rem;
+            color: var(--color-titulo);
+        }
+
+        .interactive-box {
+            background-color: var(--color-base);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 8px;
+            padding: 35px 30px;
+            margin-top: 42px;
+        }
+
+        .interactive-box h3 {
+            margin-top: 0;
+            color: var(--color-titulo);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 21px;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--color-texto);
+            font-size: 1rem;
+        }
+
+        /* === INPUTS UNIFICADOS: TODOS CON LA MISMA ALTURA === */
+        input[type="number"],
+        .input-group input,
+        .ecuacion-row input,
+        .terna-row input {
+            width: 110px;
+            min-height: 52px;
+            padding: 14px 12px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: var(--color-contenedor);
+            line-height: 1.4;
+            text-align: center;
+            color: var(--color-texto);
+        }
+
+        input[type="number"]:focus,
+        .input-group input:focus,
+        .ecuacion-row input:focus,
+        .terna-row input:focus {
+            border-color: var(--color-acento);
+            box-shadow: 0 0 0 3px rgba(91, 127, 163, 0.15);
+        }
+
+        input[type="number"]::placeholder,
+        .input-group input::placeholder,
+        .ecuacion-row input::placeholder,
+        .terna-row input::placeholder {
+            color: #8fa3b8;
+            font-size: 1rem;
+        }
+
+        .ecuacion-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 21px;
+            padding: 16px;
+            background-color: var(--color-contenedor);
+            border-radius: 6px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .ecuacion-row.recta2 {
+            border-left-color: var(--color-recta2);
+        }
+
+        .ecuacion-label {
+            font-weight: 700;
+            color: var(--color-titulo);
+            min-width: 80px;
+            font-size: 1rem;
+        }
+
+        .terna-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 21px;
+            padding: 16px;
+            background-color: var(--color-contenedor);
+            border-radius: 6px;
+            border-left: 4px solid var(--color-exito);
+        }
+
+        .terna-label {
+            font-weight: 700;
+            color: var(--color-titulo);
+            min-width: 80px;
+            font-size: 1rem;
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+            margin-top: 7px;
+        }
+
+        .btn-primario:hover {
+            background-color: var(--color-header);
+        }
+
+        .resultado {
+            margin-top: 21px;
+            padding: 17px 21px;
+            border-radius: 6px;
+            background-color: var(--color-contenedor);
+            border-left: 4px solid transparent;
+            font-size: 1rem;
+            min-height: 28px;
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+        }
+
+        .navegacion {
+            background-color: var(--color-base);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navegacion button {
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .navegacion button:hover:not(:disabled) {
+            background-color: var(--color-header);
+        }
+
+        .navegacion button:disabled {
+            background-color: var(--color-acento-suave);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .contador {
+            font-weight: 600;
+            color: var(--color-titulo);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px 10px; }
+            header { padding: 25px 20px; }
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; }
+            .navegacion { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+            input[type="number"],
+            .input-group input,
+            .ecuacion-row input,
+            .terna-row input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="prepa">Preparatoria Abierta</div>
+        <h1>Módulo 3 — Sistemas de Ecuaciones Lineales con Tres Variables</h1>
+        <div class="subtitulo">Matemáticas III | Prepa Abierta 33</div>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <main>
+        <!-- Diapositiva 1: Bienvenida -->
+        <section class="slide active" id="slide-1">
+            <h2>Bienvenida al Módulo 3</h2>
+            <p>En este módulo ampliaremos nuestros conocimientos sobre sistemas de ecuaciones lineales, pasando de dos a tres variables. Estos sistemas son fundamentales para modelar situaciones donde intervienen tres incógnitas relacionadas linealmente.</p>
+            <p>Aprenderemos a resolver sistemas de ecuaciones lineales con tres variables utilizando métodos algebraicos como suma o resta, sustitución y la Regla de Cramer extendida a matrices de $3 \times 3$.</p>
+            
+            <div class="math-block">
+                $$
+                \begin{cases}
+                a_1x + b_1y + c_1z = d_1 \\
+                a_2x + b_2y + c_2z = d_2 \\
+                a_3x + b_3y + c_3z = d_3
+                \end{cases}
+                $$
+            </div>
+            <p>La solución de este sistema, cuando existe y es única, es una <strong>terna ordenada</strong> $(x, y, z)$ que satisface simultáneamente las tres ecuaciones.</p>
+        </section>
+
+        <!-- Diapositiva 2: Método de Suma o Resta -->
+        <section class="slide" id="slide-2">
+            <h2>1. Método de Suma o Resta</h2>
+            <p>El objetivo de este método es reducir el sistema de $3 \times 3$ a un sistema de $2 \times 2$ eliminando una de las variables. Se elige una variable (por ejemplo, $z$) y se combinan las ecuaciones por pares para eliminarla.</p>
+            
+            <h3>Ejemplo Resuelto</h3>
+            <p>Resolver el sistema:</p>
+            <div class="math-block">
+                $$
+                \begin{cases}
+                2x - 3y + z = -1 \quad (1) \\
+                x + 2y + z = 2 \quad (2) \\
+                -6x + 2y - 3z = -4 \quad (3)
+                \end{cases}
+                $$
+            </div>
+            <p>1. Restamos (2) de (1) para eliminar $z$: $(2x - 3y + z) - (x + 2y + z) = -1 - 2 \implies x - 5y = -3$</p>
+            <p>2. Multiplicamos (2) por 3 y sumamos a (3): $3(x + 2y + z) + (-6x + 2y - 3z) = 3(2) + (-4) \implies -3x + 8y = 2$</p>
+            <p>3. Resolvemos el nuevo sistema $2 \times 2$: Multiplicamos la primera por 3 y sumamos: $3(x - 5y) + (-3x + 8y) = 3(-3) + 2 \implies -7y = -7 \implies y = 1$.</p>
+            <p>4. Sustituimos $y=1$ para hallar $x=2$, y luego sustituimos ambos en (1) para hallar $z=-2$. <strong>Solución: $(2, 1, -2)$</strong>.</p>
+
+            <div class="interactive-box">
+                <h3>🧮 Resolvedor de Sistemas 3x3</h3>
+                <p>Ingresa los coeficientes del sistema $a_ix + b_iy + c_iz = d_i$ para encontrar la terna solución $(x, y, z)$.</p>
+                
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 1:</span>
+                    <input type="number" id="s2-a1" placeholder="a₁" step="any">
+                    <input type="number" id="s2-b1" placeholder="b₁" step="any">
+                    <input type="number" id="s2-c1" placeholder="c₁" step="any">
+                    <input type="number" id="s2-d1" placeholder="d₁" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 2:</span>
+                    <input type="number" id="s2-a2" placeholder="a₂" step="any">
+                    <input type="number" id="s2-b2" placeholder="b₂" step="any">
+                    <input type="number" id="s2-c2" placeholder="c₂" step="any">
+                    <input type="number" id="s2-d2" placeholder="d₂" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 3:</span>
+                    <input type="number" id="s2-a3" placeholder="a₃" step="any">
+                    <input type="number" id="s2-b3" placeholder="b" step="any">
+                    <input type="number" id="s2-c3" placeholder="c₃" step="any">
+                    <input type="number" id="s2-d3" placeholder="d₃" step="any">
+                </div>
+                <button class="btn-primario" onclick="resolver3x3()">Resolver Sistema</button>
+                <div id="res-s2" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 3: Método de Sustitución -->
+        <section class="slide" id="slide-3">
+            <h2>2. Método de Sustitución</h2>
+            <p>Este método consiste en despejar una variable en una de las ecuaciones (preferiblemente la de coeficiente 1 o -1) y sustituir la expresión resultante en las otras dos ecuaciones, reduciendo el sistema a dos ecuaciones con dos incógnitas.</p>
+            
+            <h3>Ejemplo Resuelto</h3>
+            <p>Resolver el sistema:</p>
+            <div class="math-block">
+                $$
+                \begin{cases}
+                x - 2y + 2z = 1 \quad (1) \\
+                2x - 3y - z = -11 \quad (2) \\
+                3x + 2y + z = 4 \quad (3)
+                \end{cases}
+                $$
+            </div>
+            <p>1. Despejamos $z$ de (3): $z = 4 - 3x - 2y$.</p>
+            <p>2. Sustituimos en (1) y (2):
+                <br>En (1): $x - 2y + 2(4 - 3x - 2y) = 1 \implies -5x - 6y = -7$
+                <br>En (2): $2x - 3y - (4 - 3x - 2y) = -11 \implies 5x - y = -7$
+            </p>
+            <p>3. De la segunda ecuación despejamos $y = 5x + 7$ y sustituimos en la primera: $-5x - 6(5x + 7) = -7 \implies -35x = 35 \implies x = -1$.</p>
+            <p>4. Hallamos $y = 2$ y $z = 3$. <strong>Solución: $(-1, 2, 3)$</strong>.</p>
+
+            <div class="interactive-box">
+                <h3>✅ Verificador de Soluciones</h3>
+                <p>Ingresa una terna $(x, y, z)$ y los coeficientes del sistema para verificar si es solución.</p>
+                
+                <div class="terna-row">
+                    <span class="terna-label">Terna:</span>
+                    <input type="number" id="s3-x" placeholder="x" step="any">
+                    <input type="number" id="s3-y" placeholder="y" step="any">
+                    <input type="number" id="s3-z" placeholder="z" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 1:</span>
+                    <input type="number" id="s3-a1" placeholder="a₁" step="any">
+                    <input type="number" id="s3-b1" placeholder="b₁" step="any">
+                    <input type="number" id="s3-c1" placeholder="c₁" step="any">
+                    <input type="number" id="s3-d1" placeholder="d₁" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 2:</span>
+                    <input type="number" id="s3-a2" placeholder="a₂" step="any">
+                    <input type="number" id="s3-b2" placeholder="b₂" step="any">
+                    <input type="number" id="s3-c2" placeholder="c₂" step="any">
+                    <input type="number" id="s3-d2" placeholder="d₂" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Ec. 3:</span>
+                    <input type="number" id="s3-a3" placeholder="a₃" step="any">
+                    <input type="number" id="s3-b3" placeholder="b₃" step="any">
+                    <input type="number" id="s3-c3" placeholder="c₃" step="any">
+                    <input type="number" id="s3-d3" placeholder="d" step="any">
+                </div>
+                <button class="btn-primario" onclick="verificarSolucion()">Verificar Terna</button>
+                <div id="res-s3" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 4: Regla de Cramer 3x3 -->
+        <section class="slide" id="slide-4">
+            <h2>3. Regla de Cramer para Sistemas 3x3</h2>
+            <p>La Regla de Cramer utiliza determinantes de matrices $3 \times 3$. Para calcularlos, usamos la <strong>Regla de Sarrus</strong> o el desarrollo por cofactores.</p>
+            
+            <div class="math-block">
+                $$\Delta = \begin{vmatrix} a_1 & b_1 & c_1 \\ a_2 & b_2 & c_2 \\ a_3 & b_3 & c_3 \end{vmatrix}$$
+                $$x = \frac{\Delta_x}{\Delta}, \quad y = \frac{\Delta_y}{\Delta}, \quad z = \frac{\Delta_z}{\Delta}$$
+            </div>
+            <p>Donde $\Delta_x$ se obtiene reemplazando la columna de coeficientes de $x$ por los términos independientes $(d_1, d_2, d_3)$, y análogamente para $\Delta_y$ y $\Delta_z$.</p>
+
+            <div class="interactive-box">
+                <h3>📐 Calculadora de Determinante 3x3</h3>
+                <p>Ingresa los 9 coeficientes de la matriz del sistema para calcular su determinante principal $\Delta$.</p>
+                
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Fila 1:</span>
+                    <input type="number" id="s4-a1" placeholder="a₁" step="any">
+                    <input type="number" id="s4-b1" placeholder="b₁" step="any">
+                    <input type="number" id="s4-c1" placeholder="c₁" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Fila 2:</span>
+                    <input type="number" id="s4-a2" placeholder="a₂" step="any">
+                    <input type="number" id="s4-b2" placeholder="b₂" step="any">
+                    <input type="number" id="s4-c2" placeholder="c₂" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Fila 3:</span>
+                    <input type="number" id="s4-a3" placeholder="a₃" step="any">
+                    <input type="number" id="s4-b3" placeholder="b₃" step="any">
+                    <input type="number" id="s4-c3" placeholder="c₃" step="any">
+                </div>
+                <button class="btn-primario" onclick="calcularDeterminante()">Calcular $\Delta$</button>
+                <div id="res-s4" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 5: Problemas de Planteo -->
+        <section class="slide" id="slide-5">
+            <h2>4. Problemas de Planteo</h2>
+            <p>Los problemas de planteo con tres variables requieren identificar tres incógnitas y establecer tres ecuaciones lineales independientes basadas en las condiciones del problema.</p>
+            
+            <h3>Ejemplo Resuelto</h3>
+            <p>Un equipo está formado por 60 jugadores de las escuelas Preparatoria, Agronomía y Economía. Hay diez alumnos menos de Economía que la suma de los de Preparatoria y Agronomía, y el número de alumnos de Agronomía y Economía es el doble del número de alumnos de Preparatoria. ¿Cuántos alumnos hay de cada escuela?</p>
+            <p>Sean $x, y, z$ los jugadores de Preparatoria, Agronomía y Economía respectivamente:</p>
+            <div class="math-block">
+                $$
+                \begin{cases}
+                x + y + z = 60 \\
+                x + y - z = 10 \\
+                -2x + y + z = 0
+                \end{cases}
+                $$
+            </div>
+            <p>Resolviendo (por suma y resta), obtenemos $x = 20$, $y = 15$, $z = 25$.</p>
+
+            <div class="interactive-box">
+                <h3> Simulador: Problema de los 60 Jugadores</h3>
+                <p>Ingresa los valores propuestos para Preparatoria ($x$), Agronomía ($y$) y Economía ($z$) para verificar si satisfacen las condiciones del problema.</p>
+                
+                <div class="input-group">
+                    <label>Preparatoria ($x$):</label>
+                    <input type="number" id="s5-x" placeholder="x" step="any">
+                    <label>Agronomía ($y$):</label>
+                    <input type="number" id="s5-y" placeholder="y" step="any">
+                    <label>Economía ($z$):</label>
+                    <input type="number" id="s5-z" placeholder="z" step="any">
+                </div>
+                <button class="btn-primario" onclick="verificarPlanteo()">Verificar Condiciones</button>
+                <div id="res-s5" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 6: Resumen -->
+        <section class="slide" id="slide-6">
+            <h2>Resumen y Cierre</h2>
+            <p>¡Felicidades! Has completado el estudio de los sistemas de ecuaciones lineales con tres variables. A continuación, se sintetizan las ideas clave de este módulo:</p>
+            <ul>
+                <li>Un sistema $3 \times 3$ busca una terna ordenada $(x, y, z)$ que satisfaga tres ecuaciones simultáneamente.</li>
+                <li>El <strong>método de suma o resta</strong> y el de <strong>sustitución</strong> reducen el sistema a uno de $2 \times 2$ eliminando una variable.</li>
+                <li>La <strong>Regla de Cramer</strong> para $3 \times 3$ utiliza determinantes calculados mediante la Regla de Sarrus.</li>
+                <li>Los problemas de planteo se resuelven identificando tres incógnitas y traduciendo las condiciones del texto a tres ecuaciones lineales.</li>
+            </ul>
+            <div class="math-block" style="background-color: var(--color-base); padding: 28px; border-radius: 8px; border-left: 5px solid var(--color-exito);">
+                <p style="text-align: center; margin: 0; font-weight: bold; color: var(--color-titulo);">
+                    "El álgebra lineal nos permite modelar y resolver problemas complejos del mundo real donde múltiples factores interactúan simultáneamente."
+                </p>
+            </div>
+            <p style="text-align: center; margin-top: 42px; font-size: 1.2rem; color: var(--color-acento);">
+                ¡Excelente trabajo! Continúa practicando con los reactivos de tu material de estudio.
+            </p>
+        </section>
+    </main>
+
+    <div class="navegacion">
+        <button id="btnPrev" onclick="cambiarSlide(-1)">← Anterior</button>
+        <span class="contador" id="contador">Diapositiva 1 de 6</span>
+        <button id="btnNext" onclick="cambiarSlide(1)">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    let slideActual = 1;
+    const totalSlides = 6;
+
+    function actualizarNavegacion() {
+        document.querySelectorAll('.slide').forEach((slide, index) => {
+            slide.classList.toggle('active', index + 1 === slideActual);
+        });
+        
+        document.getElementById('contador').textContent = `Diapositiva ${slideActual} de ${totalSlides}`;
+        document.getElementById('btnPrev').disabled = slideActual === 1;
+        document.getElementById('btnNext').disabled = slideActual === totalSlides;
+        document.getElementById('btnNext').textContent = slideActual === totalSlides - 1 ? 'Fin' : 'Siguiente →';
+        
+        const progreso = ((slideActual - 1) / (totalSlides - 1)) * 100;
+        document.getElementById('progressBar').style.width = `${progreso}%`;
+    }
+
+    function cambiarSlide(direccion) {
+        if (direccion === 1 && slideActual < totalSlides) {
+            slideActual++;
+        } else if (direccion === -1 && slideActual > 1) {
+            slideActual--;
+        }
+        actualizarNavegacion();
+    }
+
+    function mostrarResultado(elementId, mensaje, esExito) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = mensaje;
+        el.className = `resultado ${esExito ? 'exito' : 'error'}`;
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([el]).catch(err => console.error('MathJax error:', err));
+        }
+    }
+
+    function det3(m) {
+        return m[0][0]*(m[1][1]*m[2][2] - m[1][2]*m[2][1])
+             - m[0][1]*(m[1][0]*m[2][2] - m[1][2]*m[2][0])
+             + m[0][2]*(m[1][0]*m[2][1] - m[1][1]*m[2][0]);
+    }
+
+    // Slide 2: Resolvedor 3x3
+    function resolver3x3() {
+        const getVal = (id) => parseFloat(document.getElementById(id).value);
+        const a1=getVal('s2-a1'), b1=getVal('s2-b1'), c1=getVal('s2-c1'), d1=getVal('s2-d1');
+        const a2=getVal('s2-a2'), b2=getVal('s2-b2'), c2=getVal('s2-c2'), d2=getVal('s2-d2');
+        const a3=getVal('s2-a3'), b3=getVal('s2-b3'), c3=getVal('s2-c3'), d3=getVal('s2-d3');
+
+        if ([a1,b1,c1,d1,a2,b2,c2,d2,a3,b3,c3,d3].some(isNaN)) {
+            mostrarResultado('res-s2', '⚠️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        const A = [[a1,b1,c1],[a2,b2,c2],[a3,b3,c3]];
+        const detA = det3(A);
+
+        if (Math.abs(detA) < 1e-10) {
+            mostrarResultado('res-s2', '️ El determinante principal es 0. El sistema no tiene solución única (es inconsistente o indeterminado).', false);
+            return;
+        }
+
+        const Ax = [[d1,b1,c1],[d2,b2,c2],[d3,b3,c3]];
+        const Ay = [[a1,d1,c1],[a2,d2,c2],[a3,d3,c3]];
+        const Az = [[a1,b1,d1],[a2,b2,d2],[a3,b3,d3]];
+
+        const x = det3(Ax) / detA;
+        const y = det3(Ay) / detA;
+        const z = det3(Az) / detA;
+
+        mostrarResultado('res-s2', `✅ <strong>Solución del sistema:</strong><br>$$x = ${x.toFixed(3)}, \\quad y = ${y.toFixed(3)}, \\quad z = ${z.toFixed(3)}$$<br><em>Terna ordenada: $(${x.toFixed(2)}, ${y.toFixed(2)}, ${z.toFixed(2)})$</em>`, true);
+    }
+
+    // Slide 3: Verificador
+    function verificarSolucion() {
+        const getVal = (id) => parseFloat(document.getElementById(id).value);
+        const x=getVal('s3-x'), y=getVal('s3-y'), z=getVal('s3-z');
+        const a1=getVal('s3-a1'), b1=getVal('s3-b1'), c1=getVal('s3-c1'), d1=getVal('s3-d1');
+        const a2=getVal('s3-a2'), b2=getVal('s3-b2'), c2=getVal('s3-c2'), d2=getVal('s3-d2');
+        const a3=getVal('s3-a3'), b3=getVal('s3-b3'), c3=getVal('s3-c3'), d3=getVal('s3-d3');
+
+        if ([x,y,z,a1,b1,c1,d1,a2,b2,c2,d2,a3,b3,c3,d3].some(isNaN)) {
+            mostrarResultado('res-s3', '️ Por favor, completa todos los campos.', false);
+            return;
+        }
+
+        const eq1 = Math.abs(a1*x + b1*y + c1*z - d1) < 1e-6;
+        const eq2 = Math.abs(a2*x + b2*y + c2*z - d2) < 1e-6;
+        const eq3 = Math.abs(a3*x + b3*y + c3*z - d3) < 1e-6;
+
+        if (eq1 && eq2 && eq3) {
+            mostrarResultado('res-s3', `✅ <strong>¡Correcto!</strong> La terna $(${x}, ${y}, ${z})$ satisface las tres ecuaciones simultáneamente. Es solución del sistema.`, true);
+        } else {
+            let msg = `❌ <strong>Incorrecto.</strong> La terna $(${x}, ${y}, ${z})$ no es solución.<br>`;
+            if (!eq1) msg += `• Falla en Ec. 1: $${a1}(${x}) + ${b1}(${y}) + ${c1}(${z}) = ${a1*x+b1*y+c1*z} \\neq ${d1}$<br>`;
+            if (!eq2) msg += `• Falla en Ec. 2: $${a2}(${x}) + ${b2}(${y}) + ${c2}(${z}) = ${a2*x+b2*y+c2*z} \\neq ${d2}$<br>`;
+            if (!eq3) msg += `• Falla en Ec. 3: $${a3}(${x}) + ${b3}(${y}) + ${c3}(${z}) = ${a3*x+b3*y+c3*z} \\neq ${d3}$`;
+            mostrarResultado('res-s3', msg, false);
+        }
+    }
+
+    // Slide 4: Determinante
+    function calcularDeterminante() {
+        const getVal = (id) => parseFloat(document.getElementById(id).value);
+        const a1=getVal('s4-a1'), b1=getVal('s4-b1'), c1=getVal('s4-c1');
+        const a2=getVal('s4-a2'), b2=getVal('s4-b2'), c2=getVal('s4-c2');
+        const a3=getVal('s4-a3'), b3=getVal('s4-b3'), c3=getVal('s4-c3');
+
+        if ([a1,b1,c1,a2,b2,c2,a3,b3,c3].some(isNaN)) {
+            mostrarResultado('res-s4', '⚠️ Por favor, completa todos los campos de la matriz.', false);
+            return;
+        }
+
+        const M = [[a1,b1,c1],[a2,b2,c2],[a3,b3,c3]];
+        const det = det3(M);
+
+        let msg = `$$\\Delta = \\begin{vmatrix} ${a1} & ${b1} & ${c1} \\\\ ${a2} & ${b2} & ${c2} \\\\ ${a3} & ${b3} & ${c3} \\end{vmatrix} = ${det}$$`;
+        
+        if (Math.abs(det) < 1e-10) {
+            msg += `<br>⚠️ Como $\\Delta = 0$, las filas (o columnas) son linealmente dependientes. El sistema asociado no tiene solución única.`;
+            mostrarResultado('res-s4', msg, false);
+        } else {
+            msg += `<br>✅ El determinante es $\\Delta = ${det} \\neq 0$. El sistema asociado tiene solución única.`;
+            mostrarResultado('res-s4', msg, true);
+        }
+    }
+
+    // Slide 5: Planteo
+    function verificarPlanteo() {
+        const x = parseFloat(document.getElementById('s5-x').value);
+        const y = parseFloat(document.getElementById('s5-y').value);
+        const z = parseFloat(document.getElementById('s5-z').value);
+
+        if (isNaN(x) || isNaN(y) || isNaN(z)) {
+            mostrarResultado('res-s5', '️ Por favor, ingresa valores para x, y y z.', false);
+            return;
+        }
+
+        const cond1 = Math.abs(x + y + z - 60) < 1e-6;
+        const cond2 = Math.abs(x + y - z - 10) < 1e-6;
+        const cond3 = Math.abs(-2*x + y + z) < 1e-6;
+
+        if (cond1 && cond2 && cond3) {
+            mostrarResultado('res-s5', `✅ <strong>¡Excelente!</strong> Los valores $x=${x}, y=${y}, z=${z}$ satisfacen todas las condiciones:<br>• Total: $${x}+${y}+${z} = 60$ ✓<br>• Economía vs otros: $${x}+${y}-${z} = 10$ ✓<br>• Agronomía+Economía = 2*Prepa: $${y}+${z} = ${2*x}$ ✓`, true);
+        } else {
+            let msg = `❌ <strong>No cumple todas las condiciones.</strong><br>`;
+            msg += `• Condición 1 (Total=60): $${x}+${y}+${z} = ${x+y+z}$ ${cond1 ? '✓' : '✗'}<br>`;
+            msg += `• Condición 2 (x+y-z=10): $${x}+${y}-${z} = ${x+y-z}$ ${cond2 ? '✓' : '✗'}<br>`;
+            msg += `• Condición 3 (y+z=2x): $${y}+${z} = ${y+z}$ vs $2(${x}) = ${2*x}$ ${cond3 ? '✓' : '✗'}`;
+            mostrarResultado('res-s5', msg, false);
+        }
+    }
+
+    actualizarNavegacion();
+</script>
+
+</body>
+</html>

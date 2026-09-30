@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demostrador de Cramer 3×3 | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      color: var(--color-texto-oscuro);
+      line-height: 1.7;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1100px;
+      background-color: var(--color-blanco);
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 30px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-acento-suave);
+      margin-bottom: 8px;
+    }
+
+    header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      min-height: 600px;
+    }
+
+    /* =========================================
+       PANEL DE CONTROL
+       ========================================= */
+    .panel-control {
+      background-color: var(--color-base);
+      padding: 22px;
+      border-right: 1px solid var(--color-acento-suave);
+    }
+
+    .panel-control h2 {
+      color: var(--color-primario);
+      font-size: 1rem;
+      margin-bottom: 14px;
+      border-left: 4px solid var(--color-acento);
+      padding-left: 10px;
+    }
+
+    .grupo-coef {
+      background-color: var(--color-blanco);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .grupo-coef .etiqueta-ec {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .fila-coef {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 6px;
+      align-items: end;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .campo label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      text-align: center;
+      margin-bottom: 2px;
+    }
+
+    .campo input {
+      padding: 8px 4px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      text-align: center;
+      font-family: inherit;
+      transition: border-color 0.3s;
+      width: 100%;
+    }
+
+    .campo input:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .botones-accion {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .btn-primario {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .btn-primario:hover { background-color: var(--color-primario); }
+
+    .btn-secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+    h3.subtitulo {
+      color: var(--color-primario);
+      font-size: 0.85rem;
+      margin-top: 20px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--color-acento);
+      padding-left: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .botones-ejemplos {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+
+    .btn-ejemplo {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      color: var(--color-primario);
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .btn-ejemplo:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-color: var(--color-acento);
+    }
+
+    /* =========================================
+       PANEL DE DESARROLLO
+       ========================================= */
+    .panel-desarrollo {
+      padding: 25px;
+      overflow-y: auto;
+      max-height: 820px;
+    }
+
+    .sistema-display {
+      background-color: var(--color-base);
+      border-left: 5px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 15px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+    }
+
+    .paso {
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 15px 18px;
+      margin-bottom: 14px;
+    }
+
+    .paso-titulo {
+      font-weight: 700;
+      color: var(--color-primario);
+      font-size: 1rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .paso-numero {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .paso-contenido {
+      color: var(--color-texto-oscuro);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .resultado-clasificacion {
+      padding: 14px 18px;
+      border-radius: 6px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 15px;
+      font-size: 1.05rem;
+    }
+
+    .resultado-clasificacion.unico {
+      background-color: rgba(39, 174, 96, 0.12);
+      border-left: 4px solid var(--color-exito);
+      color: var(--color-exito);
+    }
+
+    .resultado-clasificacion.inconsistente {
+      background-color: rgba(192, 57, 43, 0.12);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .resultado-clasificacion.indeterminado {
+      background-color: rgba(91, 127, 163, 0.15);
+      border-left: 4px solid var(--color-acento);
+      color: var(--color-primario);
+    }
+
+    .aviso {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .aviso.info {
+      background-color: rgba(91, 127, 163, 0.1);
+      border-left: 4px solid var(--color-acento);
+      color: var(--color-primario);
+    }
+
+    .aviso.error {
+      background-color: rgba(192, 57, 43, 0.10);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .footer-info {
+      background-color: var(--color-base);
+      border-top: 1px solid var(--color-acento-suave);
+      padding: 15px 25px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      text-align: center;
+    }
+
+    .footer-info strong { color: var(--color-acento); }
+
+    @media (max-width: 900px) {
+      .layout-principal {
+        grid-template-columns: 1fr;
+      }
+      .panel-control {
+        border-right: none;
+        border-bottom: 1px solid var(--color-acento-suave);
+      }
+      .panel-desarrollo {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.3rem; }
+      .panel-control, .panel-desarrollo { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <header>
+    <div class="institucion">Preparatoria Abierta</div>
+    <h1>Demostrador de la Regla de Cramer</h1>
+    <p>Sistemas de Ecuaciones 3×3 por Determinantes | Matemáticas III</p>
+  </header>
+
+  <div class="layout-principal">
+
+    <!-- =========================================
+         PANEL DE CONTROL
+         ========================================= -->
+    <div class="panel-control">
+      <h2>Coeficientes del sistema</h2>
+
+      <div class="grupo-coef">
+        <div class="etiqueta-ec">Ecuación 1</div>
+        <div class="fila-coef">
+          <div class="campo"><label>a₁</label><input type="number" id="a1" value="2" step="any"></div>
+          <div class="campo"><label>b₁</label><input type="number" id="b1" value="-3" step="any"></div>
+          <div class="campo"><label>c₁</label><input type="number" id="c1" value="1" step="any"></div>
+          <div class="campo"><label>d₁</label><input type="number" id="d1" value="-1" step="any"></div>
+        </div>
+      </div>
+
+      <div class="grupo-coef">
+        <div class="etiqueta-ec">Ecuación 2</div>
+        <div class="fila-coef">
+          <div class="campo"><label>a₂</label><input type="number" id="a2" value="1" step="any"></div>
+          <div class="campo"><label>b₂</label><input type="number" id="b2" value="2" step="any"></div>
+          <div class="campo"><label>c₂</label><input type="number" id="c2" value="1" step="any"></div>
+          <div class="campo"><label>d₂</label><input type="number" id="d2" value="2" step="any"></div>
+        </div>
+      </div>
+
+      <div class="grupo-coef">
+        <div class="etiqueta-ec">Ecuación 3</div>
+        <div class="fila-coef">
+          <div class="campo"><label>a₃</label><input type="number" id="a3" value="-6" step="any"></div>
+          <div class="campo"><label>b₃</label><input type="number" id="b3" value="2" step="any"></div>
+          <div class="campo"><label>c₃</label><input type="number" id="c3" value="-3" step="any"></div>
+          <div class="campo"><label>d₃</label><input type="number" id="d3" value="-4" step="any"></div>
+        </div>
+      </div>
+
+      <div class="botones-accion">
+        <button class="btn-primario" id="btn-calcular">🧮 Calcular con Cramer</button>
+        <button class="btn-secundario" id="btn-limpiar">🗑️ Limpiar</button>
+      </div>
+
+      <h3 class="subtitulo">Ejemplos predefinidos</h3>
+      <div class="botones-ejemplos">
+        <button class="btn-ejemplo" data-ej="1">Sistema del módulo (solución: 2, 1, -2)</button>
+        <button class="btn-ejemplo" data-ej="2">Sistema por sustitución (-1, 2, 3)</button>
+        <button class="btn-ejemplo" data-ej="3">Inconsistente (Δ = 0)</button>
+        <button class="btn-ejemplo" data-ej="4">Coeficientes con ceros (x+y=3)</button>
+      </div>
+    </div>
+
+    <!-- =========================================
+         PANEL DE DESARROLLO
+         ========================================= -->
+    <div class="panel-desarrollo">
+      <div class="sistema-display" id="sistema-display">
+        Ingresa los coeficientes y presiona <strong>Calcular con Cramer</strong>.
+      </div>
+
+      <div id="resultados"></div>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <strong>Objetivo:</strong> Aplicar la Regla de Cramer para resolver sistemas de ecuaciones lineales 3×3. Calcular el determinante principal $\Delta$ y los determinantes $\Delta_x$, $\Delta_y$, $\Delta_z$ para obtener la terna ordenada $(x, y, z)$ y clasificar el sistema.
+  </div>
+</div>
+
+<script>
+  // =========================================
+  // ESTADO
+  // =========================================
+  var sistema = { a1: 2, b1: -3, c1: 1, d1: -1, a2: 1, b2: 2, c2: 1, d2: 2, a3: -6, b3: 2, c3: -3, d3: -4 };
+
+  // =========================================
+  // UTILIDADES
+  // =========================================
+  function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+    }
+  }
+
+  function formatear(n) {
+    if (Number.isInteger(n)) return n.toString();
+    return parseFloat(n.toFixed(4)).toString();
+  }
+
+  function formatearCoef(n, variable) {
+    // Devuelve "3x", "-x", "x", "-3x", etc.
+    if (n === 0) return '';
+    if (n === 1) return variable;
+    if (n === -1) return '-' + variable;
+    return n + variable;
+  }
+
+  function formatearEcuacion(a, b, c, d) {
+    var partes = [];
+    if (a !== 0) partes.push(formatearCoef(a, 'x'));
+    if (b !== 0) {
+      if (partes.length > 0 && b > 0) partes.push('+ ' + formatearCoef(b, 'y'));
+      else partes.push(formatearCoef(b, 'y'));
+    }
+    if (c !== 0) {
+      if (partes.length > 0 && c > 0) partes.push('+ ' + formatearCoef(c, 'z'));
+      else partes.push(formatearCoef(c, 'z'));
+    }
+    var texto = partes.join(' ');
+    if (texto === '') texto = '0';
+    texto += ' = ' + d;
+    return texto;
+  }
+
+  function calcularDeterminante3x3(a1, b1, c1, a2, b2, c2, a3, b3, c3) {
+    // Regla de Sarrus / desarrollo por primera fila
+    return a1 * (b2 * c3 - b3 * c2)
+         - b1 * (a2 * c3 - a3 * c2)
+         + c1 * (a2 * b3 - a3 * b2);
+  }
+
+  // =========================================
+  // LEER COEFICIENTES
+  // =========================================
+  function leerCoeficientes() {
+    sistema.a1 = parseFloat(document.getElementById('a1').value) || 0;
+    sistema.b1 = parseFloat(document.getElementById('b1').value) || 0;
+    sistema.c1 = parseFloat(document.getElementById('c1').value) || 0;
+    sistema.d1 = parseFloat(document.getElementById('d1').value) || 0;
+    sistema.a2 = parseFloat(document.getElementById('a2').value) || 0;
+    sistema.b2 = parseFloat(document.getElementById('b2').value) || 0;
+    sistema.c2 = parseFloat(document.getElementById('c2').value) || 0;
+    sistema.d2 = parseFloat(document.getElementById('d2').value) || 0;
+    sistema.a3 = parseFloat(document.getElementById('a3').value) || 0;
+    sistema.b3 = parseFloat(document.getElementById('b3').value) || 0;
+    sistema.c3 = parseFloat(document.getElementById('c3').value) || 0;
+    sistema.d3 = parseFloat(document.getElementById('d3').value) || 0;
+  }
+
+  // =========================================
+  // CALCULAR Y MOSTRAR
+  // =========================================
+  function calcular() {
+    leerCoeficientes();
+    var s = sistema;
+
+    // Mostrar sistema
+    var sistemaLatex = '$$\\begin{cases} ' + formatearEcuacion(s.a1, s.b1, s.c1, s.d1) + ' \\\\ ' + formatearEcuacion(s.a2, s.b2, s.c2, s.d2) + ' \\\\ ' + formatearEcuacion(s.a3, s.b3, s.c3, s.d3) + ' \\end{cases}$$';
+    document.getElementById('sistema-display').innerHTML = sistemaLatex;
+
+    // Calcular determinante principal
+    var delta = calcularDeterminante3x3(s.a1, s.b1, s.c1, s.a2, s.b2, s.c2, s.a3, s.b3, s.c3);
+
+    // Calcular Delta_x, Delta_y, Delta_z
+    var deltaX = calcularDeterminante3x3(s.d1, s.b1, s.c1, s.d2, s.b2, s.c2, s.d3, s.b3, s.c3);
+    var deltaY = calcularDeterminante3x3(s.a1, s.d1, s.c1, s.a2, s.d2, s.c2, s.a3, s.d3, s.c3);
+    var deltaZ = calcularDeterminante3x3(s.a1, s.b1, s.d1, s.a2, s.b2, s.d2, s.a3, s.b3, s.d3);
+
+    // Construir HTML
+    var html = '';
+
+    // Clasificación
+    var clasificacion = '';
+    var clase = '';
+    if (Math.abs(delta) > 1e-9) {
+      clasificacion = 'Sistema consistente determinado — solución única';
+      clase = 'unico';
+    } else {
+      if (Math.abs(deltaX) > 1e-9 || Math.abs(deltaY) > 1e-9 || Math.abs(deltaZ) > 1e-9) {
+        clasificacion = 'Sistema inconsistente — sin solución (conjunto vacío)';
+        clase = 'inconsistente';
+      } else {
+        clasificacion = 'Sistema consistente indeterminado — infinitas soluciones';
+        clase = 'indeterminado';
+      }
+    }
+
+    html += '<div class="resultado-clasificacion ' + clase + '">' + clasificacion + '</div>';
+
+    // Paso 1: Δ
+    html += '<div class="paso">';
+    html += '<div class="paso-titulo"><span class="paso-numero">1</span>Calcular el determinante principal Δ</div>';
+    html += '<div class="paso-contenido">';
+    html += '$$\\Delta = \\begin{vmatrix} ' + formatear(s.a1) + ' & ' + formatear(s.b1) + ' & ' + formatear(s.c1) + ' \\\\ ' + formatear(s.a2) + ' & ' + formatear(s.b2) + ' & ' + formatear(s.c2) + ' \\\\ ' + formatear(s.a3) + ' & ' + formatear(s.b3) + ' & ' + formatear(s.c3) + ' \\end{vmatrix} = ' + formatear(delta) + '$$';
+    html += '</div>';
+    html += '</div>';
+
+    // Si Δ = 0, mostrar los otros determinantes
+    if (Math.abs(delta) < 1e-9) {
+      // Paso 2: Δx
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">2</span>Calcular Δx</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_x = \\begin{vmatrix} ' + formatear(s.d1) + ' & ' + formatear(s.b1) + ' & ' + formatear(s.c1) + ' \\\\ ' + formatear(s.d2) + ' & ' + formatear(s.b2) + ' & ' + formatear(s.c2) + ' \\\\ ' + formatear(s.d3) + ' & ' + formatear(s.b3) + ' & ' + formatear(s.c3) + ' \\end{vmatrix} = ' + formatear(deltaX) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      // Paso 3: Δy
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">3</span>Calcular Δy</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_y = \\begin{vmatrix} ' + formatear(s.a1) + ' & ' + formatear(s.d1) + ' & ' + formatear(s.c1) + ' \\\\ ' + formatear(s.a2) + ' & ' + formatear(s.d2) + ' & ' + formatear(s.c2) + ' \\\\ ' + formatear(s.a3) + ' & ' + formatear(s.d3) + ' & ' + formatear(s.c3) + ' \\end{vmatrix} = ' + formatear(deltaY) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      // Paso 4: Δz
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">4</span>Calcular Δz</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_z = \\begin{vmatrix} ' + formatear(s.a1) + ' & ' + formatear(s.b1) + ' & ' + formatear(s.d1) + ' \\\\ ' + formatear(s.a2) + ' & ' + formatear(s.b2) + ' & ' + formatear(s.d2) + ' \\\\ ' + formatear(s.a3) + ' & ' + formatear(s.b3) + ' & ' + formatear(s.d3) + ' \\end{vmatrix} = ' + formatear(deltaZ) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      if (clase === 'inconsistente') {
+        html += '<div class="aviso error">⚠️ Como Δ = 0 y al menos uno de Δx, Δy, Δz es distinto de cero, el sistema es inconsistente. No tiene solución (rectas o planos paralelos).</div>';
+      } else {
+        html += '<div class="aviso info">ℹ️ Como Δ = 0 y Δx = Δy = Δz = 0, el sistema es consistente indeterminado. Tiene infinitas soluciones (dependencia lineal entre las ecuaciones).</div>';
+      }
+
+    } else {
+      // Sistema con solución única: mostrar Δx, Δy, Δz
+      // Paso 2: Δx
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">2</span>Calcular Δx</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_x = \\begin{vmatrix} ' + formatear(s.d1) + ' & ' + formatear(s.b1) + ' & ' + formatear(s.c1) + ' \\\\ ' + formatear(s.d2) + ' & ' + formatear(s.b2) + ' & ' + formatear(s.c2) + ' \\\\ ' + formatear(s.d3) + ' & ' + formatear(s.b3) + ' & ' + formatear(s.c3) + ' \\end{vmatrix} = ' + formatear(deltaX) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      // Paso 3: Δy
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">3</span>Calcular Δy</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_y = \\begin{vmatrix} ' + formatear(s.a1) + ' & ' + formatear(s.d1) + ' & ' + formatear(s.c1) + ' \\\\ ' + formatear(s.a2) + ' & ' + formatear(s.d2) + ' & ' + formatear(s.c2) + ' \\\\ ' + formatear(s.a3) + ' & ' + formatear(s.d3) + ' & ' + formatear(s.c3) + ' \\end{vmatrix} = ' + formatear(deltaY) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      // Paso 4: Δz
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">4</span>Calcular Δz</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$\\Delta_z = \\begin{vmatrix} ' + formatear(s.a1) + ' & ' + formatear(s.b1) + ' & ' + formatear(s.d1) + ' \\\\ ' + formatear(s.a2) + ' & ' + formatear(s.b2) + ' & ' + formatear(s.d2) + ' \\\\ ' + formatear(s.a3) + ' & ' + formatear(s.b3) + ' & ' + formatear(s.d3) + ' \\end{vmatrix} = ' + formatear(deltaZ) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      // Paso 5: Aplicar Cramer
+      var x = deltaX / delta;
+      var y = deltaY / delta;
+      var z = deltaZ / delta;
+
+      html += '<div class="paso">';
+      html += '<div class="paso-titulo"><span class="paso-numero">5</span>Aplicar la Regla de Cramer</div>';
+      html += '<div class="paso-contenido">';
+      html += '$$x = \\frac{\\Delta_x}{\\Delta} = \\frac{' + formatear(deltaX) + '}{' + formatear(delta) + '} = ' + formatear(x) + '$$';
+      html += '$$y = \\frac{\\Delta_y}{\\Delta} = \\frac{' + formatear(deltaY) + '}{' + formatear(delta) + '} = ' + formatear(y) + '$$';
+      html += '$$z = \\frac{\\Delta_z}{\\Delta} = \\frac{' + formatear(deltaZ) + '}{' + formatear(delta) + '} = ' + formatear(z) + '$$';
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="resultado-clasificacion unico">✅ Solución: la terna ordenada es $(' + formatear(x) + ',\\ ' + formatear(y) + ',\\ ' + formatear(z) + ')$</div>';
+    }
+
+    document.getElementById('resultados').innerHTML = html;
+    renderMath(document.getElementById('resultados'));
+    renderMath(document.getElementById('sistema-display'));
+  }
+
+  // =========================================
+  // EVENTOS
+  // =========================================
+  document.getElementById('btn-calcular').addEventListener('click', calcular);
+
+  document.getElementById('btn-limpiar').addEventListener('click', function() {
+    ['a1', 'b1', 'c1', 'd1', 'a2', 'b2', 'c2', 'd2', 'a3', 'b3', 'c3', 'd3'].forEach(function(id) {
+      document.getElementById(id).value = '0';
+    });
+    document.getElementById('sistema-display').innerHTML = 'Ingresa los coeficientes y presiona <strong>Calcular con Cramer</strong>.';
+    document.getElementById('resultados').innerHTML = '';
+  });
+
+  // Ejemplos predefinidos
+  var ejemplos = {
+    '1': { a1: 2, b1: -3, c1: 1, d1: -1, a2: 1, b2: 2, c2: 1, d2: 2, a3: -6, b3: 2, c3: -3, d3: -4 },
+    '2': { a1: 1, b1: -2, c1: 2, d1: 1, a2: 2, b2: -3, c2: -1, d2: -11, a3: 3, b3: 2, c3: 1, d3: 4 },
+    '3': { a1: 1, b1: 1, c1: 1, d1: 3, a2: 2, b2: 2, c2: 2, d2: 10, a3: 1, b3: -1, c3: 1, d3: 1 },
+    '4': { a1: 1, b1: 1, c1: 0, d1: 3, a2: 0, b2: 1, c2: 1, d2: 5, a3: 1, b3: 0, c3: 1, d3: 4 }
+  };
+
+  document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ej = ejemplos[this.dataset.ej];
+      if (!ej) return;
+      ['a1', 'b1', 'c1', 'd1', 'a2', 'b2', 'c2', 'd2', 'a3', 'b3', 'c3', 'd3'].forEach(function(id) {
+        document.getElementById(id).value = ej[id];
+      });
+      calcular();
+    });
+  });
+
+  // =========================================
+  // INICIALIZACIÓN
+  // =========================================
+  calcular();
+</script>
+
+</body>
+</html>

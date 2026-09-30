@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 3: Sistemas de Ecuaciones con Tres Variables</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1.05rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 3</h1>
+            <p>Sistemas de Ecuaciones Lineales con Tres Variables</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 3
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cuál es la naturaleza de la solución de un sistema de tres ecuaciones lineales con tres variables cuando el sistema es consistente determinado?",
+                options: [
+                    { text: "La solución es un par ordenado $(x, y)$.", correct: false },
+                    { text: "La solución es una terna ordenada $(x, y, z)$ única.", correct: true },
+                    { text: "La solución es un conjunto infinito de puntos.", correct: false },
+                    { text: "El sistema no tiene solución.", correct: false }
+                ],
+                feedback: "Un sistema de tres ecuaciones lineales con tres variables tiene como solución una terna ordenada $(x, y, z)$ que satisface simultáneamente las tres ecuaciones. Cuando la solución es única, se dice que el sistema es consistente determinado."
+            },
+            {
+                id: 2,
+                text: "¿En qué consiste el proceso general para resolver un sistema de tres ecuaciones lineales con tres variables mediante el método de suma o resta?",
+                options: [
+                    { text: "Sumar todas las ecuaciones para obtener una sola ecuación con las tres variables.", correct: false },
+                    { text: "Reducir el sistema de 3 ecuaciones a un sistema de 2 ecuaciones mediante la eliminación de una variable, usando las tres ecuaciones.", correct: true },
+                    { text: "Sustituir directamente los valores de $x$, $y$, $z$ en cada ecuación.", correct: false },
+                    { text: "Multiplicar todas las ecuaciones entre sí para eliminar los denominadores.", correct: false }
+                ],
+                feedback: "El proceso consiste en reducir el sistema de 3 ecuaciones a un sistema de 2 ecuaciones mediante la eliminación de una de las tres variables. Es fundamental que en este proceso intervengan las tres ecuaciones para obtener información completa del sistema."
+            },
+            {
+                id: 3,
+                text: "Al resolver el sistema $\\begin{cases} 2x - 3y + z = -1 \\\\ x + 2y + z = 2 \\\\ -6x + 2y - 3z = -4 \\end{cases}$ por suma o resta, al eliminar $z$ entre las ecuaciones (1) y (2) se obtiene $x - 5y = -3$. ¿Qué ecuación se obtiene al eliminar $z$ entre las ecuaciones (2) y (3)?",
+                options: [
+                    { text: "$-3x + 8y = 2$", correct: true },
+                    { text: "$-5x + 4y = 2$", correct: false },
+                    { text: "$3x - 8y = -2$", correct: false },
+                    { text: "$-3x - 8y = 2$", correct: false }
+                ],
+                feedback: "Multiplicamos la ecuación (2) por 3: $3x + 6y + 3z = 6$. Luego sumamos la ecuación (3): $-6x + 2y - 3z = -4$. Sumando: $(3x - 6x) + (6y + 2y) + (3z - 3z) = 6 - 4$, es decir, $-3x + 8y = 2$."
+            },
+            {
+                id: 4,
+                text: "Resolviendo el sistema del reactivo anterior, después de reducir a dos variables se obtiene $x = 2$ y $y = 1$. ¿Cuál es el valor de $z$ al sustituir en la ecuación $2x - 3y + z = -1$?",
+                options: [
+                    { text: "$z = 2$", correct: false },
+                    { text: "$z = -2$", correct: true },
+                    { text: "$z = 0$", correct: false },
+                    { text: "$z = -1$", correct: false }
+                ],
+                feedback: "Sustituyendo $x = 2$ y $y = 1$: $2(2) - 3(1) + z = -1 \\Rightarrow 4 - 3 + z = -1 \\Rightarrow 1 + z = -1 \\Rightarrow z = -2$. La solución del sistema es la terna $(2, 1, -2)$."
+            },
+            {
+                id: 5,
+                text: "Al aplicar la Regla de Cramer a un sistema $3 \\times 3$, ¿qué indica que el determinante principal sea $\\Delta = 0$?",
+                options: [
+                    { text: "El sistema tiene solución única.", correct: false },
+                    { text: "El sistema no tiene solución única: puede ser inconsistente o tener infinitas soluciones.", correct: true },
+                    { text: "El sistema tiene exactamente dos soluciones.", correct: false },
+                    { text: "El sistema siempre tiene solución trivial $(0, 0, 0)$.", correct: false }
+                ],
+                feedback: "Cuando $\\Delta = 0$ el sistema no tiene solución única. Para determinar si es inconsistente o consistente indeterminado, se deben calcular $\\Delta_x$, $\\Delta_y$ y $\\Delta_z$. Si al menos uno de ellos es distinto de cero, el sistema es inconsistente. Si todos son cero, el sistema tiene infinitas soluciones."
+            },
+            {
+                id: 6,
+                text: "Se tiene el sistema $\\begin{cases} x + y + z = 3 \\\\ 2x + 2y + 2z = 10 \\\\ x - y + z = 1 \\end{cases}$. Al calcular $\\Delta = 0$, ¿qué se puede concluir sobre este sistema?",
+                options: [
+                    { text: "Tiene solución única porque los coeficientes son simples.", correct: false },
+                    { text: "Es inconsistente: las ecuaciones representan planos paralelos no coincidentes.", correct: true },
+                    { text: "Tiene infinitas soluciones porque $\\Delta = 0$.", correct: false },
+                    { text: "No se puede concluir nada con esa información.", correct: false }
+                ],
+                feedback: "Como la segunda ecuación es el doble de la primera en los coeficientes de las variables pero no en el término independiente ($2 \\cdot 3 = 6 \\neq 10$), los planos son paralelos no coincidentes. El sistema es inconsistente y el conjunto solución es vacío."
+            },
+            {
+                id: 7,
+                text: "Al resolver por el método de sustitución el sistema $\\begin{cases} x - 2y + 2z = 1 \\\\ 2x - 3y - z = -11 \\\\ 3x + 2y + z = 4 \\end{cases}$, se despeja $z$ de la tercera ecuación: $z = 4 - 3x - 2y$. ¿Cuál es la ecuación resultante al sustituir en la ecuación (1)?",
+                options: [
+                    { text: "$-5x - 6y = -7$", correct: true },
+                    { text: "$5x + 6y = 7$", correct: false },
+                    { text: "$-5x + 6y = -7$", correct: false },
+                    { text: "$-5x - 6y = 7$", correct: false }
+                ],
+                feedback: "Sustituyendo: $x - 2y + 2(4 - 3x - 2y) = 1 \\Rightarrow x - 2y + 8 - 6x - 4y = 1 \\Rightarrow -5x - 6y + 8 = 1 \\Rightarrow -5x - 6y = -7$."
+            },
+            {
+                id: 8,
+                text: "En el sistema del reactivo anterior, tras sustituir en las ecuaciones (1) y (2) se obtiene el sistema $2 \\times 2$: $\\begin{cases} -5x - 6y = -7 \\\\ 5x - y = -7 \\end{cases}$. ¿Cuál es la solución completa del sistema original?",
+                options: [
+                    { text: "$(-1, 2, 3)$", correct: true },
+                    { text: "$(1, -2, 3)$", correct: false },
+                    { text: "$(-1, -2, 3)$", correct: false },
+                    { text: "$(-1, 2, -3)$", correct: false }
+                ],
+                feedback: "Del sistema $2 \\times 2$: sumando ambas ecuaciones se obtiene $-7y = -14 \\Rightarrow y = 2$. Sustituyendo en $5x - y = -7$: $5x - 2 = -7 \\Rightarrow 5x = -5 \\Rightarrow x = -1$. Finalmente, $z = 4 - 3(-1) - 2(2) = 4 + 3 - 4 = 3$. La solución es $(-1, 2, 3)$."
+            },
+            {
+                id: 9,
+                text: "Un equipo está formado por 60 jugadores de tres escuelas. Hay diez alumnos menos de Economía que la suma de Preparatoria y Agronomía, y el número de alumnos de Agronomía y Economía es el doble del número de alumnos de Preparatoria. ¿Cuál es el sistema de ecuaciones que modela esta situación?",
+                options: [
+                    { text: "$\\begin{cases} x + y + z = 60 \\\\ x + y - z = 10 \\\\ -2x + y + z = 0 \\end{cases}$", correct: true },
+                    { text: "$\\begin{cases} x + y + z = 60 \\\\ z = x + y + 10 \\\\ y + z = 2x \\end{cases}$", correct: false },
+                    { text: "$\\begin{cases} x + y + z = 60 \\\\ x + y + z = 10 \\\\ 2x + y + z = 0 \\end{cases}$", correct: false },
+                    { text: "$\\begin{cases} x + y + z = 60 \\\\ x - y - z = 10 \\\\ 2x - y - z = 0 \\end{cases}$", correct: false }
+                ],
+                feedback: "Sea $x$ = Preparatoria, $y$ = Agronomía, $z$ = Economía. Las condiciones son: (1) $x + y + z = 60$. (2) $z = x + y - 10 \\Rightarrow x + y - z = 10$. (3) $y + z = 2x \\Rightarrow -2x + y + z = 0$. La solución es $x = 20$, $y = 15$, $z = 25$."
+            },
+            {
+                id: 10,
+                text: "Al resolver el sistema $\\begin{cases} x + y + z = 6 \\\\ 2x - y + z = 3 \\\\ x + 2y - z = 2 \\end{cases}$ por el método de Cramer, el valor del determinante principal $\\Delta$ es:",
+                options: [
+                    { text: "$\\Delta = -7$", correct: true },
+                    { text: "$\\Delta = 7$", correct: false },
+                    { text: "$\\Delta = 0$", correct: false },
+                    { text: "$\\Delta = 21$", correct: false }
+                ],
+                feedback: "$\\Delta = \\begin{vmatrix} 1 & 1 & 1 \\\\ 2 & -1 & 1 \\\\ 1 & 2 & -1 \\end{vmatrix} = 1[( -1)(-1) - (1)(2)] - 1[(2)(-1) - (1)(1)] + 1[(2)(2) - (-1)(1)] = 1(1 - 2) - 1(-2 - 1) + 1(4 + 1) = -1 + 3 + 5 = 7$."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 3 sobre sistemas de ecuaciones lineales con tres variables.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de los métodos de solución para sistemas de tres variables. Repasa algunos detalles sobre el método de Cramer y los sistemas inconsistentes para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos teóricos y prácticos del Módulo 3 (métodos de suma/resta, sustitución y Cramer para sistemas 3×3, así como los tres casos de solución) antes de intentar nuevamente.";
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

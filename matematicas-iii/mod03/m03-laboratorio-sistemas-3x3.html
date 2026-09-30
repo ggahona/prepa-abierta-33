@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio de Sistemas 3×3 | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      color: var(--color-texto-oscuro);
+      line-height: 1.7;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1000px;
+      background-color: var(--color-blanco);
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 30px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-acento-suave);
+      margin-bottom: 8px;
+    }
+
+    header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+    .barra-progreso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 12px 20px;
+      margin: 20px 25px 0 25px;
+      border-left: 4px solid var(--color-acento);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .barra-progreso .info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+    }
+
+    .barra-progreso .contador {
+      font-weight: 700;
+      color: var(--color-acento);
+    }
+
+    .btn-secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-secundario:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .tarjeta-problema {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 25px;
+      margin: 20px 25px 25px 25px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .meta-problema {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .numero-problema {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-acento);
+    }
+
+    .nivel-problema {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .nivel-problema.basico {
+      background-color: rgba(39, 174, 96, 0.15);
+      color: var(--color-exito);
+    }
+    .nivel-problema.medio {
+      background-color: rgba(91, 127, 163, 0.15);
+      color: var(--color-acento);
+    }
+    .nivel-problema.alto {
+      background-color: rgba(192, 57, 43, 0.15);
+      color: var(--color-error);
+    }
+
+    .enunciado {
+      font-size: 1.05rem;
+      color: var(--color-texto-oscuro);
+      margin-bottom: 20px;
+      line-height: 1.7;
+      text-align: justify;
+      padding: 15px;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .sistema-display {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    .fase {
+      margin-bottom: 20px;
+      padding: 18px;
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+    }
+
+    .fase-titulo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .numero-fase {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .grupo-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .input-wrapper label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 5px;
+    }
+
+    select.select-opcion {
+      padding: 10px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      width: 100%;
+      transition: border-color 0.3s;
+      font-family: inherit;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, var(--color-acento) 50%),
+                        linear-gradient(135deg, var(--color-acento) 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(50% - 2px),
+                           calc(100% - 15px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding-right: 40px;
+    }
+
+    select.select-opcion:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .select-opcion.pendiente {
+      border-color: var(--color-acento-suave);
+      color: var(--color-acento);
+    }
+
+    .select-opcion.correcto {
+      border-color: var(--color-exito);
+      background-color: rgba(39, 174, 96, 0.08);
+      color: var(--color-exito);
+      font-weight: 600;
+    }
+
+    .select-opcion.incorrecto {
+      border-color: var(--color-error);
+      background-color: rgba(192, 57, 43, 0.08);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .btn-primario {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 8px;
+      font-family: inherit;
+    }
+
+    .btn-primario:hover { background-color: var(--color-primario); }
+
+    .btn-pista {
+      background-color: transparent;
+      border: 2px dashed var(--color-acento-suave);
+      color: var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      margin-right: 8px;
+      font-family: inherit;
+    }
+
+    .btn-pista:hover {
+      background-color: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .feedback {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .feedback.visible { display: block; }
+    .feedback.correcto {
+      background-color: rgba(39, 174, 96, 0.12);
+      border-left: 4px solid var(--color-exito);
+      color: var(--color-exito);
+    }
+    .feedback.incorrecto {
+      background-color: rgba(192, 57, 43, 0.12);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .pista-texto {
+      background-color: rgba(91, 127, 163, 0.1);
+      border-left: 4px solid var(--color-acento);
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--color-primario);
+      margin-top: 12px;
+      display: none;
+    }
+    .pista-texto.visible { display: block; }
+
+    .navegacion-problemas {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid var(--color-acento-suave);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .indicador-problema {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-navegacion {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+    .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .info-solucion {
+      background-color: rgba(39, 174, 96, 0.1);
+      border-left: 4px solid var(--color-exito);
+      padding: 12px 16px;
+      border-radius: 6px;
+      color: var(--color-exito);
+      font-weight: 600;
+      margin-top: 15px;
+    }
+
+    .footer-info {
+      background-color: var(--color-base);
+      border-top: 1px solid var(--color-acento-suave);
+      padding: 15px 25px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      text-align: center;
+    }
+
+    .footer-info strong { color: var(--color-acento); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2rem; }
+      .tarjeta-problema { padding: 15px; margin: 15px; }
+      .barra-progreso { margin: 15px 15px 0 15px; }
+      .grupo-inputs { flex-direction: column; align-items: stretch; }
+      .navegacion-problemas { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <header>
+    <div class="institucion">Preparatoria Abierta</div>
+    <h1>Laboratorio de Sistemas 3×3</h1>
+    <p>Sistemas de Ecuaciones Lineales con Tres Variables | Matemáticas III</p>
+  </header>
+
+  <div class="barra-progreso">
+    <div class="info">
+      <span>📊 Progreso:</span>
+      <span class="contador" id="contador-resueltos">0 de 8 resueltos</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-secundario" id="btn-aleatorio">🎲 Problema aleatorio</button>
+      <button class="btn-secundario" id="btn-reiniciar">🔄 Reiniciar progreso</button>
+    </div>
+  </div>
+
+  <div class="tarjeta-problema">
+    <div class="meta-problema">
+      <div class="numero-problema" id="numero-problema">Problema 1 de 8</div>
+      <div class="nivel-problema basico" id="nivel-problema">Básico</div>
+    </div>
+
+    <div class="enunciado" id="enunciado">
+      Cargando problema...
+    </div>
+
+    <div class="sistema-display" id="sistema-display"></div>
+
+    <!-- FASE 1: MÉTODO -->
+    <div class="fase" id="fase-1">
+      <div class="fase-titulo">
+        <span class="numero-fase">1</span>
+        Elige el método de solución
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>¿Qué método conviene usar?</label>
+          <select class="select-opcion" id="metodo-elegido">
+            <option value="">— Selecciona una opción —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-1">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-1">Verificar</button>
+      <div class="pista-texto" id="pista-1"></div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+
+    <!-- FASE 2: VARIABLE A ELIMINAR -->
+    <div class="fase" id="fase-2" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">2</span>
+        Identifica la variable a eliminar
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>¿Qué variable conviene eliminar primero?</label>
+          <select class="select-opcion" id="variable-eliminar">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>¿Con qué par de ecuaciones?</label>
+          <select class="select-opcion" id="par-ecuaciones">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-2">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-2">Verificar</button>
+      <div class="pista-texto" id="pista-2"></div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+
+    <!-- FASE 3: SISTEMA 2x2 RESULTANTE -->
+    <div class="fase" id="fase-3" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">3</span>
+        Sistema 2×2 resultante
+      </div>
+      <p style="font-size: 0.92rem; margin-bottom: 10px; color: var(--color-primario);">
+        Después de eliminar la variable elegida, se obtiene un sistema de 2×2. Selecciona las dos ecuaciones resultantes.
+      </p>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Ecuación resultante A:</label>
+          <select class="select-opcion" id="ecuacion-a">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Ecuación resultante B:</label>
+          <select class="select-opcion" id="ecuacion-b">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-3">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-3">Verificar</button>
+      <div class="pista-texto" id="pista-3"></div>
+      <div class="feedback" id="feedback-3"></div>
+    </div>
+
+    <!-- FASE 4: SOLUCIÓN -->
+    <div class="fase" id="fase-4" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">4</span>
+        Solución del sistema
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Valor de $x$:</label>
+          <select class="select-opcion" id="solucion-x">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>Valor de $y$:</label>
+          <select class="select-opcion" id="solucion-y">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>Valor de $z$:</label>
+          <select class="select-opcion" id="solucion-z">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-4">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-4">Verificar</button>
+      <div class="pista-texto" id="pista-4"></div>
+      <div class="feedback" id="feedback-4"></div>
+      <div class="info-solucion" id="info-solucion" style="display: none;"></div>
+    </div>
+
+    <div class="navegacion-problemas">
+      <button class="btn-navegacion secundario" id="btn-anterior" disabled>← Anterior</button>
+      <span class="indicador-problema" id="indicador-problema">Problema 1 de 8</span>
+      <button class="btn-navegacion" id="btn-siguiente">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <strong>Objetivo:</strong> Resolver sistemas de ecuaciones lineales con tres variables aplicando los métodos de suma/resta y sustitución. Identificar la variable más conveniente para eliminar, reducir el sistema a 2×2 y obtener la terna ordenada $(x, y, z)$.
+  </div>
+</div>
+
+<script>
+  // =========================================
+  // BANCO DE PROBLEMAS — SISTEMAS 3×3
+  // =========================================
+  var problemas = [
+    {
+      nivel: 'Básico',
+      enunciado: 'Resuelve el siguiente sistema de ecuaciones lineales con tres variables.',
+      sistema: {
+        eq1: { a: 1, b: 1, c: 1, d: 6 },
+        eq2: { a: 2, b: -1, c: 1, d: 3 },
+        eq3: { a: 1, b: 2, c: -1, d: 2 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'y',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['2x - y = 3', 'x + 2y = 2'],
+      opcionesEcuaciones: ['2x - y = 3', 'x + 2y = 2', '3x + y = 5', 'x - 3y = 1'],
+      solucion: { x: 1, y: 2, z: 3 },
+      opcionesX: [1, 2, 3, 4, 5, 6],
+      opcionesY: [1, 2, 3, 4, 5, 6],
+      opcionesZ: [1, 2, 3, 4, 5, 6],
+      pistaMetodo: 'Observa que en las ecuaciones 1 y 2 los coeficientes de $z$ son iguales (ambos 1). Restar las ecuaciones eliminará $z$ directamente.',
+      pistaVariable: 'La variable $z$ tiene coeficientes 1, 1, -1. Eliminar $z$ usando las ecuaciones 1 y 2 es directo.',
+      pistaPar: 'Restando ecuación 1 menos ecuación 2: $(x+y+z) - (2x-y+z) = 6 - 3$, que da $-x + 2y = 3$.',
+      pistaEcuaciones: 'El sistema 2×2 resultante tiene dos ecuaciones con $x$ e $y$.',
+      pistaSolucion: 'Una vez con el sistema 2×2, resuelve para $x$ e $y$, y luego sustituye en la ecuación original para obtener $z$.'
+    },
+    {
+      nivel: 'Básico',
+      enunciado: 'Resuelve el siguiente sistema por el método de suma o resta.',
+      sistema: {
+        eq1: { a: 2, b: 3, c: -4, d: 1 },
+        eq2: { a: 3, b: -1, c: -2, d: 4 },
+        eq3: { a: 4, b: -7, c: -1, d: -7 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'z',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['x + 2y = 5', '2x + y = 3'],
+      opcionesEcuaciones: ['x + 2y = 5', '2x + y = 3', '3x + y = 7', 'x - y = 1'],
+      solucion: { x: 1, y: 2, z: 1 },
+      opcionesX: [1, 2, 3, 4, 5, 6],
+      opcionesY: [1, 2, 3, 4, 5, 6],
+      opcionesZ: [1, 2, 3, 4, 5, 6],
+      pistaMetodo: 'Elimina $z$ combinando las ecuaciones. Los coeficientes de $z$ son -4, -2, -1.',
+      pistaVariable: 'Eliminar $z$ con las ecuaciones 1 y 2 es directo si multiplicas la ecuación 2 por 2.',
+      pistaPar: 'Multiplica la ecuación 2 por 2: $6x - 2y - 4z = 8$. Réstala de la ecuación 1.',
+      pistaEcuaciones: 'Las dos ecuaciones resultantes son lineales en $x$ e $y$.',
+      pistaSolucion: 'Sustituye los valores de $x$ e $y$ en una de las ecuaciones originales para obtener $z$.'
+    },
+    {
+      nivel: 'Básico',
+      enunciado: 'Resuelve el sistema usando el método de sustitución.',
+      sistema: {
+        eq1: { a: 1, b: 3, c: -2, d: 2 },
+        eq2: { a: 2, b: -3, c: 3, d: 11 },
+        eq3: { a: 3, b: 2, c: 2, d: 14 }
+      },
+      metodoCorrecto: 'Sustitución',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'x',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['5y - 7z = -7', '11y + 4z = 8'],
+      opcionesEcuaciones: ['5y - 7z = -7', '11y + 4z = 8', 'y + 3z = 1', '2y - z = 3'],
+      solucion: { x: 2, y: 1, z: 3 },
+      opcionesX: [1, 2, 3, 4, 5, 6],
+      opcionesY: [1, 2, 3, 4, 5, 6],
+      opcionesZ: [1, 2, 3, 4, 5, 6],
+      pistaMetodo: 'En la ecuación 1, $x$ tiene coeficiente 1. Conviene despejar $x$ de allí y sustituir.',
+      pistaVariable: 'Despejar $x$ de la ecuación 1: $x = 2 - 3y + 2z$. Sustituir en las ecuaciones 2 y 3.',
+      pistaPar: 'Sustituye en las ecuaciones 2 y 3 para obtener un sistema 2×2 en $y, z$.',
+      pistaEcuaciones: 'Las dos ecuaciones resultantes contienen $y$ y $z$ únicamente.',
+      pistaSolucion: 'Resuelve el sistema 2×2 en $y, z$, luego sustituye en la expresión de $x$.'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'Resuelve el sistema. Elige el método más conveniente.',
+      sistema: {
+        eq1: { a: 3, b: 2, c: 1, d: 2 },
+        eq2: { a: 2, b: -3, c: -6, d: 2 },
+        eq3: { a: 3, b: -4, c: 3, d: 8 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'z',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 3',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['6x + 2y = 10', '5x + y = 7'],
+      opcionesEcuaciones: ['6x + 2y = 10', '5x + y = 7', 'x + 5y = 5', '2x - y = 2'],
+      solucion: { x: 1, y: 2, z: -3 },
+      opcionesX: [1, 2, 3, 4, 5, 6],
+      opcionesY: [-3, -2, -1, 1, 2, 3],
+      opcionesZ: [-3, -2, -1, 1, 2, 3],
+      pistaMetodo: 'Los coeficientes de $z$ son 1, -6, 3. Multiplicar la ecuación 1 por 3 permite eliminar $z$ con la ecuación 3.',
+      pistaVariable: 'Elimina $z$ usando las ecuaciones 1 y 3 multiplicando la primera por 3.',
+      pistaPar: 'La ecuación 1 multiplicada por 3 da $9x + 6y + 3z = 6$. Súmala con la ecuación 3.',
+      pistaEcuaciones: 'El sistema 2×2 resultante tiene soluciones enteras.',
+      pistaSolucion: 'Sustituye los valores de $x, y$ en la ecuación original para obtener $z$.'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'Resuelve el sistema por suma o resta.',
+      sistema: {
+        eq1: { a: 4, b: 4, c: -3, d: 3 },
+        eq2: { a: 2, b: 3, c: 1, d: -4 },
+        eq3: { a: 3, b: -1, c: 4, d: 4 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'z',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['10x + 13y = -9', '10x + 15y = 12'],
+      opcionesEcuaciones: ['10x + 13y = -9', '10x + 15y = 12', 'x + y = 2', '3x + 5y = 1'],
+      solucion: { x: -3, y: 2, z: 1 },
+      opcionesX: [-3, -2, -1, 1, 2, 3],
+      opcionesY: [-3, -2, -1, 1, 2, 3],
+      opcionesZ: [-3, -2, -1, 1, 2, 3],
+      pistaMetodo: 'Elimina $z$ multiplicando la ecuación 2 por 3 y sumándola con la ecuación 1.',
+      pistaVariable: 'Los coeficientes de $z$ son -3, 1, 4. Multiplicando la ecuación 2 por 3 se iguala con la 1.',
+      pistaPar: 'Multiplica la ecuación 2 por 3: $6x + 9y + 3z = -12$. Súmala con la ecuación 1.',
+      pistaEcuaciones: 'Resuelve el 2×2 resultante por suma o resta.',
+      pistaSolucion: 'Una vez con $x$ e $y$, sustituye en cualquier ecuación original para hallar $z$.'
+    },
+    {
+      nivel: 'Medio',
+      enunciado: 'Resuelve el sistema por el método más conveniente.',
+      sistema: {
+        eq1: { a: 2, b: -3, c: -3, d: 9 },
+        eq2: { a: 1, b: 3, c: 2, d: 3 },
+        eq3: { a: 3, b: -4, c: -1, d: 4 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'x',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['3y + z = 3', '13y + 7z = -15'],
+      opcionesEcuaciones: ['3y + z = 3', '13y + 7z = -15', 'y + z = 2', '5y - 3z = 1'],
+      solucion: { x: 0, y: 1, z: 0 },
+      opcionesX: [-3, -2, -1, 0, 1, 2],
+      opcionesY: [-3, -2, -1, 0, 1, 2],
+      opcionesZ: [-3, -2, -1, 0, 1, 2],
+      pistaMetodo: 'Los coeficientes de $x$ son 2, 1, 3. La ecuación 2 tiene coeficiente 1, útil para combinar.',
+      pistaVariable: 'Elimina $x$ multiplicando la ecuación 2 por 2 y restándola de la ecuación 1.',
+      pistaPar: 'También puedes eliminar $x$ entre las ecuaciones 2 y 3 multiplicando la 2 por 3.',
+      pistaEcuaciones: 'Resuelve el 2×2 en $y, z$ y luego obtén $x$.',
+      pistaSolucion: 'Sustituye $y, z$ en la ecuación 2 para obtener $x$.'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Resuelve el sistema. Verifica que la terna ordenada satisface las tres ecuaciones.',
+      sistema: {
+        eq1: { a: 2, b: -3, c: 1, d: -1 },
+        eq2: { a: 1, b: 2, c: 1, d: 2 },
+        eq3: { a: -6, b: 2, c: -3, d: -4 }
+      },
+      metodoCorrecto: 'Suma o resta',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'z',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['x - 5y = -3', '-3x + 8y = 2'],
+      opcionesEcuaciones: ['x - 5y = -3', '-3x + 8y = 2', '3x - 2y = 1', '5x - 3y = 5'],
+      solucion: { x: 2, y: 1, z: -2 },
+      opcionesX: [-3, -2, -1, 1, 2, 3],
+      opcionesY: [-3, -2, -1, 1, 2, 3],
+      opcionesZ: [-3, -2, -1, 1, 2, 3],
+      pistaMetodo: 'Los coeficientes de $z$ son 1, 1, -3. Las ecuaciones 1 y 2 tienen coeficientes iguales en $z$.',
+      pistaVariable: 'Resta la ecuación 2 de la 1 para eliminar $z$ de inmediato.',
+      pistaPar: 'Luego usa las ecuaciones 2 y 3 para eliminar $z$ también.',
+      pistaEcuaciones: 'Multiplica la ecuación 2 por 3 para igualar coeficientes de $z$ con la 3.',
+      pistaSolucion: 'Resuelve el 2×2 en $x, y$ y luego sustituye en la ecuación 1 para obtener $z$.'
+    },
+    {
+      nivel: 'Alto',
+      enunciado: 'Resuelve el sistema. Comprueba que la solución es única.',
+      sistema: {
+        eq1: { a: 1, b: -2, c: 2, d: 1 },
+        eq2: { a: 2, b: -3, c: -1, d: -11 },
+        eq3: { a: 3, b: 2, c: 1, d: 4 }
+      },
+      metodoCorrecto: 'Sustitución',
+      opcionesMetodo: ['Suma o resta', 'Sustitución', 'Cramer', 'Gráfico'],
+      variableCorrecta: 'z',
+      opcionesVariable: ['x', 'y', 'z'],
+      parCorrecto: 'Ecuaciones 1 y 2',
+      opcionesPar: ['Ecuaciones 1 y 2', 'Ecuaciones 1 y 3', 'Ecuaciones 2 y 3'],
+      ecuacionesResultantes: ['-5x - 6y = -7', '5x - y = -7'],
+      opcionesEcuaciones: ['-5x - 6y = -7', '5x - y = -7', 'x + y = 0', '3x - 2y = 1'],
+      solucion: { x: -1, y: 2, z: 3 },
+      opcionesX: [-3, -2, -1, 1, 2, 3],
+      opcionesY: [-3, -2, -1, 1, 2, 3],
+      opcionesZ: [-3, -2, -1, 1, 2, 3],
+      pistaMetodo: 'Despeja $z$ de la ecuación 3 (coeficiente 1) y sustitúyela en 1 y 2.',
+      pistaVariable: 'La ecuación 3 permite despejar $z = 4 - 3x - 2y$ directamente.',
+      pistaPar: 'Sustituye $z$ en las ecuaciones 1 y 2 para obtener un sistema 2×2 en $x, y$.',
+      pistaEcuaciones: 'El sistema 2×2 se resuelve por suma/resta o sustitución.',
+      pistaSolucion: 'Después de obtener $x, y$, sustituye en la expresión de $z$.'
+    }
+  ];
+
+  // =========================================
+  // ESTADO
+  // =========================================
+  var indiceActual = 0;
+  var resueltos = JSON.parse(localStorage.getItem('lab_3x3_resueltos') || '[]');
+
+  // =========================================
+  // UTILIDADES
+  // =========================================
+  function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+    }
+  }
+
+  function mezclar(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function actualizarContador() {
+    document.getElementById('contador-resueltos').textContent = resueltos.length + ' de ' + problemas.length + ' resueltos';
+  }
+
+  function formatearEcuacion(eq) {
+    var texto = '';
+    // x
+    if (eq.a !== 0) {
+      if (eq.a === 1) texto += 'x';
+      else if (eq.a === -1) texto += '-x';
+      else texto += eq.a + 'x';
+    }
+    // y
+    if (eq.b !== 0) {
+      if (texto !== '' && eq.b > 0) texto += ' + ';
+      else if (texto !== '' && eq.b < 0) texto += ' - ';
+      else if (texto === '' && eq.b < 0) texto += '-';
+      var absB = Math.abs(eq.b);
+      if (absB !== 1) texto += absB;
+      texto += 'y';
+    }
+    // z
+    if (eq.c !== 0) {
+      if (texto !== '' && eq.c > 0) texto += ' + ';
+      else if (texto !== '' && eq.c < 0) texto += ' - ';
+      else if (texto === '' && eq.c < 0) texto += '-';
+      var absC = Math.abs(eq.c);
+      if (absC !== 1) texto += absC;
+      texto += 'z';
+    }
+    texto += ' = ' + eq.d;
+    return texto;
+  }
+
+  // =========================================
+  // CARGAR PROBLEMA
+  // =========================================
+  function cargarProblema(indice) {
+    indiceActual = indice;
+    var p = problemas[indice];
+
+    document.getElementById('numero-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    var nivelElem = document.getElementById('nivel-problema');
+    nivelElem.textContent = p.nivel;
+    nivelElem.className = 'nivel-problema ' + p.nivel.toLowerCase();
+
+    document.getElementById('enunciado').innerHTML = p.enunciado;
+
+    // Mostrar sistema
+    var sistemaHTML = '$$\\begin{cases} ' + formatearEcuacion(p.sistema.eq1) + ' \\\\ ' + formatearEcuacion(p.sistema.eq2) + ' \\\\ ' + formatearEcuacion(p.sistema.eq3) + ' \\end{cases}$$';
+    document.getElementById('sistema-display').innerHTML = sistemaHTML;
+
+    // Fase 1: Método
+    var selectMetodo = document.getElementById('metodo-elegido');
+    selectMetodo.innerHTML = '<option value="">— Selecciona una opción —</option>';
+    mezclar(p.opcionesMetodo).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectMetodo.appendChild(opt);
+    });
+    selectMetodo.className = 'select-opcion pendiente';
+
+    // Fase 2: Variable
+    var selectVariable = document.getElementById('variable-eliminar');
+    selectVariable.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesVariable).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectVariable.appendChild(opt);
+    });
+    selectVariable.className = 'select-opcion pendiente';
+
+    var selectPar = document.getElementById('par-ecuaciones');
+    selectPar.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesPar).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectPar.appendChild(opt);
+    });
+    selectPar.className = 'select-opcion pendiente';
+
+    // Fase 3: Ecuaciones resultantes
+    var selectA = document.getElementById('ecuacion-a');
+    selectA.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesEcuaciones).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectA.appendChild(opt);
+    });
+    selectA.className = 'select-opcion pendiente';
+
+    var selectB = document.getElementById('ecuacion-b');
+    selectB.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesEcuaciones).forEach(function(op) {
+      var opt = document.createElement('option');
+      opt.value = op;
+      opt.textContent = op;
+      selectB.appendChild(opt);
+    });
+    selectB.className = 'select-opcion pendiente';
+
+    // Fase 4: Solución
+    var selectX = document.getElementById('solucion-x');
+    selectX.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesX).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectX.appendChild(opt);
+    });
+    selectX.className = 'select-opcion pendiente';
+
+    var selectY = document.getElementById('solucion-y');
+    selectY.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesY).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectY.appendChild(opt);
+    });
+    selectY.className = 'select-opcion pendiente';
+
+    var selectZ = document.getElementById('solucion-z');
+    selectZ.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesZ).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectZ.appendChild(opt);
+    });
+    selectZ.className = 'select-opcion pendiente';
+
+    // Resetear fases
+    ['fase-1', 'fase-2', 'fase-3', 'fase-4'].forEach(function(id, i) {
+      if (i > 0) document.getElementById(id).style.display = 'none';
+      else document.getElementById(id).style.display = 'block';
+    });
+
+    ['feedback-1', 'feedback-2', 'feedback-3', 'feedback-4'].forEach(function(id) {
+      document.getElementById(id).className = 'feedback';
+    });
+    ['pista-1', 'pista-2', 'pista-3', 'pista-4'].forEach(function(id) {
+      document.getElementById(id).className = 'pista-texto';
+    });
+
+    document.getElementById('info-solucion').style.display = 'none';
+
+    // Navegación
+    document.getElementById('indicador-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    document.getElementById('btn-anterior').disabled = (indice === 0);
+    document.getElementById('btn-siguiente').disabled = (indice === problemas.length - 1);
+
+    renderMath(document.body);
+  }
+
+  // =========================================
+  // VERIFICAR FASE 1: MÉTODO
+  // =========================================
+  document.getElementById('btn-verificar-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var resp = document.getElementById('metodo-elegido').value;
+    var feedback = document.getElementById('feedback-1');
+    var select = document.getElementById('metodo-elegido');
+
+    if (!resp) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar un método.';
+      return;
+    }
+
+    if (resp === p.metodoCorrecto) {
+      select.className = 'select-opcion correcto';
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! El método más conveniente es <strong>' + p.metodoCorrecto + '</strong>.';
+      document.getElementById('fase-2').style.display = 'block';
+      renderMath(feedback);
+    } else {
+      select.className = 'select-opcion incorrecto';
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ No es el método más conveniente. Revisa la pista.';
+      renderMath(feedback);
+    }
+  });
+
+  document.getElementById('btn-pista-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-1');
+    pista.innerHTML = '💡 ' + p.pistaMetodo;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 2: VARIABLE Y PAR
+  // =========================================
+  document.getElementById('btn-verificar-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respVar = document.getElementById('variable-eliminar').value;
+    var respPar = document.getElementById('par-ecuaciones').value;
+    var feedback = document.getElementById('feedback-2');
+    var selectVar = document.getElementById('variable-eliminar');
+    var selectPar = document.getElementById('par-ecuaciones');
+
+    if (!respVar || !respPar) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar la variable y el par de ecuaciones.';
+      return;
+    }
+
+    var okVar = (respVar === p.variableCorrecta);
+    var okPar = (respPar === p.parCorrecto);
+
+    selectVar.className = 'select-opcion ' + (okVar ? 'correcto' : 'incorrecto');
+    selectPar.className = 'select-opcion ' + (okPar ? 'correcto' : 'incorrecto');
+
+    if (okVar && okPar) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! Elimina $' + p.variableCorrecta + '$ usando las ' + p.parCorrecto.toLowerCase() + '.';
+      document.getElementById('fase-3').style.display = 'block';
+      renderMath(feedback);
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      var msg = '❌ Revisa. ';
+      if (!okVar) msg += 'La variable no es la más conveniente. ';
+      if (!okPar) msg += 'El par de ecuaciones no es el óptimo. ';
+      feedback.innerHTML = msg + 'Usa la pista si necesitas ayuda.';
+      renderMath(feedback);
+    }
+  });
+
+  document.getElementById('btn-pista-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-2');
+    pista.innerHTML = '💡 ' + p.pistaVariable;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 3: ECUACIONES RESULTANTES
+  // =========================================
+  document.getElementById('btn-verificar-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respA = document.getElementById('ecuacion-a').value;
+    var respB = document.getElementById('ecuacion-b').value;
+    var feedback = document.getElementById('feedback-3');
+    var selectA = document.getElementById('ecuacion-a');
+    var selectB = document.getElementById('ecuacion-b');
+
+    if (!respA || !respB) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar las dos ecuaciones resultantes.';
+      return;
+    }
+
+    // Verificar que ambas ecuaciones estén en las correctas
+    var correctas = p.ecuacionesResultantes;
+    var okA = correctas.indexOf(respA) !== -1;
+    var okB = correctas.indexOf(respB) !== -1;
+    var diferentes = (respA !== respB);
+
+    selectA.className = 'select-opcion ' + (okA ? 'correcto' : 'incorrecto');
+    selectB.className = 'select-opcion ' + (okB ? 'correcto' : 'incorrecto');
+
+    if (okA && okB && diferentes) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! Las dos ecuaciones resultantes son:<br>• $' + correctas[0] + '$<br>• $' + correctas[1] + '$';
+      document.getElementById('fase-4').style.display = 'block';
+      renderMath(feedback);
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      var msg = '❌ Revisa. ';
+      if (!diferentes) msg += 'Las dos ecuaciones deben ser distintas. ';
+      if (!okA || !okB) msg += 'Alguna de las ecuaciones no es la correcta. ';
+      feedback.innerHTML = msg + 'Usa la pista para ver el desarrollo.';
+      renderMath(feedback);
+    }
+  });
+
+  document.getElementById('btn-pista-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-3');
+    pista.innerHTML = '💡 ' + p.pistaEcuaciones + '<br><br>Las ecuaciones correctas son: $' + p.ecuacionesResultantes[0] + '$ y $' + p.ecuacionesResultantes[1] + '$.';
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 4: SOLUCIÓN
+  // =========================================
+  document.getElementById('btn-verificar-4').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respX = parseFloat(document.getElementById('solucion-x').value);
+    var respY = parseFloat(document.getElementById('solucion-y').value);
+    var respZ = parseFloat(document.getElementById('solucion-z').value);
+    var feedback = document.getElementById('feedback-4');
+    var selectX = document.getElementById('solucion-x');
+    var selectY = document.getElementById('solucion-y');
+    var selectZ = document.getElementById('solucion-z');
+
+    if (isNaN(respX) || isNaN(respY) || isNaN(respZ)) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar los tres valores.';
+      return;
+    }
+
+    var okX = (respX === p.solucion.x);
+    var okY = (respY === p.solucion.y);
+    var okZ = (respZ === p.solucion.z);
+
+    selectX.className = 'select-opcion ' + (okX ? 'correcto' : 'incorrecto');
+    selectY.className = 'select-opcion ' + (okY ? 'correcto' : 'incorrecto');
+    selectZ.className = 'select-opcion ' + (okZ ? 'correcto' : 'incorrecto');
+
+    if (okX && okY && okZ) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! La solución es la terna ordenada $(' + p.solucion.x + ',\\ ' + p.solucion.y + ',\\ ' + p.solucion.z + ')$.';
+      document.getElementById('info-solucion').style.display = 'block';
+      document.getElementById('info-solucion').innerHTML = '✅ <strong>Problema resuelto.</strong> La terna $(' + p.solucion.x + ',\\ ' + p.solucion.y + ',\\ ' + p.solucion.z + ')$ satisface las tres ecuaciones.';
+
+      if (resueltos.indexOf(indiceActual) === -1) {
+        resueltos.push(indiceActual);
+        localStorage.setItem('lab_3x3_resueltos', JSON.stringify(resueltos));
+        actualizarContador();
+      }
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ La solución no es correcta. Revisa tus cálculos o usa la pista.';
+    }
+    renderMath(feedback);
+    renderMath(document.getElementById('info-solucion'));
+  });
+
+  document.getElementById('btn-pista-4').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-4');
+    pista.innerHTML = '💡 ' + p.pistaSolucion;
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // NAVEGACIÓN
+  // =========================================
+  document.getElementById('btn-anterior').addEventListener('click', function() {
+    if (indiceActual > 0) cargarProblema(indiceActual - 1);
+  });
+
+  document.getElementById('btn-siguiente').addEventListener('click', function() {
+    if (indiceActual < problemas.length - 1) cargarProblema(indiceActual + 1);
+  });
+
+  document.getElementById('btn-aleatorio').addEventListener('click', function() {
+    var nuevo;
+    do {
+      nuevo = Math.floor(Math.random() * problemas.length);
+    } while (nuevo === indiceActual && problemas.length > 1);
+    cargarProblema(nuevo);
+  });
+
+  document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres reiniciar tu progreso?')) {
+      resueltos = [];
+      localStorage.removeItem('lab_3x3_resueltos');
+      actualizarContador();
+    }
+  });
+
+  // =========================================
+  // INICIALIZACIÓN
+  // =========================================
+  actualizarContador();
+  cargarProblema(0);
+</script>
+
+</body>
+</html>

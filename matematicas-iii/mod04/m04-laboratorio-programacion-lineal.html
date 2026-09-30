@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Programación Lineal | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1250px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            min-height: 700px;
+        }
+
+        /* =========================================
+           PANEL DE CONTROL
+           ========================================= */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px;
+            border-right: 1px solid var(--color-acento-suave);
+            overflow-y: auto;
+            max-height: 900px;
+        }
+
+        .panel-control h2 {
+            color: var(--color-primario);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--color-acento);
+            padding-left: 10px;
+        }
+
+        .seccion-restriccion {
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .seccion-restriccion h3 {
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chk-activa {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--color-acento);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .chk-activa input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            cursor: pointer;
+        }
+
+        .grupo-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 5px;
+            align-items: end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin-bottom: 2px;
+            text-align: center;
+        }
+
+        input[type="number"] {
+            padding: 5px 3px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 4px;
+            font-size: 0.82rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100%;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        select.signo {
+            padding: 5px 3px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+        }
+
+        .seccion-objetivo {
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--color-exito);
+        }
+
+        .seccion-objetivo h3 {
+            color: var(--color-primario);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .grupo-objetivo {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            align-items: end;
+            margin-bottom: 8px;
+        }
+
+        .selector-tipo {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .radio-tipo {
+            flex: 1;
+            background-color: var(--color-base);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .radio-tipo input { display: none; }
+
+        .radio-tipo.activo {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        .btn-accion {
+            width: 100%;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-accion:hover { background-color: var(--color-primario); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .botones-ejemplos {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .btn-ejemplo {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        /* =========================================
+           PANEL DE CANVAS
+           ========================================= */
+        .panel-canvas {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--color-blanco);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 4px rgba(44,73,102,0.06);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Slider de recta móvil */
+        .control-recta-movil {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 12px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+
+        .control-recta-movil label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--color-acento-suave);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-acento);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--color-blanco);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--color-acento);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--color-blanco);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .valor-slider {
+            font-family: 'Consolas', monospace;
+            font-weight: 700;
+            color: var(--color-acento);
+            font-size: 0.95rem;
+            min-width: 70px;
+            text-align: right;
+        }
+
+        /* =========================================
+           PANEL DE RESULTADOS
+           ========================================= */
+        .panel-resultados {
+            margin-top: 20px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+            border-left: 5px solid var(--color-acento);
+        }
+
+        .panel-resultados.con-optimo {
+            border-left-color: var(--color-exito);
+            background-color: rgba(39, 174, 96, 0.06);
+        }
+
+        .panel-resultados.sin-solucion {
+            border-left-color: var(--color-error);
+            background-color: rgba(192, 57, 43, 0.06);
+        }
+
+        .panel-resultados.no-acotado {
+            border-left-color: #f39c12;
+            background-color: rgba(243, 156, 18, 0.06);
+        }
+
+        .panel-resultados h3 {
+            color: var(--color-primario);
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+        }
+
+        .tabla-vertices {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            font-size: 0.9rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .tabla-vertices th {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tabla-vertices td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--color-acento-suave);
+            color: var(--color-texto-oscuro);
+        }
+
+        .tabla-vertices tr:nth-child(even) td {
+            background-color: var(--color-base);
+        }
+
+        .tabla-vertices tr.optimo td {
+            background-color: rgba(39, 174, 96, 0.2);
+            font-weight: 700;
+            color: var(--color-exito);
+        }
+
+        .mensaje-optimo {
+            background-color: var(--color-blanco);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        .mensaje-optimo strong { color: var(--color-exito); }
+
+        .aviso-especial {
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-error);
+            padding: 12px 16px;
+            border-radius: 6px;
+            color: var(--color-error);
+            font-weight: 600;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal {
+                grid-template-columns: 1fr;
+            }
+            .panel-control {
+                border-right: none;
+                border-bottom: 1px solid var(--color-acento-suave);
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            .panel-control, .panel-canvas { padding: 15px; }
+            .tabla-vertices { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Laboratorio de Programación Lineal</h1>
+        <p>Optimización con Sistemas de Desigualdades | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Restricciones del sistema</h2>
+
+            <div class="seccion-restriccion">
+                <h3>
+                    Restricción 1
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-1" checked>
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₁</label><input type="number" id="r1a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>B₁</label><input type="number" id="r1b" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₁</label><input type="number" id="r1c" value="12" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="r1s">
+                            <option value="<=" selected>≤</option>
+                            <option value="<">&lt;</option>
+                            <option value=">=">≥</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seccion-restriccion">
+                <h3>
+                    Restricción 2
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-2" checked>
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₂</label><input type="number" id="r2a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>B₂</label><input type="number" id="r2b" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>C₂</label><input type="number" id="r2c" value="5" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="r2s">
+                            <option value="<=">&lt;</option>
+                            <option value="<=" selected>≥</option>
+                            <option value=">=">≥</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seccion-restriccion">
+                <h3>
+                    Restricción 3
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-3" checked>
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₃</label><input type="number" id="r3a" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>B₃</label><input type="number" id="r3b" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₃</label><input type="number" id="r3c" value="4" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="r3s">
+                            <option value="<=">&lt;</option>
+                            <option value="<=" selected>≥</option>
+                            <option value=">=">≥</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seccion-restriccion">
+                <h3>
+                    Restricción 4
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-4">
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₄</label><input type="number" id="r4a" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>B₄</label><input type="number" id="r4b" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>C₄</label><input type="number" id="r4c" value="0" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="r4s">
+                            <option value="<=" selected>≤</option>
+                            <option value="<">&lt;</option>
+                            <option value=">=">≥</option>
+                            <option value=">">&gt;</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <h2 style="margin-top: 15px;">Función objetivo</h2>
+            <div class="seccion-objetivo">
+                <h3>$Z = ax + by$</h3>
+                <div class="grupo-objetivo">
+                    <div class="input-wrapper"><label>a</label><input type="number" id="obja" value="12" step="any"></div>
+                    <div class="input-wrapper"><label>b</label><input type="number" id="objb" value="10" step="any"></div>
+                    <div class="input-wrapper" style="justify-content: flex-end;">
+                        <span style="font-size: 0.75rem; color: var(--color-acento); font-weight: 700; text-align: center;">Tipo</span>
+                    </div>
+                </div>
+                <div class="selector-tipo">
+                    <label class="radio-tipo activo" id="lbl-max">
+                        <input type="radio" name="tipo" value="max" checked>
+                        Maximizar
+                    </label>
+                    <label class="radio-tipo" id="lbl-min">
+                        <input type="radio" name="tipo" value="min">
+                        Minimizar
+                    </label>
+                </div>
+            </div>
+
+            <button class="btn-accion" id="btn-actualizar">🔄 Actualizar</button>
+            <button class="btn-accion btn-secundario" id="btn-reset-vista">🎯 Centrar vista</button>
+
+            <h2 style="margin-top: 20px;">Ejemplos predefinidos</h2>
+            <div class="botones-ejemplos">
+                <button class="btn-ejemplo" data-ej="1">
+                    ✈️ Agencia de viajes (maximizar $U = 12x + 10y$)
+                </button>
+                <button class="btn-ejemplo" data-ej="2">
+                    🌱 Fertilizantes (minimizar $C = 3x + 2y$)
+                </button>
+                <button class="btn-ejemplo" data-ej="3">
+                    🧵 Sastre: sacos y abrigos (maximizar)
+                </button>
+                <button class="btn-ejemplo" data-ej="4">
+                    🚚 Camiones refrigerados (minimizar)
+                </button>
+            </div>
+        </div>
+
+        <!-- PANEL DE CANVAS Y RESULTADOS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560"></canvas>
+            </div>
+
+            <div class="control-recta-movil">
+                <label>Recta de nivel $k$ =</label>
+                <input type="range" id="slider-k" min="0" max="1000" value="0" step="1">
+                <span class="valor-slider" id="valor-k">0</span>
+            </div>
+
+            <div class="panel-resultados" id="panel-resultados">
+                <h3 id="titulo-resultados">Análisis del sistema</h3>
+                <div id="contenido-resultados">
+                    Cargando análisis...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Aplicar el método gráfico de programación lineal. Encontrar la región factible, identificar sus vértices, y evaluar la función objetivo en cada uno de ellos para determinar el valor máximo o mínimo.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN DEL CANVAS
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var ancho = canvas.width;
+    var alto = canvas.height;
+    var origenX = ancho / 2;
+    var origenY = alto / 2;
+    var escala = 25;
+    var escalaBase = 25;
+
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+    var COLOR_FACTIBLE = 'rgba(39, 174, 96, 0.28)';
+    var COLOR_FRONTERA = '#5b7fa3';
+    var COLOR_VERTICE = '#c0392b';
+    var COLOR_OPTIMO = '#27ae60';
+    var COLOR_RECTA_NIVEL = '#f39c12';
+
+    var coefs = {
+        restricciones: [
+            { a: 1, b: 1, c: 12, signo: '<=', activa: true },
+            { a: 1, b: 0, c: 5, signo: '>=', activa: true },
+            { a: 0, b: 1, c: 4, signo: '>=', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<=', activa: false }
+        ],
+        objetivo: { a: 12, b: 10, tipo: 'max' }
+    };
+
+    var verticesCalculados = [];
+    var kActual = 0;
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (!isFinite(n)) return '∞';
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(2)).toString();
+    }
+
+    function aPixelX(x) { return origenX + x * escala; }
+    function aPixelY(y) { return origenY - y * escala; }
+    function aCoordX(px) { return (px - origenX) / escala; }
+    function aCoordY(py) { return (origenY - py) / escala; }
+
+    // =========================================
+    // EVALUAR RESTRICCIÓN EN UN PUNTO
+    // =========================================
+    function cumpleRestriccion(rest, x, y) {
+        var valor = rest.a * x + rest.b * y;
+        switch (rest.signo) {
+            case '<':  return valor < rest.c - 1e-9;
+            case '<=': return valor <= rest.c + 1e-9;
+            case '>':  return valor > rest.c + 1e-9;
+            case '>=': return valor >= rest.c - 1e-9;
+        }
+        return false;
+    }
+
+    // =========================================
+    // DIBUJAR CUADRÍCULA Y EJES
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+
+        var rangoX = Math.ceil(origenX / escala);
+        var rangoY = Math.ceil(origenY / escala);
+
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, alto);
+            ctx.stroke();
+        }
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(0, py);
+            ctx.lineTo(ancho, py);
+            ctx.stroke();
+        }
+    }
+
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+
+        // Eje X
+        ctx.beginPath();
+        ctx.moveTo(0, origenY);
+        ctx.lineTo(ancho - 5, origenY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ancho - 5, origenY);
+        ctx.lineTo(ancho - 15, origenY - 6);
+        ctx.lineTo(ancho - 15, origenY + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('X', ancho - 20, origenY - 12);
+
+        // Eje Y
+        ctx.beginPath();
+        ctx.moveTo(origenX, alto);
+        ctx.lineTo(origenX, 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origenX, 5);
+        ctx.lineTo(origenX - 6, 15);
+        ctx.lineTo(origenX + 6, 15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('Y', origenX + 12, 18);
+
+        // Marcas
+        ctx.font = '11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var rangoX = Math.ceil(origenX / escala);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            if (i === 0) continue;
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, origenY - 4);
+            ctx.lineTo(px, origenY + 4);
+            ctx.stroke();
+            if (i % 2 === 0) ctx.fillText(i.toString(), px, origenY + 18);
+        }
+
+        ctx.textAlign = 'right';
+        var rangoY = Math.ceil(origenY / escala);
+        for (var j = -rangoY; j <= rangoY; j++) {
+            if (j === 0) continue;
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(origenX - 4, py);
+            ctx.lineTo(origenX + 4, py);
+            ctx.stroke();
+            if (j % 2 === 0) ctx.fillText(j.toString(), origenX - 8, py + 4);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillText('0', origenX - 6, origenY + 16);
+    }
+
+    // =========================================
+    // DIBUJAR REGIÓN FACTIBLE
+    // =========================================
+    function dibujarRegionFactible() {
+        var activas = coefs.restricciones.filter(function(r) { return r.activa; });
+        if (activas.length === 0) return;
+
+        var paso = 3;
+        ctx.fillStyle = COLOR_FACTIBLE;
+
+        for (var px = 0; px < ancho; px += paso) {
+            for (var py = 0; py < alto; py += paso) {
+                var cx = aCoordX(px);
+                var cy = aCoordY(py);
+                var cumpleTodas = true;
+                for (var i = 0; i < activas.length; i++) {
+                    if (!cumpleRestriccion(activas[i], cx, cy)) {
+                        cumpleTodas = false;
+                        break;
+                    }
+                }
+                if (cumpleTodas) {
+                    ctx.fillRect(px, py, paso, paso);
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // DIBUJAR RECTA FRONTERA DE UNA RESTRICCIÓN
+    // =========================================
+    function dibujarRectaFrontera(rest, color, esEstricta) {
+        if (Math.abs(rest.a) < 1e-9 && Math.abs(rest.b) < 1e-9) return;
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        if (esEstricta) {
+            ctx.setLineDash([8, 5]);
+        } else {
+            ctx.setLineDash([]);
+        }
+
+        if (Math.abs(rest.b) > 1e-9) {
+            var m = -rest.a / rest.b;
+            var k = rest.c / rest.b;
+            var x_min = -origenX / escala;
+            var x_max = (ancho - origenX) / escala;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(x_min), aPixelY(m * x_min + k));
+            ctx.lineTo(aPixelX(x_max), aPixelY(m * x_max + k));
+            ctx.stroke();
+        } else if (Math.abs(rest.a) > 1e-9) {
+            var xv = rest.c / rest.a;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(xv), 0);
+            ctx.lineTo(aPixelX(xv), alto);
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+    }
+
+    // =========================================
+    // CALCULAR VÉRTICES DE LA REGIÓN FACTIBLE
+    // =========================================
+    function calcularVertices() {
+        var activas = coefs.restricciones.filter(function(r) { return r.activa; });
+        var vertices = [];
+
+        // Intersección de cada par de rectas
+        for (var i = 0; i < activas.length; i++) {
+            for (var j = i + 1; j < activas.length; j++) {
+                var r1 = activas[i];
+                var r2 = activas[j];
+                var det = r1.a * r2.b - r2.a * r1.b;
+                if (Math.abs(det) < 1e-9) continue; // Paralelas
+
+                var x = (r1.c * r2.b - r2.c * r1.b) / det;
+                var y = (r1.a * r2.c - r2.a * r1.c) / det;
+
+                // Verificar que el punto cumpla TODAS las restricciones activas
+                var cumpleTodas = true;
+                for (var k = 0; k < activas.length; k++) {
+                    if (!cumpleRestriccion(activas[k], x, y)) {
+                        cumpleTodas = false;
+                        break;
+                    }
+                }
+                if (cumpleTodas) {
+                    // Evitar duplicados
+                    var dup = false;
+                    for (var v = 0; v < vertices.length; v++) {
+                        if (Math.abs(vertices[v].x - x) < 1e-6 && Math.abs(vertices[v].y - y) < 1e-6) {
+                            dup = true;
+                            break;
+                        }
+                    }
+                    if (!dup) {
+                        vertices.push({ x: x, y: y });
+                    }
+                }
+            }
+        }
+
+        // También considerar intersecciones con los ejes (si las restricciones x≥0, y≥0 no están explícitas)
+        // Detectar si hay restricciones del tipo x ≥ 0 o y ≥ 0 implícitas
+        var tieneXPositiva = activas.some(function(r) { return r.a === 1 && r.b === 0 && r.signo === '>=' && r.c === 0; });
+        var tieneYPositiva = activas.some(function(r) { return r.a === 0 && r.b === 1 && r.signo === '>=' && r.c === 0; });
+
+        // Si no hay restricciones explícitas de no negatividad, añadimos los cortes con los ejes
+        // como candidatos potenciales si cumplen las demás restricciones.
+        if (!tieneXPositiva && !tieneYPositiva) {
+            // Considerar intersecciones con x=0 e y=0
+            for (var m = 0; m < activas.length; m++) {
+                var r = activas[m];
+                // Con x=0: y = c/b
+                if (Math.abs(r.b) > 1e-9) {
+                    var y0 = r.c / r.b;
+                    var cumpleX0 = true;
+                    for (var n = 0; n < activas.length; n++) {
+                        if (!cumpleRestriccion(activas[n], 0, y0)) { cumpleX0 = false; break; }
+                    }
+                    if (cumpleX0 && y0 >= -1e-6) {
+                        var dupX0 = vertices.some(function(v) { return Math.abs(v.x) < 1e-6 && Math.abs(v.y - y0) < 1e-6; });
+                        if (!dupX0) vertices.push({ x: 0, y: y0 });
+                    }
+                }
+                // Con y=0: x = c/a
+                if (Math.abs(r.a) > 1e-9) {
+                    var x0 = r.c / r.a;
+                    var cumpleY0 = true;
+                    for (var n2 = 0; n2 < activas.length; n2++) {
+                        if (!cumpleRestriccion(activas[n2], x0, 0)) { cumpleY0 = false; break; }
+                    }
+                    if (cumpleY0 && x0 >= -1e-6) {
+                        var dupY0 = vertices.some(function(v) { return Math.abs(v.y) < 1e-6 && Math.abs(v.x - x0) < 1e-6; });
+                        if (!dupY0) vertices.push({ x: x0, y: 0 });
+                    }
+                }
+            }
+        }
+
+        return vertices;
+    }
+
+    // =========================================
+    // DIBUJAR VÉRTICES
+    // =========================================
+    function dibujarVertices(vertices, mejorVertice) {
+        vertices.forEach(function(v, i) {
+            var px = aPixelX(v.x);
+            var py = aPixelY(v.y);
+
+            var esOptimo = mejorVertice && Math.abs(mejorVertice.x - v.x) < 1e-6 && Math.abs(mejorVertice.y - v.y) < 1e-6;
+
+            ctx.beginPath();
+            ctx.arc(px, py, esOptimo ? 9 : 7, 0, 2 * Math.PI);
+            ctx.fillStyle = esOptimo ? COLOR_OPTIMO : COLOR_VERTICE;
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Etiqueta
+            ctx.font = 'bold 11px Segoe UI, sans-serif';
+            ctx.fillStyle = esOptimo ? COLOR_OPTIMO : COLOR_VERTICE;
+            ctx.textAlign = 'left';
+            var etiqueta = '(' + formatearNumero(v.x) + ', ' + formatearNumero(v.y) + ')';
+            ctx.fillText(etiqueta, px + 12, py - 8);
+        });
+    }
+
+    // =========================================
+    // DIBUJAR RECTA DE NIVEL
+    // =========================================
+    function dibujarRectaNivel(k) {
+        var a = coefs.objetivo.a;
+        var b = coefs.objetivo.b;
+        if (Math.abs(a) < 1e-9 && Math.abs(b) < 1e-9) return;
+
+        ctx.strokeStyle = COLOR_RECTA_NIVEL;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+
+        if (Math.abs(b) > 1e-9) {
+            var m = -a / b;
+            var kk = k / b;
+            var x_min = -origenX / escala;
+            var x_max = (ancho - origenX) / escala;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(x_min), aPixelY(m * x_min + kk));
+            ctx.lineTo(aPixelX(x_max), aPixelY(m * x_max + kk));
+            ctx.stroke();
+        } else if (Math.abs(a) > 1e-9) {
+            var xv = k / a;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(xv), 0);
+            ctx.lineTo(aPixelX(xv), alto);
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+    }
+
+    // =========================================
+    // RENDERIZAR TODO
+    // =========================================
+    function renderizar() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+
+        dibujarCuadricula();
+        dibujarEjes();
+
+        // Dibujar región factible
+        dibujarRegionFactible();
+
+        // Dibujar rectas fronteras
+        var activas = coefs.restricciones.filter(function(r) { return r.activa; });
+        activas.forEach(function(r) {
+            var esEstricta = (r.signo === '<' || r.signo === '>');
+            dibujarRectaFrontera(r, COLOR_FRONTERA, esEstricta);
+        });
+
+        // Calcular y dibujar vértices
+        verticesCalculados = calcularVertices();
+
+        // Determinar el vértice óptimo
+        var mejorVertice = null;
+        if (verticesCalculados.length > 0) {
+            var mejorValor = null;
+            verticesCalculados.forEach(function(v) {
+                var valor = coefs.objetivo.a * v.x + coefs.objetivo.b * v.y;
+                if (mejorValor === null) {
+                    mejorValor = valor;
+                    mejorVertice = v;
+                } else if (coefs.objetivo.tipo === 'max' && valor > mejorValor) {
+                    mejorValor = valor;
+                    mejorVertice = v;
+                } else if (coefs.objetivo.tipo === 'min' && valor < mejorValor) {
+                    mejorValor = valor;
+                    mejorVertice = v;
+                }
+            });
+        }
+
+        // Dibujar vértices
+        dibujarVertices(verticesCalculados, mejorVertice);
+
+        // Dibujar recta de nivel
+        dibujarRectaNivel(kActual);
+
+        // Actualizar panel de resultados
+        actualizarResultados(verticesCalculados, mejorVertice);
+    }
+
+    // =========================================
+    // ACTUALIZAR PANEL DE RESULTADOS
+    // =========================================
+    function actualizarResultados(vertices, mejorVertice) {
+        var panel = document.getElementById('panel-resultados');
+        var titulo = document.getElementById('titulo-resultados');
+        var contenido = document.getElementById('contenido-resultados');
+
+        panel.classList.remove('con-optimo', 'sin-solucion', 'no-acotado');
+
+        if (vertices.length === 0) {
+            titulo.textContent = '⚠️ Región factible vacía o no acotada';
+            contenido.innerHTML = '<div class="aviso-especial">No se encontraron vértices factibles. Revisa las restricciones: podrían ser inconsistentes o la región factible podría ser no acotada en la dirección de la función objetivo.</div>';
+            panel.classList.add('sin-solucion');
+            return;
+        }
+
+        // Construir tabla de vértices
+        var html = '<table class="tabla-vertices">';
+        html += '<thead><tr><th>Vértice</th><th>Coordenadas</th><th>Valor de Z</th></tr></thead><tbody>';
+
+        vertices.forEach(function(v, i) {
+            var valor = coefs.objetivo.a * v.x + coefs.objetivo.b * v.y;
+            var esOptimo = mejorVertice && Math.abs(mejorVertice.x - v.x) < 1e-6 && Math.abs(mejorVertice.y - v.y) < 1e-6;
+            html += '<tr' + (esOptimo ? ' class="optimo"' : '') + '>';
+            html += '<td>' + (esOptimo ? '⭐' : '') + ' V' + (i + 1) + '</td>';
+            html += '<td>$(' + formatearNumero(v.x) + ', \\ ' + formatearNumero(v.y) + ')$</td>';
+            html += '<td>$' + formatearNumero(valor) + '$</td>';
+            html += '</tr>';
+        });
+
+        html += '</tbody></table>';
+
+        // Mensaje del óptimo
+        if (mejorVertice) {
+            var valorOptimo = coefs.objetivo.a * mejorVertice.x + coefs.objetivo.b * mejorVertice.y;
+            var tipoTexto = coefs.objetivo.tipo === 'max' ? 'máximo' : 'mínimo';
+            html += '<div class="mensaje-optimo">';
+            html += '⭐ El <strong>' + tipoTexto + '</strong> de $Z = ' + coefs.objetivo.a + 'x + ' + coefs.objetivo.b + 'y$ es ';
+            html += '<strong>$Z = ' + formatearNumero(valorOptimo) + '$</strong>, ';
+            html += 'alcanzado en el vértice $(' + formatearNumero(mejorVertice.x) + ', \\ ' + formatearNumero(mejorVertice.y) + ')$.';
+            html += '</div>';
+            panel.classList.add('con-optimo');
+        }
+
+        titulo.textContent = '📊 Análisis del sistema';
+        contenido.innerHTML = html;
+        renderMath(contenido);
+    }
+
+    // =========================================
+    // LEER COEFICIENTES
+    // =========================================
+    function leerCoeficientes() {
+        var ids = [
+            { a: 'r1a', b: 'r1b', c: 'r1c', s: 'r1s', act: 'activa-1' },
+            { a: 'r2a', b: 'r2b', c: 'r2c', s: 'r2s', act: 'activa-2' },
+            { a: 'r3a', b: 'r3b', c: 'r3c', s: 'r3s', act: 'activa-3' },
+            { a: 'r4a', b: 'r4b', c: 'r4c', s: 'r4s', act: 'activa-4' }
+        ];
+        ids.forEach(function(ids_, i) {
+            coefs.restricciones[i].a = parseFloat(document.getElementById(ids_.a).value) || 0;
+            coefs.restricciones[i].b = parseFloat(document.getElementById(ids_.b).value) || 0;
+            coefs.restricciones[i].c = parseFloat(document.getElementById(ids_.c).value) || 0;
+            coefs.restricciones[i].signo = document.getElementById(ids_.s).value;
+            coefs.restricciones[i].activa = document.getElementById(ids_.act).checked;
+        });
+
+        coefs.objetivo.a = parseFloat(document.getElementById('obja').value) || 0;
+        coefs.objetivo.b = parseFloat(document.getElementById('objb').value) || 0;
+        coefs.objetivo.tipo = document.querySelector('input[name="tipo"]:checked').value;
+    }
+
+    // =========================================
+    // ACTUALIZAR TODO
+    // =========================================
+    function actualizarTodo() {
+        leerCoeficientes();
+        renderizar();
+        actualizarSliderRango();
+    }
+
+    // =========================================
+    // SLIDER DE RECTA DE NIVEL
+    // =========================================
+    function actualizarSliderRango() {
+        // Ajustar el rango del slider según los valores de la función objetivo en los vértices
+        var minK = 0, maxK = 100;
+        if (verticesCalculados.length > 0) {
+            var valores = verticesCalculados.map(function(v) {
+                return coefs.objetivo.a * v.x + coefs.objetivo.b * v.y;
+            });
+            minK = Math.min.apply(null, valores);
+            maxK = Math.max.apply(null, valores);
+            // Dar un margen
+            var margen = Math.max(1, Math.abs(maxK - minK) * 0.2);
+            minK = Math.floor(minK - margen);
+            maxK = Math.ceil(maxK + margen);
+        }
+        var slider = document.getElementById('slider-k');
+        slider.min = minK;
+        slider.max = maxK;
+        slider.step = Math.max(0.1, (maxK - minK) / 200);
+        if (kActual < minK) kActual = minK;
+        if (kActual > maxK) kActual = maxK;
+        slider.value = kActual;
+        document.getElementById('valor-k').textContent = formatearNumero(kActual);
+    }
+
+    document.getElementById('slider-k').addEventListener('input', function() {
+        kActual = parseFloat(this.value);
+        document.getElementById('valor-k').textContent = formatearNumero(kActual);
+        renderizar();
+    });
+
+    // =========================================
+    // EVENTOS
+    // =========================================
+    document.getElementById('btn-actualizar').addEventListener('click', actualizarTodo);
+
+    ['r1a', 'r1b', 'r1c', 'r1s', 'activa-1',
+     'r2a', 'r2b', 'r2c', 'r2s', 'activa-2',
+     'r3a', 'r3b', 'r3c', 'r3s', 'activa-3',
+     'r4a', 'r4b', 'r4c', 'r4s', 'activa-4',
+     'obja', 'objb'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.addEventListener('input', actualizarTodo);
+        el.addEventListener('change', actualizarTodo);
+    });
+
+    document.querySelectorAll('input[name="tipo"]').forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            document.getElementById('lbl-max').classList.toggle('activo', this.value === 'max');
+            document.getElementById('lbl-min').classList.toggle('activo', this.value === 'min');
+            actualizarTodo();
+        });
+    });
+
+    document.getElementById('btn-reset-vista').addEventListener('click', function() {
+        escala = escalaBase;
+        origenX = ancho / 2;
+        origenY = alto / 2;
+        renderizar();
+    });
+
+    // =========================================
+    // EJEMPLOS PREDEFINIDOS
+    // =========================================
+    var ejemplos = {
+        '1': {
+            restricciones: [
+                { a: 1, b: 1, c: 12, signo: '<=', activa: true },
+                { a: 1, b: 0, c: 5, signo: '>=', activa: true },
+                { a: 0, b: 1, c: 4, signo: '>=', activa: true },
+                { a: 0, b: 0, c: 0, signo: '<=', activa: false }
+            ],
+            objetivo: { a: 12, b: 10, tipo: 'max' }
+        },
+        '2': {
+            restricciones: [
+                { a: 5, b: 1, c: 10, signo: '>=', activa: true },
+                { a: 2, b: 2, c: 12, signo: '>=', activa: true },
+                { a: 1, b: 4, c: 12, signo: '>=', activa: true },
+                { a: 1, b: 0, c: 0, signo: '>=', activa: true }
+            ],
+            objetivo: { a: 3, b: 2, tipo: 'min' }
+        },
+        '3': {
+            restricciones: [
+                { a: 2, b: 3, c: 60, signo: '<=', activa: true },
+                { a: 4, b: 2, c: 80, signo: '<=', activa: true },
+                { a: 1, b: 0, c: 0, signo: '>=', activa: true },
+                { a: 0, b: 1, c: 0, signo: '>=', activa: true }
+            ],
+            objetivo: { a: 20, b: 30, tipo: 'max' }
+        },
+        '4': {
+            restricciones: [
+                { a: 1, b: 3, c: 60, signo: '>=', activa: true },
+                { a: 2, b: 2, c: 80, signo: '>=', activa: true },
+                { a: 1, b: 0, c: 0, signo: '>=', activa: true },
+                { a: 0, b: 1, c: 0, signo: '>=', activa: true }
+            ],
+            objetivo: { a: 1, b: 2, tipo: 'min' }
+        }
+    };
+
+    document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var ej = ejemplos[this.dataset.ej];
+            if (!ej) return;
+
+            var ids = [
+                { a: 'r1a', b: 'r1b', c: 'r1c', s: 'r1s', act: 'activa-1' },
+                { a: 'r2a', b: 'r2b', c: 'r2c', s: 'r2s', act: 'activa-2' },
+                { a: 'r3a', b: 'r3b', c: 'r3c', s: 'r3s', act: 'activa-3' },
+                { a: 'r4a', b: 'r4b', c: 'r4c', s: 'r4s', act: 'activa-4' }
+            ];
+
+            ids.forEach(function(ids_, i) {
+                var r = ej.restricciones[i];
+                document.getElementById(ids_.a).value = r.a;
+                document.getElementById(ids_.b).value = r.b;
+                document.getElementById(ids_.c).value = r.c;
+                document.getElementById(ids_.s).value = r.signo;
+                document.getElementById(ids_.act).checked = r.activa;
+            });
+
+            document.getElementById('obja').value = ej.objetivo.a;
+            document.getElementById('objb').value = ej.objetivo.b;
+            document.querySelector('input[name="tipo"][value="' + ej.objetivo.tipo + '"]').checked = true;
+            document.getElementById('lbl-max').classList.toggle('activo', ej.objetivo.tipo === 'max');
+            document.getElementById('lbl-min').classList.toggle('activo', ej.objetivo.tipo === 'min');
+
+            kActual = 0;
+            actualizarTodo();
+        });
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    actualizarTodo();
+</script>
+
+</body>
+</html>

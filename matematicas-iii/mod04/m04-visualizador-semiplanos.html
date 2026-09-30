@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Semiplanos — Desigualdades Lineales | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            min-height: 620px;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px;
+            border-right: 1px solid var(--color-acento-suave);
+            overflow-y: auto;
+            max-height: 800px;
+        }
+
+        .panel-control h2 {
+            color: var(--color-primario);
+            font-size: 1.05rem;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--color-acento);
+            padding-left: 10px;
+        }
+
+        .seccion-desigualdad {
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--color-acento);
+            position: relative;
+        }
+
+        .seccion-desigualdad.des-1 { border-left-color: #5b7fa3; }
+        .seccion-desigualdad.des-2 { border-left-color: #c0392b; }
+        .seccion-desigualdad.des-3 { border-left-color: #27ae60; }
+
+        .seccion-desigualdad h3 {
+            color: var(--color-primario);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .seccion-desigualdad h3::before {
+            content: "";
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+
+        .seccion-desigualdad.des-1 h3::before { background-color: #5b7fa3; }
+        .seccion-desigualdad.des-2 h3::before { background-color: #c0392b; }
+        .seccion-desigualdad.des-3 h3::before { background-color: #27ae60; }
+
+        .chk-activa {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--color-acento);
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .chk-activa input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            cursor: pointer;
+        }
+
+        .grupo-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 6px;
+            align-items: end;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-wrapper label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin-bottom: 2px;
+            text-align: center;
+        }
+
+        input[type="number"] {
+            padding: 6px 4px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100%;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        select.signo {
+            padding: 6px 4px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+        }
+
+        .btn-accion {
+            width: 100%;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-accion:hover { background-color: var(--color-primario); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .botones-ejemplos {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .btn-ejemplo {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        .info-punto {
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 15px;
+            border-left: 4px solid var(--color-acento-suave);
+            font-size: 0.85rem;
+            color: var(--color-primario);
+        }
+
+        .info-punto .titulo {
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--color-acento);
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-punto .valor {
+            font-family: 'Consolas', monospace;
+            color: var(--color-primario);
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .info-punto .estado {
+            margin-top: 6px;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .info-punto .estado.visible { display: block; }
+        .info-punto .estado.correcto {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--color-exito);
+        }
+        .info-punto .estado.incorrecto {
+            background-color: rgba(192, 57, 43, 0.12);
+            color: var(--color-error);
+        }
+
+        .panel-canvas {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--color-blanco);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 4px rgba(44,73,102,0.06);
+            cursor: crosshair;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .canvas-instrucciones {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background-color: rgba(255,255,255,0.92);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--color-primario);
+            font-weight: 600;
+            border: 1px solid var(--color-acento-suave);
+            pointer-events: none;
+        }
+
+        .leyenda-regiones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+            padding: 12px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            font-size: 0.82rem;
+        }
+
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        .leyenda-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            border: 1px solid var(--color-acento-suave);
+        }
+
+        .descripcion-region {
+            margin-top: 15px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 15px 20px;
+            border-left: 5px solid var(--color-acento);
+            font-size: 0.92rem;
+            color: var(--color-primario);
+        }
+
+        .descripcion-region strong { color: var(--color-acento); }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal {
+                grid-template-columns: 1fr;
+            }
+            .panel-control {
+                border-right: none;
+                border-bottom: 1px solid var(--color-acento-suave);
+                max-height: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            .panel-control, .panel-canvas { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Visualizador de Semiplanos</h1>
+        <p>Desigualdades Lineales y Sistemas con Dos Variables | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Desigualdades del sistema</h2>
+
+            <div class="seccion-desigualdad des-1">
+                <h3>
+                    Desigualdad 1
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-1" checked>
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₁</label><input type="number" id="a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>B₁</label><input type="number" id="b1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₁</label><input type="number" id="c1" value="-2" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="s1">
+                            <option value="<">&lt;</option>
+                            <option value="<=" selected>≤</option>
+                            <option value=">">&gt;</option>
+                            <option value=">=">≥</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seccion-desigualdad des-2">
+                <h3>
+                    Desigualdad 2
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-2" checked>
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₂</label><input type="number" id="a2" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>B₂</label><input type="number" id="b2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₂</label><input type="number" id="c2" value="-2" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="s2">
+                            <option value="<">&lt;</option>
+                            <option value="<=" selected>≤</option>
+                            <option value=">">&gt;</option>
+                            <option value=">=">≥</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="seccion-desigualdad des-3">
+                <h3>
+                    Desigualdad 3
+                    <label class="chk-activa">
+                        <input type="checkbox" id="activa-3">
+                        Activa
+                    </label>
+                </h3>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A₃</label><input type="number" id="a3" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>B₃</label><input type="number" id="b3" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>C₃</label><input type="number" id="c3" value="-4" step="any"></div>
+                    <div class="input-wrapper">
+                        <label>Signo</label>
+                        <select class="signo" id="s3">
+                            <option value="<">&lt;</option>
+                            <option value="<=" selected>≤</option>
+                            <option value=">">&gt;</option>
+                            <option value=">=">≥</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-accion" id="btn-actualizar">🔄 Actualizar visualización</button>
+            <button class="btn-accion btn-secundario" id="btn-limpiar-punto">🧹 Limpiar punto de prueba</button>
+
+            <h2 style="margin-top: 20px;">Ejemplos predefinidos</h2>
+            <div class="botones-ejemplos">
+                <button class="btn-ejemplo" data-ej="1">
+                    📐 $x + y - 2 < 0$ (semiplano inferior)
+                </button>
+                <button class="btn-ejemplo" data-ej="2">
+                    📐 $x + y - 2 > 0$ (semiplano superior)
+                </button>
+                <button class="btn-ejemplo" data-ej="3">
+                    📐 $x > 2$ (semiplano derecho)
+                </button>
+                <button class="btn-ejemplo" data-ej="4">
+                    🔷 Sistema: $x - 2y + 4 > 0$ ; $2x + y - 2 < 0$
+                </button>
+                <button class="btn-ejemplo" data-ej="5">
+                    🔺 Sistema triangular: $x > 4$ ; $x + y + 2 > 0$ ; $-x + y - 3 < 0$
+                </button>
+                <button class="btn-ejemplo" data-ej="6">
+                    ➖ Banda: $y < 4$ ; $2x - 3y \leq 6$
+                </button>
+            </div>
+
+            <div class="info-punto" id="info-punto">
+                <div class="titulo">Punto de prueba</div>
+                <div class="valor" id="valor-punto">Haz clic en el canvas</div>
+                <div class="estado" id="estado-punto"></div>
+            </div>
+        </div>
+
+        <!-- PANEL DE CANVAS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560"></canvas>
+                <div class="canvas-instrucciones">🖱️ Clic para probar un punto</div>
+            </div>
+
+            <div class="leyenda-regiones">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background: rgba(91, 127, 163, 0.4);"></div>
+                    <span>Desigualdad 1</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background: rgba(192, 57, 43, 0.4);"></div>
+                    <span>Desigualdad 2</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background: rgba(39, 174, 96, 0.4);"></div>
+                    <span>Desigualdad 3</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background: rgba(44, 73, 102, 0.4); border: 2px solid #2c4966;"></div>
+                    <span>Región solución (intersección)</span>
+                </div>
+            </div>
+
+            <div class="descripcion-region" id="descripcion-region">
+                <strong>Región solución del sistema:</strong> <span id="texto-region">Cargando...</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comprender cómo cada desigualdad lineal define un semiplano y cómo la intersección de varios semiplanos forma la región solución de un sistema. Observa la diferencia entre las fronteras punteadas (desigualdades estrictas) y las sólidas (con igualdad).
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN DEL CANVAS
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var ancho = canvas.width;
+    var alto = canvas.height;
+    var origenX = ancho / 2;
+    var origenY = alto / 2;
+    var escala = 30;
+
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+
+    var COLORES_DES = [
+        { linea: '#5b7fa3', relleno: 'rgba(91, 127, 163, 0.28)' },
+        { linea: '#c0392b', relleno: 'rgba(192, 57, 43, 0.28)' },
+        { linea: '#27ae60', relleno: 'rgba(39, 174, 96, 0.28)' }
+    ];
+
+    var COLOR_INTERSECCION = 'rgba(44, 73, 102, 0.45)';
+    var COLOR_PUNTO = '#2c4966';
+
+    // Estado
+    var desigualdades = [
+        { a: 1, b: 1, c: -2, signo: '<=', activa: true },
+        { a: 2, b: 1, c: -2, signo: '<=', activa: true },
+        { a: 0, b: 1, c: -4, signo: '<=', activa: false }
+    ];
+
+    var puntoPrueba = null;
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(2)).toString();
+    }
+
+    function aPixelX(x) { return origenX + x * escala; }
+    function aPixelY(y) { return origenY - y * escala; }
+
+    function aCoordX(px) { return (px - origenX) / escala; }
+    function aCoordY(py) { return (origenY - py) / escala; }
+
+    // =========================================
+    // EVALUAR DESIGUALDAD EN UN PUNTO
+    // =========================================
+    function evaluarDesigualdad(des, x, y) {
+        var valor = des.a * x + des.b * y + des.c;
+        switch (des.signo) {
+            case '<':  return valor < -1e-9;
+            case '<=': return valor <= 1e-9;
+            case '>':  return valor > 1e-9;
+            case '>=': return valor >= -1e-9;
+        }
+        return false;
+    }
+
+    // =========================================
+    // DIBUJAR CUADRÍCULA Y EJES
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+
+        var rangoX = Math.ceil(origenX / escala);
+        var rangoY = Math.ceil(origenY / escala);
+
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, alto);
+            ctx.stroke();
+        }
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(0, py);
+            ctx.lineTo(ancho, py);
+            ctx.stroke();
+        }
+    }
+
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+
+        // Eje X
+        ctx.beginPath();
+        ctx.moveTo(0, origenY);
+        ctx.lineTo(ancho - 5, origenY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ancho - 5, origenY);
+        ctx.lineTo(ancho - 15, origenY - 6);
+        ctx.lineTo(ancho - 15, origenY + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('X', ancho - 20, origenY - 12);
+
+        // Eje Y
+        ctx.beginPath();
+        ctx.moveTo(origenX, alto);
+        ctx.lineTo(origenX, 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origenX, 5);
+        ctx.lineTo(origenX - 6, 15);
+        ctx.lineTo(origenX + 6, 15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('Y', origenX + 12, 18);
+
+        // Marcas en X
+        ctx.font = '11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var rangoX = Math.ceil(origenX / escala);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            if (i === 0) continue;
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, origenY - 4);
+            ctx.lineTo(px, origenY + 4);
+            ctx.stroke();
+            if (i % 2 === 0) ctx.fillText(i.toString(), px, origenY + 18);
+        }
+
+        // Marcas en Y
+        ctx.textAlign = 'right';
+        var rangoY = Math.ceil(origenY / escala);
+        for (var j = -rangoY; j <= rangoY; j++) {
+            if (j === 0) continue;
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(origenX - 4, py);
+            ctx.lineTo(origenX + 4, py);
+            ctx.stroke();
+            if (j % 2 === 0) ctx.fillText(j.toString(), origenX - 8, py + 4);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillText('0', origenX - 6, origenY + 16);
+    }
+
+    // =========================================
+    // DIBUJAR SEMIPLANO (SOLO SI ES LA ÚNICA ACTIVA)
+    // =========================================
+    function dibujarSemiplanoIndividual(des, numDes) {
+        var color = COLORES_DES[numDes];
+        var paso = 3;
+
+        // Relleno del semiplano con muestreo
+        ctx.fillStyle = color.relleno;
+        for (var px = 0; px < ancho; px += paso) {
+            for (var py = 0; py < alto; py += paso) {
+                var cx = aCoordX(px);
+                var cy = aCoordY(py);
+                if (evaluarDesigualdad(des, cx, cy)) {
+                    ctx.fillRect(px, py, paso, paso);
+                }
+            }
+        }
+
+        // Dibujar recta frontera
+        dibujarRectaFrontera(des, color.linea, numDes);
+    }
+
+    // =========================================
+    // DIBUJAR RECTA FRONTERA
+    // =========================================
+    function dibujarRectaFrontera(des, color, numDes) {
+        var a = des.a, b = des.b, c = des.c;
+        var signo = des.signo;
+
+        if (Math.abs(a) < 1e-9 && Math.abs(b) < 1e-9) return;
+
+        var esEstricta = (signo === '<' || signo === '>');
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.8;
+        if (esEstricta) {
+            ctx.setLineDash([8, 5]);
+        } else {
+            ctx.setLineDash([]);
+        }
+
+        if (Math.abs(b) > 1e-9) {
+            var m = -a / b;
+            var k = -c / b;
+            var x_min = -origenX / escala;
+            var x_max = (ancho - origenX) / escala;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(x_min), aPixelY(m * x_min + k));
+            ctx.lineTo(aPixelX(x_max), aPixelY(m * x_max + k));
+            ctx.stroke();
+        } else if (Math.abs(a) > 1e-9) {
+            var xv = -c / a;
+            ctx.beginPath();
+            ctx.moveTo(aPixelX(xv), 0);
+            ctx.lineTo(aPixelX(xv), alto);
+            ctx.stroke();
+        }
+
+        ctx.setLineDash([]);
+
+        // Etiqueta
+        if (numDes !== undefined) {
+            ctx.font = 'bold 14px Segoe UI, sans-serif';
+            ctx.fillStyle = color;
+
+            // Colocar la etiqueta en un borde del canvas donde la recta entre
+            var lx, ly;
+            if (Math.abs(b) > 1e-9) {
+                // Elegir un x cercano al borde izquierdo o derecho
+                var xTest = (aPixelX(0) > 0) ? 0 : (ancho - 1);
+                // Mejor: usar una x fija en la parte visible
+                var xMostrar = (origenX - 100) > 0 ? aCoordX(80) : aCoordX(ancho - 80);
+                var yMostrar = (-a / b) * xMostrar - c / b;
+                lx = aPixelX(xMostrar) + 8;
+                ly = aPixelY(yMostrar) - 8;
+            } else {
+                lx = aPixelX(-c / a) + 8;
+                ly = 30;
+            }
+
+            // Limitar a los bordes
+            lx = Math.max(15, Math.min(ancho - 40, lx));
+            ly = Math.max(20, Math.min(alto - 10, ly));
+
+            // Fondo blanco para el texto
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            var texto = 'D' + numDes;
+            var textWidth = ctx.measureText(texto).width + 8;
+            ctx.fillRect(lx - 4, ly - 14, textWidth, 18);
+            ctx.fillStyle = color;
+            ctx.fillText(texto, lx, ly);
+        }
+    }
+
+    // =========================================
+    // DIBUJAR INTERSECCIÓN DE SEMIPLANOS
+    // =========================================
+    function dibujarInterseccion() {
+        var activas = desigualdades.filter(function(d) { return d.activa; });
+        if (activas.length < 2) return;
+
+        var paso = 3;
+        ctx.fillStyle = COLOR_INTERSECCION;
+
+        for (var px = 0; px < ancho; px += paso) {
+            for (var py = 0; py < alto; py += paso) {
+                var cx = aCoordX(px);
+                var cy = aCoordY(py);
+                var cumpleTodas = true;
+                for (var i = 0; i < activas.length; i++) {
+                    if (!evaluarDesigualdad(activas[i], cx, cy)) {
+                        cumpleTodas = false;
+                        break;
+                    }
+                }
+                if (cumpleTodas) {
+                    ctx.fillRect(px, py, paso, paso);
+                }
+            }
+        }
+    }
+
+    // =========================================
+    // DIBUJAR PUNTO DE PRUEBA
+    // =========================================
+    function dibujarPuntoPrueba() {
+        if (!puntoPrueba) return;
+
+        var px = aPixelX(puntoPrueba.x);
+        var py = aPixelY(puntoPrueba.y);
+
+        ctx.beginPath();
+        ctx.arc(px, py, 13, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(44, 73, 102, 0.2)';
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(px, py, 8, 0, 2 * Math.PI);
+        ctx.fillStyle = COLOR_PUNTO;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2.5;
+        ctx.stroke();
+
+        // Etiqueta
+        ctx.font = 'bold 12px Segoe UI, sans-serif';
+        ctx.fillStyle = COLOR_PUNTO;
+        ctx.textAlign = 'left';
+        var etiqueta = '(' + formatearNumero(puntoPrueba.x) + ', ' + formatearNumero(puntoPrueba.y) + ')';
+        // Ajustar si se sale del canvas
+        var offsetX = 14;
+        if (px + 100 > ancho) {
+            ctx.textAlign = 'right';
+            offsetX = -14;
+        }
+        ctx.fillText(etiqueta, px + offsetX, py - 10);
+    }
+
+    // =========================================
+    // RENDERIZAR TODO
+    // =========================================
+    function renderizar() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+
+        dibujarCuadricula();
+        dibujarEjes();
+
+        var activas = [];
+        for (var i = 0; i < desigualdades.length; i++) {
+            if (desigualdades[i].activa) activas.push(i);
+        }
+
+        // Si solo hay 1 activa: dibujar su semiplano con relleno individual
+        if (activas.length === 1) {
+            dibujarSemiplanoIndividual(desigualdades[activas[0]], activas[0]);
+        } else if (activas.length >= 2) {
+            // Dibujar primero la intersección (al fondo)
+            dibujarInterseccion();
+            // Dibujar las fronteras de cada una encima
+            for (var k = 0; k < activas.length; k++) {
+                dibujarRectaFrontera(desigualdades[activas[k]], COLORES_DES[activas[k]].linea, activas[k] + 1);
+            }
+        }
+
+        // Punto de prueba encima de todo
+        dibujarPuntoPrueba();
+
+        // Actualizar descripción
+        actualizarDescripcion(activas);
+    }
+
+    // =========================================
+    // ACTUALIZAR DESCRIPCIÓN
+    // =========================================
+    function actualizarDescripcion(activas) {
+        var texto = document.getElementById('texto-region');
+        if (activas.length === 0) {
+            texto.innerHTML = 'Ninguna desigualdad activa. Activa al menos una para ver su semiplano.';
+        } else if (activas.length === 1) {
+            texto.innerHTML = 'Se muestra el semiplano de la Desigualdad ' + (activas[0] + 1) + '. Activa más desigualdades para ver la intersección.';
+        } else {
+            texto.innerHTML = 'La región sombreada más oscura es la <strong>intersección</strong> de los ' + activas.length + ' semiplanos activos. Esta es la región solución del sistema.';
+        }
+        renderMath(texto);
+    }
+
+    // =========================================
+    // LEER COEFICIENTES
+    // =========================================
+    function leerCoeficientes() {
+        var ids = [
+            { a: 'a1', b: 'b1', c: 'c1', s: 's1', act: 'activa-1' },
+            { a: 'a2', b: 'b2', c: 'c2', s: 's2', act: 'activa-2' },
+            { a: 'a3', b: 'b3', c: 'c3', s: 's3', act: 'activa-3' }
+        ];
+        ids.forEach(function(ids_, i) {
+            desigualdades[i].a = parseFloat(document.getElementById(ids_.a).value) || 0;
+            desigualdades[i].b = parseFloat(document.getElementById(ids_.b).value) || 0;
+            desigualdades[i].c = parseFloat(document.getElementById(ids_.c).value) || 0;
+            desigualdades[i].signo = document.getElementById(ids_.s).value;
+            desigualdades[i].activa = document.getElementById(ids_.act).checked;
+        });
+    }
+
+    // =========================================
+    // ACTUALIZAR TODO
+    // =========================================
+    function actualizarTodo() {
+        leerCoeficientes();
+        renderizar();
+    }
+
+    // =========================================
+    // EVENTOS
+    // =========================================
+    document.getElementById('btn-actualizar').addEventListener('click', actualizarTodo);
+
+    ['a1', 'b1', 'c1', 's1', 'activa-1',
+     'a2', 'b2', 'c2', 's2', 'activa-2',
+     'a3', 'b3', 'c3', 's3', 'activa-3'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.addEventListener('input', actualizarTodo);
+        el.addEventListener('change', actualizarTodo);
+    });
+
+    document.getElementById('btn-limpiar-punto').addEventListener('click', function() {
+        puntoPrueba = null;
+        document.getElementById('valor-punto').textContent = 'Haz clic en el canvas';
+        document.getElementById('estado-punto').className = 'estado';
+        renderizar();
+    });
+
+    // Clic en el canvas para probar un punto
+    canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var px = (e.clientX - rect.left) * scaleX;
+        var py = (e.clientY - rect.top) * scaleY;
+
+        var cx = aCoordX(px);
+        var cy = aCoordY(py);
+        puntoPrueba = { x: cx, y: cy };
+
+        // Verificar si el punto pertenece a la región solución
+        var activas = desigualdades.filter(function(d) { return d.activa; });
+        var cumpleTodas = true;
+        var cumpleAlguna = false;
+
+        if (activas.length > 0) {
+            for (var i = 0; i < activas.length; i++) {
+                if (evaluarDesigualdad(activas[i], cx, cy)) {
+                    cumpleAlguna = true;
+                } else {
+                    cumpleTodas = false;
+                }
+            }
+        }
+
+        // Actualizar panel
+        document.getElementById('valor-punto').textContent = '(' + formatearNumero(cx) + ', ' + formatearNumero(cy) + ')';
+        var estado = document.getElementById('estado-punto');
+
+        if (activas.length === 0) {
+            estado.className = 'estado';
+            estado.innerHTML = '';
+        } else if (activas.length === 1) {
+            if (cumpleAlguna) {
+                estado.className = 'estado correcto visible';
+                estado.innerHTML = '✅ El punto satisface la desigualdad';
+            } else {
+                estado.className = 'estado incorrecto visible';
+                estado.innerHTML = '❌ El punto NO satisface la desigualdad';
+            }
+        } else {
+            if (cumpleTodas) {
+                estado.className = 'estado correcto visible';
+                estado.innerHTML = '✅ El punto pertenece a la región solución';
+            } else {
+                estado.className = 'estado incorrecto visible';
+                estado.innerHTML = '❌ El punto NO pertenece a la región solución';
+            }
+        }
+
+        renderizar();
+    });
+
+    // =========================================
+    // EJEMPLOS PREDEFINIDOS
+    // =========================================
+    var ejemplos = {
+        '1': [
+            { a: 1, b: 1, c: -2, signo: '<', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false }
+        ],
+        '2': [
+            { a: 1, b: 1, c: -2, signo: '>', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false }
+        ],
+        '3': [
+            { a: 1, b: 0, c: -2, signo: '>', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false }
+        ],
+        '4': [
+            { a: 1, b: -2, c: 4, signo: '>', activa: true },
+            { a: 2, b: 1, c: -2, signo: '<', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false }
+        ],
+        '5': [
+            { a: 1, b: 0, c: -4, signo: '>', activa: true },
+            { a: 1, b: 1, c: 2, signo: '>', activa: true },
+            { a: -1, b: 1, c: -3, signo: '<', activa: true }
+        ],
+        '6': [
+            { a: 0, b: 1, c: -4, signo: '<', activa: true },
+            { a: 2, b: -3, c: -6, signo: '<=', activa: true },
+            { a: 0, b: 0, c: 0, signo: '<', activa: false }
+        ]
+    };
+
+    document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var ej = ejemplos[this.dataset.ej];
+            if (!ej) return;
+
+            var inputs = [
+                { a: 'a1', b: 'b1', c: 'c1', s: 's1', act: 'activa-1' },
+                { a: 'a2', b: 'b2', c: 'c2', s: 's2', act: 'activa-2' },
+                { a: 'a3', b: 'b3', c: 'c3', s: 's3', act: 'activa-3' }
+            ];
+
+            inputs.forEach(function(ids, i) {
+                document.getElementById(ids.a).value = ej[i].a;
+                document.getElementById(ids.b).value = ej[i].b;
+                document.getElementById(ids.c).value = ej[i].c;
+                document.getElementById(ids.s).value = ej[i].signo;
+                document.getElementById(ids.act).checked = ej[i].activa;
+            });
+
+            // Limpiar punto de prueba
+            puntoPrueba = null;
+            document.getElementById('valor-punto').textContent = 'Haz clic en el canvas';
+            document.getElementById('estado-punto').className = 'estado';
+
+            actualizarTodo();
+        });
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    actualizarTodo();
+</script>
+
+</body>
+</html>

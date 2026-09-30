@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Planteo de Desigualdades | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        main {
+            padding: 30px;
+        }
+
+        /* =========================================
+           BARRA DE PROGRESO
+           ========================================= */
+        .barra-progreso {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 12px 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--color-acento);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .barra-progreso .info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+        }
+
+        .barra-progreso .contador {
+            font-weight: 700;
+            color: var(--color-acento);
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secundario:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+
+        /* =========================================
+           TARJETA DE PROBLEMA
+           ========================================= */
+        .tarjeta-problema {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-problema {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .numero-problema {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+        }
+
+        .nivel-problema {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .nivel-problema.basico {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: var(--color-exito);
+        }
+        .nivel-problema.medio {
+            background-color: rgba(91, 127, 163, 0.15);
+            color: var(--color-acento);
+        }
+        .nivel-problema.alto {
+            background-color: rgba(192, 57, 43, 0.15);
+            color: var(--color-error);
+        }
+
+        .enunciado {
+            font-size: 1.05rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 20px;
+            line-height: 1.7;
+            text-align: justify;
+            padding: 15px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            border-left: 4px solid var(--color-acento);
+        }
+
+        /* =========================================
+           FASES
+           ========================================= */
+        .fase {
+            margin-bottom: 20px;
+            padding: 18px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+        }
+
+        .fase-titulo {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .numero-fase {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="number"], select.select-opcion {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100%;
+            transition: border-color 0.3s;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus, select.select-opcion:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        select.select-opcion {
+            background-image: linear-gradient(45deg, transparent 50%, var(--color-acento) 50%),
+                              linear-gradient(135deg, var(--color-acento) 50%, transparent 50%);
+            background-position: calc(100% - 20px) calc(50% - 2px),
+                                 calc(100% - 15px) calc(50% - 2px);
+            background-size: 6px 6px, 6px 6px;
+            background-repeat: no-repeat;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding-right: 40px;
+        }
+
+        /* Restricciones */
+        .lista-restricciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .restriccion-item {
+            background-color: var(--color-base);
+            border-radius: 6px;
+            padding: 12px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .restriccion-item .restriccion-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .fila-restriccion {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto;
+            gap: 6px;
+            align-items: end;
+        }
+
+        .fila-restriccion .celda {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fila-restriccion .celda label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            text-align: center;
+            margin-bottom: 2px;
+        }
+
+        .fila-restriccion input,
+        .fila-restriccion select {
+            padding: 6px 4px;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* Botones */
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+
+        .btn-pista {
+            background-color: transparent;
+            border: 2px dashed var(--color-acento-suave);
+            color: var(--color-acento);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+            margin-right: 8px;
+        }
+
+        .btn-pista:hover {
+            background-color: var(--color-base);
+            border-color: var(--color-acento);
+        }
+
+        .btn-agregar {
+            background-color: var(--color-blanco);
+            border: 2px dashed var(--color-acento-suave);
+            color: var(--color-acento);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 5px;
+        }
+
+        .btn-agregar:hover {
+            background-color: var(--color-base);
+            border-color: var(--color-acento);
+        }
+
+        /* Feedback */
+        .feedback {
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            font-weight: 600;
+            margin-top: 12px;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39, 174, 96, 0.12);
+            border-left: 4px solid var(--color-exito);
+            color: var(--color-exito);
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192, 57, 43, 0.12);
+            border-left: 4px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .pista-texto {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+            display: none;
+        }
+        .pista-texto.visible { display: block; }
+
+        /* Canvas */
+        .canvas-wrapper {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        /* Navegación */
+        .navegacion-problemas {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--color-acento-suave);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .indicador-problema {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            main { padding: 18px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            .fila-restriccion { grid-template-columns: 1fr 1fr; }
+            .navegacion-problemas { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Laboratorio de Planteo de Desigualdades</h1>
+        <p>Traducir problemas verbales a sistemas de desigualdades | Matemáticas III</p>
+    </header>
+
+    <main>
+        <!-- BARRA DE PROGRESO -->
+        <div class="barra-progreso">
+            <div class="info">
+                <span>📊 Progreso:</span>
+                <span class="contador" id="contador-resueltos">0 de 10 resueltos</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <button class="btn-secundario" id="btn-aleatorio">🎲 Problema aleatorio</button>
+                <button class="btn-secundario" id="btn-reiniciar">🔄 Reiniciar progreso</button>
+            </div>
+        </div>
+
+        <!-- TARJETA DEL PROBLEMA -->
+        <div class="tarjeta-problema">
+            <div class="meta-problema">
+                <div class="numero-problema" id="numero-problema">Problema 1 de 10</div>
+                <div class="nivel-problema basico" id="nivel-problema">Básico</div>
+            </div>
+
+            <div class="enunciado" id="enunciado">
+                Cargando problema...
+            </div>
+
+            <!-- FASE 1: IDENTIFICAR INCÓGNITAS (CON SELECTS) -->
+            <div class="fase" id="fase-1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span>
+                    Identifica las incógnitas
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper">
+                        <label>¿Qué representa $x$?</label>
+                        <select class="select-opcion" id="incognita-x">
+                            <option value="">— Selecciona una opción —</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper">
+                        <label>¿Qué representa $y$?</label>
+                        <select class="select-opcion" id="incognita-y">
+                            <option value="">— Selecciona una opción —</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="btn-pista" id="btn-pista-1">💡 Pista para las incógnitas</button>
+                <button class="btn-primario" id="btn-verificar-1">Verificar incógnitas</button>
+                <div class="pista-texto" id="pista-1"></div>
+                <div class="feedback" id="feedback-1"></div>
+            </div>
+
+            <!-- FASE 2: CONSTRUIR LAS RESTRICCIONES -->
+            <div class="fase" id="fase-2" style="display: none;">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span>
+                    Construye las restricciones
+                </div>
+
+                <div class="lista-restricciones" id="lista-restricciones">
+                </div>
+
+                <button class="btn-agregar" id="btn-agregar-restriccion">+ Agregar restricción</button>
+                <br>
+                <button class="btn-pista" id="btn-pista-2">💡 Pista para las restricciones</button>
+                <button class="btn-primario" id="btn-verificar-2">Verificar restricciones</button>
+                <div class="pista-texto" id="pista-2"></div>
+                <div class="feedback" id="feedback-2"></div>
+            </div>
+
+            <!-- FASE 3: VER REGIÓN FACTIBLE -->
+            <div class="fase" id="fase-3" style="display: none;">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span>
+                    Visualiza la región factible
+                </div>
+
+                <div class="canvas-wrapper">
+                    <canvas id="canvas" width="780" height="480"></canvas>
+                </div>
+
+                <div id="info-solucion" style="margin-top: 15px;"></div>
+            </div>
+
+            <!-- NAVEGACIÓN -->
+            <div class="navegacion-problemas">
+                <button class="btn-navegacion secundario" id="btn-anterior" disabled>← Anterior</button>
+                <span class="indicador-problema" id="indicador-problema">Problema 1 de 10</span>
+                <button class="btn-navegacion" id="btn-siguiente">Siguiente →</button>
+            </div>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Aprender a traducir problemas verbales al lenguaje algebraico construyendo el sistema de desigualdades correcto. Cada problema tiene tres fases: identificar incógnitas, construir las restricciones y visualizar la región factible.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // BANCO DE PROBLEMAS
+    // =========================================
+    var problemas = [
+        {
+            nivel: 'Básico',
+            enunciado: 'Una agencia de viajes puede aceptar como máximo 12 personas en una excursión. Para que el grupo sea mixto, deben ir cuando menos 5 hombres y 4 mujeres. ¿Cuáles son las posibles combinaciones de hombres y mujeres que puede aceptar la agencia?',
+            incognitaX: 'numero de hombres',
+            incognitaY: 'numero de mujeres',
+            opcionesX: ['numero de personas en total', 'numero de hombres', 'numero de mujeres', 'numero de excursiones'],
+            opcionesY: ['numero de personas en total', 'numero de hombres', 'numero de mujeres', 'numero de excursiones'],
+            pistaIncognitas: 'Asigna $x$ al número de hombres y $y$ al número de mujeres que asistirán a la excursión.',
+            restricciones: [
+                { a: 1, b: 1, signo: '<=', c: 12 },
+                { a: 1, b: 0, signo: '>=', c: 5 },
+                { a: 0, b: 1, signo: '>=', c: 4 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'La primera restricción es del total: $x + y \\leq 12$. Las condiciones mínimas son $x \\geq 5$ y $y \\geq 4$. También se cumple $x \\geq 0$ e $y \\geq 0$ por el contexto.',
+            region: 'región triangular con vértices $(5, 4)$, $(8, 4)$ y $(5, 7)$'
+        },
+        {
+            nivel: 'Básico',
+            enunciado: 'Un jardinero necesita al menos 10 unidades del fertilizante A, 12 unidades del fertilizante B y 12 unidades del fertilizante C. Un producto líquido contiene 5, 2 y 1 unidades de A, B y C por litro, respectivamente. Un producto sólido contiene 1, 2 y 4 unidades de A, B y C por kilo, respectivamente. ¿Qué combinaciones de litros de líquido y kilos de sólido cumplen con los requerimientos?',
+            incognitaX: 'litros de producto liquido',
+            incognitaY: 'kilos de producto solido',
+            opcionesX: ['litros de producto liquido', 'kilos de producto solido', 'unidades de fertilizante A', 'unidades de fertilizante B'],
+            opcionesY: ['litros de producto liquido', 'kilos de producto solido', 'unidades de fertilizante A', 'unidades de fertilizante B'],
+            pistaIncognitas: '$x$ = litros del producto líquido; $y$ = kilos del producto sólido.',
+            restricciones: [
+                { a: 5, b: 1, signo: '>=', c: 10 },
+                { a: 2, b: 2, signo: '>=', c: 12 },
+                { a: 1, b: 4, signo: '>=', c: 12 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'Cada fertilizante genera una restricción: $5x + y \\geq 10$ (A), $2x + 2y \\geq 12$ (B), $x + 4y \\geq 12$ (C). Además $x \\geq 0$ e $y \\geq 0$.',
+            region: 'región no acotada con vértices $(0, 10)$, $(1, 5)$, $(4, 2)$, $(12, 0)$'
+        },
+        {
+            nivel: 'Medio',
+            enunciado: 'Un sastre tiene 60 m² de tela de algodón y 80 m² de tela de lana. Para hacer un saco necesita 2 m² de algodón y 4 m² de lana. Para hacer un abrigo necesita 3 m² de algodón y 2 m² de lana. ¿Cuántos sacos y abrigos puede fabricar sin exceder sus recursos?',
+            incognitaX: 'numero de sacos',
+            incognitaY: 'numero de abrigos',
+            opcionesX: ['numero de sacos', 'numero de abrigos', 'metros de algodon', 'metros de lana'],
+            opcionesY: ['numero de sacos', 'numero de abrigos', 'metros de algodon', 'metros de lana'],
+            pistaIncognitas: '$x$ = cantidad de sacos; $y$ = cantidad de abrigos.',
+            restricciones: [
+                { a: 2, b: 3, signo: '<=', c: 60 },
+                { a: 4, b: 2, signo: '<=', c: 80 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'El algodón limita con $2x + 3y \\leq 60$. La lana limita con $4x + 2y \\leq 80$. Como no puede haber cantidades negativas, $x \\geq 0$ e $y \\geq 0$.',
+            region: 'polígono con vértices $(0, 0)$, $(20, 0)$, $(15, 10)$, $(0, 20)$'
+        },
+        {
+            nivel: 'Medio',
+            enunciado: 'Una compañía renta dos tipos de camiones. El camión tipo A tiene 1 m³ de espacio refrigerado y 2 m³ de espacio no refrigerado. El camión tipo B tiene 3 m³ de espacio refrigerado y 2 m³ de espacio no refrigerado. La planta necesita embarcar al menos 60 m³ de productos refrigerados y al menos 80 m³ de productos no refrigerados. ¿Qué combinaciones de camiones cumplen con los requerimientos?',
+            incognitaX: 'numero de camiones tipo A',
+            incognitaY: 'numero de camiones tipo B',
+            opcionesX: ['numero de camiones tipo A', 'numero de camiones tipo B', 'metros cubicos refrigerados', 'metros cubicos no refrigerados'],
+            opcionesY: ['numero de camiones tipo A', 'numero de camiones tipo B', 'metros cubicos refrigerados', 'metros cubicos no refrigerados'],
+            pistaIncognitas: '$x$ = camiones tipo A; $y$ = camiones tipo B.',
+            restricciones: [
+                { a: 1, b: 3, signo: '>=', c: 60 },
+                { a: 2, b: 2, signo: '>=', c: 80 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'El espacio refrigerado requiere $x + 3y \\geq 60$. El no refrigerado requiere $2x + 2y \\geq 80$, es decir $x + y \\geq 40$. Además $x \\geq 0$, $y \\geq 0$.',
+            region: 'región no acotada con vértices $(0, 40)$, $(30, 10)$, $(60, 0)$'
+        },
+        {
+            nivel: 'Medio',
+            enunciado: 'En un taller de carpintería se producen mesas y sillas. Cada mesa requiere 4 horas de trabajo y 3 m² de madera, mientras que cada silla requiere 2 horas de trabajo y 1 m² de madera. El taller dispone a lo más de 60 horas de trabajo y 45 m² de madera por semana. Además, por compromisos con los clientes, debe producir al menos 5 mesas y al menos 10 sillas por semana. ¿Cuáles son las combinaciones posibles de mesas y sillas que el taller puede producir?',
+            incognitaX: 'numero de mesas',
+            incognitaY: 'numero de sillas',
+            opcionesX: ['numero de mesas', 'numero de sillas', 'horas de trabajo', 'metros de madera'],
+            opcionesY: ['numero de mesas', 'numero de sillas', 'horas de trabajo', 'metros de madera'],
+            pistaIncognitas: '$x$ = mesas producidas; $y$ = sillas producidas.',
+            restricciones: [
+                { a: 4, b: 2, signo: '<=', c: 60 },
+                { a: 3, b: 1, signo: '<=', c: 45 },
+                { a: 1, b: 0, signo: '>=', c: 5 },
+                { a: 0, b: 1, signo: '>=', c: 10 }
+            ],
+            pistaRestricciones: 'Horas de trabajo: $4x + 2y \\leq 60$. Madera: $3x + y \\leq 45$. Pedido mínimo: $x \\geq 5$, $y \\geq 10$.',
+            region: 'polígono acotado con varios vértices, incluyendo $(5, 10)$ y $(5, 20)$'
+        },
+        {
+            nivel: 'Medio',
+            enunciado: 'Una empresa fabrica dos modelos de lámparas: clásicas y modernas. Cada lámpara clásica requiere 3 horas de mano de obra y 2 kg de metal. Cada lámpara moderna requiere 2 horas de mano de obra y 4 kg de metal. La empresa dispone semanalmente de 120 horas de mano de obra y de 160 kg de metal. ¿Cuáles son las combinaciones factibles de lámparas de cada tipo?',
+            incognitaX: 'lamparas clasicas',
+            incognitaY: 'lamparas modernas',
+            opcionesX: ['lamparas clasicas', 'lamparas modernas', 'horas de mano de obra', 'kilos de metal'],
+            opcionesY: ['lamparas clasicas', 'lamparas modernas', 'horas de mano de obra', 'kilos de metal'],
+            pistaIncognitas: '$x$ = lámparas clásicas; $y$ = lámparas modernas.',
+            restricciones: [
+                { a: 3, b: 2, signo: '<=', c: 120 },
+                { a: 2, b: 4, signo: '<=', c: 160 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'Horas: $3x + 2y \\leq 120$. Metal: $2x + 4y \\leq 160$. No negatividad: $x \\geq 0$, $y \\geq 0$.',
+            region: 'polígono con vértices $(0, 0)$, $(40, 0)$, $(32, 12)$, $(0, 40)$'
+        },
+        {
+            nivel: 'Alto',
+            enunciado: 'Una fábrica de alimentos produce dos tipos de mezcla: tipo A y tipo B. La mezcla A contiene 3 kg de maíz y 1 kg de soya por unidad. La mezcla B contiene 1 kg de maíz y 3 kg de soya por unidad. La fábrica dispone a lo más de 90 kg de maíz y 90 kg de soya. Además, por razones de mercado, la producción de A debe ser al menos el doble que la de B, pero no más del triple. ¿Cuáles son las combinaciones factibles de producción?',
+            incognitaX: 'unidades de mezcla A',
+            incognitaY: 'unidades de mezcla B',
+            opcionesX: ['unidades de mezcla A', 'unidades de mezcla B', 'kilos de maiz', 'kilos de soya'],
+            opcionesY: ['unidades de mezcla A', 'unidades de mezcla B', 'kilos de maiz', 'kilos de soya'],
+            pistaIncognitas: '$x$ = unidades de mezcla A; $y$ = unidades de mezcla B.',
+            restricciones: [
+                { a: 3, b: 1, signo: '<=', c: 90 },
+                { a: 1, b: 3, signo: '<=', c: 90 },
+                { a: 1, b: -2, signo: '>=', c: 0 },
+                { a: 1, b: -3, signo: '<=', c: 0 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'Maíz: $3x + y \\leq 90$. Soya: $x + 3y \\leq 90$. Restricciones de mercado: $x \\geq 2y \\Rightarrow x - 2y \\geq 0$ y $x \\leq 3y \\Rightarrow x - 3y \\leq 0$. No negatividad: $x \\geq 0$, $y \\geq 0$.',
+            region: 'región poligonal acotada entre las rectas de mercado'
+        },
+        {
+            nivel: 'Alto',
+            enunciado: 'Un inversionista tiene $100,000 para invertir en tres tipos de fondos. El fondo A rinde 5% anual, el fondo B rinde 7% y el fondo C rinde 9%. Por política de riesgo, debe invertir al menos el doble en el fondo A que en el fondo C, y no más del triple en el fondo B que en el fondo A. Además, la inversión en A y C juntas no debe exceder los $80,000. Si llamamos x a la cantidad invertida en A, y a la cantidad en B, plantea las restricciones del sistema.',
+            incognitaX: 'miles invertidos en fondo A',
+            incognitaY: 'miles invertidos en fondo B',
+            opcionesX: ['miles invertidos en fondo A', 'miles invertidos en fondo B', 'miles invertidos en fondo C', 'tasa de interes del fondo A'],
+            opcionesY: ['miles invertidos en fondo A', 'miles invertidos en fondo B', 'miles invertidos en fondo C', 'tasa de interes del fondo B'],
+            pistaIncognitas: 'Trabajamos con miles de pesos: $x$ = inversión en A; $y$ = inversión en B. La inversión en C es $z = 100 - x - y$.',
+            restricciones: [
+                { a: 2, b: 1, signo: '<=', c: 100 },
+                { a: 3, b: -1, signo: '>=', c: 0 },
+                { a: 3, b: 2, signo: '>=', c: 100 },
+                { a: 1, b: 1, signo: '>=', c: 0 },
+                { a: 1, b: 1, signo: '<=', c: 100 }
+            ],
+            pistaRestricciones: 'A partir de $z = 100 - x - y$, las condiciones $z \\geq 0 \\Rightarrow x + y \\leq 100$ y las relaciones entre A, B, C dan las restricciones mostradas. Esta es una versión simplificada con $x, y$ en miles.',
+            region: 'región poligonal acotada'
+        },
+        {
+            nivel: 'Alto',
+            enunciado: 'Una empresa de transporte cuenta con dos tipos de vehículos: camionetas y camiones. Cada camioneta puede transportar 2 toneladas y cada camión 5 toneladas. La empresa debe transportar al menos 60 toneladas de mercancía. Además, la cantidad de camiones no puede ser mayor que el triple de la cantidad de camionetas, y el total de vehículos no puede exceder de 25. ¿Cuáles son las combinaciones factibles?',
+            incognitaX: 'numero de camionetas',
+            incognitaY: 'numero de camiones',
+            opcionesX: ['numero de camionetas', 'numero de camiones', 'toneladas transportadas', 'total de vehiculos'],
+            opcionesY: ['numero de camionetas', 'numero de camiones', 'toneladas transportadas', 'total de vehiculos'],
+            pistaIncognitas: '$x$ = número de camionetas; $y$ = número de camiones.',
+            restricciones: [
+                { a: 2, b: 5, signo: '>=', c: 60 },
+                { a: -3, b: 1, signo: '<=', c: 0 },
+                { a: 1, b: 1, signo: '<=', c: 25 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'Carga mínima: $2x + 5y \\geq 60$. Camiones ≤ 3 × camionetas: $y \\leq 3x \\Rightarrow -3x + y \\leq 0$. Estacionamiento: $x + y \\leq 25$. No negatividad: $x \\geq 0$, $y \\geq 0$.',
+            region: 'región acotada con varios vértices'
+        },
+        {
+            nivel: 'Alto',
+            enunciado: 'Un nutricionista debe preparar una dieta que contenga al menos 30 unidades de vitamina A, 40 unidades de vitamina B y 20 unidades de vitamina C. Un alimento tipo X contiene 3, 2 y 1 unidades de A, B y C respectivamente por porción; y un alimento tipo Y contiene 1, 4 y 3 unidades por porción. ¿Qué combinaciones de porciones de X e Y satisfacen los requerimientos?',
+            incognitaX: 'porciones del alimento X',
+            incognitaY: 'porciones del alimento Y',
+            opcionesX: ['porciones del alimento X', 'porciones del alimento Y', 'unidades de vitamina A', 'unidades de vitamina B'],
+            opcionesY: ['porciones del alimento X', 'porciones del alimento Y', 'unidades de vitamina A', 'unidades de vitamina B'],
+            pistaIncognitas: '$x$ = porciones del alimento X; $y$ = porciones del alimento Y.',
+            restricciones: [
+                { a: 3, b: 1, signo: '>=', c: 30 },
+                { a: 2, b: 4, signo: '>=', c: 40 },
+                { a: 1, b: 3, signo: '>=', c: 20 },
+                { a: 1, b: 0, signo: '>=', c: 0 },
+                { a: 0, b: 1, signo: '>=', c: 0 }
+            ],
+            pistaRestricciones: 'Vitamina A: $3x + y \\geq 30$. Vitamina B: $2x + 4y \\geq 40$. Vitamina C: $x + 3y \\geq 20$. No negatividad: $x \\geq 0$, $y \\geq 0$.',
+            region: 'región no acotada con vértices $(0, 30)$, $(8, 6)$, $(20, 0)$'
+        }
+    ];
+
+    // =========================================
+    // ESTADO
+    // =========================================
+    var indiceActual = 0;
+    var resueltos = JSON.parse(localStorage.getItem('planteo_des_resueltos') || '[]');
+    var restriccionesActuales = [];
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function compararRestricciones(estudiante, oficial) {
+        var tol = 1e-6;
+
+        var coefsE = [estudiante.a, estudiante.b, estudiante.c];
+        var coefsO = [oficial.a, oficial.b, oficial.c];
+
+        var signoEquivalente = estudiante.signo === oficial.signo;
+        var signoOpuesto = (estudiante.signo === '<=' && oficial.signo === '>=') ||
+                           (estudiante.signo === '>=' && oficial.signo === '<=') ||
+                           (estudiante.signo === '<' && oficial.signo === '>') ||
+                           (estudiante.signo === '>' && oficial.signo === '<');
+
+        var factor = null;
+        for (var i = 0; i < 3; i++) {
+            if (Math.abs(coefsO[i]) > tol) {
+                factor = coefsE[i] / coefsO[i];
+                break;
+            }
+        }
+        if (factor === null) return false;
+
+        for (var j = 0; j < 3; j++) {
+            if (Math.abs(coefsE[j] - factor * coefsO[j]) > 1e-3) {
+                return false;
+            }
+        }
+
+        if (factor > 0) return signoEquivalente;
+        else return signoOpuesto;
+    }
+
+    // =========================================
+    // ACTUALIZAR CONTADOR
+    // =========================================
+    function actualizarContador() {
+        document.getElementById('contador-resueltos').textContent = resueltos.length + ' de ' + problemas.length + ' resueltos';
+    }
+
+    // =========================================
+    // CARGAR PROBLEMA
+    // =========================================
+    function cargarProblema(indice) {
+        indiceActual = indice;
+        var p = problemas[indice];
+
+        document.getElementById('numero-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+        var nivelElem = document.getElementById('nivel-problema');
+        nivelElem.textContent = p.nivel;
+        nivelElem.className = 'nivel-problema ' + p.nivel.toLowerCase();
+
+        document.getElementById('enunciado').innerHTML = p.enunciado;
+
+        // Fase 1: cargar selects con opciones
+        var selectX = document.getElementById('incognita-x');
+        var selectY = document.getElementById('incognita-y');
+
+        // Mezclar opciones para no revelar la respuesta por posición
+        selectX.innerHTML = '<option value="">— Selecciona una opción —</option>';
+        p.opcionesX.forEach(function(op) {
+            var opt = document.createElement('option');
+            opt.value = op;
+            opt.textContent = op;
+            selectX.appendChild(opt);
+        });
+
+        selectY.innerHTML = '<option value="">— Selecciona una opción —</option>';
+        p.opcionesY.forEach(function(op) {
+            var opt = document.createElement('option');
+            opt.value = op;
+            opt.textContent = op;
+            selectY.appendChild(opt);
+        });
+
+        document.getElementById('feedback-1').className = 'feedback';
+        document.getElementById('pista-1').className = 'pista-texto';
+        document.getElementById('fase-2').style.display = 'none';
+        document.getElementById('fase-3').style.display = 'none';
+
+        // Fase 2: resetear restricciones
+        restriccionesActuales = [
+            { a: '', b: '', signo: '<=', c: '' },
+            { a: '', b: '', signo: '<=', c: '' }
+        ];
+        renderizarRestricciones();
+        document.getElementById('feedback-2').className = 'feedback';
+        document.getElementById('pista-2').className = 'pista-texto';
+
+        // Navegación
+        document.getElementById('indicador-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+        document.getElementById('btn-anterior').disabled = (indice === 0);
+        document.getElementById('btn-siguiente').disabled = (indice === problemas.length - 1);
+
+        renderMath(document.body);
+    }
+
+    // =========================================
+    // RENDERIZAR RESTRICCIONES
+    // =========================================
+    function renderizarRestricciones() {
+        var lista = document.getElementById('lista-restricciones');
+        lista.innerHTML = '';
+
+        restriccionesActuales.forEach(function(r, i) {
+            var div = document.createElement('div');
+            div.className = 'restriccion-item';
+            div.innerHTML = '<div class="restriccion-label">Restricción ' + (i + 1) + '</div>' +
+                '<div class="fila-restriccion">' +
+                    '<div class="celda"><label>a</label><input type="number" data-idx="' + i + '" data-campo="a" value="' + (r.a !== '' ? r.a : '') + '" step="any" placeholder="0"></div>' +
+                    '<div class="celda"><label>b</label><input type="number" data-idx="' + i + '" data-campo="b" value="' + (r.b !== '' ? r.b : '') + '" step="any" placeholder="0"></div>' +
+                    '<div class="celda"><label>c</label><input type="number" data-idx="' + i + '" data-campo="c" value="' + (r.c !== '' ? r.c : '') + '" step="any" placeholder="0"></div>' +
+                    '<div class="celda"><label>Signo</label>' +
+                        '<select data-idx="' + i + '" data-campo="signo">' +
+                            '<option value="<="' + (r.signo === '<=' ? ' selected' : '') + '>≤</option>' +
+                            '<option value=">="' + (r.signo === '>=' ? ' selected' : '') + '>≥</option>' +
+                            '<option value="<"' + (r.signo === '<' ? ' selected' : '') + '>&lt;</option>' +
+                            '<option value=">"' + (r.signo === '>' ? ' selected' : '') + '>&gt;</option>' +
+                        '</select>' +
+                    '</div>' +
+                '</div>';
+            lista.appendChild(div);
+        });
+
+        lista.querySelectorAll('input, select').forEach(function(el) {
+            var handler = function() {
+                var idx = parseInt(this.dataset.idx);
+                var campo = this.dataset.campo;
+                restriccionesActuales[idx][campo] = this.value;
+            };
+            el.addEventListener('input', handler);
+            el.addEventListener('change', handler);
+        });
+    }
+
+    // =========================================
+    // VERIFICAR FASE 1 (CON SELECTS)
+    // =========================================
+    document.getElementById('btn-verificar-1').addEventListener('click', function() {
+        var p = problemas[indiceActual];
+        var respuestaX = document.getElementById('incognita-x').value;
+        var respuestaY = document.getElementById('incognita-y').value;
+        var feedback = document.getElementById('feedback-1');
+
+        if (!respuestaX || !respuestaY) {
+            feedback.className = 'feedback incorrecto visible';
+            feedback.innerHTML = '⚠️ Debes seleccionar una opción para cada variable.';
+            return;
+        }
+
+        var okX = (respuestaX === p.incognitaX);
+        var okY = (respuestaY === p.incognitaY);
+
+        if (okX && okY) {
+            feedback.className = 'feedback correcto visible';
+            feedback.innerHTML = '✅ ¡Correcto! Las incógnitas están bien identificadas.<br>' +
+                '<strong>$x$:</strong> ' + p.incognitaX + '<br>' +
+                '<strong>$y$:</strong> ' + p.incognitaY;
+            document.getElementById('fase-2').style.display = 'block';
+        } else {
+            feedback.className = 'feedback incorrecto visible';
+            var mensaje = '❌ Revisa tus selecciones. ';
+            if (!okX) mensaje += 'La variable $x$ no está bien asignada. ';
+            if (!okY) mensaje += 'La variable $y$ no está bien asignada. ';
+            mensaje += 'Usa el botón de pista si necesitas ayuda.';
+            feedback.innerHTML = mensaje;
+        }
+        renderMath(feedback);
+    });
+
+    // =========================================
+    // PISTA FASE 1
+    // =========================================
+    document.getElementById('btn-pista-1').addEventListener('click', function() {
+        var p = problemas[indiceActual];
+        var pista = document.getElementById('pista-1');
+        pista.innerHTML = '💡 ' + p.pistaIncognitas;
+        pista.classList.add('visible');
+        renderMath(pista);
+    });
+
+    // =========================================
+    // AGREGAR RESTRICCIÓN
+    // =========================================
+    document.getElementById('btn-agregar-restriccion').addEventListener('click', function() {
+        restriccionesActuales.push({ a: '', b: '', signo: '<=', c: '' });
+        renderizarRestricciones();
+    });
+
+    // =========================================
+    // VERIFICAR FASE 2
+    // =========================================
+    document.getElementById('btn-verificar-2').addEventListener('click', function() {
+        var p = problemas[indiceActual];
+        var feedback = document.getElementById('feedback-2');
+
+        var restriccionesCompletas = restriccionesActuales.filter(function(r) {
+            return r.a !== '' && r.b !== '' && r.c !== '';
+        }).map(function(r) {
+            return {
+                a: parseFloat(r.a),
+                b: parseFloat(r.b),
+                signo: r.signo,
+                c: parseFloat(r.c)
+            };
+        });
+
+        if (restriccionesCompletas.length < 2) {
+            feedback.className = 'feedback incorrecto visible';
+            feedback.innerHTML = '⚠️ Debes escribir al menos 2 restricciones completas con coeficientes y término independiente.';
+            return;
+        }
+
+        var oficiales = p.restricciones.filter(function(r) {
+            var esNoNegatividad = (Math.abs(r.a) === 1 && r.b === 0 && r.c === 0) ||
+                                  (r.a === 0 && Math.abs(r.b) === 1 && r.c === 0);
+            return !esNoNegatividad;
+        });
+
+        var faltantes = [];
+        var coincidencias = 0;
+
+        oficiales.forEach(function(of) {
+            var encontrada = false;
+            for (var i = 0; i < restriccionesCompletas.length; i++) {
+                if (compararRestricciones(restriccionesCompletas[i], of)) {
+                    encontrada = true;
+                    break;
+                }
+            }
+            if (encontrada) coincidencias++;
+            else faltantes.push(of);
+        });
+
+        if (coincidencias === oficiales.length) {
+            feedback.className = 'feedback correcto visible';
+            feedback.innerHTML = '✅ ¡Excelente! Todas las restricciones principales están correctamente planteadas.<br>' +
+                'Se han detectado ' + oficiales.length + ' restricciones clave del problema.';
+            document.getElementById('fase-3').style.display = 'block';
+            dibujarRegionFactible(restriccionesCompletas);
+            mostrarInfoSolucion(p);
+        } else {
+            feedback.className = 'feedback incorrecto visible';
+            var mensaje = '❌ Aún no están todas las restricciones correctas. ';
+            mensaje += 'Has acertado ' + coincidencias + ' de ' + oficiales.length + '. ';
+            mensaje += 'Revisa el enunciado y usa la pista si es necesario.';
+            feedback.innerHTML = mensaje;
+        }
+        renderMath(feedback);
+    });
+
+    // =========================================
+    // PISTA FASE 2
+    // =========================================
+    document.getElementById('btn-pista-2').addEventListener('click', function() {
+        var p = problemas[indiceActual];
+        var pista = document.getElementById('pista-2');
+        pista.innerHTML = '💡 ' + p.pistaRestricciones;
+        pista.classList.add('visible');
+        renderMath(pista);
+    });
+
+    // =========================================
+    // DIBUJAR REGIÓN FACTIBLE
+    // =========================================
+    function dibujarRegionFactible(restricciones) {
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var ancho = canvas.width;
+        var alto = canvas.height;
+        var origenX = ancho / 2;
+        var origenY = alto / 2;
+        var escala = 12;
+
+        var maxCoord = 0;
+        restricciones.forEach(function(r) {
+            if (Math.abs(r.a) > 1e-9) maxCoord = Math.max(maxCoord, Math.abs(r.c / r.a));
+            if (Math.abs(r.b) > 1e-9) maxCoord = Math.max(maxCoord, Math.abs(r.c / r.b));
+        });
+        if (maxCoord > 20) escala = Math.min(ancho, alto) / (maxCoord * 2.4);
+        if (maxCoord > 50) escala = Math.min(ancho, alto) / (maxCoord * 2.2);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+
+        var COLOR_CUADRICULA = '#e8eef5';
+        var COLOR_EJE = '#2c4966';
+        var COLOR_FACTIBLE = 'rgba(39, 174, 96, 0.32)';
+        var COLOR_FRONTERA = '#5b7fa3';
+
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+        var rangoX = Math.ceil(origenX / escala);
+        var rangoY = Math.ceil(origenY / escala);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = origenX + i * escala;
+            ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, alto); ctx.stroke();
+        }
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = origenY - j * escala;
+            ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(ancho, py); ctx.stroke();
+        }
+
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(0, origenY); ctx.lineTo(ancho, origenY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(origenX, 0); ctx.lineTo(origenX, alto); ctx.stroke();
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('X', ancho - 20, origenY - 10);
+        ctx.fillText('Y', origenX + 10, 20);
+
+        ctx.font = '10px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var paso = Math.max(1, Math.round(maxCoord / 10));
+        for (var i = -rangoX; i <= rangoX; i += paso) {
+            if (i === 0) continue;
+            var px = origenX + i * escala;
+            if (px < 20 || px > ancho - 20) continue;
+            ctx.fillStyle = COLOR_EJE;
+            ctx.fillText(i.toString(), px, origenY + 15);
+        }
+        ctx.textAlign = 'right';
+        for (var j = -rangoY; j <= rangoY; j += paso) {
+            if (j === 0) continue;
+            var py = origenY - j * escala;
+            if (py < 15 || py > alto - 15) continue;
+            ctx.fillStyle = COLOR_EJE;
+            ctx.fillText(j.toString(), origenX - 5, py + 4);
+        }
+
+        var pasoPx = 3;
+        ctx.fillStyle = COLOR_FACTIBLE;
+        for (var px = 0; px < ancho; px += pasoPx) {
+            for (var py = 0; py < alto; py += pasoPx) {
+                var cx = (px - origenX) / escala;
+                var cy = (origenY - py) / escala;
+                var cumple = true;
+                for (var k = 0; k < restricciones.length; k++) {
+                    var r = restricciones[k];
+                    var val = r.a * cx + r.b * cy;
+                    if (r.signo === '<=' && val > r.c + 1e-9) { cumple = false; break; }
+                    if (r.signo === '>=' && val < r.c - 1e-9) { cumple = false; break; }
+                    if (r.signo === '<' && val > r.c - 1e-9) { cumple = false; break; }
+                    if (r.signo === '>' && val < r.c + 1e-9) { cumple = false; break; }
+                }
+                if (cumple) ctx.fillRect(px, py, pasoPx, pasoPx);
+            }
+        }
+
+        restricciones.forEach(function(r) {
+            if (Math.abs(r.a) < 1e-9 && Math.abs(r.b) < 1e-9) return;
+            ctx.strokeStyle = COLOR_FRONTERA;
+            ctx.lineWidth = 2;
+            if (r.signo === '<' || r.signo === '>') {
+                ctx.setLineDash([6, 4]);
+            } else {
+                ctx.setLineDash([]);
+            }
+            if (Math.abs(r.b) > 1e-9) {
+                var m = -r.a / r.b;
+                var kk = r.c / r.b;
+                var x_min = -origenX / escala;
+                var x_max = (ancho - origenX) / escala;
+                ctx.beginPath();
+                ctx.moveTo(origenX + x_min * escala, origenY - (m * x_min + kk) * escala);
+                ctx.lineTo(origenX + x_max * escala, origenY - (m * x_max + kk) * escala);
+                ctx.stroke();
+            } else {
+                var xv = r.c / r.a;
+                ctx.beginPath();
+                ctx.moveTo(origenX + xv * escala, 0);
+                ctx.lineTo(origenX + xv * escala, alto);
+                ctx.stroke();
+            }
+            ctx.setLineDash([]);
+        });
+    }
+
+    // =========================================
+    // MOSTRAR INFO SOLUCIÓN
+    // =========================================
+    function mostrarInfoSolucion(p) {
+        var info = document.getElementById('info-solucion');
+        info.innerHTML = '<div style="background-color: rgba(39, 174, 96, 0.1); border-left: 4px solid #27ae60; padding: 12px 16px; border-radius: 6px; color: #27ae60; font-weight: 600;">' +
+            '✅ <strong>Región factible identificada.</strong><br>' +
+            'La región factible de este problema es: ' + p.region + '.' +
+            '</div>';
+
+        if (resueltos.indexOf(indiceActual) === -1) {
+            resueltos.push(indiceActual);
+            localStorage.setItem('planteo_des_resueltos', JSON.stringify(resueltos));
+            actualizarContador();
+        }
+    }
+
+    // =========================================
+    // NAVEGACIÓN
+    // =========================================
+    document.getElementById('btn-anterior').addEventListener('click', function() {
+        if (indiceActual > 0) cargarProblema(indiceActual - 1);
+    });
+
+    document.getElementById('btn-siguiente').addEventListener('click', function() {
+        if (indiceActual < problemas.length - 1) cargarProblema(indiceActual + 1);
+    });
+
+    document.getElementById('btn-aleatorio').addEventListener('click', function() {
+        var nuevo;
+        do {
+            nuevo = Math.floor(Math.random() * problemas.length);
+        } while (nuevo === indiceActual && problemas.length > 1);
+        cargarProblema(nuevo);
+    });
+
+    document.getElementById('btn-reiniciar').addEventListener('click', function() {
+        if (confirm('¿Estás seguro de que quieres reiniciar tu progreso?')) {
+            resueltos = [];
+            localStorage.removeItem('planteo_des_resueltos');
+            actualizarContador();
+        }
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    actualizarContador();
+    cargarProblema(0);
+</script>
+
+</body>
+</html>

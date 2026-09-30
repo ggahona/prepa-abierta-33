@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 4: Sistemas de Desigualdades Lineales</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.45rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 4</h1>
+            <p>Sistemas de Desigualdades Lineales con Dos Variables</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 4
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Qué es una desigualdad lineal con dos variables?",
+                options: [
+                    { text: "Una ecuación que contiene dos variables elevadas al cuadrado.", correct: false },
+                    { text: "Una expresión de la forma $Ax + By + C \\leq 0$ ó $Ax + By + C \\geq 0$, con $A \\neq 0$ y $B \\neq 0$.", correct: true },
+                    { text: "Una ecuación con una sola variable y coeficiente constante.", correct: false },
+                    { text: "Un sistema de dos ecuaciones que se cortan en un solo punto.", correct: false }
+                ],
+                feedback: "Una desigualdad lineal con dos variables tiene la forma $Ax + By + C \\leq 0$ ó $Ax + By + C \\geq 0$, donde $A \\neq 0$ y $B \\neq 0$, con $A, B, C \\in \\mathbb{R}$. Su solución es una región del plano (semiplano)."
+            },
+            {
+                id: 2,
+                text: "¿Qué representa gráficamente el conjunto solución de una desigualdad lineal con dos variables?",
+                options: [
+                    { text: "Una línea recta únicamente.", correct: false },
+                    { text: "Un semiplano, es decir, una de las dos mitades en que la recta frontera divide al plano.", correct: true },
+                    { text: "Un único punto del plano cartesiano.", correct: false },
+                    { text: "Un círculo con radio definido por la desigualdad.", correct: false }
+                ],
+                feedback: "La gráfica de una desigualdad lineal es una de las dos mitades del plano cartesiano (semiplano) determinadas por la recta frontera. La frontera puede incluirse o excluirse según el signo de la desigualdad ($\\leq, \\geq$ la incluyen; $<, >$ la excluyen)."
+            },
+            {
+                id: 3,
+                text: "Al graficar la desigualdad $x + y - 2 < 0$, ¿cómo se representa la recta frontera y qué semiplano corresponde a la solución?",
+                options: [
+                    { text: "Recta frontera con línea sólida, región arriba de la recta.", correct: false },
+                    { text: "Recta frontera con línea punteada, región debajo de la recta.", correct: true },
+                    { text: "Recta frontera con línea punteada, región arriba de la recta.", correct: false },
+                    { text: "Recta frontera con línea sólida, región debajo de la recta.", correct: false }
+                ],
+                feedback: "Como la desigualdad es estricta ($<$, no $\\leq$), la recta frontera se dibuja punteada para indicar que no se incluye. La solución es el semiplano debajo de la recta $y = -x + 2$, ya que $y < -x + 2$."
+            },
+            {
+                id: 4,
+                text: "¿Qué tipo de línea se dibuja al graficar la desigualdad $2x - 3y \\leq 6$?",
+                options: [
+                    { text: "Línea punteada porque la desigualdad es estricta.", correct: false },
+                    { text: "Línea sólida porque la desigualdad incluye la igualdad ($\\leq$).", correct: true },
+                    { text: "Dos líneas paralelas punteadas.", correct: false },
+                    { text: "Ninguna línea, solo el área sombreada.", correct: false }
+                ],
+                feedback: "El símbolo $\\leq$ incluye la igualdad, por lo que la recta frontera $y = \\frac{2}{3}x - 2$ forma parte del conjunto solución y se dibuja con línea sólida. Si fuera $<$, sería punteada."
+            },
+            {
+                id: 5,
+                text: "¿Cómo se determina la solución de un sistema de desigualdades lineales con dos variables?",
+                options: [
+                    { text: "Sumando todas las desigualdades para obtener una sola.", correct: false },
+                    { text: "Calculando la intersección de los semiplanos solución de cada desigualdad.", correct: true },
+                    { text: "Encontrando el punto donde se cortan las rectas fronteras.", correct: false },
+                    { text: "Aplicando la fórmula general de la ecuación cuadrática.", correct: false }
+                ],
+                feedback: "La solución de un sistema de desigualdades es la **intersección** de los conjuntos solución de cada desigualdad. Geométricamente, es la región del plano donde se superponen todos los semiplanos solución."
+            },
+            {
+                id: 6,
+                text: "Al resolver el sistema $\\begin{cases} x - 2y + 4 > 0 \\\\ 2x + y - 2 < 0 \\end{cases}$, ¿qué semiplanos forman la región solución del sistema?",
+                options: [
+                    { text: "Ambas regiones arriba de sus rectas fronteras.", correct: false },
+                    { text: "Debajo de $y = \\frac{1}{2}x + 2$ y debajo de $y = -2x + 2$.", correct: true },
+                    { text: "Arriba de $y = \\frac{1}{2}x + 2$ y debajo de $y = -2x + 2$.", correct: false },
+                    { text: "Debajo de $y = \\frac{1}{2}x + 2$ y arriba de $y = -2x + 2$.", correct: false }
+                ],
+                feedback: "Al resolver para $y$: la primera desigualdad da $y < \\frac{1}{2}x + 2$ (región debajo) y la segunda da $y < -2x + 2$ (región debajo). La solución es la intersección de ambos semiplanos inferiores."
+            },
+            {
+                id: 7,
+                text: "¿Qué tipo de región geométrica se obtiene al resolver el sistema $\\begin{cases} x > 4 \\\\ x + y + 2 > 0 \\\\ -x + y - 3 < 0 \\end{cases}$?",
+                options: [
+                    { text: "Un semiplano infinito sin límites.", correct: false },
+                    { text: "Una región triangular acotada (polígono de 3 lados).", correct: true },
+                    { text: "Una banda horizontal entre dos rectas paralelas.", correct: false },
+                    { text: "Una circunferencia de radio indefinido.", correct: false }
+                ],
+                feedback: "Al transformar: $x > 4$, $y > -x - 2$ y $y < x + 3$. La intersección de estas tres regiones forma una región triangular acotada a la derecha de $x = 4$, entre las dos rectas oblicuas."
+            },
+            {
+                id: 8,
+                text: "¿Qué es la programación lineal?",
+                options: [
+                    { text: "Un método para resolver sistemas de ecuaciones lineales por suma y resta.", correct: false },
+                    { text: "Una aplicación de las desigualdades lineales que busca maximizar o minimizar una función objetivo sujeta a restricciones.", correct: true },
+                    { text: "Un algoritmo para graficar rectas con pendiente positiva.", correct: false },
+                    { text: "Una técnica para factorizar polinomios de grado mayor a 2.", correct: false }
+                ],
+                feedback: "La programación lineal es una aplicación que consiste en optimizar (maximizar o minimizar) una función objetivo lineal, sujeta a un conjunto de restricciones expresadas como desigualdades lineales. La región factible es un polígono y el óptimo se alcanza en uno de sus vértices."
+            },
+            {
+                id: 9,
+                text: "En un problema de programación lineal con región factible poligonal, ¿dónde se alcanza siempre el valor máximo o mínimo de la función objetivo?",
+                options: [
+                    { text: "En el centro del polígono factible.", correct: false },
+                    { text: "En uno de los vértices del polígono factible.", correct: true },
+                    { text: "En cualquier punto de la frontera del polígono.", correct: false },
+                    { text: "En el origen del sistema coordenado.", correct: false }
+                ],
+                feedback: "El Teorema Fundamental de la Programación Lineal establece que el valor máximo o mínimo de la función objetivo se alcanza siempre en al menos uno de los vértices del polígono que forma la región factible. Esto se debe a que las curvas de nivel de la función son rectas paralelas."
+            },
+            {
+                id: 10,
+                text: "Una agencia de viajes puede aceptar como máximo 12 personas, con al menos 5 hombres y 4 mujeres. La utilidad por hombre es \\$12 y por mujer \\$10. Si $x$ = hombres y $y$ = mujeres, ¿cuál es la función objetivo y la restricción total de personas?",
+                options: [
+                    { text: "$U = 12x + 10y$, con $x + y \\leq 12$.", correct: true },
+                    { text: "$U = 10x + 12y$, con $x + y \\geq 12$.", correct: false },
+                    { text: "$U = 12x + 10y$, con $x - y \\leq 12$.", correct: false },
+                    { text: "$U = 22xy$, con $x + y = 12$.", correct: false }
+                ],
+                feedback: "La función utilidad es $U = 12x + 10y$ (12 por cada hombre, 10 por cada mujer). La restricción del número máximo de personas es $x + y \\leq 12$. Al evaluar los vértices del polígono factible: $A(5,4) \\Rightarrow U=100$, $D(8,4) \\Rightarrow U=136$, $J(5,7) \\Rightarrow U=130$. La utilidad máxima se obtiene con 8 hombres y 4 mujeres, dando \\$136."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 4 sobre sistemas de desigualdades lineales con dos variables y programación lineal.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de los sistemas de desigualdades lineales. Repasa los detalles sobre fronteras punteadas vs. sólidas, la intersección de semiplanos y el teorema fundamental de la programación lineal para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos teóricos y prácticos del Módulo 4 (semiplanos, fronteras, intersección de regiones, polígono factible y el método de los vértices en programación lineal) antes de intentar nuevamente.";
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

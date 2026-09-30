@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 4: Sistemas de Desigualdades Lineales</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <style>
+        :root {
+            --color-fondo-pagina: #f0f4f8;
+            --color-contenedor: #ffffff;
+            --color-header: #2d4a66;
+            --color-header-texto: #a9c1d9;
+            --color-titulo: #2d4a66;
+            --color-acento: #5b7fa3;
+            --color-acento-suave: #a9c1d9;
+            --color-base: #e8eef5;
+            --color-texto: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 12px;
+            --sombra: 0 4px 20px rgba(44, 73, 102, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--color-fondo-pagina);
+            color: var(--color-texto);
+            line-height: 1.7;
+            font-size: 1rem;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: var(--color-contenedor);
+            border-radius: var(--radio-borde);
+            box-shadow: var(--sombra);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-header);
+            color: var(--color-contenedor);
+            padding: 35px 40px;
+            text-align: center;
+        }
+
+        header .prepa {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            color: var(--color-header-texto);
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        header h1 {
+            font-size: 1.9rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        header .subtitulo {
+            font-size: 1rem;
+            color: var(--color-header-texto);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 50px;
+            min-height: 480px;
+        }
+
+        .slide {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-titulo);
+            font-size: 1.6rem;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        p {
+            text-align: justify;
+            margin-bottom: 15px;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .math-block {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 1.2rem;
+            color: var(--color-titulo);
+        }
+
+        .interactive-box {
+            background-color: var(--color-base);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 8px;
+            padding: 35px 30px;
+            margin-top: 42px;
+        }
+
+        .interactive-box h3 {
+            margin-top: 0;
+            color: var(--color-titulo);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-bottom: 21px;
+            align-items: center;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: var(--color-texto);
+            font-size: 1rem;
+        }
+
+        input[type="number"],
+        .input-group input,
+        .ecuacion-row input {
+            min-height: 52px;
+            padding: 14px 16px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+            border-radius: 6px;
+            box-sizing: border-box;
+            width: 110px;
+            text-align: center;
+            border: 2px solid var(--color-acento-suave);
+            background-color: var(--color-contenedor);
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type="number"]:focus,
+        .input-group input:focus,
+        .ecuacion-row input:focus {
+            border-color: var(--color-acento);
+            box-shadow: 0 0 0 3px rgba(91, 127, 163, 0.15);
+        }
+
+        .ecuacion-row {
+            padding: 16px;
+            margin-bottom: 21px;
+            border-left: 4px solid var(--color-acento);
+            background-color: var(--color-contenedor);
+            border-radius: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn-primario {
+            min-height: 52px;
+            padding: 14px 24px;
+            font-size: 1rem;
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 7px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-primario:hover {
+            background-color: var(--color-header);
+        }
+
+        .resultado {
+            padding: 17px 21px;
+            margin-top: 21px;
+            min-height: 28px;
+            background-color: var(--color-contenedor);
+            border-radius: 6px;
+            border-left: 4px solid transparent;
+            font-size: 1rem;
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+        }
+
+        .navegacion {
+            background-color: var(--color-base);
+            padding: 18px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navegacion button {
+            background-color: var(--color-acento);
+            color: var(--color-contenedor);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+
+        .navegacion button:hover:not(:disabled) {
+            background-color: var(--color-header);
+        }
+
+        .navegacion button:disabled {
+            background-color: var(--color-acento-suave);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .contador {
+            font-weight: 600;
+            color: var(--color-titulo);
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 15px 10px; }
+            header { padding: 25px 20px; }
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; }
+            .navegacion { padding: 15px 20px; flex-wrap: wrap; gap: 10px; }
+            input[type="number"], .input-group input, .ecuacion-row input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="prepa">Preparatoria Abierta</div>
+        <h1>Módulo 4 — Sistemas de Desigualdades Lineales</h1>
+        <div class="subtitulo">Matemáticas III | Prepa Abierta 33</div>
+    </header>
+
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <main>
+        <!-- Diapositiva 1: Bienvenida -->
+        <section class="slide active" id="slide-1">
+            <h2>Bienvenida al Módulo 4</h2>
+            <p>En este módulo ampliaremos nuestro estudio del álgebra lineal explorando las desigualdades. A diferencia de las ecuaciones, que buscan puntos exactos de intersección, las desigualdades describen regiones completas en el plano cartesiano.</p>
+            <p>Aprenderemos a graficar desigualdades lineales, a resolver sistemas de desigualdades encontrando la región factible común, y aplicaremos estos conceptos a la <strong>Programación Lineal</strong> para resolver problemas de optimización (maximización de utilidades o minimización de costos).</p>
+            
+            <div class="math-block">
+                $$Ax + By + C \geq 0 \quad \text{o} \quad Ax + By + C \leq 0$$
+            </div>
+            <p>Esta es la forma general de una desigualdad lineal con dos variables. Su gráfica representa un semiplano delimitado por una recta frontera.</p>
+        </section>
+
+        <!-- Diapositiva 2: Desigualdades Lineales -->
+        <section class="slide" id="slide-2">
+            <h2>1. Desigualdades Lineales y Semiplanos</h2>
+            <p>Una desigualdad lineal con dos variables divide al plano cartesiano en dos regiones llamadas <strong>semiplanos</strong>. La recta $Ax + By + C = 0$ actúa como la frontera.</p>
+            <ul>
+                <li><strong>Desigualdad estricta ($>$ o $<$):</strong> La recta frontera se dibuja punteada, ya que los puntos sobre ella no satisfacen la desigualdad.</li>
+                <li><strong>Desigualdad no estricta ($\geq$ o $\leq$):</strong> La recta frontera se dibuja continua, ya que los puntos sobre ella sí son parte de la solución.</li>
+            </ul>
+            <h3>Ejemplo Resuelto</h3>
+            <p>Graficar $x + y - 2 < 0$.</p>
+            <p>1. Despejamos $y$: $y < -x + 2$.</p>
+            <p>2. Trazamos la recta punteada $y = -x + 2$ (cortes en $(0, 2)$ y $(2, 0)$).</p>
+            <p>3. Como es "$<$", la región solución es el semiplano <strong>debajo</strong> de la recta.</p>
+
+            <div class="interactive-box">
+                <h3>🔍 Verificador de Semiplano</h3>
+                <p>Ingresa los coeficientes de $Ax + By + C > 0$ y un punto $(x, y)$ para verificar si pertenece a la región solución.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Desigualdad:</span>
+                    <input type="number" id="s2-a" placeholder="A" step="any">
+                    <input type="number" id="s2-b" placeholder="B" step="any">
+                    <input type="number" id="s2-c" placeholder="C" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Punto $(x, y)$:</label>
+                    <input type="number" id="s2-x" placeholder="x" step="any">
+                    <input type="number" id="s2-y" placeholder="y" step="any">
+                </div>
+                <button class="btn-primario" onclick="verificarSemiplano()">Verificar Punto</button>
+                <div id="res-s2" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 3: Sistemas de Desigualdades -->
+        <section class="slide" id="slide-3">
+            <h2>2. Sistemas de Desigualdades</h2>
+            <p>Un sistema de desigualdades lineales busca la <strong>intersección</strong> de las regiones solución de cada desigualdad individual. La región resultante se conoce como <strong>región factible</strong>.</p>
+            
+            <h3>Ejemplo Resuelto</h3>
+            <p>Resolver el sistema:</p>
+            <div class="math-block">
+                $$
+                \begin{cases}
+                x - 2y + 4 > 0 \implies y < \frac{1}{2}x + 2 \\
+                2x + y - 2 < 0 \implies y < -2x + 2
+                \end{cases}
+                $$
+            </div>
+            <p>La solución es la región que queda simultáneamente debajo de ambas rectas. El punto de intersección de las fronteras es $(0, 2)$.</p>
+
+            <div class="interactive-box">
+                <h3>📐 Verificador de Región Factible</h3>
+                <p>Ingresa dos desigualdades de la forma $A_1x + B_1y < C_1$ y $A_2x + B_2y < C_2$, y un punto para ver si está en la región factible.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Desig. 1:</span>
+                    <input type="number" id="s3-a1" placeholder="A₁" step="any">
+                    <input type="number" id="s3-b1" placeholder="B₁" step="any">
+                    <input type="number" id="s3-c1" placeholder="C₁" step="any">
+                </div>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Desig. 2:</span>
+                    <input type="number" id="s3-a2" placeholder="A₂" step="any">
+                    <input type="number" id="s3-b2" placeholder="B₂" step="any">
+                    <input type="number" id="s3-c2" placeholder="C₂" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Punto $(x, y)$:</label>
+                    <input type="number" id="s3-x" placeholder="x" step="any">
+                    <input type="number" id="s3-y" placeholder="y" step="any">
+                </div>
+                <button class="btn-primario" onclick="verificarSistema()">Verificar Región</button>
+                <div id="res-s3" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 4: Programación Lineal -->
+        <section class="slide" id="slide-4">
+            <h2>3. Programación Lineal</h2>
+            <p>La programación lineal es una técnica de optimización utilizada para encontrar el valor máximo o mínimo de una <strong>función objetivo</strong> lineal, sujeta a un conjunto de restricciones expresadas como desigualdades lineales.</p>
+            <ul>
+                <li><strong>Región Factible:</strong> Polígono (convexo) formado por la intersección de las restricciones.</li>
+                <li><strong>Función Objetivo:</strong> $Z = ax + by$, donde $Z$ es la cantidad a maximizar (utilidad) o minimizar (costo).</li>
+                <li><strong>Teorema Fundamental:</strong> El valor óptimo de $Z$ siempre ocurre en al menos uno de los <strong>vértices</strong> de la región factible.</li>
+            </ul>
+
+            <div class="interactive-box">
+                <h3>🧮 Evaluador de Función Objetivo</h3>
+                <p>Calcula el valor de $Z = ax + by$ para un punto dado. Útil para evaluar vértices.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Función Z:</span>
+                    <input type="number" id="s4-a" placeholder="a" step="any">
+                    <input type="number" id="s4-b" placeholder="b" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Vértice $(x, y)$:</label>
+                    <input type="number" id="s4-x" placeholder="x" step="any">
+                    <input type="number" id="s4-y" placeholder="y" step="any">
+                </div>
+                <button class="btn-primario" onclick="evaluarFuncion()">Calcular Z</button>
+                <div id="res-s4" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 5: Problemas de Optimización -->
+        <section class="slide" id="slide-5">
+            <h2>4. Problemas de Optimización</h2>
+            <p>Para resolver un problema de programación lineal, seguimos estos pasos:
+            <ol>
+                <li>Identificar las variables ($x, y$).</li>
+                <li>Plantear la función objetivo ($Z$).</li>
+                <li>Plantear las restricciones (desigualdades).</li>
+                <li>Graficar y encontrar los vértices de la región factible.</li>
+                <li>Evaluar $Z$ en cada vértice para encontrar el óptimo.</li>
+            </ol>
+            </p>
+            <h3>Ejemplo Resuelto (Agencia de Viajes)</h3>
+            <p>Maximizar $U = 12x + 10y$ sujeto a $x+y \leq 12$, $x \geq 5$, $y \geq 4$.</p>
+            <p>Vértices: $A(5,4) \to U=100$, $D(8,4) \to U=136$, $J(5,7) \to U=130$.</p>
+            <p><strong>Máxima utilidad:</strong> $\$136$ en el punto $(8, 4)$.</p>
+
+            <div class="interactive-box">
+                <h3>📊 Comparador de Vértices</h3>
+                <p>Ingresa los coeficientes de la función objetivo y las coordenadas de dos vértices para determinar cuál es óptimo.</p>
+                <div class="ecuacion-row">
+                    <span class="ecuacion-label">Función Z:</span>
+                    <input type="number" id="s5-a" placeholder="a" step="any">
+                    <input type="number" id="s5-b" placeholder="b" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Vértice 1 $(x_1, y_1)$:</label>
+                    <input type="number" id="s5-x1" placeholder="x₁" step="any">
+                    <input type="number" id="s5-y1" placeholder="y₁" step="any">
+                </div>
+                <div class="input-group">
+                    <label>Vértice 2 $(x_2, y_2)$:</label>
+                    <input type="number" id="s5-x2" placeholder="x₂" step="any">
+                    <input type="number" id="s5-y2" placeholder="y₂" step="any">
+                </div>
+                <button class="btn-primario" onclick="compararVertices()">Comparar Vértices</button>
+                <div id="res-s5" class="resultado"></div>
+            </div>
+        </section>
+
+        <!-- Diapositiva 6: Resumen -->
+        <section class="slide" id="slide-6">
+            <h2>Resumen y Cierre</h2>
+            <p>¡Felicidades! Has completado el estudio de los sistemas de desigualdades lineales y la programación lineal. A continuación, se sintetizan las ideas clave de este módulo:</p>
+            <ul>
+                <li>Una desigualdad lineal representa un <strong>semiplano</strong> en el plano cartesiano.</li>
+                <li>La solución de un sistema de desigualdades es la <strong>intersección</strong> de sus regiones (región factible).</li>
+                <li>La <strong>Programación Lineal</strong> permite optimizar (maximizar o minimizar) una función objetivo lineal.</li>
+                <li>El <strong>Teorema Fundamental</strong> garantiza que el valor óptimo siempre se encuentra en un vértice de la región factible.</li>
+            </ul>
+            <div class="math-block" style="background-color: var(--color-base); padding: 28px; border-radius: 8px; border-left: 5px solid var(--color-exito);">
+                <p style="text-align: center; margin: 0; font-weight: bold; color: var(--color-titulo);">
+                    "La programación lineal es la herramienta matemática que nos permite tomar las mejores decisiones posibles con recursos limitados."
+                </p>
+            </div>
+            <p style="text-align: center; margin-top: 42px; font-size: 1.2rem; color: var(--color-acento);">
+                ¡Excelente trabajo! Continúa practicando con los problemas de planteo de tu material.
+            </p>
+        </section>
+    </main>
+
+    <div class="navegacion">
+        <button id="btnPrev" onclick="cambiarSlide(-1)">← Anterior</button>
+        <span class="contador" id="contador">Diapositiva 1 de 6</span>
+        <button id="btnNext" onclick="cambiarSlide(1)">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    let slideActual = 1;
+    const totalSlides = 6;
+
+    function actualizarNavegacion() {
+        document.querySelectorAll('.slide').forEach((slide, index) => {
+            slide.classList.toggle('active', index + 1 === slideActual);
+        });
+        
+        document.getElementById('contador').textContent = `Diapositiva ${slideActual} de ${totalSlides}`;
+        document.getElementById('btnPrev').disabled = slideActual === 1;
+        document.getElementById('btnNext').disabled = slideActual === totalSlides;
+        document.getElementById('btnNext').textContent = slideActual === totalSlides - 1 ? 'Fin' : 'Siguiente →';
+        
+        const progreso = ((slideActual - 1) / (totalSlides - 1)) * 100;
+        document.getElementById('progressBar').style.width = `${progreso}%`;
+    }
+
+    function cambiarSlide(direccion) {
+        if (direccion === 1 && slideActual < totalSlides) {
+            slideActual++;
+        } else if (direccion === -1 && slideActual > 1) {
+            slideActual--;
+        }
+        actualizarNavegacion();
+    }
+
+    function mostrarResultado(elementId, mensaje, esExito) {
+        const el = document.getElementById(elementId);
+        el.innerHTML = mensaje;
+        el.className = `resultado ${esExito ? 'exito' : 'error'}`;
+        if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+            MathJax.typesetPromise([el]).catch(err => console.error('MathJax error:', err));
+        }
+    }
+
+    // Slide 2: Verificador de Semiplano
+    function verificarSemiplano() {
+        const A = parseFloat(document.getElementById('s2-a').value);
+        const B = parseFloat(document.getElementById('s2-b').value);
+        const C = parseFloat(document.getElementById('s2-c').value);
+        const x = parseFloat(document.getElementById('s2-x').value);
+        const y = parseFloat(document.getElementById('s2-y').value);
+
+        if ([A, B, C, x, y].some(isNaN)) {
+            mostrarResultado('res-s2', '️ Por favor, completa todos los campos con valores numéricos.', false);
+            return;
+        }
+
+        const resultado = A * x + B * y + C;
+        let msg = `Evaluando en $(${x}, ${y})$: $${A}(${x}) + ${B}(${y}) + ${C} = ${resultado}$<br>`;
+        
+        if (resultado > 0) {
+            msg += `✅ Como $${resultado} > 0$, el punto <strong>SÍ</strong> satisface la desigualdad $Ax + By + C > 0$.`;
+            mostrarResultado('res-s2', msg, true);
+        } else if (resultado === 0) {
+            msg += `⚠️ Como $${resultado} = 0$, el punto está exactamente sobre la recta frontera (no satisface la desigualdad estricta).`;
+            mostrarResultado('res-s2', msg, false);
+        } else {
+            msg += `❌ Como $${resultado} < 0$, el punto <strong>NO</strong> satisface la desigualdad $Ax + By + C > 0$.`;
+            mostrarResultado('res-s2', msg, false);
+        }
+    }
+
+    // Slide 3: Verificador de Sistema
+    function verificarSistema() {
+        const a1 = parseFloat(document.getElementById('s3-a1').value);
+        const b1 = parseFloat(document.getElementById('s3-b1').value);
+        const c1 = parseFloat(document.getElementById('s3-c1').value);
+        const a2 = parseFloat(document.getElementById('s3-a2').value);
+        const b2 = parseFloat(document.getElementById('s3-b2').value);
+        const c2 = parseFloat(document.getElementById('s3-c2').value);
+        const x = parseFloat(document.getElementById('s3-x').value);
+        const y = parseFloat(document.getElementById('s3-y').value);
+
+        if ([a1, b1, c1, a2, b2, c2, x, y].some(isNaN)) {
+            mostrarResultado('res-s3', '⚠️ Por favor, completa todos los campos.', false);
+            return;
+        }
+
+        const r1 = a1 * x + b1 * y;
+        const r2 = a2 * x + b2 * y;
+        const ok1 = r1 < c1;
+        const ok2 = r2 < c2;
+
+        let msg = `Evaluación del punto $(${x}, ${y})$:<br>`;
+        msg += `• Desig. 1: $${a1}(${x}) + ${b1}(${y}) = ${r1}$. ¿Es $< ${c1}$? ${ok1 ? '✅ Sí' : '❌ No'}<br>`;
+        msg += `• Desig. 2: $${a2}(${x}) + ${b2}(${y}) = ${r2}$. ¿Es $< ${c2}$? ${ok2 ? '✅ Sí' : '❌ No'}<br><br>`;
+
+        if (ok1 && ok2) {
+            msg += `🎯 <strong>¡Correcto!</strong> El punto pertenece a la región factible del sistema.`;
+            mostrarResultado('res-s3', msg, true);
+        } else {
+            msg += `⚠️ El punto <strong>NO</strong> pertenece a la región factible (no satisface todas las restricciones).`;
+            mostrarResultado('res-s3', msg, false);
+        }
+    }
+
+    // Slide 4: Evaluador de Función Objetivo
+    function evaluarFuncion() {
+        const a = parseFloat(document.getElementById('s4-a').value);
+        const b = parseFloat(document.getElementById('s4-b').value);
+        const x = parseFloat(document.getElementById('s4-x').value);
+        const y = parseFloat(document.getElementById('s4-y').value);
+
+        if ([a, b, x, y].some(isNaN)) {
+            mostrarResultado('res-s4', '⚠️ Por favor, completa todos los campos.', false);
+            return;
+        }
+
+        const Z = a * x + b * y;
+        const msg = `Para la función $Z = ${a}x + ${b}y$ evaluada en el vértice $(${x}, ${y})$:<br>$$Z = ${a}(${x}) + ${b}(${y}) = ${Z}$$`;
+        mostrarResultado('res-s4', msg, true);
+    }
+
+    // Slide 5: Comparador de Vértices
+    function compararVertices() {
+        const a = parseFloat(document.getElementById('s5-a').value);
+        const b = parseFloat(document.getElementById('s5-b').value);
+        const x1 = parseFloat(document.getElementById('s5-x1').value);
+        const y1 = parseFloat(document.getElementById('s5-y1').value);
+        const x2 = parseFloat(document.getElementById('s5-x2').value);
+        const y2 = parseFloat(document.getElementById('s5-y2').value);
+
+        if ([a, b, x1, y1, x2, y2].some(isNaN)) {
+            mostrarResultado('res-s5', '️ Por favor, completa todos los campos.', false);
+            return;
+        }
+
+        const Z1 = a * x1 + b * y1;
+        const Z2 = a * x2 + b * y2;
+        
+        let msg = `Evaluando $Z = ${a}x + ${b}y$:<br>`;
+        msg += `• Vértice 1 $(${x1}, ${y1})$: $Z_1 = ${Z1}$<br>`;
+        msg += `• Vértice 2 $(${x2}, ${y2})$: $Z_2 = ${Z2}$<br><br>`;
+
+        if (Z1 > Z2) {
+            msg += `📈 Para <strong>Maximizar</strong>, el óptimo es el Vértice 1 ($Z=${Z1}$).<br>📉 Para <strong>Minimizar</strong>, el óptimo es el Vértice 2 ($Z=${Z2}$).`;
+        } else if (Z2 > Z1) {
+            msg += `📈 Para <strong>Maximizar</strong>, el óptimo es el Vértice 2 ($Z=${Z2}$).<br>📉 Para <strong>Minimizar</strong>, el óptimo es el Vértice 1 ($Z=${Z1}$).`;
+        } else {
+            msg += `⚖️ Ambos vértices producen el mismo valor $Z=${Z1}$. (La función es paralela al segmento que los une).`;
+        }
+        mostrarResultado('res-s5', msg, true);
+    }
+
+    actualizarNavegacion();
+</script>
+
+</body>
+</html>

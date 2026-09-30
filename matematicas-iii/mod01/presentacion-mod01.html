@@ -1,1 +1,780 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo I — Ecuaciones y Funciones Lineales | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error { border-left-color: var(--color-error); color: var(--color-error); }
+        .resultado.exito { border-left-color: var(--color-exito); }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo I — Ecuaciones y Funciones Lineales</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo I</h2>
+            <p>En este módulo exploraremos las relaciones lineales, las ecuaciones de primer grado y las funciones lineales. Estos conceptos son fundamentales para modelar fenómenos donde una cantidad cambia proporcionalmente respecto a otra.</p>
+            <div class="math-block">$$Ax + By + C = 0$$</div>
+            <p>A lo largo de esta presentación, encontrarás secciones teóricas y cajas interactivas que te permitirán practicar y verificar tu comprensión de cada tema.</p>
+        </div>
+
+        <div class="diapositiva" data-indice="1">
+            <h2>1. Relaciones Lineales</h2>
+            <p>Una relación lineal es cualquier conjunto de pares ordenados cuya gráfica es una línea recta. Estas relaciones se definen mediante ecuaciones llamadas <strong>ecuaciones lineales</strong> o ecuaciones de primer grado con dos variables, usualmente $x$ e $y$.</p>
+            <h3>Definición formal</h3>
+            <p>Una ecuación lineal o ecuación de primer grado en $x, y$ es cualquier ecuación equivalente a la forma:</p>
+            <div class="math-block">$$Ax + By + C = 0$$</div>
+            <p>donde $A$, $B$ y $C$ son constantes reales tales que $A$ y $B$ no sean ambas cero.</p>
+            <div class="caja-interactiva">
+                <h3>🧮 Conversor de ecuaciones</h3>
+                <p>Ingresa los coeficientes para construir la ecuación en la forma general $Ax + By + C = 0$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A =</label><input type="number" id="conv-A" placeholder="0"></div>
+                    <div class="input-wrapper"><label>B =</label><input type="number" id="conv-B" placeholder="0"></div>
+                    <div class="input-wrapper"><label>C =</label><input type="number" id="conv-C" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-convertir">Convertir</button>
+                </div>
+                <div class="resultado" id="res-convertir">La ecuación aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Soluciones de ecuaciones lineales</h2>
+            <p>Una solución de una ecuación lineal es un par ordenado $(x, y)$ que al sustituirse en la ecuación hace verdadera la igualdad.</p>
+            <p><strong>Ejemplo:</strong> $2x - 3y - 12 = 0$</p>
+            <ul>
+                <li>Si $x = 0$: $2(0) - 3y - 12 = 0 \implies -3y = 12 \implies y = -4$. Solución: $(0, -4)$</li>
+                <li>Si $y = 0$: $2x - 3(0) - 12 = 0 \implies 2x = 12 \implies x = 6$. Solución: $(6, 0)$</li>
+            </ul>
+            <div class="caja-interactiva">
+                <h3>🎯 Buscador de soluciones</h3>
+                <p>Ingresa los coeficientes y un valor de $x$ para encontrar $y$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A =</label><input type="number" id="sol-A" placeholder="0"></div>
+                    <div class="input-wrapper"><label>B =</label><input type="number" id="sol-B" placeholder="0"></div>
+                    <div class="input-wrapper"><label>C =</label><input type="number" id="sol-C" placeholder="0"></div>
+                    <div class="input-wrapper"><label>x =</label><input type="number" id="sol-x" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-solucion">Encontrar y</button>
+                </div>
+                <div class="resultado" id="res-solucion">El par ordenado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Gráfica de ecuaciones lineales</h2>
+            <p>Cuando el conjunto de los números reales es el conjunto de sustitución de las dos variables, la gráfica de una ecuación lineal es una línea recta.</p>
+            <h3>Método de las intersecciones</h3>
+            <p>Para graficar una ecuación lineal, encontramos dos puntos:</p>
+            <ol>
+                <li><strong>Intersección con el eje Y:</strong> hacemos $x = 0$ y resolvemos para $y$.</li>
+                <li><strong>Intersección con el eje X:</strong> hacemos $y = 0$ y resolvemos para $x$.</li>
+            </ol>
+            <div class="caja-interactiva">
+                <h3>📐 Calculadora de intersecciones</h3>
+                <p>Define los coeficientes para encontrar los puntos de intersección con los ejes:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A =</label><input type="number" id="int-A" placeholder="0"></div>
+                    <div class="input-wrapper"><label>B =</label><input type="number" id="int-B" placeholder="0"></div>
+                    <div class="input-wrapper"><label>C =</label><input type="number" id="int-C" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-interseccion">Calcular intersecciones</button>
+                </div>
+                <div class="resultado" id="res-interseccion">Los puntos de intersección aparecerán aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="4">
+            <h2>4. Función Lineal</h2>
+            <p>En las ecuaciones lineales donde el coeficiente de $y$ es distinto de cero ($B \neq 0$), cada ecuación define una función. La ecuación puede escribirse en forma equivalente si la resolvemos para $y$.</p>
+            <h3>Definición</h3>
+            <p>La ecuación $f(x) = mx + b$, con $x \in \mathbb{R}$, donde $m$ y $b$ son constantes reales, representa una función llamada <strong>función lineal</strong>.</p>
+            <div class="math-block">$$f(x) = mx + b$$</div>
+            <h3>Caso particular: función constante</h3>
+            <p>Cuando $m = 0$, entonces $f(x) = b$. Esta función se llama función constante, y su gráfica es una recta paralela al eje $X$.</p>
+            <div class="math-block">$$f(x) = b \quad (\text{recta horizontal})$$</div>
+            <div class="caja-interactiva">
+                <h3>🔄 Conversor a forma pendiente-ordenada</h3>
+                <p>Convierte $Ax + By + C = 0$ a la forma $y = mx + b$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>A =</label><input type="number" id="pend-A" placeholder="0"></div>
+                    <div class="input-wrapper"><label>B =</label><input type="number" id="pend-B" placeholder="0"></div>
+                    <div class="input-wrapper"><label>C =</label><input type="number" id="pend-C" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-pendiente">Convertir</button>
+                </div>
+                <div class="resultado" id="res-pendiente">La forma pendiente-ordenada aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="5">
+            <h2>5. La Pendiente</h2>
+            <p>El significado de la constante $m$ es el cambio en $y$ por unidad de cambio en $x$. Geométricamente, la pendiente indica la inclinación de la recta.</p>
+            <div class="math-block">$$m = \frac{y_2 - y_1}{x_2 - x_1}$$</div>
+            <h3>Propiedad de tricotomía</h3>
+            <ul>
+                <li>$m > 0$: la ordenada crece; la gráfica se desplaza hacia arriba.</li>
+                <li>$m = 0$: no aumenta ni disminuye, es una función constante.</li>
+                <li>$m < 0$: la $y$ decrece; la gráfica se desplaza hacia abajo.</li>
+            </ul>
+            <div class="caja-interactiva">
+                <h3>📏 Calculadora de pendientes</h3>
+                <p>Ingresa dos puntos $(x_1, y_1)$ y $(x_2, y_2)$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>x₁ =</label><input type="number" id="pen-x1" placeholder="0"></div>
+                    <div class="input-wrapper"><label>y₁ =</label><input type="number" id="pen-y1" placeholder="0"></div>
+                    <div class="input-wrapper"><label>x₂ =</label><input type="number" id="pen-x2" placeholder="0"></div>
+                    <div class="input-wrapper"><label>y₂ =</label><input type="number" id="pen-y2" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-pendiente2">Calcular pendiente</button>
+                </div>
+                <div class="resultado" id="res-pendiente2">La pendiente aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="6">
+            <h2>6. Ordenada al Origen</h2>
+            <p>La constante $b$ es la ordenada al origen, que es el valor de $y$ cuando $x = 0$. Geométricamente, es el punto donde la recta intersecta al eje $Y$.</p>
+            <div class="math-block">$$f(0) = m \cdot 0 + b = b \implies \text{Punto: } (0, b)$$</div>
+            <p><strong>Ejemplo:</strong> $f(x) = 3x - 2 \implies$ Pendiente $m = 3$, Ordenada al origen $b = -2$. La recta pasa por $(0, -2)$.</p>
+            <div class="caja-interactiva">
+                <h3>🎯 Verificador de ordenada al origen</h3>
+                <p>Ingresa la pendiente $m$ y la ordenada al origen $b$ para obtener la ecuación y su punto de intersección con el eje $Y$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>m =</label><input type="number" id="ord-m" placeholder="0"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="ord-b" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-ordenada">Verificar</button>
+                </div>
+                <div class="resultado" id="res-ordenada">La ecuación y el punto aparecerán aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="7">
+            <h2>7. Rectas Paralelas</h2>
+            <p>Dos rectas con la misma pendiente son paralelas. No tienen puntos en común.</p>
+            <div class="math-block">$$\text{Si } m_1 = m_2 \text{, entonces las rectas son paralelas}$$</div>
+            <p><strong>Ejemplo:</strong> $f(x) = 2x + 3$ y $g(x) = 2x - 1$. Ambas tienen pendiente $m = 2$, por lo tanto son paralelas.</p>
+            <div class="caja-interactiva">
+                <h3>📏 Verificador de rectas paralelas</h3>
+                <p>Ingresa las pendientes $m_1$ y $m_2$ de dos rectas para determinar si son paralelas:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>m₁ =</label><input type="number" id="par-m1" placeholder="0"></div>
+                    <div class="input-wrapper"><label>m₂ =</label><input type="number" id="par-m2" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-paralelas">Verificar</button>
+                </div>
+                <div class="resultado" id="res-paralelas">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="8">
+            <h2>8. Familias de Rectas</h2>
+            <p>Una familia de rectas es un conjunto de rectas que tienen una propiedad común.</p>
+            <ul>
+                <li><strong>Familia 1:</strong> $y = mx + b_0$ (con $b_0$ fijo). Todas las rectas pasan por el punto $(0, b_0)$. Tienen en común la ordenada al origen.</li>
+                <li><strong>Familia 2:</strong> $y = m_0 x + b$ (con $m_0$ fijo). Todas las rectas tienen la misma pendiente $m_0$. Son rectas paralelas entre sí.</li>
+            </ul>
+            <div class="caja-interactiva">
+                <h3>👨‍👩‍👧‍👦 Explorador de familias de rectas</h3>
+                <p>Selecciona el tipo de familia y define el valor del parámetro fijo:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper">
+                        <label>Tipo de familia:</label>
+                        <select id="fam-tipo" style="padding: 10px; border: 2px solid var(--color-acento-suave); border-radius: 6px; font-size: 1rem; color: var(--color-primario); background-color: var(--color-blanco); width: 220px;">
+                            <option value="b0">Ordenada fija: $y = mx + b_0$</option>
+                            <option value="m0">Pendiente fija: $y = m_0 x + b$</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper"><label>Valor fijo =</label><input type="number" id="fam-valor" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-familia">Explorar</button>
+                </div>
+                <div class="resultado" id="res-familia">La descripción de la familia aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="9">
+            <h2>9. Recta común a dos familias</h2>
+            <p>Dadas dos familias de rectas, podemos encontrar una recta que pertenezca a ambas si existe una combinación de pendiente y ordenada al origen que satisfaga ambas condiciones.</p>
+            <p><strong>Ejemplo:</strong> Familias $y = mx - 2$ y $y = 3x + b$. La recta común debe tener $m = 3$ y $b = -2$:</p>
+            <div class="math-block">$$y = 3x - 2$$</div>
+            <div class="caja-interactiva">
+                <h3>🔗 Buscador de recta común</h3>
+                <p>Ingresa los valores fijos de las dos familias para encontrar la recta común:</p>
+                <p style="font-size: 0.9rem; margin-bottom: 10px;">Familia 1: $y = mx + b_1$ &nbsp;&nbsp;|&nbsp;&nbsp; Familia 2: $y = m_2 x + b$</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="com-b1" placeholder="0"></div>
+                    <div class="input-wrapper"><label>m₂ =</label><input type="number" id="com-m2" placeholder="0"></div>
+                    <button class="btn-primario" id="btn-comun">Encontrar recta común</button>
+                </div>
+                <div class="resultado" id="res-comun">La recta común aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <div class="diapositiva" data-indice="10">
+            <h2>10. Resumen del módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Una ecuación lineal tiene la forma $Ax + By + C = 0$ con $A$ y $B$ no ambos cero.</li>
+                <li>La gráfica de una ecuación lineal es una línea recta.</li>
+                <li>Para graficar, encontramos las intersecciones con los ejes.</li>
+                <li>La función lineal tiene la forma $f(x) = mx + b$.</li>
+                <li>La pendiente $m$ indica el cambio en $y$ por unidad de cambio en $x$.</li>
+                <li>La ordenada al origen $b$ es el punto donde la recta cruza el eje $Y$.</li>
+                <li>Rectas con la misma pendiente son paralelas.</li>
+                <li>Las familias de rectas comparten una propiedad común: una ordenada fija o una pendiente fija.</li>
+                <li>La recta común a dos familias combina la pendiente de una con la ordenada de la otra.</li>
+            </ul>
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo I. Ahora dominas las ecuaciones y funciones lineales.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 11</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // LÓGICA DE LAS CAJAS INTERACTIVAS
+    // =========================================
+
+    // 1. CONVERSOR DE ECUACIONES
+    document.getElementById('btn-convertir').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('conv-A').value) || 0;
+        var B = parseFloat(document.getElementById('conv-B').value) || 0;
+        var C = parseFloat(document.getElementById('conv-C').value) || 0;
+        var res = document.getElementById('res-convertir');
+
+        if (A === 0 && B === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ A y B no pueden ser ambos cero. No es una ecuación lineal.';
+            return;
+        }
+
+        var latex = '';
+        if (A !== 0) {
+            var coefA = (Math.abs(A) === 1) ? (A < 0 ? '-' : '') : A;
+            latex += coefA + 'x';
+        }
+        if (B !== 0) {
+            var signoB = B < 0 ? '-' : '+';
+            var absB = Math.abs(B);
+            var coefB = (absB === 1) ? '' : absB;
+            latex += (latex ? ' ' + signoB + ' ' : (B < 0 ? '-' : '')) + coefB + 'y';
+        }
+        if (C !== 0) {
+            var signoC = C < 0 ? '-' : '+';
+            latex += ' ' + signoC + ' ' + Math.abs(C);
+        }
+        latex += ' = 0';
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$' + latex + '$$';
+        renderMath(res);
+    });
+
+    // 2. BUSCADOR DE SOLUCIONES
+    document.getElementById('btn-solucion').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('sol-A').value) || 0;
+        var B = parseFloat(document.getElementById('sol-B').value) || 0;
+        var C = parseFloat(document.getElementById('sol-C').value) || 0;
+        var x = parseFloat(document.getElementById('sol-x').value) || 0;
+        var res = document.getElementById('res-solucion');
+
+        if (B === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ B no puede ser cero (no se puede despejar y).';
+            return;
+        }
+
+        var y = -(A * x + C) / B;
+        res.className = 'resultado exito';
+        res.innerHTML = 'Para $x = ' + x + '$, el valor de $y$ es <strong>' + y + '</strong>. Par ordenado: <strong>(' + x + ', ' + y + ')</strong>';
+        renderMath(res);
+    });
+
+    // 3. CALCULADORA DE INTERSECCIONES
+    document.getElementById('btn-interseccion').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('int-A').value) || 0;
+        var B = parseFloat(document.getElementById('int-B').value) || 0;
+        var C = parseFloat(document.getElementById('int-C').value) || 0;
+        var res = document.getElementById('res-interseccion');
+
+        if (A === 0 && B === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ A y B no pueden ser ambos cero.';
+            return;
+        }
+
+        var html = '';
+        if (B !== 0) {
+            var yInt = -C / B;
+            html += '📍 Intersección con eje Y (x=0): <strong>(0, ' + yInt + ')</strong><br>';
+        } else {
+            html += '⚠️ No hay intersección con el eje Y (recta vertical).<br>';
+        }
+
+        if (A !== 0) {
+            var xInt = -C / A;
+            html += '📍 Intersección con eje X (y=0): <strong>(' + xInt + ', 0)</strong>';
+        } else {
+            html += '⚠️ No hay intersección con el eje X (recta horizontal).';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+    });
+
+    // 4. CONVERSOR A FORMA PENDIENTE-ORDENADA
+    document.getElementById('btn-pendiente').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('pend-A').value) || 0;
+        var B = parseFloat(document.getElementById('pend-B').value) || 0;
+        var C = parseFloat(document.getElementById('pend-C').value) || 0;
+        var res = document.getElementById('res-pendiente');
+
+        if (B === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ B no puede ser cero. La ecuación representa una recta vertical y no es función.';
+            return;
+        }
+
+        var m = -A / B;
+        var b = -C / B;
+
+        var latex = 'y = ';
+        if (m === 1) latex += 'x';
+        else if (m === -1) latex += '-x';
+        else if (m !== 0) latex += m + 'x';
+
+        if (b > 0) latex += (m !== 0 ? ' + ' + b : '' + b);
+        else if (b < 0) latex += ' - ' + Math.abs(b);
+
+        if (m === 0 && b === 0) latex += '0';
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$' + latex + '$$ <br> Pendiente $m = ' + m + '$, Ordenada al origen $b = ' + b + '$';
+        renderMath(res);
+    });
+
+    // 5. CALCULADORA DE PENDIENTES
+    document.getElementById('btn-pendiente2').addEventListener('click', function() {
+        var x1 = parseFloat(document.getElementById('pen-x1').value) || 0;
+        var y1 = parseFloat(document.getElementById('pen-y1').value) || 0;
+        var x2 = parseFloat(document.getElementById('pen-x2').value) || 0;
+        var y2 = parseFloat(document.getElementById('pen-y2').value) || 0;
+        var res = document.getElementById('res-pendiente2');
+
+        if (x2 === x1) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ La pendiente es indefinida (recta vertical). $x_1 = x_2$.';
+            renderMath(res);
+            return;
+        }
+
+        var m = (y2 - y1) / (x2 - x1);
+        var tipo = '';
+        if (m > 0) tipo = '↗️ Creciente (m > 0)';
+        else if (m === 0) tipo = '➡️ Constante (m = 0)';
+        else tipo = '↘️ Decreciente (m < 0)';
+
+        res.className = 'resultado exito';
+        res.innerHTML = 'Pendiente $m = \\frac{' + y2 + ' - (' + y1 + ')}{' + x2 + ' - (' + x1 + ')} = ' + m + '$ <br> <strong>' + tipo + '</strong>';
+        renderMath(res);
+    });
+
+    // 6. VERIFICADOR DE ORDENADA AL ORIGEN
+    document.getElementById('btn-ordenada').addEventListener('click', function() {
+        var m = parseFloat(document.getElementById('ord-m').value) || 0;
+        var b = parseFloat(document.getElementById('ord-b').value) || 0;
+        var res = document.getElementById('res-ordenada');
+
+        var latex = 'y = ';
+        if (m === 1) latex += 'x';
+        else if (m === -1) latex += '-x';
+        else if (m !== 0) latex += m + 'x';
+
+        if (b > 0) latex += (m !== 0 ? ' + ' + b : '' + b);
+        else if (b < 0) latex += ' - ' + Math.abs(b);
+
+        if (m === 0 && b === 0) latex += '0';
+
+        res.className = 'resultado exito';
+        res.innerHTML = 'Ecuación: $$' + latex + '$$ <br> Punto de intersección con el eje $Y$: <strong>(0, ' + b + ')</strong>';
+        renderMath(res);
+    });
+
+    // 7. VERIFICADOR DE RECTAS PARALELAS
+    document.getElementById('btn-paralelas').addEventListener('click', function() {
+        var m1 = parseFloat(document.getElementById('par-m1').value) || 0;
+        var m2 = parseFloat(document.getElementById('par-m2').value) || 0;
+        var res = document.getElementById('res-paralelas');
+
+        if (m1 === m2) {
+            res.className = 'resultado exito';
+            res.innerHTML = '✅ Las rectas son <strong>paralelas</strong> porque $m_1 = m_2 = ' + m1 + '$. No tienen ningún punto en común.';
+        } else {
+            res.className = 'resultado error';
+            res.innerHTML = '❌ Las rectas <strong>no son paralelas</strong> porque $m_1 = ' + m1 + '$ y $m_2 = ' + m2 + '$. Se intersecan en un único punto.';
+        }
+        renderMath(res);
+    });
+
+    // 8. EXPLORADOR DE FAMILIAS DE RECTAS
+    document.getElementById('btn-familia').addEventListener('click', function() {
+        var tipo = document.getElementById('fam-tipo').value;
+        var valor = parseFloat(document.getElementById('fam-valor').value) || 0;
+        var res = document.getElementById('res-familia');
+
+        if (tipo === 'b0') {
+            res.className = 'resultado exito';
+            res.innerHTML = 'Familia de rectas con <strong>ordenada al origen fija</strong>: $y = mx + ' + valor + '$<br>' +
+                'Todas las rectas pasan por el punto <strong>(0, ' + valor + ')</strong>.<br>' +
+                'Al variar $m$, las rectas giran alrededor de ese punto.';
+        } else {
+            res.className = 'resultado exito';
+            res.innerHTML = 'Familia de rectas con <strong>pendiente fija</strong>: $y = ' + valor + 'x + b$<br>' +
+                'Todas las rectas son <strong>paralelas</strong> entre sí (misma pendiente $m = ' + valor + '$).<br>' +
+                'Al variar $b$, las rectas se desplazan verticalmente.';
+        }
+        renderMath(res);
+    });
+
+    // 9. BUSCADOR DE RECTA COMÚN
+    document.getElementById('btn-comun').addEventListener('click', function() {
+        var b1 = parseFloat(document.getElementById('com-b1').value) || 0;
+        var m2 = parseFloat(document.getElementById('com-m2').value) || 0;
+        var res = document.getElementById('res-comun');
+
+        var latex = 'y = ';
+        if (m2 === 1) latex += 'x';
+        else if (m2 === -1) latex += '-x';
+        else if (m2 !== 0) latex += m2 + 'x';
+
+        if (b1 > 0) latex += (m2 !== 0 ? ' + ' + b1 : '' + b1);
+        else if (b1 < 0) latex += ' - ' + Math.abs(b1);
+
+        if (m2 === 0 && b1 === 0) latex += '0';
+
+        res.className = 'resultado exito';
+        res.innerHTML = 'La recta común a ambas familias es: $$' + latex + '$$<br>' +
+            'Tiene la pendiente de la Familia 2 ($m = ' + m2 + '$) y la ordenada al origen de la Familia 1 ($b = ' + b1 + '$).';
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

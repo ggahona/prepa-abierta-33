@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratorio de Suma de Números Complejos | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      color: var(--color-texto-oscuro);
+      line-height: 1.7;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1000px;
+      background-color: var(--color-blanco);
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 30px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-acento-suave);
+      margin-bottom: 8px;
+    }
+
+    header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+    .barra-progreso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 12px 20px;
+      margin: 20px 25px 0 25px;
+      border-left: 4px solid var(--color-acento);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .barra-progreso .info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+    }
+
+    .barra-progreso .contador {
+      font-weight: 700;
+      color: var(--color-acento);
+    }
+
+    .btn-secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-secundario:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .tarjeta-problema {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 25px;
+      margin: 20px 25px 25px 25px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .meta-problema {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .numero-problema {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-acento);
+    }
+
+    .nivel-problema {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .nivel-problema.basico {
+      background-color: rgba(39, 174, 96, 0.15);
+      color: var(--color-exito);
+    }
+    .nivel-problema.medio {
+      background-color: rgba(91, 127, 163, 0.15);
+      color: var(--color-acento);
+    }
+    .nivel-problema.alto {
+      background-color: rgba(192, 57, 43, 0.15);
+      color: var(--color-error);
+    }
+
+    .enunciado {
+      font-size: 1.05rem;
+      color: var(--color-texto-oscuro);
+      margin-bottom: 20px;
+      line-height: 1.7;
+      text-align: justify;
+      padding: 15px;
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .operacion-display {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+
+    .fase {
+      margin-bottom: 20px;
+      padding: 18px;
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+    }
+
+    .fase-titulo {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .numero-fase {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 50%;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .grupo-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .input-wrapper label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 5px;
+    }
+
+    select.select-opcion {
+      padding: 10px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      font-size: 0.95rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      width: 100%;
+      transition: border-color 0.3s;
+      font-family: inherit;
+      cursor: pointer;
+      background-image: linear-gradient(45deg, transparent 50%, var(--color-acento) 50%),
+                        linear-gradient(135deg, var(--color-acento) 50%, transparent 50%);
+      background-position: calc(100% - 20px) calc(50% - 2px),
+                           calc(100% - 15px) calc(50% - 2px);
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding-right: 40px;
+    }
+
+    select.select-opcion:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .select-opcion.pendiente {
+      border-color: var(--color-acento-suave);
+      color: var(--color-acento);
+    }
+
+    .select-opcion.correcto {
+      border-color: var(--color-exito);
+      background-color: rgba(39, 174, 96, 0.08);
+      color: var(--color-exito);
+      font-weight: 600;
+    }
+
+    .select-opcion.incorrecto {
+      border-color: var(--color-error);
+      background-color: rgba(192, 57, 43, 0.08);
+      color: var(--color-error);
+      font-weight: 600;
+    }
+
+    .btn-primario {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 22px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-top: 8px;
+      font-family: inherit;
+    }
+
+    .btn-primario:hover { background-color: var(--color-primario); }
+
+    .btn-pista {
+      background-color: transparent;
+      border: 2px dashed var(--color-acento-suave);
+      color: var(--color-acento);
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 8px;
+      margin-right: 8px;
+      font-family: inherit;
+    }
+
+    .btn-pista:hover {
+      background-color: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .feedback {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      margin-top: 12px;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .feedback.visible { display: block; }
+    .feedback.correcto {
+      background-color: rgba(39, 174, 96, 0.12);
+      border-left: 4px solid var(--color-exito);
+      color: var(--color-exito);
+    }
+    .feedback.incorrecto {
+      background-color: rgba(192, 57, 43, 0.12);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .pista-texto {
+      background-color: rgba(91, 127, 163, 0.1);
+      border-left: 4px solid var(--color-acento);
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--color-primario);
+      margin-top: 12px;
+      display: none;
+    }
+    .pista-texto.visible { display: block; }
+
+    .navegacion-problemas {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 2px solid var(--color-acento-suave);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .indicador-problema {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-navegacion {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+    .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .info-solucion {
+      background-color: rgba(39, 174, 96, 0.1);
+      border-left: 4px solid var(--color-exito);
+      padding: 12px 16px;
+      border-radius: 6px;
+      color: var(--color-exito);
+      font-weight: 600;
+      margin-top: 15px;
+    }
+
+    .footer-info {
+      background-color: var(--color-base);
+      border-top: 1px solid var(--color-acento-suave);
+      padding: 15px 25px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      text-align: center;
+    }
+
+    .footer-info strong { color: var(--color-acento); }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2rem; }
+      .tarjeta-problema { padding: 15px; margin: 15px; }
+      .barra-progreso { margin: 15px 15px 0 15px; }
+      .grupo-inputs { flex-direction: column; align-items: stretch; }
+      .navegacion-problemas { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <header>
+    <div class="institucion">Preparatoria Abierta</div>
+    <h1>Laboratorio de Suma de Números Complejos</h1>
+    <p>Suma de Pares Ordenados y Propiedades | Matemáticas III</p>
+  </header>
+
+  <div class="barra-progreso">
+    <div class="info">
+      <span>📊 Progreso:</span>
+      <span class="contador" id="contador-resueltos">0 de 8 resueltos</span>
+    </div>
+    <div style="display: flex; gap: 8px;">
+      <button class="btn-secundario" id="btn-aleatorio">🎲 Problema aleatorio</button>
+      <button class="btn-secundario" id="btn-reiniciar">🔄 Reiniciar progreso</button>
+    </div>
+  </div>
+
+  <div class="tarjeta-problema">
+    <div class="meta-problema">
+      <div class="numero-problema" id="numero-problema">Problema 1 de 8</div>
+      <div class="nivel-problema basico" id="nivel-problema">Básico</div>
+    </div>
+
+    <div class="enunciado" id="enunciado">
+      Cargando problema...
+    </div>
+
+    <div class="operacion-display" id="operacion-display"></div>
+
+    <!-- FASE 1: IDENTIFICAR COMPONENTES -->
+    <div class="fase" id="fase-1">
+      <div class="fase-titulo">
+        <span class="numero-fase">1</span>
+        Identifica los componentes
+      </div>
+      <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-primario);">
+        Selecciona los valores correctos de cada componente.
+      </p>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>$a_1$ (primer componente de $z_1$)</label>
+          <select class="select-opcion" id="comp-a1">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>$b_1$ (segundo componente de $z_1$)</label>
+          <select class="select-opcion" id="comp-b1">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>$a_2$ (primer componente de $z_2$)</label>
+          <select class="select-opcion" id="comp-a2">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>$b_2$ (segundo componente de $z_2$)</label>
+          <select class="select-opcion" id="comp-b2">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-1">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-1">Verificar</button>
+      <div class="pista-texto" id="pista-1"></div>
+      <div class="feedback" id="feedback-1"></div>
+    </div>
+
+    <!-- FASE 2: SUMAR COMPONENTE A COMPONENTE -->
+    <div class="fase" id="fase-2" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">2</span>
+        Suma componente a componente
+      </div>
+      <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-primario);">
+        Aplica la definición: $z_1 + z_2 = (a_1 + a_2,\ b_1 + b_2)$
+      </p>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Primer componente del resultado ($a_1 + a_2$)</label>
+          <select class="select-opcion" id="suma-a">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+        <div class="input-wrapper">
+          <label>Segundo componente del resultado ($b_1 + b_2$)</label>
+          <select class="select-opcion" id="suma-b">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-2">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-2">Verificar</button>
+      <div class="pista-texto" id="pista-2"></div>
+      <div class="feedback" id="feedback-2"></div>
+    </div>
+
+    <!-- FASE 3: PAR ORDENADO RESULTADO -->
+    <div class="fase" id="fase-3" style="display: none;">
+      <div class="fase-titulo">
+        <span class="numero-fase">3</span>
+        Escribe el par ordenado resultado
+      </div>
+      <p style="font-size: 0.9rem; margin-bottom: 12px; color: var(--color-primario);">
+        Selecciona el par ordenado que representa la suma completa.
+      </p>
+      <div class="grupo-inputs">
+        <div class="input-wrapper">
+          <label>Par ordenado resultado $z_1 + z_2 =$</label>
+          <select class="select-opcion" id="par-resultado">
+            <option value="">— Selecciona —</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-pista" id="btn-pista-3">💡 Pista</button>
+      <button class="btn-primario" id="btn-verificar-3">Verificar</button>
+      <div class="pista-texto" id="pista-3"></div>
+      <div class="feedback" id="feedback-3"></div>
+      <div class="info-solucion" id="info-solucion" style="display: none;"></div>
+    </div>
+
+    <div class="navegacion-problemas">
+      <button class="btn-navegacion secundario" id="btn-anterior" disabled>← Anterior</button>
+      <span class="indicador-problema" id="indicador-problema">Problema 1 de 8</span>
+      <button class="btn-navegacion" id="btn-siguiente">Siguiente →</button>
+    </div>
+  </div>
+
+  <div class="footer-info">
+    <strong>Objetivo:</strong> Aplicar la definición de suma de números complejos $z_1 + z_2 = (a_1 + a_2,\ b_1 + b_2)$, identificando cada componente y construyendo el par ordenado resultado. Se incluyen casos de inverso aditivo, identidad y suma con fracciones.
+  </div>
+</div>
+
+<script>
+  // =========================================
+  // BANCO DE PROBLEMAS — SUMA DE ℂ
+  // =========================================
+  var problemas = [
+    {
+      nivel: 'Básico',
+      z1: { a: 3, b: -1 },
+      z2: { a: 1, b: 5 },
+      opcionesA: [1, 2, 3, 4, 5],
+      opcionesB: [-5, -3, -1, 1, 3, 5]
+    },
+    {
+      nivel: 'Básico',
+      z1: { a: -2, b: 4 },
+      z2: { a: 3, b: 2 },
+      opcionesA: [-3, -2, -1, 1, 2, 3],
+      opcionesB: [-4, -2, 2, 4, 6, 8]
+    },
+    {
+      nivel: 'Básico',
+      z1: { a: 2, b: -3 },
+      z2: { a: -2, b: 3 },
+      opcionesA: [-4, -3, -2, -1, 1, 2],
+      opcionesB: [-5, -3, -1, 1, 3, 5]
+    },
+    {
+      nivel: 'Básico',
+      z1: { a: 1, b: -4 },
+      z2: { a: 3, b: -2 },
+      opcionesA: [1, 2, 3, 4, 5, 6],
+      opcionesB: [-8, -7, -6, -5, -4, -3]
+    },
+    {
+      nivel: 'Medio',
+      z1: { a: 0, b: 3 },
+      z2: { a: 0, b: 2 },
+      opcionesA: [0, 1, 2, 3, 4],
+      opcionesB: [3, 4, 5, 6, 7]
+    },
+    {
+      nivel: 'Medio',
+      z1: { a: 0, b: 0 },
+      z2: { a: 7, b: -2 },
+      opcionesA: [0, 3, 5, 7, 9],
+      opcionesB: [-3, -2, -1, 0, 1, 2]
+    },
+    {
+      nivel: 'Medio',
+      z1: { a: 1, b: -4 },
+      z2: { a: 3, b: -2 },
+      opcionesA: [1, 2, 3, 4, 5, 6],
+      opcionesB: [-8, -7, -6, -5, -4, -3]
+    },
+    {
+      nivel: 'Alto',
+      z1: { a: 3, b: 1.8 },
+      z2: { a: -3.5, b: -0.6667 },
+      opcionesA: [-1, -0.5, 0, 0.5, 1],
+      opcionesB: [-2, -1.5, -1, -0.5, 0, 1.13]
+    }
+  ];
+
+  // =========================================
+  // ESTADO
+  // =========================================
+  var indiceActual = 0;
+  var resueltos = JSON.parse(localStorage.getItem('lab_suma_c_resueltos') || '[]');
+
+  // =========================================
+  // UTILIDADES
+  // =========================================
+  function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+    }
+  }
+
+  function mezclar(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i]; a[i] = a[j]; a[j] = tmp;
+    }
+    return a;
+  }
+
+  function formatear(n) {
+    if (Number.isInteger(n)) return n.toString();
+    return parseFloat(n.toFixed(4)).toString();
+  }
+
+  function actualizarContador() {
+    document.getElementById('contador-resueltos').textContent = resueltos.length + ' de ' + problemas.length + ' resueltos';
+  }
+
+  // =========================================
+  // CARGAR PROBLEMA
+  // =========================================
+  function cargarProblema(indice) {
+    indiceActual = indice;
+    var p = problemas[indice];
+
+    document.getElementById('numero-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    var nivelElem = document.getElementById('nivel-problema');
+    nivelElem.textContent = p.nivel;
+    nivelElem.className = 'nivel-problema ' + p.nivel.toLowerCase();
+
+    // Enunciado dinámico
+    var enunciadoHTML = 'Efectúa la suma de los siguientes números complejos expresados como pares ordenados:';
+    document.getElementById('enunciado').innerHTML = enunciadoHTML;
+
+    // Mostrar operación
+    var opHTML = '$z_1 + z_2 = (' + formatear(p.z1.a) + ',\\ ' + formatear(p.z1.b) + ') + (' + formatear(p.z2.a) + ',\\ ' + formatear(p.z2.b) + ')$';
+    document.getElementById('operacion-display').innerHTML = opHTML;
+
+    // Fase 1: Componentes
+    var selectA1 = document.getElementById('comp-a1');
+    selectA1.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesA).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectA1.appendChild(opt);
+    });
+    selectA1.className = 'select-opcion pendiente';
+
+    var selectB1 = document.getElementById('comp-b1');
+    selectB1.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesB).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectB1.appendChild(opt);
+    });
+    selectB1.className = 'select-opcion pendiente';
+
+    var selectA2 = document.getElementById('comp-a2');
+    selectA2.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesA).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectA2.appendChild(opt);
+    });
+    selectA2.className = 'select-opcion pendiente';
+
+    var selectB2 = document.getElementById('comp-b2');
+    selectB2.innerHTML = '<option value="">— Selecciona —</option>';
+    mezclar(p.opcionesB).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectB2.appendChild(opt);
+    });
+    selectB2.className = 'select-opcion pendiente';
+
+    // Fase 2: Suma de componentes
+    var sumaA = p.z1.a + p.z2.a;
+    var sumaB = p.z1.b + p.z2.b;
+
+    var selectSumaA = document.getElementById('suma-a');
+    selectSumaA.innerHTML = '<option value="">— Selecciona —</option>';
+    // Opciones: la correcta + 3 distractores
+    var opcionesSumaA = [sumaA, sumaA + 1, sumaA - 1, p.z1.a - p.z2.a, p.z2.a - p.z1.a];
+    var opcionesSumaAUnicas = [];
+    opcionesSumaA.forEach(function(v) {
+      if (opcionesSumaAUnicas.indexOf(v) === -1) opcionesSumaAUnicas.push(v);
+    });
+    mezclar(opcionesSumaAUnicas).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = formatear(v);
+      selectSumaA.appendChild(opt);
+    });
+    selectSumaA.className = 'select-opcion pendiente';
+
+    var selectSumaB = document.getElementById('suma-b');
+    selectSumaB.innerHTML = '<option value="">— Selecciona —</option>';
+    var opcionesSumaB = [sumaB, sumaB + 1, sumaB - 1, p.z1.b - p.z2.b, p.z2.b - p.z1.b];
+    var opcionesSumaBUnicas = [];
+    opcionesSumaB.forEach(function(v) {
+      if (opcionesSumaBUnicas.indexOf(v) === -1) opcionesSumaBUnicas.push(v);
+    });
+    mezclar(opcionesSumaBUnicas).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = formatear(v);
+      selectSumaB.appendChild(opt);
+    });
+    selectSumaB.className = 'select-opcion pendiente';
+
+    // Fase 3: Par ordenado resultado
+    var selectPar = document.getElementById('par-resultado');
+    selectPar.innerHTML = '<option value="">— Selecciona —</option>';
+    var parCorrecto = '(' + formatear(sumaA) + ', ' + formatear(sumaB) + ')';
+    var pares = [
+      parCorrecto,
+      '(' + formatear(sumaB) + ', ' + formatear(sumaA) + ')',
+      '(' + formatear(p.z1.a) + ', ' + formatear(p.z2.b) + ')',
+      '(' + formatear(p.z2.a) + ', ' + formatear(p.z1.b) + ')',
+      '(' + formatear(sumaA + 1) + ', ' + formatear(sumaB) + ')'
+    ];
+    var paresUnicos = [];
+    pares.forEach(function(v) {
+      if (paresUnicos.indexOf(v) === -1) paresUnicos.push(v);
+    });
+    mezclar(paresUnicos).forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v;
+      opt.textContent = v;
+      selectPar.appendChild(opt);
+    });
+    selectPar.className = 'select-opcion pendiente';
+
+    // Resetear fases
+    ['fase-1', 'fase-2', 'fase-3'].forEach(function(id, i) {
+      if (i > 0) document.getElementById(id).style.display = 'none';
+      else document.getElementById(id).style.display = 'block';
+    });
+
+    ['feedback-1', 'feedback-2', 'feedback-3'].forEach(function(id) {
+      document.getElementById(id).className = 'feedback';
+    });
+    ['pista-1', 'pista-2', 'pista-3'].forEach(function(id) {
+      document.getElementById(id).className = 'pista-texto';
+    });
+
+    document.getElementById('info-solucion').style.display = 'none';
+
+    // Navegación
+    document.getElementById('indicador-problema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    document.getElementById('btn-anterior').disabled = (indice === 0);
+    document.getElementById('btn-siguiente').disabled = (indice === problemas.length - 1);
+
+    renderMath(document.body);
+  }
+
+  // =========================================
+  // VERIFICAR FASE 1: COMPONENTES
+  // =========================================
+  document.getElementById('btn-verificar-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var a1 = parseFloat(document.getElementById('comp-a1').value);
+    var b1 = parseFloat(document.getElementById('comp-b1').value);
+    var a2 = parseFloat(document.getElementById('comp-a2').value);
+    var b2 = parseFloat(document.getElementById('comp-b2').value);
+    var feedback = document.getElementById('feedback-1');
+
+    if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar los cuatro componentes.';
+      return;
+    }
+
+    var okA1 = (Math.abs(a1 - p.z1.a) < 1e-6);
+    var okB1 = (Math.abs(b1 - p.z1.b) < 1e-6);
+    var okA2 = (Math.abs(a2 - p.z2.a) < 1e-6);
+    var okB2 = (Math.abs(b2 - p.z2.b) < 1e-6);
+
+    document.getElementById('comp-a1').className = 'select-opcion ' + (okA1 ? 'correcto' : 'incorrecto');
+    document.getElementById('comp-b1').className = 'select-opcion ' + (okB1 ? 'correcto' : 'incorrecto');
+    document.getElementById('comp-a2').className = 'select-opcion ' + (okA2 ? 'correcto' : 'incorrecto');
+    document.getElementById('comp-b2').className = 'select-opcion ' + (okB2 ? 'correcto' : 'incorrecto');
+
+    if (okA1 && okB1 && okA2 && okB2) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! Los componentes están bien identificados.';
+      document.getElementById('fase-2').style.display = 'block';
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ Revisa los componentes seleccionados. Usa la pista si necesitas ayuda.';
+    }
+    renderMath(feedback);
+  });
+
+  document.getElementById('btn-pista-1').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-1');
+    pista.innerHTML = '💡 En el par ordenado $(a, b)$, el primer componente $a$ es la primera coordenada y el segundo componente $b$ es la segunda. Para $z_1 = (' + formatear(p.z1.a) + ',\\ ' + formatear(p.z1.b) + ')$, tenemos $a_1 = ' + formatear(p.z1.a) + '$ y $b_1 = ' + formatear(p.z1.b) + '$.';
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 2: SUMA DE COMPONENTES
+  // =========================================
+  document.getElementById('btn-verificar-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var respA = parseFloat(document.getElementById('suma-a').value);
+    var respB = parseFloat(document.getElementById('suma-b').value);
+    var feedback = document.getElementById('feedback-2');
+
+    if (isNaN(respA) || isNaN(respB)) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar los dos componentes del resultado.';
+      return;
+    }
+
+    var sumaA = p.z1.a + p.z2.a;
+    var sumaB = p.z1.b + p.z2.b;
+
+    var okA = (Math.abs(respA - sumaA) < 1e-6);
+    var okB = (Math.abs(respB - sumaB) < 1e-6);
+
+    document.getElementById('suma-a').className = 'select-opcion ' + (okA ? 'correcto' : 'incorrecto');
+    document.getElementById('suma-b').className = 'select-opcion ' + (okB ? 'correcto' : 'incorrecto');
+
+    if (okA && okB) {
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! El resultado de la suma componente a componente es $(' + formatear(sumaA) + ',\\ ' + formatear(sumaB) + ')$.';
+      document.getElementById('fase-3').style.display = 'block';
+    } else {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ Revisa la suma. Recuerda: $a_1 + a_2$ para el primer componente, $b_1 + b_2$ para el segundo.';
+    }
+    renderMath(feedback);
+  });
+
+  document.getElementById('btn-pista-2').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-2');
+    pista.innerHTML = '💡 Aplica la definición: $z_1 + z_2 = (a_1 + a_2,\\ b_1 + b_2)$. Para el primer componente: $' + formatear(p.z1.a) + ' + (' + formatear(p.z2.a) + ')$. Para el segundo: $' + formatear(p.z1.b) + ' + (' + formatear(p.z2.b) + ')$.';
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // VERIFICAR FASE 3: PAR ORDENADO
+  // =========================================
+  document.getElementById('btn-verificar-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var resp = document.getElementById('par-resultado').value;
+    var feedback = document.getElementById('feedback-3');
+
+    if (!resp) {
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '⚠️ Debes seleccionar el par ordenado resultado.';
+      return;
+    }
+
+    var sumaA = p.z1.a + p.z2.a;
+    var sumaB = p.z1.b + p.z2.b;
+    var parCorrecto = '(' + formatear(sumaA) + ', ' + formatear(sumaB) + ')';
+
+    if (resp === parCorrecto) {
+      document.getElementById('par-resultado').className = 'select-opcion correcto';
+      feedback.className = 'feedback correcto visible';
+      feedback.innerHTML = '✅ ¡Correcto! $z_1 + z_2 = ' + parCorrecto + '$.';
+      document.getElementById('info-solucion').style.display = 'block';
+      document.getElementById('info-solucion').innerHTML = '✅ <strong>Problema resuelto.</strong> La suma es el par ordenado $' + parCorrecto + '$.';
+
+      if (resueltos.indexOf(indiceActual) === -1) {
+        resueltos.push(indiceActual);
+        localStorage.setItem('lab_suma_c_resueltos', JSON.stringify(resueltos));
+        actualizarContador();
+      }
+    } else {
+      document.getElementById('par-resultado').className = 'select-opcion incorrecto';
+      feedback.className = 'feedback incorrecto visible';
+      feedback.innerHTML = '❌ El par ordenado no es correcto. Revisa el orden de los componentes.';
+    }
+    renderMath(feedback);
+    renderMath(document.getElementById('info-solucion'));
+  });
+
+  document.getElementById('btn-pista-3').addEventListener('click', function() {
+    var p = problemas[indiceActual];
+    var pista = document.getElementById('pista-3');
+    var sumaA = p.z1.a + p.z2.a;
+    var sumaB = p.z1.b + p.z2.b;
+    pista.innerHTML = '💡 El par ordenado resultado es $(' + formatear(sumaA) + ',\\ ' + formatear(sumaB) + ')$. Recuerda: primero el componente real (parte $x$), luego el imaginario (parte $y$).';
+    pista.classList.add('visible');
+    renderMath(pista);
+  });
+
+  // =========================================
+  // NAVEGACIÓN
+  // =========================================
+  document.getElementById('btn-anterior').addEventListener('click', function() {
+    if (indiceActual > 0) cargarProblema(indiceActual - 1);
+  });
+
+  document.getElementById('btn-siguiente').addEventListener('click', function() {
+    if (indiceActual < problemas.length - 1) cargarProblema(indiceActual + 1);
+  });
+
+  document.getElementById('btn-aleatorio').addEventListener('click', function() {
+    var nuevo;
+    do {
+      nuevo = Math.floor(Math.random() * problemas.length);
+    } while (nuevo === indiceActual && problemas.length > 1);
+    cargarProblema(nuevo);
+  });
+
+  document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    if (confirm('¿Estás seguro de que quieres reiniciar tu progreso?')) {
+      resueltos = [];
+      localStorage.removeItem('lab_suma_c_resueltos');
+      actualizarContador();
+    }
+  });
+
+  // =========================================
+  // INICIALIZACIÓN
+  // =========================================
+  actualizarContador();
+  cargarProblema(0);
+</script>
+
+</body>
+</html>

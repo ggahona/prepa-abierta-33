@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 5 — Números Complejos: Suma y Propiedades | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 5 — Números Complejos: Suma y Propiedades</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo 5</h2>
+            <p>En este módulo iniciamos el estudio del <strong>Conjunto de los Números Complejos</strong>, denotado por $\mathbb{C}$. Veremos que este conjunto contiene a los números reales y permite resolver ecuaciones que no tienen solución en $\mathbb{R}$, como $y = x^2 + 1$.</p>
+            <div class="math-block">$$\mathbb{C} = \{z \mid z = (a, b); a, b \in \mathbb{R}\}$$</div>
+            <p>Nos enfocaremos en la <strong>definición</strong> de número complejo, la <strong>igualdad</strong> entre ellos, la operación de <strong>suma</strong> y sus propiedades <strong>conmutativa</strong> y <strong>asociativa</strong>, incluyendo el elemento identidad y el inverso aditivo.</p>
+        </div>
+
+        <!-- DIAPOSITIVA 2: NÚMEROS COMPLEJOS -->
+        <div class="diapositiva" data-indice="1">
+            <h2>1. El Conjunto de los Números Complejos</h2>
+            <p>Ecuaciones como $y = x^2 + 1$ tienen gráficas que no intersecan al eje $X$. Esto significa que para ningún $x \in \mathbb{R}$ resulta $y = 0$, pues $x^2 + 1$ siempre es distinto de cero.</p>
+            <p>Cuando esto sucede, decimos que la ecuación <strong>no tiene solución en el conjunto de los números reales</strong>. Las soluciones están contenidas en un conjunto más amplio llamado <strong>El Conjunto de los Números Complejos</strong>, denotado por $\mathbb{C}$.</p>
+
+            <h3>Definición formal</h3>
+            <div class="math-block">$$\mathbb{C} = \{z \mid z = (a, b); a, b \in \mathbb{R}\}$$</div>
+            <p>Un número complejo es un <strong>par ordenado con componentes reales</strong>. Cada número complejo se representa geométricamente como un punto del plano, y recíprocamente cada punto del plano representa un número complejo.</p>
+
+            <div class="caja-interactiva">
+                <h3>🧮 Constructor de números complejos</h3>
+                <p>Ingresa dos componentes reales $a$ y $b$ para construir el número complejo $z = (a, b)$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="nc-a" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="nc-b" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-construir">Construir z</button>
+                </div>
+                <div class="resultado" id="res-construir">El número complejo aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: IGUALDAD -->
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Igualdad de Números Complejos</h2>
+            <p>Dos números complejos son iguales si y sólo si tienen el mismo primer componente y también son iguales sus segundos componentes.</p>
+            <div class="math-block">$$z_1 = z_2 \text{ si y sólo si } a_1 = a_2 \text{ y } b_1 = b_2$$</div>
+
+            <h3>Ejemplo</h3>
+            <p>Si $(x, y) = (3, 2)$, entonces $x = 3$ y $y = 2$.</p>
+
+            <div class="caja-interactiva">
+                <h3>🎯 Verificador de igualdad</h3>
+                <p>Ingresa las componentes de dos números complejos $z_1$ y $z_2$ para verificar si son iguales:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="ig-a1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="ig-b1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="ig-a2" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="ig-b2" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-igualdad">Verificar</button>
+                </div>
+                <div class="resultado" id="res-igualdad">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: SUMA -->
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Suma de Números Complejos</h2>
+            <p>La suma de dos números complejos se define componente a componente:</p>
+            <div class="math-block">$$z_1 + z_2 = (a_1 + a_2, \ b_1 + b_2)$$</div>
+            <p>Como $a_1, a_2, b_1, b_2$ son números reales y $\mathbb{R}$ es cerrado respecto a la suma, la suma de dos números complejos <strong>es a su vez un número complejo</strong>. Decimos que $\mathbb{C}$ es <strong>cerrado</strong> respecto a la suma.</p>
+
+            <h3>Ejemplo</h3>
+            <div class="math-block">$$(1, 2) + (3, -4) = (1 + 3, \ 2 + (-4)) = (4, -2)$$</div>
+
+            <div class="caja-interactiva">
+                <h3>➕ Calculadora de suma</h3>
+                <p>Ingresa las componentes de dos números complejos para sumarlos:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="su-a1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="su-b1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="su-a2" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="su-b2" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-suma">Sumar</button>
+                </div>
+                <div class="resultado" id="res-suma">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: PROPIEDADES -->
+        <div class="diapositiva" data-indice="4">
+            <h2>4. Propiedades Conmutativa y Asociativa</h2>
+
+            <h3>Propiedad conmutativa</h3>
+            <p>Para toda $z_1, z_2 \in \mathbb{C}$:</p>
+            <div class="math-block">$$z_1 + z_2 = z_2 + z_1$$</div>
+
+            <h3>Propiedad asociativa</h3>
+            <p>Para toda terna $z_1, z_2, z_3 \in \mathbb{C}$:</p>
+            <div class="math-block">$$z_1 + (z_2 + z_3) = (z_1 + z_2) + z_3$$</div>
+
+            <div class="caja-interactiva">
+                <h3>🔍 Verificador de propiedades</h3>
+                <p>Ingresa tres números complejos $z_1$, $z_2$ y $z_3$ para comprobar las dos propiedades:</p>
+                <p style="font-size: 0.88rem; margin-bottom: 10px;"><strong>z₁:</strong></p>
+                <div class="grupo-inputs" style="margin-top: 0;">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="pr-a1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="pr-b1" placeholder="0" step="any"></div>
+                </div>
+                <p style="font-size: 0.88rem; margin-bottom: 10px;"><strong>z₂:</strong></p>
+                <div class="grupo-inputs" style="margin-top: 0;">
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="pr-a2" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="pr-b2" placeholder="0" step="any"></div>
+                </div>
+                <p style="font-size: 0.88rem; margin-bottom: 10px;"><strong>z₃:</strong></p>
+                <div class="grupo-inputs" style="margin-top: 0;">
+                    <div class="input-wrapper"><label>a₃ =</label><input type="number" id="pr-a3" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₃ =</label><input type="number" id="pr-b3" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-propiedades">Verificar propiedades</button>
+                </div>
+                <div class="resultado" id="res-propiedades">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: IDENTIDAD E INVERSO -->
+        <div class="diapositiva" data-indice="5">
+            <h2>5. Elemento Identidad e Inverso Aditivo</h2>
+
+            <h3>Elemento identidad para la suma</h3>
+            <p>El elemento identidad $(x, y)$ debe satisfacer $(a, b) + (x, y) = (a, b)$ para todo $(a, b) \in \mathbb{C}$. Esto ocurre si $x = y = 0$, por lo que el <strong>elemento identidad es $(0, 0)$</strong>.</p>
+            <div class="math-block">$$(2, 3) + (0, 0) = (2, 3)$$</div>
+
+            <h3>Inverso aditivo</h3>
+            <p>El inverso aditivo de $(a, b)$ es el par ordenado $(-a, -b)$, pues:</p>
+            <div class="math-block">$$(a, b) + (-a, -b) = (0, 0)$$</div>
+
+            <div class="caja-interactiva">
+                <h3>⚖️ Calculadora de identidad e inverso</h3>
+                <p>Ingresa un número complejo $z = (a, b)$ para obtener su identidad y su inverso aditivo:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="id-a" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="id-b" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-identidad">Calcular</button>
+                </div>
+                <div class="resultado" id="res-identidad">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: DEMOSTRACIÓN ASOCIATIVA -->
+        <div class="diapositiva" data-indice="6">
+            <h2>6. Demostración de la Propiedad Asociativa</h2>
+            <p>Sean $z_1 = (a_1, b_1)$, $z_2 = (a_2, b_2)$, $z_3 = (a_3, b_3)$ tres números complejos. Demostramos que $z_1 + (z_2 + z_3) = (z_1 + z_2) + z_3$:</p>
+
+            <div class="math-block">
+            $$
+            \begin{align*}
+            z_1 + (z_2 + z_3) &= (a_1, b_1) + [(a_2, b_2) + (a_3, b_3)] \\
+            &= (a_1, b_1) + (a_2 + a_3, \ b_2 + b_3) \\
+            &= (a_1 + (a_2 + a_3), \ b_1 + (b_2 + b_3)) \\
+            &= ((a_1 + a_2) + a_3, \ (b_1 + b_2) + b_3) \\
+            &= [(a_1, b_1) + (a_2, b_2)] + (a_3, b_3) \\
+            &= (z_1 + z_2) + z_3
+            \end{align*}
+            $$
+            </div>
+
+            <p>La propiedad se apoya en el <strong>postulado asociativo de la suma en $\mathbb{R}$</strong>, ya que las componentes son números reales.</p>
+
+            <div class="caja-interactiva">
+                <h3>🧪 Comprobador numérico</h3>
+                <p>Ingresa tres números complejos y verifica numéricamente la propiedad asociativa:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="as-a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="as-b1" value="2" step="any"></div>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="as-a2" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="as-b2" value="-1" step="any"></div>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₃ =</label><input type="number" id="as-a3" value="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₃ =</label><input type="number" id="as-b3" value="4" step="any"></div>
+                    <button class="btn-primario" id="btn-asociativa">Comprobar</button>
+                </div>
+                <div class="resultado" id="res-asociativa">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: RESUMEN -->
+        <div class="diapositiva" data-indice="7">
+            <h2>7. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Un número complejo es un par ordenado $(a, b)$ con componentes reales.</li>
+                <li>El conjunto $\mathbb{C}$ contiene a $\mathbb{R}$ como subconjunto propio.</li>
+                <li>Dos números complejos son iguales si y sólo si sus componentes respectivas son iguales.</li>
+                <li>La suma se define componente a componente: $(a_1, b_1) + (a_2, b_2) = (a_1 + a_2, \ b_1 + b_2)$.</li>
+                <li>La suma es <strong>cerrada</strong>, <strong>conmutativa</strong> y <strong>asociativa</strong> en $\mathbb{C}$.</li>
+                <li>El elemento identidad para la suma es $(0, 0)$.</li>
+                <li>El inverso aditivo de $(a, b)$ es $(-a, -b)$.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 5. Ahora comprendes la estructura de los números complejos y la operación de suma con sus propiedades fundamentales.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 8</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    // =========================================
+    // 1. CONSTRUCTOR DE NÚMEROS COMPLEJOS
+    // =========================================
+    document.getElementById('btn-construir').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('nc-a').value);
+        var b = parseFloat(document.getElementById('nc-b').value);
+        var res = document.getElementById('res-construir');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes reales.';
+            return;
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = 'El número complejo es: $z = (' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ')$<br>' +
+            '<em>Se representa como el punto $(' + formatearNumero(a) + ', ' + formatearNumero(b) + ')$ en el plano.</em>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. VERIFICADOR DE IGUALDAD
+    // =========================================
+    document.getElementById('btn-igualdad').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('ig-a1').value);
+        var b1 = parseFloat(document.getElementById('ig-b1').value);
+        var a2 = parseFloat(document.getElementById('ig-a2').value);
+        var b2 = parseFloat(document.getElementById('ig-b2').value);
+        var res = document.getElementById('res-igualdad');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        if (a1 === a2 && b1 === b2) {
+            res.className = 'resultado exito';
+            res.innerHTML = '✅ Los números complejos son <strong>iguales</strong>: $(' + formatearNumero(a1) + ', ' + formatearNumero(b1) + ') = (' + formatearNumero(a2) + ', ' + formatearNumero(b2) + ')$';
+        } else {
+            res.className = 'resultado error';
+            res.innerHTML = '❌ Los números complejos <strong>no son iguales</strong>.<br>';
+            if (a1 !== a2 && b1 !== b2) {
+                res.innerHTML += 'Ni el primer componente ni el segundo coinciden.';
+            } else if (a1 !== a2) {
+                res.innerHTML += 'Los primeros componentes difieren: $' + formatearNumero(a1) + ' \\neq ' + formatearNumero(a2) + '$';
+            } else {
+                res.innerHTML += 'Los segundos componentes difieren: $' + formatearNumero(b1) + ' \\neq ' + formatearNumero(b2) + '$';
+            }
+        }
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. CALCULADORA DE SUMA
+    // =========================================
+    document.getElementById('btn-suma').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('su-a1').value);
+        var b1 = parseFloat(document.getElementById('su-b1').value);
+        var a2 = parseFloat(document.getElementById('su-a2').value);
+        var b2 = parseFloat(document.getElementById('su-b2').value);
+        var res = document.getElementById('res-suma');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var sa = a1 + a2;
+        var sb = b1 + b2;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$(' + formatearNumero(a1) + ', ' + formatearNumero(b1) + ') + (' + formatearNumero(a2) + ', ' + formatearNumero(b2) + ') = (' + formatearNumero(sa) + ', ' + formatearNumero(sb) + ')$$' +
+            '<em>La suma es un nuevo número complejo: es cerrada.</em>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. VERIFICADOR DE PROPIEDADES
+    // =========================================
+    document.getElementById('btn-propiedades').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('pr-a1').value);
+        var b1 = parseFloat(document.getElementById('pr-b1').value);
+        var a2 = parseFloat(document.getElementById('pr-a2').value);
+        var b2 = parseFloat(document.getElementById('pr-b2').value);
+        var a3 = parseFloat(document.getElementById('pr-a3').value);
+        var b3 = parseFloat(document.getElementById('pr-b3').value);
+        var res = document.getElementById('res-propiedades');
+
+        if ([a1, b1, a2, b2, a3, b3].some(isNaN)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar las seis componentes.';
+            return;
+        }
+
+        // Conmutativa: z1 + z2 = z2 + z1
+        var c1a = a1 + a2, c1b = b1 + b2;
+        var c2a = a2 + a1, c2b = b2 + b1;
+        var conmutativaOk = (c1a === c2a) && (c1b === c2b);
+
+        // Asociativa: z1 + (z2 + z3) = (z1 + z2) + z3
+        var suma23a = a2 + a3, suma23b = b2 + b3;
+        var izqA = a1 + suma23a, izqB = b1 + suma23b;
+        var suma12a = a1 + a2, suma12b = b1 + b2;
+        var derA = suma12a + a3, derB = suma12b + b3;
+        var asociativaOk = (izqA === derA) && (izqB === derB);
+
+        var html = '';
+        if (conmutativaOk) {
+            html += '<p style="color: var(--color-exito); font-weight: 600;">✅ Propiedad conmutativa verificada: $z_1 + z_2 = z_2 + z_1 = (' + formatearNumero(c1a) + ', ' + formatearNumero(c1b) + ')$</p>';
+        } else {
+            html += '<p style="color: var(--color-error); font-weight: 600;">❌ Error en la propiedad conmutativa.</p>';
+        }
+
+        if (asociativaOk) {
+            html += '<p style="color: var(--color-exito); font-weight: 600;">✅ Propiedad asociativa verificada: $z_1 + (z_2 + z_3) = (z_1 + z_2) + z_3 = (' + formatearNumero(izqA) + ', ' + formatearNumero(izqB) + ')$</p>';
+        } else {
+            html += '<p style="color: var(--color-error); font-weight: 600;">❌ Error en la propiedad asociativa.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. CALCULADORA DE IDENTIDAD E INVERSO
+    // =========================================
+    document.getElementById('btn-identidad').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('id-a').value);
+        var b = parseFloat(document.getElementById('id-b').value);
+        var res = document.getElementById('res-identidad');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var identidadSuma = '(' + formatearNumero(a) + ', ' + formatearNumero(b) + ') + (0, 0) = (' + formatearNumero(a) + ', ' + formatearNumero(b) + ')';
+        var inverso = '(-' + formatearNumero(a) + ', -' + formatearNumero(b) + ')';
+        var verificacionInverso = '(' + formatearNumero(a) + ', ' + formatearNumero(b) + ') + ' + inverso + ' = (0, 0)';
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p><strong>Elemento identidad:</strong> $$' + identidadSuma + '$$</p>' +
+            '<p><strong>Inverso aditivo:</strong> $$' + inverso + '$$</p>' +
+            '<p><strong>Verificación:</strong> $$' + verificacionInverso + '$$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. COMPROBADOR NUMÉRICO DE ASOCIATIVIDAD
+    // =========================================
+    document.getElementById('btn-asociativa').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('as-a1').value);
+        var b1 = parseFloat(document.getElementById('as-b1').value);
+        var a2 = parseFloat(document.getElementById('as-a2').value);
+        var b2 = parseFloat(document.getElementById('as-b2').value);
+        var a3 = parseFloat(document.getElementById('as-a3').value);
+        var b3 = parseFloat(document.getElementById('as-b3').value);
+        var res = document.getElementById('res-asociativa');
+
+        if ([a1, b1, a2, b2, a3, b3].some(isNaN)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar las seis componentes.';
+            return;
+        }
+
+        // Lado izquierdo: z1 + (z2 + z3)
+        var suma23a = a2 + a3, suma23b = b2 + b3;
+        var izqA = a1 + suma23a, izqB = b1 + suma23b;
+
+        // Lado derecho: (z1 + z2) + z3
+        var suma12a = a1 + a2, suma12b = b1 + b2;
+        var derA = suma12a + a3, derB = suma12b + b3;
+
+        var html = '<p><strong>Lado izquierdo</strong> $z_1 + (z_2 + z_3)$:</p>';
+        html += '$$(' + formatearNumero(a1) + ', ' + formatearNumero(b1) + ') + [(' + formatearNumero(a2) + ', ' + formatearNumero(b2) + ') + (' + formatearNumero(a3) + ', ' + formatearNumero(b3) + ')]$$';
+        html += '$$= (' + formatearNumero(a1) + ', ' + formatearNumero(b1) + ') + (' + formatearNumero(suma23a) + ', ' + formatearNumero(suma23b) + ') = (' + formatearNumero(izqA) + ', ' + formatearNumero(izqB) + ')$$';
+
+        html += '<p><strong>Lado derecho</strong> $(z_1 + z_2) + z_3$:</p>';
+        html += '$$[(' + formatearNumero(a1) + ', ' + formatearNumero(b1) + ') + (' + formatearNumero(a2) + ', ' + formatearNumero(b2) + ')] + (' + formatearNumero(a3) + ', ' + formatearNumero(b3) + ')$$';
+        html += '$$= (' + formatearNumero(suma12a) + ', ' + formatearNumero(suma12b) + ') + (' + formatearNumero(a3) + ', ' + formatearNumero(b3) + ') = (' + formatearNumero(derA) + ', ' + formatearNumero(derB) + ')$$';
+
+        if (izqA === derA && izqB === derB) {
+            html += '<p style="color: var(--color-exito); font-weight: 700; text-align: center;">✅ Ambos lados son iguales. Propiedad asociativa verificada.</p>';
+            res.className = 'resultado exito';
+        } else {
+            html += '<p style="color: var(--color-error); font-weight: 700; text-align: center;">❌ Los lados no coinciden.</p>';
+            res.className = 'resultado error';
+        }
+
+        res.innerHTML = html;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

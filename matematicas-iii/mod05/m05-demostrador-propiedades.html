@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demostrador de Propiedades — Suma en ℂ | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f4f7fa;
+      color: var(--color-texto-oscuro);
+      line-height: 1.7;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 1100px;
+      background-color: var(--color-blanco);
+      border-radius: 12px;
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background-color: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 30px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--color-acento-suave);
+      margin-bottom: 8px;
+    }
+
+    header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+    /* =========================================
+       PESTAÑAS
+       ========================================= */
+    .pestanas {
+      display: flex;
+      background-color: var(--color-base);
+      border-bottom: 2px solid var(--color-acento-suave);
+      overflow-x: auto;
+      flex-wrap: wrap;
+    }
+
+    .pestana {
+      padding: 14px 20px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+      border-bottom: 4px solid transparent;
+      font-family: inherit;
+    }
+
+    .pestana:hover {
+      background-color: var(--color-blanco);
+      color: var(--color-primario);
+    }
+
+    .pestana.activa {
+      background-color: var(--color-blanco);
+      color: var(--color-primario);
+      border-bottom-color: var(--color-acento);
+    }
+
+    /* =========================================
+       CONTENIDO DE PESTAÑA
+       ========================================= */
+    .contenido-pestana {
+      display: none;
+      padding: 25px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .contenido-pestana.activa { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .contenido-pestana h2 {
+      color: var(--color-primario);
+      font-size: 1.15rem;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--color-acento);
+      padding-left: 12px;
+    }
+
+    /* =========================================
+       CAJA DE DEFINICIÓN
+       ========================================= */
+    .definicion {
+      background-color: var(--color-base);
+      border-left: 5px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 0.92rem;
+      color: var(--color-primario);
+    }
+
+    .definicion .titulo-def {
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: var(--color-acento);
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    /* =========================================
+       LAYOUT DE DOS COLUMNAS
+       ========================================= */
+    .layout-dos-columnas {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .layout-dos-columnas { grid-template-columns: 1fr; }
+    }
+
+    /* =========================================
+       PANEL DE ENTRADA
+       ========================================= */
+    .panel-entrada {
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 18px;
+    }
+
+    .panel-entrada h3 {
+      color: var(--color-primario);
+      font-size: 0.92rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .grupo-entrada {
+      background-color: var(--color-blanco);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--color-acento);
+    }
+
+    .grupo-entrada label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: 0.8rem;
+      color: var(--color-primario);
+    }
+
+    .fila-inputs {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .fila-inputs span {
+      font-weight: 700;
+      color: var(--color-acento);
+      font-size: 0.95rem;
+    }
+
+    input[type="text"] {
+      width: 65px;
+      padding: 6px 4px;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      background-color: var(--color-blanco);
+      text-align: center;
+      transition: border-color 0.3s;
+      font-family: inherit;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    /* =========================================
+       BOTONES
+       ========================================= */
+    .botones-accion {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      padding: 9px 14px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .btn-primario {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      flex: 1;
+      min-width: 100px;
+    }
+    .btn-primario:hover { background-color: var(--color-primario); }
+
+    .btn-secundario {
+      background-color: var(--color-blanco);
+      color: var(--color-acento);
+      border: 2px solid var(--color-acento);
+      flex: 1;
+      min-width: 100px;
+    }
+    .btn-secundario:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+    }
+
+    .btn-ejemplo {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      color: var(--color-primario);
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      width: 100%;
+      margin-bottom: 6px;
+    }
+    .btn-ejemplo:hover {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-color: var(--color-acento);
+    }
+
+    /* =========================================
+       ÁREA DE DESARROLLO
+       ========================================= */
+    .panel-desarrollo {
+      background-color: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 18px;
+      min-height: 300px;
+    }
+
+    .desarrollo {
+      background-color: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      padding: 14px;
+      border-radius: 6px;
+      font-family: 'Consolas', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      color: var(--color-texto-oscuro);
+      overflow-x: auto;
+    }
+
+    .desarrollo .paso {
+      margin-bottom: 6px;
+      color: var(--color-texto-oscuro);
+    }
+
+    .desarrollo .etiqueta {
+      color: var(--color-acento);
+      font-weight: 700;
+    }
+
+    .desarrollo .resultado {
+      color: var(--color-exito);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px dashed var(--color-acento-suave);
+    }
+
+    .desarrollo .verificacion {
+      color: var(--color-exito);
+      font-weight: 700;
+      font-size: 1rem;
+      margin-top: 8px;
+      padding: 8px 12px;
+      background-color: rgba(39, 174, 96, 0.12);
+      border-radius: 6px;
+    }
+
+    .desarrollo .verificacion.falla {
+      color: var(--color-error);
+      background-color: rgba(192, 57, 43, 0.10);
+    }
+
+    /* =========================================
+       MENSAJE
+       ========================================= */
+    .mensaje {
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+      line-height: 1.6;
+    }
+
+    .mensaje.ok {
+      background-color: rgba(39, 174, 96, 0.12);
+      border-left: 4px solid var(--color-exito);
+      color: var(--color-exito);
+      display: block;
+    }
+
+    .mensaje.error {
+      background-color: rgba(192, 57, 43, 0.10);
+      border-left: 4px solid var(--color-error);
+      color: var(--color-error);
+      display: block;
+    }
+
+    .mensaje.info {
+      background-color: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      color: var(--color-primario);
+      display: block;
+    }
+
+    /* =========================================
+       MODO RETO
+       ========================================= */
+    .reto-info {
+      background-color: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-left: 5px solid var(--color-acento);
+    }
+
+    .reto-info .marcador {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 12px;
+    }
+
+    .reto-info .marcador .aciertos { color: var(--color-exito); }
+    .reto-info .marcador .errores { color: var(--color-error); }
+
+    .reto-ejemplo {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 24px;
+      text-align: center;
+      font-size: 1.15rem;
+      margin-bottom: 15px;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .reto-opciones {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+    }
+
+    .btn-reto {
+      background-color: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      color: var(--color-primario);
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-reto:hover:not(:disabled) {
+      background-color: var(--color-acento);
+      color: var(--color-blanco);
+      border-color: var(--color-acento);
+    }
+
+    .btn-reto:disabled {
+      cursor: default;
+      opacity: 0.85;
+    }
+
+    .btn-reto.correcto {
+      background-color: rgba(39, 174, 96, 0.2);
+      border-color: var(--color-exito);
+      color: var(--color-exito);
+    }
+
+    .btn-reto.incorrecto {
+      background-color: rgba(192, 57, 43, 0.15);
+      border-color: var(--color-error);
+      color: var(--color-error);
+    }
+
+    /* =========================================
+       FOOTER
+       ========================================= */
+    .footer-info {
+      background-color: var(--color-base);
+      border-top: 1px solid var(--color-acento-suave);
+      padding: 15px 25px;
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      text-align: center;
+    }
+
+    .footer-info strong { color: var(--color-acento); }
+
+    /* =========================================
+       RESPONSIVE
+       ========================================= */
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.2rem; }
+      .contenido-pestana { padding: 16px; }
+      .pestana { padding: 10px 12px; font-size: 0.8rem; }
+      .reto-opciones { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="contenedor">
+  <header>
+    <div class="institucion">Preparatoria Abierta</div>
+    <h1>Demostrador de Propiedades de la Suma en ℂ</h1>
+    <p>Conmutativa · Asociativa · Identidad · Inverso Aditivo | Matemáticas III</p>
+  </header>
+
+  <!-- PESTAÑAS -->
+  <div class="pestanas">
+    <button class="pestana activa" data-tab="conmutativa">🔄 Conmutativa</button>
+    <button class="pestana" data-tab="asociativa">🔗 Asociativa</button>
+    <button class="pestana" data-tab="identidad">0️⃣ Identidad</button>
+    <button class="pestana" data-tab="inverso">➖ Inverso Aditivo</button>
+    <button class="pestana" data-tab="reto">🎯 Reto</button>
+  </div>
+
+  <!-- PESTAÑA 1: CONMUTATIVA -->
+  <div class="contenido-pestana activa" id="tab-conmutativa">
+    <h2>Propiedad Conmutativa</h2>
+
+    <div class="definicion">
+      <div class="titulo-def">Definición</div>
+      Para toda $z_1, z_2 \in \mathbb{C}$:
+      $$z_1 + z_2 = z_2 + z_1$$
+      El orden de los sumandos no altera la suma.
+    </div>
+
+    <div class="layout-dos-columnas">
+      <div class="panel-entrada">
+        <h3>📝 Ingresa los sumandos</h3>
+
+        <div class="grupo-entrada">
+          <label>$z_1 = (a_1,\ b_1)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="c-a1" value="2" placeholder="a₁">
+            <span>,</span>
+            <input type="text" id="c-b1" value="5" placeholder="b₁">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="grupo-entrada">
+          <label>$z_2 = (a_2,\ b_2)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="c-a2" value="-3" placeholder="a₂">
+            <span>,</span>
+            <input type="text" id="c-b2" value="1" placeholder="b₂">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="botones-accion">
+          <button class="btn-primario" id="c-btn-verificar">Verificar propiedad</button>
+          <button class="btn-secundario" id="c-btn-limpiar">Limpiar</button>
+        </div>
+
+        <h3 style="margin-top: 16px;">📚 Ejemplos</h3>
+        <button class="btn-ejemplo" data-ej="c1">(2, 5) + (-3, 1)</button>
+        <button class="btn-ejemplo" data-ej="c2">(-1, 4) + (1, -4)</button>
+        <button class="btn-ejemplo" data-ej="c3">(3/2, 1/2) + (1/2, -3/2)</button>
+        <button class="btn-ejemplo" data-ej="c4">(0, 0) + (7, -2)</button>
+      </div>
+
+      <div class="panel-desarrollo">
+        <h3 style="color: var(--color-primario); font-size: 0.95rem; margin-bottom: 12px;">🔍 Verificación paso a paso</h3>
+        <div class="desarrollo" id="c-desarrollo">
+          Ingresa los valores y presiona <strong>Verificar propiedad</strong>.
+        </div>
+        <div class="mensaje" id="c-mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 2: ASOCIATIVA -->
+  <div class="contenido-pestana" id="tab-asociativa">
+    <h2>Propiedad Asociativa</h2>
+
+    <div class="definicion">
+      <div class="titulo-def">Definición</div>
+      Para toda terna $z_1, z_2, z_3 \in \mathbb{C}$:
+      $$z_1 + (z_2 + z_3) = (z_1 + z_2) + z_3$$
+      La forma de agrupar los sumandos no altera la suma.
+    </div>
+
+    <div class="layout-dos-columnas">
+      <div class="panel-entrada">
+        <h3>📝 Ingresa los tres sumandos</h3>
+
+        <div class="grupo-entrada">
+          <label>$z_1 = (a_1,\ b_1)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="a-a1" value="1" placeholder="a₁">
+            <span>,</span>
+            <input type="text" id="a-b1" value="2" placeholder="b₁">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="grupo-entrada">
+          <label>$z_2 = (a_2,\ b_2)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="a-a2" value="3" placeholder="a₂">
+            <span>,</span>
+            <input type="text" id="a-b2" value="-1" placeholder="b₂">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="grupo-entrada">
+          <label>$z_3 = (a_3,\ b_3)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="a-a3" value="-2" placeholder="a₃">
+            <span>,</span>
+            <input type="text" id="a-b3" value="4" placeholder="b₃">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="botones-accion">
+          <button class="btn-primario" id="a-btn-verificar">Verificar propiedad</button>
+          <button class="btn-secundario" id="a-btn-limpiar">Limpiar</button>
+        </div>
+
+        <h3 style="margin-top: 16px;">📚 Ejemplos</h3>
+        <button class="btn-ejemplo" data-ej="a1">(1, 2) + (3, -1) + (-2, 4)</button>
+        <button class="btn-ejemplo" data-ej="a2">(0, 0) + (5, 3) + (-5, -3)</button>
+        <button class="btn-ejemplo" data-ej="a3">(1/2, 1/3) + (1/4, 1/6) + (1/4, 1/2)</button>
+        <button class="btn-ejemplo" data-ej="a4">(-1, 1) + (2, 2) + (3, 3)</button>
+      </div>
+
+      <div class="panel-desarrollo">
+        <h3 style="color: var(--color-primario); font-size: 0.95rem; margin-bottom: 12px;">🔍 Verificación paso a paso</h3>
+        <div class="desarrollo" id="a-desarrollo">
+          Ingresa los valores y presiona <strong>Verificar propiedad</strong>.
+        </div>
+        <div class="mensaje" id="a-mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 3: IDENTIDAD -->
+  <div class="contenido-pestana" id="tab-identidad">
+    <h2>Elemento Identidad</h2>
+
+    <div class="definicion">
+      <div class="titulo-def">Definición</div>
+      El elemento identidad para la suma en $\mathbb{C}$ es $(0, 0)$:
+      $$z + (0, 0) = z$$
+      para todo $z \in \mathbb{C}$.
+    </div>
+
+    <div class="layout-dos-columnas">
+      <div class="panel-entrada">
+        <h3>📝 Ingresa un número complejo</h3>
+
+        <div class="grupo-entrada">
+          <label>$z = (a,\ b)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="i-a" value="4" placeholder="a">
+            <span>,</span>
+            <input type="text" id="i-b" value="-7" placeholder="b">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="botones-accion">
+          <button class="btn-primario" id="i-btn-verificar">Verificar propiedad</button>
+          <button class="btn-secundario" id="i-btn-limpiar">Limpiar</button>
+        </div>
+
+        <h3 style="margin-top: 16px;">📚 Ejemplos</h3>
+        <button class="btn-ejemplo" data-ej="i1">(4, -7) + (0, 0)</button>
+        <button class="btn-ejemplo" data-ej="i2">(-3, 2) + (0, 0)</button>
+        <button class="btn-ejemplo" data-ej="i3">(1/2, -1/4) + (0, 0)</button>
+        <button class="btn-ejemplo" data-ej="i4">(0, 5) + (0, 0)</button>
+      </div>
+
+      <div class="panel-desarrollo">
+        <h3 style="color: var(--color-primario); font-size: 0.95rem; margin-bottom: 12px;">🔍 Verificación paso a paso</h3>
+        <div class="desarrollo" id="i-desarrollo">
+          Ingresa los valores y presiona <strong>Verificar propiedad</strong>.
+        </div>
+        <div class="mensaje" id="i-mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 4: INVERSO ADITIVO -->
+  <div class="contenido-pestana" id="tab-inverso">
+    <h2>Inverso Aditivo</h2>
+
+    <div class="definicion">
+      <div class="titulo-def">Definición</div>
+      Para todo $z = (a, b) \in \mathbb{C}$, su inverso aditivo es $-z = (-a, -b)$:
+      $$z + (-z) = (0, 0)$$
+      El inverso aditivo es el elemento que, sumado con $z$, da la identidad.
+    </div>
+
+    <div class="layout-dos-columnas">
+      <div class="panel-entrada">
+        <h3>📝 Ingresa un número complejo</h3>
+
+        <div class="grupo-entrada">
+          <label>$z = (a,\ b)$</label>
+          <div class="fila-inputs">
+            <span>(</span>
+            <input type="text" id="v-a" value="3" placeholder="a">
+            <span>,</span>
+            <input type="text" id="v-b" value="-5" placeholder="b">
+            <span>)</span>
+          </div>
+        </div>
+
+        <div class="botones-accion">
+          <button class="btn-primario" id="v-btn-verificar">Calcular inverso</button>
+          <button class="btn-secundario" id="v-btn-limpiar">Limpiar</button>
+        </div>
+
+        <h3 style="margin-top: 16px;">📚 Ejemplos</h3>
+        <button class="btn-ejemplo" data-ej="v1">z = (3, -5)</button>
+        <button class="btn-ejemplo" data-ej="v2">z = (-2, 4)</button>
+        <button class="btn-ejemplo" data-ej="v3">z = (1/2, -3/4)</button>
+        <button class="btn-ejemplo" data-ej="v4">z = (0, 0)</button>
+      </div>
+
+      <div class="panel-desarrollo">
+        <h3 style="color: var(--color-primario); font-size: 0.95rem; margin-bottom: 12px;">🔍 Verificación paso a paso</h3>
+        <div class="desarrollo" id="v-desarrollo">
+          Ingresa los valores y presiona <strong>Calcular inverso</strong>.
+        </div>
+        <div class="mensaje" id="v-mensaje"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 5: RETO -->
+  <div class="contenido-pestana" id="tab-reto">
+    <h2>🎯 Reto: Identifica la Propiedad</h2>
+
+    <p style="margin-bottom: 15px;">Se te mostrará un ejemplo numérico con números complejos. Debes identificar qué propiedad de la suma se está ilustrando.</p>
+
+    <div class="reto-info">
+      <div class="marcador">
+        <span class="aciertos">✅ Aciertos: <span id="r-aciertos">0</span></span>
+        <span class="errores">❌ Errores: <span id="r-errores">0</span></span>
+      </div>
+      <button class="btn-primario" id="r-btn-nuevo" style="width: 100%;">🎲 Nuevo reto</button>
+    </div>
+
+    <div class="reto-ejemplo" id="r-ejemplo">
+      Presiona <strong>Nuevo reto</strong> para comenzar.
+    </div>
+
+    <div class="reto-opciones" id="r-opciones" style="display: none;">
+      <button class="btn-reto" data-resp="conmutativa">Conmutativa</button>
+      <button class="btn-reto" data-resp="asociativa">Asociativa</button>
+      <button class="btn-reto" data-resp="identidad">Identidad</button>
+      <button class="btn-reto" data-resp="inverso">Inverso Aditivo</button>
+    </div>
+
+    <div class="mensaje" id="r-mensaje"></div>
+  </div>
+
+  <div class="footer-info">
+    <strong>Objetivo:</strong> Comprobar experimentalmente las propiedades conmutativa, asociativa, identidad e inverso aditivo de la suma en $\mathbb{C}$, aplicando la definición $z_1 + z_2 = (a_1 + a_2,\ b_1 + b_2)$ y la igualdad de pares ordenados.
+  </div>
+</div>
+
+<script>
+  // =========================================
+  // UTILIDADES
+  // =========================================
+  function parsearNumero(str) {
+    str = String(str).trim();
+    if (str === '') return NaN;
+    if (str.includes('/')) {
+      var partes = str.split('/');
+      if (partes.length !== 2) return NaN;
+      var num = parseFloat(partes[0]);
+      var den = parseFloat(partes[1]);
+      if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+      return num / den;
+    }
+    return parseFloat(str);
+  }
+
+  function aFraccion(decimal) {
+    if (Number.isInteger(decimal)) return decimal.toString();
+    var signo = decimal < 0 ? -1 : 1;
+    decimal = Math.abs(decimal);
+    var h1 = 1, h2 = 0, k1 = 0, k2 = 1;
+    var b = decimal;
+    do {
+      var a = Math.floor(b);
+      var aux = h1; h1 = a * h1 + h2; h2 = aux;
+      aux = k1; k1 = a * k1 + k2; k2 = aux;
+      b = 1 / (b - a);
+    } while (Math.abs(decimal - h1 / k1) > 1e-9 && k1 < 100000);
+    var num = signo * h1;
+    var den = k1;
+    if (den === 1) return num.toString();
+    return num + '/' + den;
+  }
+
+  function formatear(n) {
+    if (Number.isInteger(n)) return n.toString();
+    return aFraccion(n);
+  }
+
+  function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+    }
+  }
+
+  function mostrarMensaje(idEl, texto, tipo) {
+    var el = document.getElementById(idEl);
+    el.innerHTML = texto;
+    el.className = 'mensaje ' + tipo;
+    renderMath(el);
+  }
+
+  function limpiarMensaje(idEl) {
+    var el = document.getElementById(idEl);
+    el.className = 'mensaje';
+    el.style.display = 'none';
+  }
+
+  // =========================================
+  // PESTAÑAS
+  // =========================================
+  var pestanas = document.querySelectorAll('.pestana');
+  var contenidos = document.querySelectorAll('.contenido-pestana');
+
+  pestanas.forEach(function(p) {
+    p.addEventListener('click', function() {
+      var tab = this.dataset.tab;
+      pestanas.forEach(function(x) { x.classList.remove('activa'); });
+      contenidos.forEach(function(x) { x.classList.remove('activa'); });
+      this.classList.add('activa');
+      document.getElementById('tab-' + tab).classList.add('activa');
+    });
+  });
+
+  // =========================================
+  // PESTAÑA 1: CONMUTATIVA
+  // =========================================
+  function verificarConmutativa() {
+    var a1 = parsearNumero(document.getElementById('c-a1').value);
+    var b1 = parsearNumero(document.getElementById('c-b1').value);
+    var a2 = parsearNumero(document.getElementById('c-a2').value);
+    var b2 = parsearNumero(document.getElementById('c-b2').value);
+
+    if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+      mostrarMensaje('c-mensaje', '⚠️ Ingresa valores numéricos válidos (puedes usar fracciones como <code>3/2</code>).', 'error');
+      return;
+    }
+
+    var z1 = { a: a1, b: b1 };
+    var z2 = { a: a2, b: b2 };
+
+    var suma1A = z1.a + z2.a;
+    var suma1B = z1.b + z2.b;
+    var suma2A = z2.a + z1.a;
+    var suma2B = z2.b + z1.b;
+
+    var iguales = (Math.abs(suma1A - suma2A) < 1e-9) && (Math.abs(suma1B - suma2B) < 1e-9);
+
+    var html =
+      '<div class="paso"><span class="etiqueta">z₁ + z₂:</span></div>' +
+      '<div class="paso">(' + formatear(z1.a) + ', ' + formatear(z1.b) + ') + (' + formatear(z2.a) + ', ' + formatear(z2.b) + ')</div>' +
+      '<div class="paso">= (' + formatear(z1.a) + ' + ' + formatear(z2.a) + ', ' + formatear(z1.b) + ' + (' + formatear(z2.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(suma1A) + ', ' + formatear(suma1B) + ')</div>' +
+      '<br>' +
+      '<div class="paso"><span class="etiqueta">z₂ + z₁:</span></div>' +
+      '<div class="paso">(' + formatear(z2.a) + ', ' + formatear(z2.b) + ') + (' + formatear(z1.a) + ', ' + formatear(z1.b) + ')</div>' +
+      '<div class="paso">= (' + formatear(z2.a) + ' + ' + formatear(z1.a) + ', ' + formatear(z2.b) + ' + (' + formatear(z1.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(suma2A) + ', ' + formatear(suma2B) + ')</div>';
+
+    if (iguales) {
+      html += '<div class="verificacion">✅ z₁ + z₂ = z₂ + z₁ &nbsp;→&nbsp; Se cumple la propiedad conmutativa.</div>';
+      mostrarMensaje('c-mensaje', '✅ La propiedad conmutativa se cumple para estos valores.', 'ok');
+    } else {
+      html += '<div class="verificacion falla">❌ z₁ + z₂ ≠ z₂ + z₁</div>';
+      mostrarMensaje('c-mensaje', '❌ Algo salió mal. Revisa los cálculos.', 'error');
+    }
+
+    document.getElementById('c-desarrollo').innerHTML = html;
+    renderMath(document.getElementById('c-desarrollo'));
+  }
+
+  document.getElementById('c-btn-verificar').addEventListener('click', verificarConmutativa);
+  document.getElementById('c-btn-limpiar').addEventListener('click', function() {
+    ['c-a1', 'c-b1', 'c-a2', 'c-b2'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('c-desarrollo').innerHTML = 'Ingresa los valores y presiona <strong>Verificar propiedad</strong>.';
+    limpiarMensaje('c-mensaje');
+  });
+
+  // =========================================
+  // PESTAÑA 2: ASOCIATIVA
+  // =========================================
+  function verificarAsociativa() {
+    var a1 = parsearNumero(document.getElementById('a-a1').value);
+    var b1 = parsearNumero(document.getElementById('a-b1').value);
+    var a2 = parsearNumero(document.getElementById('a-a2').value);
+    var b2 = parsearNumero(document.getElementById('a-b2').value);
+    var a3 = parsearNumero(document.getElementById('a-a3').value);
+    var b3 = parsearNumero(document.getElementById('a-b3').value);
+
+    if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2) || isNaN(a3) || isNaN(b3)) {
+      mostrarMensaje('a-mensaje', '⚠️ Ingresa valores numéricos válidos en los seis campos.', 'error');
+      return;
+    }
+
+    var z1 = { a: a1, b: b1 };
+    var z2 = { a: a2, b: b2 };
+    var z3 = { a: a3, b: b3 };
+
+    var s23A = z2.a + z3.a;
+    var s23B = z2.b + z3.b;
+    var res1A = z1.a + s23A;
+    var res1B = z1.b + s23B;
+
+    var s12A = z1.a + z2.a;
+    var s12B = z1.b + z2.b;
+    var res2A = s12A + z3.a;
+    var res2B = s12B + z3.b;
+
+    var iguales = (Math.abs(res1A - res2A) < 1e-9) && (Math.abs(res1B - res2B) < 1e-9);
+
+    var html =
+      '<div class="paso"><span class="etiqueta">z₁ + (z₂ + z₃):</span></div>' +
+      '<div class="paso">Primero z₂ + z₃ = (' + formatear(z2.a) + ' + ' + formatear(z3.a) + ', ' + formatear(z2.b) + ' + (' + formatear(z3.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(s23A) + ', ' + formatear(s23B) + ')</div>' +
+      '<div class="paso">Luego z₁ + (z₂ + z₃) = (' + formatear(z1.a) + ' + ' + formatear(s23A) + ', ' + formatear(z1.b) + ' + (' + formatear(s23B) + '))</div>' +
+      '<div class="paso">= (' + formatear(res1A) + ', ' + formatear(res1B) + ')</div>' +
+      '<br>' +
+      '<div class="paso"><span class="etiqueta">(z₁ + z₂) + z₃:</span></div>' +
+      '<div class="paso">Primero z₁ + z₂ = (' + formatear(z1.a) + ' + ' + formatear(z2.a) + ', ' + formatear(z1.b) + ' + (' + formatear(z2.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(s12A) + ', ' + formatear(s12B) + ')</div>' +
+      '<div class="paso">Luego (z₁ + z₂) + z₃ = (' + formatear(s12A) + ' + ' + formatear(z3.a) + ', ' + formatear(s12B) + ' + (' + formatear(z3.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(res2A) + ', ' + formatear(res2B) + ')</div>';
+
+    if (iguales) {
+      html += '<div class="verificacion">✅ z₁ + (z₂ + z₃) = (z₁ + z₂) + z₃ &nbsp;→&nbsp; Se cumple la propiedad asociativa.</div>';
+      mostrarMensaje('a-mensaje', '✅ La propiedad asociativa se cumple para estos valores.', 'ok');
+    } else {
+      html += '<div class="verificacion falla">❌ Los resultados no coinciden.</div>';
+      mostrarMensaje('a-mensaje', '❌ Algo salió mal. Revisa los cálculos.', 'error');
+    }
+
+    document.getElementById('a-desarrollo').innerHTML = html;
+    renderMath(document.getElementById('a-desarrollo'));
+  }
+
+  document.getElementById('a-btn-verificar').addEventListener('click', verificarAsociativa);
+  document.getElementById('a-btn-limpiar').addEventListener('click', function() {
+    ['a-a1', 'a-b1', 'a-a2', 'a-b2', 'a-a3', 'a-b3'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('a-desarrollo').innerHTML = 'Ingresa los valores y presiona <strong>Verificar propiedad</strong>.';
+    limpiarMensaje('a-mensaje');
+  });
+
+  // =========================================
+  // PESTAÑA 3: IDENTIDAD
+  // =========================================
+  function verificarIdentidad() {
+    var a = parsearNumero(document.getElementById('i-a').value);
+    var b = parsearNumero(document.getElementById('i-b').value);
+
+    if (isNaN(a) || isNaN(b)) {
+      mostrarMensaje('i-mensaje', '⚠️ Ingresa valores numéricos válidos.', 'error');
+      return;
+    }
+
+    var z = { a: a, b: b };
+    var id = { a: 0, b: 0 };
+
+    var resA = z.a + id.a;
+    var resB = z.b + id.b;
+
+    var iguales = (Math.abs(resA - z.a) < 1e-9) && (Math.abs(resB - z.b) < 1e-9);
+
+    var html =
+      '<div class="paso"><span class="etiqueta">z + (0, 0):</span></div>' +
+      '<div class="paso">(' + formatear(z.a) + ', ' + formatear(z.b) + ') + (0, 0)</div>' +
+      '<div class="paso">= (' + formatear(z.a) + ' + 0, ' + formatear(z.b) + ' + 0)</div>' +
+      '<div class="paso">= (' + formatear(resA) + ', ' + formatear(resB) + ')</div>';
+
+    if (iguales) {
+      html += '<div class="verificacion">✅ z + (0, 0) = z &nbsp;→&nbsp; (0, 0) es el elemento identidad.</div>';
+      mostrarMensaje('i-mensaje', '✅ El elemento $(0, 0)$ es la identidad aditiva en $\\mathbb{C}$.', 'ok');
+    } else {
+      html += '<div class="verificacion falla">❌ El resultado no es igual a z.</div>';
+      mostrarMensaje('i-mensaje', '❌ Algo salió mal. Revisa los cálculos.', 'error');
+    }
+
+    document.getElementById('i-desarrollo').innerHTML = html;
+    renderMath(document.getElementById('i-desarrollo'));
+  }
+
+  document.getElementById('i-btn-verificar').addEventListener('click', verificarIdentidad);
+  document.getElementById('i-btn-limpiar').addEventListener('click', function() {
+    ['i-a', 'i-b'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('i-desarrollo').innerHTML = 'Ingresa los valores y presiona <strong>Verificar propiedad</strong>.';
+    limpiarMensaje('i-mensaje');
+  });
+
+  // =========================================
+  // PESTAÑA 4: INVERSO ADITIVO
+  // =========================================
+  function verificarInverso() {
+    var a = parsearNumero(document.getElementById('v-a').value);
+    var b = parsearNumero(document.getElementById('v-b').value);
+
+    if (isNaN(a) || isNaN(b)) {
+      mostrarMensaje('v-mensaje', '⚠️ Ingresa valores numéricos válidos.', 'error');
+      return;
+    }
+
+    var z = { a: a, b: b };
+    var inv = { a: -a, b: -b };
+
+    var resA = z.a + inv.a;
+    var resB = z.b + inv.b;
+
+    var iguales = (Math.abs(resA) < 1e-9) && (Math.abs(resB) < 1e-9);
+
+    var html =
+      '<div class="paso"><span class="etiqueta">z = (' + formatear(z.a) + ', ' + formatear(z.b) + ')</span></div>' +
+      '<div class="paso"><span class="etiqueta">-z = (' + formatear(inv.a) + ', ' + formatear(inv.b) + ')</span></div>' +
+      '<br>' +
+      '<div class="paso"><span class="etiqueta">z + (-z):</span></div>' +
+      '<div class="paso">(' + formatear(z.a) + ', ' + formatear(z.b) + ') + (' + formatear(inv.a) + ', ' + formatear(inv.b) + ')</div>' +
+      '<div class="paso">= (' + formatear(z.a) + ' + (' + formatear(inv.a) + '), ' + formatear(z.b) + ' + (' + formatear(inv.b) + '))</div>' +
+      '<div class="paso">= (' + formatear(resA) + ', ' + formatear(resB) + ')</div>';
+
+    if (iguales) {
+      html += '<div class="verificacion">✅ z + (-z) = (0, 0) &nbsp;→&nbsp; (-z) es el inverso aditivo de z.</div>';
+      mostrarMensaje('v-mensaje', '✅ El inverso aditivo de $(' + formatear(z.a) + ',\\ ' + formatear(z.b) + ')$ es $(' + formatear(inv.a) + ',\\ ' + formatear(inv.b) + ')$.', 'ok');
+    } else {
+      html += '<div class="verificacion falla">❌ El resultado no es (0, 0).</div>';
+      mostrarMensaje('v-mensaje', '❌ Algo salió mal. Revisa los cálculos.', 'error');
+    }
+
+    document.getElementById('v-desarrollo').innerHTML = html;
+    renderMath(document.getElementById('v-desarrollo'));
+  }
+
+  document.getElementById('v-btn-verificar').addEventListener('click', verificarInverso);
+  document.getElementById('v-btn-limpiar').addEventListener('click', function() {
+    ['v-a', 'v-b'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('v-desarrollo').innerHTML = 'Ingresa los valores y presiona <strong>Calcular inverso</strong>.';
+    limpiarMensaje('v-mensaje');
+  });
+
+  // =========================================
+  // PESTAÑA 5: RETO
+  // =========================================
+  var retos = [
+    { ejemplo: '$(2, 3) + (5, -1) = (5, -1) + (2, 3)$', tipo: 'conmutativa', explicacion: 'El orden de los sumandos cambió, pero el resultado es el mismo.' },
+    { ejemplo: '$(1, 2) + [(3, 4) + (-1, 1)] = [(1, 2) + (3, 4)] + (-1, 1)$', tipo: 'asociativa', explicacion: 'La agrupación de los sumandos cambió, pero el resultado es el mismo.' },
+    { ejemplo: '$(-3, 7) + (0, 0) = (-3, 7)$', tipo: 'identidad', explicacion: 'Se sumó el elemento identidad $(0, 0)$ y el resultado no cambió.' },
+    { ejemplo: '$(4, -2) + (-4, 2) = (0, 0)$', tipo: 'inverso', explicacion: 'Se sumó el inverso aditivo y el resultado es la identidad $(0, 0)$.' },
+    { ejemplo: '$(0, 5) + (-2, 3) = (-2, 3) + (0, 5)$', tipo: 'conmutativa', explicacion: 'El orden de los sumandos cambió, pero el resultado es el mismo.' },
+    { ejemplo: '$[(2, 1) + (-1, 4)] + (3, -2) = (2, 1) + [(-1, 4) + (3, -2)]$', tipo: 'asociativa', explicacion: 'La agrupación de los sumandos cambió, pero el resultado es el mismo.' },
+    { ejemplo: '$(6, -3) + (0, 0) = (6, -3)$', tipo: 'identidad', explicacion: 'Se sumó el elemento identidad $(0, 0)$ y el resultado no cambió.' },
+    { ejemplo: '$(-1, -5) + (1, 5) = (0, 0)$', tipo: 'inverso', explicacion: 'Se sumó el inverso aditivo y el resultado es la identidad $(0, 0)$.' },
+    { ejemplo: '$(7, 2) + (-3, 8) = (-3, 8) + (7, 2)$', tipo: 'conmutativa', explicacion: 'El orden de los sumandos cambió, pero el resultado es el mismo.' },
+    { ejemplo: '$(0, 0) + (5, -6) = (5, -6)$', tipo: 'identidad', explicacion: 'Se sumó el elemento identidad $(0, 0)$ y el resultado no cambió.' }
+  ];
+
+  var retoActual = null;
+  var rAciertos = 0;
+  var rErrores = 0;
+
+  function nuevoReto() {
+    var idx = Math.floor(Math.random() * retos.length);
+    retoActual = retos[idx];
+
+    document.getElementById('r-ejemplo').innerHTML = retoActual.ejemplo;
+    document.getElementById('r-opciones').style.display = 'grid';
+    limpiarMensaje('r-mensaje');
+    renderMath(document.getElementById('r-ejemplo'));
+  }
+
+  document.getElementById('r-btn-nuevo').addEventListener('click', nuevoReto);
+
+  document.querySelectorAll('#r-opciones button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (!retoActual) return;
+      var resp = this.dataset.resp;
+
+      document.querySelectorAll('#r-opciones button').forEach(function(b) {
+        b.disabled = true;
+      });
+
+      if (resp === retoActual.tipo) {
+        this.classList.add('correcto');
+        rAciertos++;
+        mostrarMensaje('r-mensaje', '✅ ¡Correcto! ' + retoActual.explicacion, 'ok');
+      } else {
+        this.classList.add('incorrecto');
+        document.querySelectorAll('#r-opciones button').forEach(function(b) {
+          if (b.dataset.resp === retoActual.tipo) b.classList.add('correcto');
+        });
+        rErrores++;
+        mostrarMensaje('r-mensaje', '❌ Incorrecto. La propiedad es <strong>' + retoActual.tipo + '</strong>. ' + retoActual.explicacion, 'error');
+      }
+
+      document.getElementById('r-aciertos').textContent = rAciertos;
+      document.getElementById('r-errores').textContent = rErrores;
+
+      setTimeout(function() {
+        document.getElementById('r-opciones').style.display = 'none';
+        document.querySelectorAll('#r-opciones button').forEach(function(b) {
+          b.disabled = false;
+          b.classList.remove('correcto', 'incorrecto');
+        });
+        nuevoReto();
+      }, 2500);
+    });
+  });
+
+  // =========================================
+  // EJEMPLOS PREDEFINIDOS
+  // =========================================
+  var ejemplos = {
+    c1: { a1: '2', b1: '5', a2: '-3', b2: '1' },
+    c2: { a1: '-1', b1: '4', a2: '1', b2: '-4' },
+    c3: { a1: '3/2', b1: '1/2', a2: '1/2', b2: '-3/2' },
+    c4: { a1: '0', b1: '0', a2: '7', b2: '-2' },
+    a1: { a1: '1', b1: '2', a2: '3', b2: '-1', a3: '-2', b3: '4' },
+    a2: { a1: '0', b1: '0', a2: '5', b2: '3', a3: '-5', b3: '-3' },
+    a3: { a1: '1/2', b1: '1/3', a2: '1/4', b2: '1/6', a3: '1/4', b3: '1/2' },
+    a4: { a1: '-1', b1: '1', a2: '2', b2: '2', a3: '3', b3: '3' },
+    i1: { a: '4', b: '-7' },
+    i2: { a: '-3', b: '2' },
+    i3: { a: '1/2', b: '-1/4' },
+    i4: { a: '0', b: '5' },
+    v1: { a: '3', b: '-5' },
+    v2: { a: '-2', b: '4' },
+    v3: { a: '1/2', b: '-3/4' },
+    v4: { a: '0', b: '0' }
+  };
+
+  document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var ej = this.dataset.ej;
+      var data = ejemplos[ej];
+      if (!data) return;
+
+      var prefijo = ej.charAt(0);
+
+      if (prefijo === 'c') {
+        document.getElementById('c-a1').value = data.a1;
+        document.getElementById('c-b1').value = data.b1;
+        document.getElementById('c-a2').value = data.a2;
+        document.getElementById('c-b2').value = data.b2;
+        verificarConmutativa();
+      } else if (prefijo === 'a') {
+        document.getElementById('a-a1').value = data.a1;
+        document.getElementById('a-b1').value = data.b1;
+        document.getElementById('a-a2').value = data.a2;
+        document.getElementById('a-b2').value = data.b2;
+        document.getElementById('a-a3').value = data.a3;
+        document.getElementById('a-b3').value = data.b3;
+        verificarAsociativa();
+      } else if (prefijo === 'i') {
+        document.getElementById('i-a').value = data.a;
+        document.getElementById('i-b').value = data.b;
+        verificarIdentidad();
+      } else if (prefijo === 'v') {
+        document.getElementById('v-a').value = data.a;
+        document.getElementById('v-b').value = data.b;
+        verificarInverso();
+      }
+    });
+  });
+
+  // =========================================
+  // INICIALIZACIÓN
+  // =========================================
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      verificarConmutativa();
+      verificarAsociativa();
+      verificarIdentidad();
+      verificarInverso();
+    }, 500);
+  });
+
+</script>
+
+</body>
+</html>

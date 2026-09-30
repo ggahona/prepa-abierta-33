@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 1: Relaciones Lineales</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: #4a6885;
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: #4a6885;
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+    </style>
+    <!-- MathJax 3 Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 1</h1>
+            <p>Relaciones Lineales, Ecuaciones y Funciones Lineales</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "Dada una ecuación lineal expresada en la forma general $Ax + By + C = 0$, ¿cuál es la condición indispensable sobre los coeficientes $A$ y $B$ para que la ecuación sea considerada válida y represente una relación lineal?",
+                options: [
+                    { text: "$A$ y $B$ deben ser ambos diferentes de cero.", correct: false },
+                    { text: "$A$ y $B$ no deben ser ambas cero simultáneamente.", correct: true },
+                    { text: "$A$ y $B$ deben ser estrictamente iguales a cero.", correct: false },
+                    { text: "$A$ debe ser obligatoriamente cero y $B$ diferente de cero.", correct: false }
+                ],
+                feedback: "Por definición, una ecuación lineal en $x$ y $y$ requiere que las constantes $A$ y $B$ no sean ambas cero al mismo tiempo, ya que si ambas fueran cero, los términos con variables desaparecerían."
+            },
+            {
+                id: 2,
+                text: "¿Cuál es la forma algebraica estándar de una función lineal cuando el coeficiente de la variable dependiente $y$ es distinto de cero ($B \\neq 0$) y se resuelve explícitamente para $y$?",
+                options: [
+                    { text: "$Ax + By + C = 0$", correct: false },
+                    { text: "$f(x) = mx + b$", correct: true },
+                    { text: "$f(x) = ax^2 + bx + c$", correct: false },
+                    { text: "$Ax + By = C$", correct: false }
+                ],
+                feedback: "Cuando resolvemos una ecuación lineal para $y$ (dado que $B \\neq 0$), la expresión adopta la forma $f(x) = mx + b$, donde $m$ representa la pendiente y $b$ la ordenada al origen."
+            },
+            {
+                id: 3,
+                text: "¿Qué representa geométricamente la constante $b$ en la ecuación de la función lineal $f(x) = mx + b$?",
+                options: [
+                    { text: "La inclinación o cambio en $y$ por cada unidad de cambio en $x$.", correct: false },
+                    { text: "La ordenada del punto de intersección de la gráfica con el eje vertical ($Y$).", correct: true },
+                    { text: "La intersección de la recta con el eje horizontal ($X$).", correct: false },
+                    { text: "La distancia mínima entre dos rectas paralelas de la familia.", correct: false }
+                ],
+                feedback: "Al evaluar la función cuando $x = 0$, se obtiene $f(0) = b$. Esto indica que el punto $(0, b)$ es la intersección de la recta con el eje vertical o eje $Y$."
+            },
+            {
+                id: 4,
+                text: "¿Cómo se define analíticamente la pendiente $m$ de una recta que pasa por dos puntos distintos $P_1(x_1, y_1)$ y $P_2(x_2, y_2)$, con $x_1 \\neq x_2$?",
+                options: [
+                    { text: "$m = \\frac{x_2 - x_1}{y_2 - y_1}$", correct: false },
+                    { text: "$m = \\frac{y_2 - y_1}{x_2 - x_1}$", correct: true },
+                    { text: "$m = (y_2 - y_1)(x_2 - x_1)$", correct: false },
+                    { text: "$m = \\frac{y_1 + y_2}{x_1 + x_2}$", correct: false }
+                ],
+                feedback: "La pendiente $m$ se define como el cambio en la variable dependiente ($y_2 - y_1$) dividido por el cambio correspondiente en la variable independiente ($x_2 - x_1$)."
+            },
+            {
+                id: 5,
+                text: "Si al analizar una función lineal se observa que la pendiente es negativa ($m < 0$), ¿qué comportamiento presenta la gráfica de la recta al desplazarse de izquierda a derecha?",
+                options: [
+                    { text: "La recta asciende de izquierda a derecha.", correct: false },
+                    { text: "La recta es estrictamente horizontal.", correct: false },
+                    { text: "La recta desciende o se desplaza hacia abajo.", correct: true },
+                    { text: "La recta se vuelve paralela al eje vertical.", correct: false }
+                ],
+                feedback: "Por la tricotomía de los números reales, si $m < 0$, la variable $y$ decrece a medida que $x$ aumenta, lo que provoca que la gráfica se desplace hacia abajo de izquierda a derecha."
+            },
+            {
+                id: 6,
+                text: "¿Cuál es la característica geométrica fundamental de dos rectas cuyas ecuaciones lineales comparten exactamente la misma pendiente ($m$) pero tienen diferente ordenada al origen ($b$)?",
+                options: [
+                    { text: "Son rectas perpendiculares que forman un ángulo de 90 grados.", correct: false },
+                    { text: "Son rectas paralelas que no tienen ningún punto en común.", correct: true },
+                    { text: "Son exactamente la misma línea recta en el plano.", correct: false },
+                    { text: "Se intersecan en un único punto sobre el eje $X$.", correct: false }
+                ],
+                feedback: "Dos rectas con la misma pendiente y distinta ordenada al origen nunca se intersectan (no existe ningún par ordenado que satisfaga ambas ecuaciones simultáneamente), por lo que son paralelas."
+            },
+            {
+                id: 7,
+                text: "Dada la ecuación lineal $3x - 4y - 12 = 0$, ¿cuáles son las coordenadas de su intersección con el eje $X$?",
+                options: [
+                    { text: "$(4, 0)$", correct: true },
+                    { text: "$(0, -3)$", correct: false },
+                    { text: "$(6, 0)$", correct: false },
+                    { text: "$(0, 4)$", correct: false }
+                ],
+                feedback: "Para hallar la intersección con el eje $X$, hacemos $y = 0$ en la ecuación: $3x - 4(0) - 12 = 0 \\implies 3x = 12 \\implies x = 4$, obteniendo el punto $(4, 0)$."
+            },
+            {
+                id: 8,
+                text: "¿Cómo se le denomina al conjunto de rectas obtenidas a partir de una ecuación de la forma $y = mx + b$ cuando se mantiene fija la pendiente $m$ y se permite que $b$ varíe tomando diferentes valores reales (parámetro)?",
+                options: [
+                    { text: "Una familia de rectas paralelas.", correct: true },
+                    { text: "Un sistema de ecuaciones inconsistentes.", correct: false },
+                    { text: "Una función polinomial de grado dos.", correct: false },
+                    { text: "Un haz de rectas concurrentes en el origen.", correct: false }
+                ],
+                feedback: "Cuando el valor de la pendiente $m$ es constante y el término independiente $b$ actúa como parámetro variable, el conjunto resultante forma una familia de rectas paralelas."
+            },
+            {
+                id: 9,
+                text: "¿Qué tipo de gráfica produce una ecuación lineal del tipo $y = c$ (donde $c$ es una constante real, equivalente a tener $0x + 1y - c = 0$)?",
+                options: [
+                    { text: "Una línea recta vertical paralela al eje $Y$.", correct: false },
+                    { text: "Una línea recta horizontal paralela al eje $X$.", correct: true },
+                    { text: "Una recta inclinada con pendiente positiva.", correct: false },
+                    { text: "Una parábola con vértice en el origen.", correct: false }
+                ],
+                feedback: "En la ecuación $y = c$, el coeficiente de $x$ es cero, lo que significa que para cualquier valor de $x$, la ordenada $y$ permanece constante. Su gráfica es una línea recta horizontal."
+            },
+            {
+                id: 10,
+                text: "Si se tiene una función lineal cuya pendiente es $m = 2$ y su ordenada al origen es $b = -3$, ¿cuál es la ecuación algebraica correspondiente?",
+                options: [
+                    { text: "$y = -3x + 2$", correct: false },
+                    { text: "$y = 2x - 3$", correct: true },
+                    { text: "$2x + 3y = 0$", correct: false },
+                    { text: "$y = 3x - 2$", correct: false }
+                ],
+                feedback: "Sustituyendo directamente los valores en la forma pendiente-ordenada al origen $f(x) = mx + b$, obtenemos $y = 2x + (-3)$, es decir, $y = 2x - 3$."
+            }
+        ];
+
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 1 sobre relaciones y funciones lineales.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de los conceptos fundamentales del Módulo 1. Repasa algunos detalles sobre pendiente y ecuaciones lineales para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos teóricos y prácticos del Módulo 1 (ecuaciones lineales, pendiente, ordenada al origen y familias de rectas) antes de intentar nuevamente.";
+            }
+        }
+
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

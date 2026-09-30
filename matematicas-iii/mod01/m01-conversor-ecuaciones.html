@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor de Ecuaciones Lineales | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        main { padding: 30px; }
+
+        /* =========================================
+           TABS DE MODO DE ENTRADA
+           ========================================= */
+        .tabs-entrada {
+            display: flex;
+            gap: 0;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--color-acento-suave);
+            flex-wrap: wrap;
+        }
+
+        .tab-entrada {
+            padding: 12px 20px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-acento);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-entrada:hover {
+            color: var(--color-primario);
+            background-color: var(--color-base);
+        }
+
+        .tab-entrada.activa {
+            color: var(--color-primario);
+            border-bottom-color: var(--color-acento);
+        }
+
+        /* =========================================
+           PANEL DE ENTRADA
+           ========================================= */
+        .panel-entrada {
+            display: none;
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .panel-entrada.activa { display: block; }
+
+        .panel-entrada h3 {
+            color: var(--color-primario);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 120px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        /* =========================================
+           TABS DE RESULTADOS
+           ========================================= */
+        .tabs-resultado {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            border-bottom: 2px solid var(--color-acento-suave);
+            flex-wrap: wrap;
+        }
+
+        .tab-resultado {
+            padding: 12px 18px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-acento);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-resultado:hover {
+            color: var(--color-primario);
+            background-color: var(--color-base);
+        }
+
+        .tab-resultado.activa {
+            color: var(--color-primario);
+            border-bottom-color: var(--color-acento);
+        }
+
+        .tab-resultado:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .panel-resultado {
+            display: none;
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-top: none;
+            border-radius: 0 0 var(--radio-borde) var(--radio-borde);
+            padding: 25px;
+            min-height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .panel-resultado.activo { display: block; }
+
+        .resultado-ecuacion {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--color-primario);
+            padding: 20px;
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+            border-left: 4px solid var(--color-acento);
+            margin-bottom: 15px;
+        }
+
+        .resultado-info {
+            background-color: var(--color-blanco);
+            border-radius: 8px;
+            padding: 15px 20px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .resultado-info p {
+            margin-bottom: 8px;
+            color: var(--color-primario);
+        }
+
+        .resultado-info p:last-child { margin-bottom: 0; }
+
+        .resultado-info strong {
+            color: var(--color-acento);
+        }
+
+        /* =========================================
+           PASO A PASO
+           ========================================= */
+        .paso {
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            padding: 15px 20px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .paso-numero {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px;
+            height: 26px;
+            line-height: 26px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-right: 10px;
+        }
+
+        .paso-titulo {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+
+        .paso-contenido {
+            margin-top: 8px;
+            padding-left: 36px;
+            color: var(--color-texto-oscuro);
+        }
+
+        /* =========================================
+           CASOS ESPECIALES
+           ========================================= */
+        .alerta {
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .alerta.info {
+            background-color: rgba(91, 127, 163, 0.15);
+            border-left: 4px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+
+        .alerta.error {
+            background-color: rgba(192, 57, 43, 0.12);
+            border-left: 4px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .alerta.exito {
+            background-color: rgba(39, 174, 96, 0.12);
+            border-left: 4px solid var(--color-exito);
+            color: var(--color-exito);
+        }
+
+        /* =========================================
+           VERIFICADOR
+           ========================================= */
+        .verificador {
+            background-color: var(--color-blanco);
+            border: 2px dashed var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .verificador h3 {
+            color: var(--color-primario);
+            font-size: 1rem;
+            margin-bottom: 12px;
+        }
+
+        .verificador .grupo-inputs { margin-bottom: 12px; }
+
+        .feedback {
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: 12px;
+            display: none;
+        }
+
+        .feedback.visible { display: block; }
+
+        .feedback.correcto {
+            background-color: rgba(39, 174, 96, 0.15);
+            border-left: 4px solid var(--color-exito);
+            color: var(--color-exito);
+        }
+
+        .feedback.incorrecto {
+            background-color: rgba(192, 57, 43, 0.12);
+            border-left: 4px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        /* =========================================
+           HISTORIAL
+           ========================================= */
+        .historial {
+            margin-top: 25px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+        }
+
+        .historial h3 {
+            color: var(--color-primario);
+            font-size: 1rem;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .historial-item {
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+
+        .historial-item .tipo {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--color-acento);
+            letter-spacing: 0.5px;
+        }
+
+        .historial-vacio {
+            text-align: center;
+            color: var(--color-acento);
+            font-style: italic;
+            font-size: 0.9rem;
+            padding: 10px;
+        }
+
+        /* =========================================
+           EJEMPLOS RÁPIDOS
+           ========================================= */
+        .ejemplos-rapidos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--color-acento-suave);
+        }
+
+        .btn-ejemplo {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border-color: var(--color-acento);
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            main { padding: 20px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .tab-entrada, .tab-resultado { padding: 10px 12px; font-size: 0.82rem; }
+            .resultado-ecuacion { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Conversor de Ecuaciones Lineales</h1>
+        <p>Módulo 1 — Ecuaciones y Funciones Lineales | Matemáticas III</p>
+    </header>
+
+    <main>
+        <!-- TABS DE MODO DE ENTRADA -->
+        <div class="tabs-entrada">
+            <button class="tab-entrada activa" data-tab="general">Forma General</button>
+            <button class="tab-entrada" data-tab="pendiente">Pendiente-Ordenada</button>
+            <button class="tab-entrada" data-tab="punto">Punto-Pendiente</button>
+        </div>
+
+        <!-- PANEL: FORMA GENERAL -->
+        <div class="panel-entrada activa" id="panel-general">
+            <h3>Ingresa los coeficientes de $Ax + By + C = 0$</h3>
+            <div class="grupo-inputs">
+                <div class="input-wrapper"><label>A =</label><input type="number" id="gen-A" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>B =</label><input type="number" id="gen-B" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>C =</label><input type="number" id="gen-C" placeholder="0" step="any"></div>
+                <button class="btn-primario" id="btn-convertir-general">Convertir</button>
+            </div>
+            <div class="ejemplos-rapidos">
+                <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-primario); align-self: center;">Ejemplos:</span>
+                <button class="btn-ejemplo" data-tipo="general" data-a="2" data-b="-3" data-c="-12">$2x - 3y - 12 = 0$</button>
+                <button class="btn-ejemplo" data-tipo="general" data-a="4" data-b="2" data-c="-1">$4x + 2y - 1 = 0$</button>
+                <button class="btn-ejemplo" data-tipo="general" data-a="1" data-b="0" data-c="-4">$x - 4 = 0$</button>
+                <button class="btn-ejemplo" data-tipo="general" data-a="0" data-b="2" data-c="-3">$2y - 3 = 0$</button>
+            </div>
+        </div>
+
+        <!-- PANEL: PENDIENTE-ORDENADA -->
+        <div class="panel-entrada" id="panel-pendiente">
+            <h3>Ingresa la pendiente $m$ y la ordenada al origen $b$ de $y = mx + b$</h3>
+            <div class="grupo-inputs">
+                <div class="input-wrapper"><label>m =</label><input type="number" id="pen-m" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>b =</label><input type="number" id="pen-b" placeholder="0" step="any"></div>
+                <button class="btn-primario" id="btn-convertir-pendiente">Convertir</button>
+            </div>
+            <div class="ejemplos-rapidos">
+                <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-primario); align-self: center;">Ejemplos:</span>
+                <button class="btn-ejemplo" data-tipo="pendiente" data-m="2" data-b="-3">$y = 2x - 3$</button>
+                <button class="btn-ejemplo" data-tipo="pendiente" data-m="-1" data-b="4">$y = -x + 4$</button>
+                <button class="btn-ejemplo" data-tipo="pendiente" data-m="0" data-b="2">$y = 2$</button>
+                <button class="btn-ejemplo" data-tipo="pendiente" data-m="0.5" data-b="1">$y = 0.5x + 1$</button>
+            </div>
+        </div>
+
+        <!-- PANEL: PUNTO-PENDIENTE -->
+        <div class="panel-entrada" id="panel-punto">
+            <h3>Ingresa un punto $(x_1, y_1)$ y la pendiente $m$ de $y - y_1 = m(x - x_1)$</h3>
+            <div class="grupo-inputs">
+                <div class="input-wrapper"><label>x₁ =</label><input type="number" id="pto-x1" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>y₁ =</label><input type="number" id="pto-y1" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>m =</label><input type="number" id="pto-m" placeholder="0" step="any"></div>
+                <button class="btn-primario" id="btn-convertir-punto">Convertir</button>
+            </div>
+            <div class="ejemplos-rapidos">
+                <span style="font-size: 0.82rem; font-weight: 600; color: var(--color-primario); align-self: center;">Ejemplos:</span>
+                <button class="btn-ejemplo" data-tipo="punto" data-x1="1" data-y1="2" data-m="3">Punto (1,2), m=3</button>
+                <button class="btn-ejemplo" data-tipo="punto" data-x1="0" data-y1="-3" data-m="2">Punto (0,-3), m=2</button>
+                <button class="btn-ejemplo" data-tipo="punto" data-x1="2" data-y1="0" data-m="-1">Punto (2,0), m=-1</button>
+            </div>
+        </div>
+
+        <!-- TABS DE RESULTADOS -->
+        <div class="tabs-resultado">
+            <button class="tab-resultado activa" data-res="general" disabled>Forma General</button>
+            <button class="tab-resultado" data-res="pendiente" disabled>Pendiente-Ordenada</button>
+            <button class="tab-resultado" data-res="intersecciones" disabled>Intersecciones</button>
+            <button class="tab-resultado" data-res="pasos" disabled>Paso a Paso</button>
+        </div>
+
+        <!-- PANEL: RESULTADO FORMA GENERAL -->
+        <div class="panel-resultado activo" id="res-panel-general">
+            <div class="resultado-ecuacion" id="res-ecuacion-general">Ingresa los datos y presiona "Convertir"</div>
+            <div class="resultado-info">
+                <p><strong>Coeficientes:</strong> <span id="res-coef">—</span></p>
+            </div>
+        </div>
+
+        <!-- PANEL: RESULTADO PENDIENTE-ORDENADA -->
+        <div class="panel-resultado" id="res-panel-pendiente">
+            <div class="resultado-ecuacion" id="res-ecuacion-pendiente">—</div>
+            <div class="resultado-info">
+                <p><strong>Pendiente (m):</strong> <span id="res-m">—</span></p>
+                <p><strong>Ordenada al origen (b):</strong> <span id="res-b">—</span></p>
+            </div>
+        </div>
+
+        <!-- PANEL: RESULTADO INTERSECCIONES -->
+        <div class="panel-resultado" id="res-panel-intersecciones">
+            <div class="resultado-info" id="res-intersecciones-info">
+                <p>—</p>
+            </div>
+        </div>
+
+        <!-- PANEL: RESULTADO PASO A PASO -->
+        <div class="panel-resultado" id="res-panel-pasos">
+            <div id="res-pasos-contenido">
+                <p style="text-align: center; color: var(--color-acento);">—</p>
+            </div>
+        </div>
+
+        <!-- VERIFICADOR INTERACTIVO -->
+        <div class="verificador" id="verificador" style="display: none;">
+            <h3>🎯 Verifica tu comprensión</h3>
+            <p style="font-size: 0.9rem; margin-bottom: 10px; color: var(--color-primario);">
+                Antes de ver los resultados, ¿cuál crees que es la pendiente $m$ y la ordenada al origen $b$?
+            </p>
+            <div class="grupo-inputs">
+                <div class="input-wrapper"><label>m =</label><input type="number" id="ver-m" placeholder="0" step="any"></div>
+                <div class="input-wrapper"><label>b =</label><input type="number" id="ver-b" placeholder="0" step="any"></div>
+                <button class="btn-primario btn-secundario" id="btn-verificar">Verificar</button>
+            </div>
+            <div class="feedback" id="feedback-verificacion"></div>
+        </div>
+
+        <!-- HISTORIAL -->
+        <div class="historial">
+            <h3>
+                📋 Historial de conversiones
+                <button class="btn-primario btn-secundario" id="btn-limpiar-historial" style="padding: 4px 12px; font-size: 0.8rem;">Limpiar</button>
+            </h3>
+            <div id="lista-historial">
+                <div class="historial-vacio">Aún no hay conversiones en el historial.</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+    // =========================================
+    // ESTADO
+    // =========================================
+    var modoEntradaActual = 'general';
+    var ultimoResultado = null;
+    var historial = [];
+    var MAX_HISTORIAL = 5;
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function construirLatexGeneral(A, B, C) {
+        var latex = '';
+        if (A !== 0) {
+            var coefA = (Math.abs(A) === 1) ? (A < 0 ? '-' : '') : formatearNumero(A);
+            latex += coefA + 'x';
+        }
+        if (B !== 0) {
+            var signoB = B < 0 ? ' - ' : (latex ? ' + ' : '');
+            var absB = Math.abs(B);
+            var coefB = (absB === 1) ? '' : formatearNumero(absB);
+            if (latex === '') {
+                if (B < 0) latex += '-';
+                latex += coefB + 'y';
+            } else {
+                latex += signoB + coefB + 'y';
+            }
+        }
+        if (C !== 0 || (A === 0 && B === 0)) {
+            var signoC = C < 0 ? ' - ' : (latex ? ' + ' : '');
+            var absC = Math.abs(C);
+            if (latex === '') {
+                if (C < 0) latex += '-';
+                latex += formatearNumero(absC);
+            } else {
+                latex += signoC + formatearNumero(absC);
+            }
+        } else if (latex === '') {
+            latex = '0';
+        }
+        latex += ' = 0';
+        return latex;
+    }
+
+    function construirLatexPendiente(m, b) {
+        var latex = 'y = ';
+        if (m === 0) {
+            latex += formatearNumero(b);
+            return latex;
+        }
+        if (m === 1) latex += 'x';
+        else if (m === -1) latex += '-x';
+        else latex += formatearNumero(m) + 'x';
+
+        if (b > 0) latex += ' + ' + formatearNumero(b);
+        else if (b < 0) latex += ' - ' + formatearNumero(Math.abs(b));
+
+        return latex;
+    }
+
+    // =========================================
+    // TABS DE ENTRADA
+    // =========================================
+    var tabsEntrada = document.querySelectorAll('.tab-entrada');
+    tabsEntrada.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            tabsEntrada.forEach(function(t) { t.classList.remove('activa'); });
+            this.classList.add('activa');
+
+            var tipo = this.dataset.tab;
+            modoEntradaActual = tipo;
+
+            document.querySelectorAll('.panel-entrada').forEach(function(p) {
+                p.classList.remove('activa');
+            });
+            document.getElementById('panel-' + tipo).classList.add('activa');
+        });
+    });
+
+    // =========================================
+    // TABS DE RESULTADO
+    // =========================================
+    var tabsResultado = document.querySelectorAll('.tab-resultado');
+    tabsResultado.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            if (this.disabled) return;
+            tabsResultado.forEach(function(t) { t.classList.remove('activa'); });
+            this.classList.add('activa');
+
+            var res = this.dataset.res;
+            document.querySelectorAll('.panel-resultado').forEach(function(p) {
+                p.classList.remove('activo');
+            });
+            document.getElementById('res-panel-' + res).classList.add('activo');
+        });
+    });
+
+    // =========================================
+    // HABILITAR TABS DE RESULTADO
+    // =========================================
+    function habilitarTabsResultado() {
+        tabsResultado.forEach(function(t) { t.disabled = false; });
+    }
+
+    // =========================================
+    // CONVERSIÓN DESDE FORMA GENERAL
+    // =========================================
+    document.getElementById('btn-convertir-general').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('gen-A').value) || 0;
+        var B = parseFloat(document.getElementById('gen-B').value) || 0;
+        var C = parseFloat(document.getElementById('gen-C').value) || 0;
+
+        procesarConversion(A, B, C, 'general');
+    });
+
+    // =========================================
+    // CONVERSIÓN DESDE PENDIENTE-ORDENADA
+    // =========================================
+    document.getElementById('btn-convertir-pendiente').addEventListener('click', function() {
+        var m = parseFloat(document.getElementById('pen-m').value) || 0;
+        var b = parseFloat(document.getElementById('pen-b').value) || 0;
+
+        // Convertir y = mx + b a Ax + By + C = 0
+        // mx - y + b = 0  →  A = m, B = -1, C = b
+        var A = m;
+        var B = -1;
+        var C = b;
+
+        procesarConversion(A, B, C, 'pendiente');
+    });
+
+    // =========================================
+    // CONVERSIÓN DESDE PUNTO-PENDIENTE
+    // =========================================
+    document.getElementById('btn-convertir-punto').addEventListener('click', function() {
+        var x1 = parseFloat(document.getElementById('pto-x1').value) || 0;
+        var y1 = parseFloat(document.getElementById('pto-y1').value) || 0;
+        var m = parseFloat(document.getElementById('pto-m').value) || 0;
+
+        // y - y1 = m(x - x1)  →  y = mx - mx1 + y1
+        var b = -m * x1 + y1;
+        var A = m;
+        var B = -1;
+        var C = b;
+
+        procesarConversion(A, B, C, 'punto');
+    });
+
+    // =========================================
+    // PROCESAR CONVERSIÓN (función central)
+    // =========================================
+    function procesarConversion(A, B, C, origen) {
+        // CASO INVÁLIDO
+        if (A === 0 && B === 0) {
+            mostrarError('⚠️ A y B no pueden ser ambos cero. No es una ecuación lineal válida.');
+            return;
+        }
+
+        // Convertir a forma pendiente-ordenada si B ≠ 0
+        var m = null;
+        var b = null;
+        var esVertical = (B === 0);
+        var esHorizontal = (A === 0 && B !== 0);
+
+        if (!esVertical) {
+            m = -A / B;
+            b = -C / B;
+        }
+
+        // Guardar resultado
+        ultimoResultado = {
+            A: A, B: B, C: C,
+            m: m, b: b,
+            esVertical: esVertical,
+            esHorizontal: esHorizontal
+        };
+
+        // Actualizar panel de forma general
+        document.getElementById('res-ecuacion-general').innerHTML = '$$' + construirLatexGeneral(A, B, C) + '$$';
+        document.getElementById('res-coef').textContent = 'A = ' + formatearNumero(A) + ', B = ' + formatearNumero(B) + ', C = ' + formatearNumero(C);
+        renderMath(document.getElementById('res-ecuacion-general'));
+
+        // Actualizar panel de pendiente-ordenada
+        if (esVertical) {
+            document.getElementById('res-ecuacion-pendiente').innerHTML = 'Recta vertical: $x = ' + formatearNumero(-C / A) + '$';
+            document.getElementById('res-m').textContent = 'Indefinida';
+            document.getElementById('res-b').textContent = 'No aplica';
+        } else {
+            document.getElementById('res-ecuacion-pendiente').innerHTML = '$$' + construirLatexPendiente(m, b) + '$$';
+            document.getElementById('res-m').textContent = formatearNumero(m);
+            document.getElementById('res-b').textContent = formatearNumero(b);
+        }
+        renderMath(document.getElementById('res-ecuacion-pendiente'));
+
+        // Actualizar panel de intersecciones
+        actualizarIntersecciones(A, B, C, m, b, esVertical);
+
+        // Actualizar panel de pasos
+        actualizarPasos(A, B, C, m, b, esVertical, esHorizontal);
+
+        // Habilitar tabs
+        habilitarTabsResultado();
+
+        // Mostrar verificador
+        document.getElementById('verificador').style.display = 'block';
+        document.getElementById('feedback-verificacion').classList.remove('visible');
+        document.getElementById('ver-m').value = '';
+        document.getElementById('ver-b').value = '';
+
+        // Guardar en historial
+        agregarAlHistorial(A, B, C, origen);
+
+        // Renderizar todo el MathJax
+        renderMath(document.querySelector('main'));
+    }
+
+    // =========================================
+    // ACTUALIZAR INTERSECCIONES
+    // =========================================
+    function actualizarIntersecciones(A, B, C, m, b, esVertical) {
+        var contenedor = document.getElementById('res-intersecciones-info');
+        var html = '';
+
+        if (esVertical) {
+            var xVert = -C / A;
+            html += '<p>📍 <strong>Intersección con eje X:</strong> (' + formatearNumero(xVert) + ', 0)</p>';
+            html += '<p>⚠️ No hay intersección con el eje Y (recta vertical).</p>';
+        } else {
+            // Intersección con Y: (0, b)
+            html += '<p>📍 <strong>Intersección con eje Y (x=0):</strong> (0, ' + formatearNumero(b) + ')</p>';
+
+            // Intersección con X: (-b/m, 0) si m ≠ 0
+            if (m !== 0) {
+                var xInt = -b / m;
+                html += '<p>📍 <strong>Intersección con eje X (y=0):</strong> (' + formatearNumero(xInt) + ', 0)</p>';
+            } else {
+                html += '<p>⚠️ No hay intersección con el eje X (recta horizontal).</p>';
+            }
+        }
+
+        contenedor.innerHTML = html;
+    }
+
+    // =========================================
+    // ACTUALIZAR PASO A PASO
+    // =========================================
+    function actualizarPasos(A, B, C, m, b, esVertical, esHorizontal) {
+        var contenedor = document.getElementById('res-pasos-contenido');
+        var html = '';
+
+        if (A === 0 && B === 0) {
+            html = '<p style="text-align:center; color: var(--color-error);">Ecuación inválida.</p>';
+            contenedor.innerHTML = html;
+            return;
+        }
+
+        // Paso 1: ecuación original
+        html += '<div class="paso">';
+        html += '<span class="paso-numero">1</span>';
+        html += '<span class="paso-titulo">Ecuación original</span>';
+        html += '<div class="paso-contenido">$$' + construirLatexGeneral(A, B, C) + '$$</div>';
+        html += '</div>';
+
+        // Paso 2: despejar y
+        if (esVertical) {
+            html += '<div class="paso">';
+            html += '<span class="paso-numero">2</span>';
+            html += '<span class="paso-titulo">Caso especial: recta vertical</span>';
+            html += '<div class="paso-contenido">Como $B = 0$, la ecuación no se puede resolver para $y$. Se trata de una <strong>recta vertical</strong> de la forma $x = ' + formatearNumero(-C / A) + '$, que no representa una función.</div>';
+            html += '</div>';
+        } else {
+            html += '<div class="paso">';
+            html += '<span class="paso-numero">2</span>';
+            html += '<span class="paso-titulo">Despejar $y$</span>';
+            html += '<div class="paso-contenido">';
+            if (A !== 0) {
+                html += '$$' + formatearNumero(B) + 'y = ' + formatearNumero(-A) + 'x ' + (C < 0 ? '+ ' + formatearNumero(-C) : '- ' + formatearNumero(C)) + '$$';
+            } else {
+                html += '$$' + formatearNumero(B) + 'y = ' + formatearNumero(-C) + '$$';
+            }
+            html += '</div>';
+            html += '</div>';
+
+            // Paso 3: dividir por B
+            html += '<div class="paso">';
+            html += '<span class="paso-numero">3</span>';
+            html += '<span class="paso-titulo">Dividir entre $B = ' + formatearNumero(B) + '$</span>';
+            html += '<div class="paso-contenido">$$' + construirLatexPendiente(m, b) + '$$</div>';
+            html += '</div>';
+
+            // Paso 4: identificar
+            html += '<div class="paso">';
+            html += '<span class="paso-numero">4</span>';
+            html += '<span class="paso-titulo">Identificar pendiente y ordenada al origen</span>';
+            html += '<div class="paso-contenido">';
+            html += 'Pendiente: $m = ' + formatearNumero(m) + '$<br>';
+            html += 'Ordenada al origen: $b = ' + formatearNumero(b) + '$';
+            if (esHorizontal) {
+                html += '<br><em>Como $m = 0$, es una función constante (recta horizontal).</em>';
+            }
+            html += '</div>';
+            html += '</div>';
+        }
+
+        contenedor.innerHTML = html;
+        renderMath(contenedor);
+    }
+
+    // =========================================
+    // MOSTRAR ERROR
+    // =========================================
+    function mostrarError(mensaje) {
+        document.getElementById('res-ecuacion-general').innerHTML = '<span style="color: var(--color-error); font-size: 1rem;">' + mensaje + '</span>';
+        document.getElementById('res-coef').textContent = '—';
+        document.getElementById('res-ecuacion-pendiente').innerHTML = '—';
+        document.getElementById('res-m').textContent = '—';
+        document.getElementById('res-b').textContent = '—';
+        document.getElementById('res-intersecciones-info').innerHTML = '<p style="color: var(--color-error);">' + mensaje + '</p>';
+        document.getElementById('res-pasos-contenido').innerHTML = '<p style="color: var(--color-error); text-align: center;">' + mensaje + '</p>';
+        document.getElementById('verificador').style.display = 'none';
+        habilitarTabsResultado();
+    }
+
+    // =========================================
+    // VERIFICADOR INTERACTIVO
+    // =========================================
+    document.getElementById('btn-verificar').addEventListener('click', function() {
+        if (!ultimoResultado) return;
+
+        var vm = parseFloat(document.getElementById('ver-m').value);
+        var vb = parseFloat(document.getElementById('ver-b').value);
+        var feedback = document.getElementById('feedback-verificacion');
+
+        if (isNaN(vm) || isNaN(vb)) {
+            feedback.className = 'feedback incorrecto visible';
+            feedback.innerHTML = '⚠️ Debes ingresar ambos valores para verificar.';
+            return;
+        }
+
+        var mCorrecta = ultimoResultado.m;
+        var bCorrecta = ultimoResultado.b;
+
+        if (ultimoResultado.esVertical) {
+            feedback.className = 'feedback incorrecto visible';
+            feedback.innerHTML = '⚠️ Esta es una recta vertical, no tiene pendiente ni ordenada al origen definidas.';
+            return;
+        }
+
+        var tolerancia = 0.001;
+        var mOk = Math.abs(vm - mCorrecta) < tolerancia;
+        var bOk = Math.abs(vb - bCorrecta) < tolerancia;
+
+        if (mOk && bOk) {
+            feedback.className = 'feedback correcto visible';
+            feedback.innerHTML = '✅ ¡Correcto! La pendiente es $m = ' + formatearNumero(mCorrecta) + '$ y la ordenada al origen es $b = ' + formatearNumero(bCorrecta) + '$.';
+        } else {
+            feedback.className = 'feedback incorrecto visible';
+            var mensaje = '❌ Revisa tu respuesta. ';
+            if (!mOk && !bOk) {
+                mensaje += 'Ni la pendiente ni la ordenada al origen coinciden.';
+            } else if (!mOk) {
+                mensaje += 'La pendiente no es correcta.';
+            } else {
+                mensaje += 'La ordenada al origen no es correcta.';
+            }
+            feedback.innerHTML = mensaje + ' Intenta de nuevo o revisa el paso a paso.';
+        }
+
+        renderMath(feedback);
+    });
+
+    // =========================================
+    // EJEMPLOS RÁPIDOS
+    // =========================================
+    var botonesEjemplo = document.querySelectorAll('.btn-ejemplo');
+    botonesEjemplo.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var tipo = this.dataset.tipo;
+
+            if (tipo === 'general') {
+                document.getElementById('gen-A').value = this.dataset.a;
+                document.getElementById('gen-B').value = this.dataset.b;
+                document.getElementById('gen-C').value = this.dataset.c;
+                // Cambiar a tab general
+                document.querySelector('.tab-entrada[data-tab="general"]').click();
+                document.getElementById('btn-convertir-general').click();
+            } else if (tipo === 'pendiente') {
+                document.getElementById('pen-m').value = this.dataset.m;
+                document.getElementById('pen-b').value = this.dataset.b;
+                document.querySelector('.tab-entrada[data-tab="pendiente"]').click();
+                document.getElementById('btn-convertir-pendiente').click();
+            } else if (tipo === 'punto') {
+                document.getElementById('pto-x1').value = this.dataset.x1;
+                document.getElementById('pto-y1').value = this.dataset.y1;
+                document.getElementById('pto-m').value = this.dataset.m;
+                document.querySelector('.tab-entrada[data-tab="punto"]').click();
+                document.getElementById('btn-convertir-punto').click();
+            }
+        });
+    });
+
+    // =========================================
+    // HISTORIAL
+    // =========================================
+    function agregarAlHistorial(A, B, C, origen) {
+        // Evitar duplicados consecutivos
+        if (historial.length > 0) {
+            var ultimo = historial[historial.length - 1];
+            if (ultimo.A === A && ultimo.B === B && ultimo.C === C) return;
+        }
+
+        var tipoNombres = {
+            'general': 'General',
+            'pendiente': 'Pendiente-Ordenada',
+            'punto': 'Punto-Pendiente'
+        };
+
+        historial.push({
+            A: A, B: B, C: C,
+            latex: construirLatexGeneral(A, B, C),
+            tipo: tipoNombres[origen] || 'General'
+        });
+
+        if (historial.length > MAX_HISTORIAL) {
+            historial.shift();
+        }
+
+        actualizarListaHistorial();
+    }
+
+    function actualizarListaHistorial() {
+        var contenedor = document.getElementById('lista-historial');
+
+        if (historial.length === 0) {
+            contenedor.innerHTML = '<div class="historial-vacio">Aún no hay conversiones en el historial.</div>';
+            return;
+        }
+
+        contenedor.innerHTML = '';
+        // Mostrar en orden inverso (el más reciente primero)
+        for (var i = historial.length - 1; i >= 0; i--) {
+            var item = historial[i];
+            var div = document.createElement('div');
+            div.className = 'historial-item';
+            div.innerHTML = '<span>$' + item.latex + '$</span>' +
+                '<span class="tipo">' + item.tipo + '</span>';
+            contenedor.appendChild(div);
+        }
+
+        renderMath(contenedor);
+    }
+
+    document.getElementById('btn-limpiar-historial').addEventListener('click', function() {
+        historial = [];
+        actualizarListaHistorial();
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    renderMath(document.body);
+</script>
+
+</body>
+</html>

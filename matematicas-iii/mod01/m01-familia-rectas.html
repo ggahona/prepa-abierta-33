@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laboratorio de Familias de Rectas | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1150px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .tabs-modo {
+            display: flex;
+            gap: 0;
+            background-color: var(--color-base);
+            padding: 0 30px;
+            border-bottom: 2px solid var(--color-acento-suave);
+            flex-wrap: wrap;
+        }
+
+        .tab-modo {
+            padding: 15px 22px;
+            background-color: transparent;
+            border: none;
+            border-bottom: 4px solid transparent;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--color-acento);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: -2px;
+        }
+
+        .tab-modo:hover {
+            color: var(--color-primario);
+            background-color: rgba(255,255,255,0.5);
+        }
+
+        .tab-modo.activa {
+            color: var(--color-primario);
+            border-bottom-color: var(--color-acento);
+            background-color: var(--color-blanco);
+        }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            min-height: 620px;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+
+        .panel-control h2 {
+            color: var(--color-primario);
+            font-size: 1.15rem;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--color-acento);
+            padding-left: 10px;
+        }
+
+        .descripcion-modo {
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 6px;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            line-height: 1.5;
+        }
+
+        .control-grupo {
+            margin-bottom: 22px;
+        }
+
+        .control-grupo label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+
+        .control-grupo .valor-actual {
+            background-color: var(--color-blanco);
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-family: 'Consolas', monospace;
+            color: var(--color-acento);
+            font-weight: 700;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--color-acento-suave);
+            border-radius: 3px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--color-acento);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--color-blanco);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--color-primario);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: var(--color-acento);
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid var(--color-blanco);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .btn-accion {
+            width: 100%;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 8px;
+        }
+
+        .btn-accion:hover { background-color: var(--color-primario); }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .panel-grafica {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--color-blanco);
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 4px rgba(44,73,102,0.06);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .info-panel {
+            margin-top: 18px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .info-tarjeta {
+            background-color: var(--color-base);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 6px;
+            padding: 12px 15px;
+        }
+
+        .info-tarjeta .etiqueta {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-acento);
+            margin-bottom: 4px;
+        }
+
+        .info-tarjeta .valor {
+            font-size: 0.98rem;
+            font-weight: 600;
+            color: var(--color-primario);
+        }
+
+        .info-tarjeta.ancho-completo {
+            grid-column: span 2;
+        }
+
+        .info-tarjeta.destacada {
+            background-color: var(--color-primario);
+            border-left-color: var(--color-acento-suave);
+            text-align: center;
+        }
+
+        .info-tarjeta.destacada .etiqueta {
+            color: var(--color-acento-suave);
+        }
+
+        .info-tarjeta.destacada .valor {
+            color: var(--color-blanco);
+            font-size: 1.2rem;
+        }
+
+        .lista-rectas {
+            margin-top: 15px;
+            background-color: var(--color-base);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .lista-rectas h3 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-acento);
+            margin-bottom: 10px;
+        }
+
+        .recta-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 10px;
+            margin-bottom: 5px;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .recta-item.activa {
+            background-color: rgba(91, 127, 163, 0.15);
+            font-weight: 700;
+        }
+
+        .recta-item .color-muestra {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 1px solid var(--color-acento-suave);
+        }
+
+        /* Reto */
+        .reto {
+            margin-top: 20px;
+            background-color: var(--color-base);
+            border: 2px dashed var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 20px;
+        }
+
+        .reto h3 {
+            color: var(--color-primario);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .reto p {
+            font-size: 0.88rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+        }
+
+        .reto-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+
+        input[type="number"] {
+            padding: 9px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .feedback {
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-weight: 600;
+            margin-top: 12px;
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .feedback.visible { display: block; }
+
+        .feedback.correcto {
+            background-color: rgba(39, 174, 96, 0.15);
+            border-left: 4px solid var(--color-exito);
+            color: var(--color-exito);
+        }
+
+        .feedback.incorrecto {
+            background-color: rgba(192, 57, 43, 0.12);
+            border-left: 4px solid var(--color-error);
+            color: var(--color-error);
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 25px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal {
+                grid-template-columns: 1fr;
+            }
+            .panel-control {
+                border-right: none;
+                border-bottom: 1px solid var(--color-acento-suave);
+            }
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            .panel-control, .panel-grafica { padding: 18px; }
+            .info-panel { grid-template-columns: 1fr; }
+            .info-tarjeta.ancho-completo { grid-column: span 1; }
+            .tab-modo { padding: 12px 14px; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Laboratorio de Familias de Rectas</h1>
+        <p>Módulo 1 — Ecuaciones y Funciones Lineales | Matemáticas III</p>
+    </header>
+
+    <!-- TABS DE MODO -->
+    <div class="tabs-modo">
+        <button class="tab-modo activa" data-modo="pendiente-fija">Modo 1: Pendiente fija</button>
+        <button class="tab-modo" data-modo="ordenada-fija">Modo 2: Ordenada fija</button>
+        <button class="tab-modo" data-modo="recta-comun">Modo 3: Recta común</button>
+    </div>
+
+    <div class="layout-principal">
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2 id="tituloControl">Pendiente fija</h2>
+
+            <div class="descripcion-modo" id="descripcionModo">
+                <strong>Familia con pendiente fija:</strong> todas las rectas tienen la misma pendiente $m$ y varían en su ordenada al origen $b$. Son <strong>paralelas</strong> entre sí.
+            </div>
+
+            <!-- Control: Pendiente fija -->
+            <div id="control-pendiente-fija">
+                <div class="control-grupo">
+                    <label>
+                        Pendiente fija (m)
+                        <span class="valor-actual" id="valorM1">2.00</span>
+                    </label>
+                    <input type="range" id="sliderM1" min="-5" max="5" step="0.1" value="2">
+                </div>
+                <div class="control-grupo">
+                    <label>
+                        Ordenada al origen (b) — varía
+                        <span class="valor-actual" id="valorB1">0.00</span>
+                    </label>
+                    <input type="range" id="sliderB1" min="-10" max="10" step="0.5" value="0">
+                </div>
+                <button class="btn-accion" id="btnFamilia1">📊 Mostrar familia completa</button>
+                <button class="btn-accion btn-secundario" id="btnOcultar1">🗑️ Ocultar familia</button>
+            </div>
+
+            <!-- Control: Ordenada fija -->
+            <div id="control-ordenada-fija" style="display: none;">
+                <div class="control-grupo">
+                    <label>
+                        Ordenada fija (b)
+                        <span class="valor-actual" id="valorB2">1.00</span>
+                    </label>
+                    <input type="range" id="sliderB2" min="-10" max="10" step="0.5" value="1">
+                </div>
+                <div class="control-grupo">
+                    <label>
+                        Pendiente (m) — varía
+                        <span class="valor-actual" id="valorM2">1.00</span>
+                    </label>
+                    <input type="range" id="sliderM2" min="-5" max="5" step="0.1" value="1">
+                </div>
+                <button class="btn-accion" id="btnFamilia2">📊 Mostrar familia completa</button>
+                <button class="btn-accion btn-secundario" id="btnOcultar2">🗑️ Ocultar familia</button>
+            </div>
+
+            <!-- Control: Recta común -->
+            <div id="control-recta-comun" style="display: none;">
+                <div class="control-grupo">
+                    <label>
+                        Ordenada fija de Familia 1 (b₁)
+                        <span class="valor-actual" id="valorB3">-2.00</span>
+                    </label>
+                    <input type="range" id="sliderB3" min="-10" max="10" step="0.5" value="-2">
+                </div>
+                <div class="control-grupo">
+                    <label>
+                        Pendiente fija de Familia 2 (m₂)
+                        <span class="valor-actual" id="valorM3">3.00</span>
+                    </label>
+                    <input type="range" id="sliderM3" min="-5" max="5" step="0.1" value="3">
+                </div>
+                <button class="btn-accion" id="btnRectaComun">🔗 Resaltar recta común</button>
+            </div>
+        </div>
+
+        <!-- PANEL DE GRÁFICA -->
+        <div class="panel-grafica">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="800" height="560"></canvas>
+            </div>
+
+            <div class="info-panel">
+                <div class="info-tarjeta destacada ancho-completo">
+                    <div class="etiqueta">Familia de rectas</div>
+                    <div class="valor" id="infoFamilia">—</div>
+                </div>
+                <div class="info-tarjeta">
+                    <div class="etiqueta">Propiedad común</div>
+                    <div class="valor" id="infoPropiedad">—</div>
+                </div>
+                <div class="info-tarjeta">
+                    <div class="etiqueta">Rectas mostradas</div>
+                    <div class="valor" id="infoCantidad">1</div>
+                </div>
+            </div>
+
+            <div class="lista-rectas">
+                <h3>Ecuaciones en pantalla</h3>
+                <div id="listaEcuaciones"></div>
+            </div>
+
+            <!-- RETO -->
+            <div class="reto" id="reto">
+                <h3>🎯 Reto: Encuentra la recta común</h3>
+                <p id="textoReto">
+                    ¿Cuál es la ecuación de la recta que pertenece simultáneamente a la familia con <strong>ordenada fija $b_1$</strong> y a la familia con <strong>pendiente fija $m_2$</strong>?
+                </p>
+                <div class="reto-inputs">
+                    <div class="input-wrapper"><label>Pendiente m =</label><input type="number" id="reto-m" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>Ordenada b =</label><input type="number" id="reto-b" placeholder="0" step="any"></div>
+                    <button class="btn-accion" id="btnReto" style="width: auto; margin-top: 0; padding: 10px 20px;">Verificar</button>
+                </div>
+                <div class="feedback" id="feedbackReto"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Instrucciones:</strong> Explora los tres modos. Observa cómo cambia el comportamiento de las rectas al fijar la pendiente o la ordenada al origen. Después, resuelve el reto final.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN DEL CANVAS
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+
+    var ancho = canvas.width;
+    var alto = canvas.height;
+    var origenX = ancho / 2;
+    var origenY = alto / 2;
+    var escala = 35;
+
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+    var COLOR_RECTA_ACTIVA = '#5b7fa3';
+    var COLOR_RECTA_COMUN = '#c0392b';
+    var COLOR_PUNTO = '#c0392b';
+
+    var COLORES_FAMILIA = [
+        '#5b7fa3', '#7fa3c1', '#a9c1d9', '#4a6885',
+        '#8ba7c4', '#c1d4e6', '#3d5a78', '#95b3d0',
+        '#6b8fae', '#b8cbe0'
+    ];
+
+    // Estado
+    var modoActual = 'pendiente-fija';
+    var m1 = 2, b1 = 0;
+    var b2 = 1, m2 = 1;
+    var b3 = -2, m3 = 3;
+    var mostrarFamilia1 = false;
+    var mostrarFamilia2 = false;
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(2)).toString();
+    }
+
+    function latexPendiente(m, b) {
+        var latex = 'y = ';
+        if (m === 0) {
+            latex += formatearNumero(b);
+            return latex;
+        }
+        if (m === 1) latex += 'x';
+        else if (m === -1) latex += '-x';
+        else latex += formatearNumero(m) + 'x';
+
+        if (b > 0) latex += ' + ' + formatearNumero(b);
+        else if (b < 0) latex += ' - ' + formatearNumero(Math.abs(b));
+        return latex;
+    }
+
+    function aPixelX(x) { return origenX + x * escala; }
+    function aPixelY(y) { return origenY - y * escala; }
+
+    // =========================================
+    // DIBUJAR CUADRÍCULA
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+
+        var rangoX = Math.ceil(origenX / escala);
+        var rangoY = Math.ceil(origenY / escala);
+
+        for (var i = -rangoX; i <= rangoX; i++) {
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, 0);
+            ctx.lineTo(px, alto);
+            ctx.stroke();
+        }
+
+        for (var j = -rangoY; j <= rangoY; j++) {
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(0, py);
+            ctx.lineTo(ancho, py);
+            ctx.stroke();
+        }
+    }
+
+    // =========================================
+    // DIBUJAR EJES
+    // =========================================
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.font = 'bold 14px Segoe UI, sans-serif';
+
+        // Eje X
+        ctx.beginPath();
+        ctx.moveTo(0, origenY);
+        ctx.lineTo(ancho - 5, origenY);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ancho - 5, origenY);
+        ctx.lineTo(ancho - 15, origenY - 6);
+        ctx.lineTo(ancho - 15, origenY + 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('X', ancho - 20, origenY - 12);
+
+        // Eje Y
+        ctx.beginPath();
+        ctx.moveTo(origenX, alto);
+        ctx.lineTo(origenX, 5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(origenX, 5);
+        ctx.lineTo(origenX - 6, 15);
+        ctx.lineTo(origenX + 6, 15);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillText('Y', origenX + 12, 18);
+
+        // Marcas X
+        ctx.font = '11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var rangoX = Math.ceil(origenX / escala);
+        for (var i = -rangoX; i <= rangoX; i++) {
+            if (i === 0) continue;
+            var px = aPixelX(i);
+            ctx.beginPath();
+            ctx.moveTo(px, origenY - 4);
+            ctx.lineTo(px, origenY + 4);
+            ctx.stroke();
+            if (i % 2 === 0) ctx.fillText(i.toString(), px, origenY + 18);
+        }
+
+        // Marcas Y
+        ctx.textAlign = 'right';
+        var rangoY = Math.ceil(origenY / escala);
+        for (var j = -rangoY; j <= rangoY; j++) {
+            if (j === 0) continue;
+            var py = aPixelY(j);
+            ctx.beginPath();
+            ctx.moveTo(origenX - 4, py);
+            ctx.lineTo(origenX + 4, py);
+            ctx.stroke();
+            if (j % 2 === 0) ctx.fillText(j.toString(), origenX - 8, py + 4);
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillText('0', origenX - 6, origenY + 16);
+    }
+
+    // =========================================
+    // DIBUJAR RECTA
+    // =========================================
+    function dibujarRecta(m, b, color, grosor, punteada) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = grosor || 2;
+        if (punteada) ctx.setLineDash([6, 4]);
+        else ctx.setLineDash([]);
+
+        var x_min = -origenX / escala;
+        var x_max = (ancho - origenX) / escala;
+
+        var y_min = m * x_min + b;
+        var y_max = m * x_max + b;
+
+        ctx.beginPath();
+        ctx.moveTo(aPixelX(x_min), aPixelY(y_min));
+        ctx.lineTo(aPixelX(x_max), aPixelY(y_max));
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+    }
+
+    // =========================================
+    // DIBUJAR PUNTO
+    // =========================================
+    function dibujarPunto(x, y, color, radio) {
+        ctx.beginPath();
+        ctx.arc(aPixelX(x), aPixelY(y), radio || 6, 0, 2 * Math.PI);
+        ctx.fillStyle = color || COLOR_PUNTO;
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+    }
+
+    // =========================================
+    // RENDERIZAR CANVAS
+    // =========================================
+    function renderizar() {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, ancho, alto);
+
+        dibujarCuadricula();
+        dibujarEjes();
+
+        if (modoActual === 'pendiente-fija') {
+            // Mostrar familia completa
+            if (mostrarFamilia1) {
+                var valoresB = [-8, -5, -2, 2, 5, 8];
+                for (var k = 0; k < valoresB.length; k++) {
+                    dibujarRecta(m1, valoresB[k], COLORES_FAMILIA[k % COLORES_FAMILIA.length], 1.5, false);
+                }
+            }
+            // Recta activa
+            dibujarRecta(m1, b1, COLOR_RECTA_ACTIVA, 3, false);
+            // Punto (0, b1)
+            dibujarPunto(0, b1, COLOR_PUNTO, 6);
+        }
+        else if (modoActual === 'ordenada-fija') {
+            // Familia completa: rectas que pasan por (0, b2) con diferentes pendientes
+            if (mostrarFamilia2) {
+                var valoresM = [-3, -1.5, -0.5, 0.5, 1.5, 3];
+                for (var k = 0; k < valoresM.length; k++) {
+                    dibujarRecta(valoresM[k], b2, COLORES_FAMILIA[k % COLORES_FAMILIA.length], 1.5, false);
+                }
+            }
+            // Recta activa
+            dibujarRecta(m2, b2, COLOR_RECTA_ACTIVA, 3, false);
+            // Punto (0, b2)
+            dibujarPunto(0, b2, COLOR_PUNTO, 7);
+        }
+        else if (modoActual === 'recta-comun') {
+            // Familia 1: ordenada fija b3 (rectas que pasan por (0, b3))
+            var valoresM_fam = [-2, -1, 0.5, 1.5, 2.5];
+            for (var k = 0; k < valoresM_fam.length; k++) {
+                dibujarRecta(valoresM_fam[k], b3, '#a9c1d9', 1.2, true);
+            }
+            // Familia 2: pendiente fija m3 (rectas paralelas)
+            var valoresB_fam = [-6, -3, 0, 3, 6];
+            for (var k2 = 0; k2 < valoresB_fam.length; k2++) {
+                dibujarRecta(m3, valoresB_fam[k2], '#a9c1d9', 1.2, true);
+            }
+
+            // Recta común: y = m3 x + b3
+            dibujarRecta(m3, b3, COLOR_RECTA_COMUN, 3.5, false);
+
+            // Punto común (0, b3)
+            dibujarPunto(0, b3, COLOR_PUNTO, 8);
+        }
+    }
+
+    // =========================================
+    // ACTUALIZAR INFO
+    // =========================================
+    function actualizarInfo() {
+        var infoFamilia = document.getElementById('infoFamilia');
+        var infoPropiedad = document.getElementById('infoPropiedad');
+        var infoCantidad = document.getElementById('infoCantidad');
+        var lista = document.getElementById('listaEcuaciones');
+
+        lista.innerHTML = '';
+
+        if (modoActual === 'pendiente-fija') {
+            infoFamilia.innerHTML = 'Familia: $y = ' + formatearNumero(m1) + 'x + b$';
+            infoPropiedad.textContent = 'Misma pendiente';
+            infoCantidad.textContent = mostrarFamilia1 ? '7 rectas' : '1 recta';
+
+            var valoresB = [-8, -5, -2, 0, 2, 5, 8];
+            for (var i = 0; i < valoresB.length; i++) {
+                var activa = (valoresB[i] === b1);
+                if (!mostrarFamilia1 && !activa) continue;
+                var div = document.createElement('div');
+                div.className = 'recta-item' + (activa ? ' activa' : '');
+                div.innerHTML = '<span>$' + latexPendiente(m1, valoresB[i]) + '$</span>' +
+                    '<span class="color-muestra" style="background-color:' + (activa ? COLOR_RECTA_ACTIVA : COLORES_FAMILIA[i % COLORES_FAMILIA.length]) + ';"></span>';
+                lista.appendChild(div);
+            }
+        }
+        else if (modoActual === 'ordenada-fija') {
+            infoFamilia.innerHTML = 'Familia: $y = mx + ' + formatearNumero(b2) + '$';
+            infoPropiedad.textContent = 'Punto común (0, ' + formatearNumero(b2) + ')';
+            infoCantidad.textContent = mostrarFamilia2 ? '7 rectas' : '1 recta';
+
+            var valoresM = [-3, -1.5, -0.5, 0, 0.5, 1.5, 3];
+            for (var j = 0; j < valoresM.length; j++) {
+                var activaM = (valoresM[j] === m2);
+                if (!mostrarFamilia2 && !activaM) continue;
+                var div2 = document.createElement('div');
+                div2.className = 'recta-item' + (activaM ? ' activa' : '');
+                div2.innerHTML = '<span>$' + latexPendiente(valoresM[j], b2) + '$</span>' +
+                    '<span class="color-muestra" style="background-color:' + (activaM ? COLOR_RECTA_ACTIVA : COLORES_FAMILIA[j % COLORES_FAMILIA.length]) + ';"></span>';
+                lista.appendChild(div2);
+            }
+        }
+        else if (modoActual === 'recta-comun') {
+            infoFamilia.innerHTML = 'Recta común: $y = ' + formatearNumero(m3) + 'x ' + (b3 >= 0 ? '+ ' + formatearNumero(b3) : '- ' + formatearNumero(Math.abs(b3))) + '$';
+            infoPropiedad.textContent = 'Punto común (0, ' + formatearNumero(b3) + ')';
+            infoCantidad.textContent = '11 rectas + 1 común';
+
+            var div3 = document.createElement('div');
+            div3.className = 'recta-item activa';
+            div3.innerHTML = '<span>$' + latexPendiente(m3, b3) + '$</span>' +
+                '<span class="color-muestra" style="background-color:' + COLOR_RECTA_COMUN + ';"></span>';
+            lista.appendChild(div3);
+
+            var div4 = document.createElement('div');
+            div4.className = 'recta-item';
+            div4.innerHTML = '<span style="font-size: 0.78rem; color: var(--color-acento);">+ Rectas punteadas de ambas familias</span>';
+            lista.appendChild(div4);
+        }
+
+        renderMath(document.querySelector('.panel-grafica'));
+    }
+
+    // =========================================
+    // ACTUALIZAR TODO
+    // =========================================
+    function actualizar() {
+        renderizar();
+        actualizarInfo();
+    }
+
+    // =========================================
+    // TABS DE MODO
+    // =========================================
+    var tabsModo = document.querySelectorAll('.tab-modo');
+    tabsModo.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+            tabsModo.forEach(function(t) { t.classList.remove('activa'); });
+            this.classList.add('activa');
+
+            modoActual = this.dataset.modo;
+
+            // Mostrar controles correspondientes
+            document.getElementById('control-pendiente-fija').style.display = 'none';
+            document.getElementById('control-ordenada-fija').style.display = 'none';
+            document.getElementById('control-recta-comun').style.display = 'none';
+
+            if (modoActual === 'pendiente-fija') {
+                document.getElementById('control-pendiente-fija').style.display = 'block';
+                document.getElementById('tituloControl').textContent = 'Pendiente fija';
+                document.getElementById('descripcionModo').innerHTML = '<strong>Familia con pendiente fija:</strong> todas las rectas tienen la misma pendiente $m$ y varían en su ordenada al origen $b$. Son <strong>paralelas</strong> entre sí.';
+                document.getElementById('reto').style.display = 'none';
+            } else if (modoActual === 'ordenada-fija') {
+                document.getElementById('control-ordenada-fija').style.display = 'block';
+                document.getElementById('tituloControl').textContent = 'Ordenada fija';
+                document.getElementById('descripcionModo').innerHTML = '<strong>Familia con ordenada al origen fija:</strong> todas las rectas pasan por el mismo punto $(0, b)$ y varían en su pendiente $m$. Giran alrededor de ese punto.';
+                document.getElementById('reto').style.display = 'none';
+            } else if (modoActual === 'recta-comun') {
+                document.getElementById('control-recta-comun').style.display = 'block';
+                document.getElementById('tituloControl').textContent = 'Recta común';
+                document.getElementById('descripcionModo').innerHTML = '<strong>Recta común:</strong> combinamos la ordenada fija de la Familia 1 con la pendiente fija de la Familia 2. La recta resultante pertenece a ambas familias.';
+                document.getElementById('reto').style.display = 'block';
+            }
+
+            actualizar();
+        });
+    });
+
+    // =========================================
+    // SLIDERS MODO 1
+    // =========================================
+    document.getElementById('sliderM1').addEventListener('input', function(e) {
+        m1 = parseFloat(e.target.value);
+        document.getElementById('valorM1').textContent = m1.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('sliderB1').addEventListener('input', function(e) {
+        b1 = parseFloat(e.target.value);
+        document.getElementById('valorB1').textContent = b1.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('btnFamilia1').addEventListener('click', function() {
+        mostrarFamilia1 = true;
+        actualizar();
+    });
+
+    document.getElementById('btnOcultar1').addEventListener('click', function() {
+        mostrarFamilia1 = false;
+        actualizar();
+    });
+
+    // =========================================
+    // SLIDERS MODO 2
+    // =========================================
+    document.getElementById('sliderB2').addEventListener('input', function(e) {
+        b2 = parseFloat(e.target.value);
+        document.getElementById('valorB2').textContent = b2.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('sliderM2').addEventListener('input', function(e) {
+        m2 = parseFloat(e.target.value);
+        document.getElementById('valorM2').textContent = m2.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('btnFamilia2').addEventListener('click', function() {
+        mostrarFamilia2 = true;
+        actualizar();
+    });
+
+    document.getElementById('btnOcultar2').addEventListener('click', function() {
+        mostrarFamilia2 = false;
+        actualizar();
+    });
+
+    // =========================================
+    // SLIDERS MODO 3
+    // =========================================
+    document.getElementById('sliderB3').addEventListener('input', function(e) {
+        b3 = parseFloat(e.target.value);
+        document.getElementById('valorB3').textContent = b3.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('sliderM3').addEventListener('input', function(e) {
+        m3 = parseFloat(e.target.value);
+        document.getElementById('valorM3').textContent = m3.toFixed(2);
+        actualizar();
+    });
+
+    document.getElementById('btnRectaComun').addEventListener('click', function() {
+        actualizar();
+    });
+
+    // =========================================
+    // RETO: VERIFICACIÓN
+    // =========================================
+    document.getElementById('btnReto').addEventListener('click', function() {
+        var rm = parseFloat(document.getElementById('reto-m').value);
+        var rb = parseFloat(document.getElementById('reto-b').value);
+        var feedback = document.getElementById('feedbackReto');
+
+        if (isNaN(rm) || isNaN(rb)) {
+            feedback.className = 'feedback incorrecto visible';
+            feedback.innerHTML = '⚠️ Ingresa ambos valores para verificar.';
+            return;
+        }
+
+        var tolerancia = 0.001;
+        var mOk = Math.abs(rm - m3) < tolerancia;
+        var bOk = Math.abs(rb - b3) < tolerancia;
+
+        if (mOk && bOk) {
+            feedback.className = 'feedback correcto visible';
+            feedback.innerHTML = '✅ ¡Correcto! La recta común es $y = ' + formatearNumero(m3) + 'x ' + (b3 >= 0 ? '+ ' + formatearNumero(b3) : '- ' + formatearNumero(Math.abs(b3))) + '$.';
+        } else {
+            feedback.className = 'feedback incorrecto visible';
+            var mensaje = '❌ Revisa tu respuesta. ';
+            if (!mOk && !bOk) mensaje += 'La pendiente y la ordenada no coinciden.';
+            else if (!mOk) mensaje += 'La pendiente no coincide. Recuerda que la recta común toma la pendiente de la Familia 2.';
+            else mensaje += 'La ordenada al origen no coincide. Recuerda que la recta común toma la ordenada de la Familia 1.';
+            feedback.innerHTML = mensaje;
+        }
+
+        renderMath(feedback);
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    actualizar();
+</script>
+
+</body>
+</html>

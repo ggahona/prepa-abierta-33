@@ -15,6 +15,7 @@ Cada recurso incluye presentaciones, laboratorios interactivos, visualizadores y
 > Se irán agregando más asignaturas conforme se desarrollen.
 
 ## Estructura del repositorio
+```
 prepa-abierta-33/
 └── 31-matematicas-iii/
     ├── mod01/    → Ecuaciones lineales
@@ -22,7 +23,7 @@ prepa-abierta-33/
     ├── mod03/    → Determinantes y Regla de Cramer
     ├── mod04/    → Desigualdades y programación lineal
     └── mod05/    → Números Complejos: Suma y Propiedades
-
+```
 Cada módulo contiene 5 recursos:
 - `mXX-presentacion.html` — Presentación del tema
 - `mXX-simulador.html` — Simulador interactivo

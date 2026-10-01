@@ -399,7 +399,7 @@
     <header>
         <div class="institucion">Preparatoria Abierta</div>
         <h1>Multiplicación en el Plano Complejo</h1>
-        <p>Visualizador de correspondencias | Matemáticas III</p>
+        <p>Visualizador de la multiplicación | Matemáticas III</p>
     </header>
 
     <!-- LAYOUT PRINCIPAL -->
@@ -416,12 +416,12 @@
                 </div>
                 <div class="fila-inputs">
                     <div class="input-wrapper">
-                        <label>$a_1$</label>
-                        <input type="number" id="a1" value="3" step="0.5">
+                        <label for="a1">$a_1$</label>
+                        <input type="number" id="a1" value="3" step="0.5" aria-label="Componente a1 del vector z1">
                     </div>
                     <div class="input-wrapper">
-                        <label>$b_1$</label>
-                        <input type="number" id="b1" value="-1" step="0.5">
+                        <label for="b1">$b_1$</label>
+                        <input type="number" id="b1" value="-1" step="0.5" aria-label="Componente b1 del vector z1">
                     </div>
                 </div>
             </div>
@@ -433,12 +433,12 @@
                 </div>
                 <div class="fila-inputs">
                     <div class="input-wrapper">
-                        <label>$a_2$</label>
-                        <input type="number" id="a2" value="2" step="0.5">
+                        <label for="a2">$a_2$</label>
+                        <input type="number" id="a2" value="2" step="0.5" aria-label="Componente a2 del vector z2">
                     </div>
                     <div class="input-wrapper">
-                        <label>$b_2$</label>
-                        <input type="number" id="b2" value="5" step="0.5">
+                        <label for="b2">$b_2$</label>
+                        <input type="number" id="b2" value="5" step="0.5" aria-label="Componente b2 del vector z2">
                     </div>
                 </div>
             </div>
@@ -467,13 +467,13 @@
 
             <h3>Zoom del plano</h3>
             <div class="seccion-slider">
-                <label>Escala: <span id="valZoom">20</span> px / unidad</label>
+                <label for="sliderZoom">Escala: <span id="valZoom">20</span> px / unidad</label>
                 <input type="range" id="sliderZoom" min="8" max="40" step="1" value="20">
             </div>
 
             <h3>Exponente (potencias)</h3>
             <div class="seccion-slider">
-                <label>$z_1^n$ con $n = $ <span id="valExp">1</span></label>
+                <label for="sliderExp">$z_1^n$ con $n = $ <span id="valExp">1</span></label>
                 <input type="range" id="sliderExp" min="1" max="5" step="1" value="1">
             </div>
 
@@ -489,7 +489,7 @@
         <!-- PANEL CANVAS -->
         <div class="panel-canvas">
             <div class="canvas-wrapper">
-                <canvas id="canvas" width="820" height="560"></canvas>
+                <canvas id="canvas" width="820" height="560" aria-label="Plano complejo mostrando la multiplicación de dos vectores"></canvas>
                 <div class="canvas-instrucciones">🖱️ Clic para fijar $z_2$</div>
             </div>
 
@@ -565,14 +565,13 @@ var estado = {
     }
 };
 
-// Colores (leídos de la paleta institucional)
+// Colores (paleta institucional)
 var COLOR_Z1 = '#5b7fa3';
 var COLOR_Z2 = '#27ae60';
 var COLOR_PRODUCTO = '#c0392b';
 var COLOR_ARCO = '#a9c1d9';
 var COLOR_EJE = '#2c4966';
 var COLOR_CUADRICULA = '#e8eef5';
-var COLOR_TEXTO = '#1a2a3a';
 
 // =========================================
 // UTILIDADES MATEMÁTICAS
@@ -605,6 +604,12 @@ function latexPar(z) {
     return '(' + formatearNumero(z.a) + ', \\ ' + formatearNumero(z.b) + ')';
 }
 
+function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(console.log);
+    }
+}
+
 // =========================================
 // TRANSFORMACIONES DE COORDENADAS
 // =========================================
@@ -630,14 +635,12 @@ function dibujarCuadricula() {
     ctx.lineWidth = 1;
     var paso = estado.zoom;
 
-    // Líneas verticales
     for (var x = W / 2 % paso; x < W; x += paso) {
         ctx.beginPath();
         ctx.moveTo(x, 0);
         ctx.lineTo(x, H);
         ctx.stroke();
     }
-    // Líneas horizontales
     for (var y = H / 2 % paso; y < H; y += paso) {
         ctx.beginPath();
         ctx.moveTo(0, y);
@@ -656,7 +659,6 @@ function dibujarEjes() {
     ctx.moveTo(0, H / 2);
     ctx.lineTo(W, H / 2);
     ctx.stroke();
-    // Flecha eje X
     ctx.beginPath();
     ctx.moveTo(W - 12, H / 2 - 6);
     ctx.lineTo(W, H / 2);
@@ -668,7 +670,6 @@ function dibujarEjes() {
     ctx.moveTo(W / 2, H);
     ctx.lineTo(W / 2, 0);
     ctx.stroke();
-    // Flecha eje Y
     ctx.beginPath();
     ctx.moveTo(W / 2 - 6, 12);
     ctx.lineTo(W / 2, 0);
@@ -718,7 +719,6 @@ function dibujarVector(z, color, etiqueta, grosor) {
     var origen = mundoAPantalla(0, 0);
     var destino = mundoAPantalla(z.a, z.b);
 
-    // Línea
     ctx.strokeStyle = color;
     ctx.lineWidth = grosor || 3;
     ctx.beginPath();
@@ -726,7 +726,6 @@ function dibujarVector(z, color, etiqueta, grosor) {
     ctx.lineTo(destino.px, destino.py);
     ctx.stroke();
 
-    // Flecha
     var angulo = Math.atan2(destino.py - origen.py, destino.px - origen.px);
     var tamFlecha = 12;
     ctx.fillStyle = color;
@@ -743,13 +742,11 @@ function dibujarVector(z, color, etiqueta, grosor) {
     ctx.closePath();
     ctx.fill();
 
-    // Punto en el extremo
     ctx.beginPath();
     ctx.arc(destino.px, destino.py, 5, 0, 2 * Math.PI);
     ctx.fillStyle = color;
     ctx.fill();
 
-    // Etiqueta
     if (etiqueta) {
         ctx.font = 'bold 13px Segoe UI, sans-serif';
         ctx.fillStyle = color;
@@ -772,13 +769,11 @@ function dibujarProyecciones(z, color) {
     ctx.lineWidth = 1.2;
     ctx.globalAlpha = 0.6;
 
-    // Proyección al eje X
     ctx.beginPath();
     ctx.moveTo(p.px, p.py);
     ctx.lineTo(px.px, px.py);
     ctx.stroke();
 
-    // Proyección al eje Y
     ctx.beginPath();
     ctx.moveTo(p.px, p.py);
     ctx.lineTo(py.px, py.py);
@@ -803,7 +798,7 @@ function dibujarArcoRotacion(z1, z2) {
     ctx.lineWidth = 2;
     ctx.setLineDash([6, 4]);
     ctx.beginPath();
-    // En canvas, el ángulo positivo va en sentido horario, así que invertimos
+    // En canvas el ángulo positivo es horario, invertimos el signo
     ctx.arc(centro.px, centro.py, radio, -ang1, -ang2, ang2 < ang1);
     ctx.stroke();
     ctx.restore();
@@ -816,6 +811,10 @@ function dibujarArcoRotacion(z1, z2) {
     var grados1 = ang1 * 180 / Math.PI;
     var grados2 = ang2 * 180 / Math.PI;
     var diferencia = grados2 - grados1;
+
+    // CORRECCIÓN: Normalizar la diferencia a (-180°, 180°]
+    while (diferencia > 180) diferencia -= 360;
+    while (diferencia <= -180) diferencia += 360;
 
     ctx.font = '11px Segoe UI, sans-serif';
     ctx.fillStyle = COLOR_ARCO;
@@ -837,23 +836,19 @@ function render() {
     var z1 = estado.z1;
     var z2 = estado.z2;
 
-    // Si el exponente es > 1, z1 se eleva a esa potencia para el producto
     var z1Efectivo = estado.exponente > 1 ? potencia(z1, estado.exponente) : z1;
     var producto = multiplicar(z1Efectivo, z2);
 
-    // Proyecciones (primero, para que queden detrás)
     if (estado.mostrar.proyeccion) {
         if (estado.mostrar.z1) dibujarProyecciones(z1, COLOR_Z1);
         if (estado.mostrar.z2) dibujarProyecciones(z2, COLOR_Z2);
         if (estado.mostrar.producto) dibujarProyecciones(producto, COLOR_PRODUCTO);
     }
 
-    // Arco de rotación
     if (estado.mostrar.arco && estado.mostrar.z1 && estado.mostrar.z2) {
         dibujarArcoRotacion(z1Efectivo, z2);
     }
 
-    // Vectores
     if (estado.mostrar.z1) {
         var etq1 = estado.exponente > 1 ? 'z₁^' + estado.exponente : 'z₁';
         dibujarVector(z1Efectivo, COLOR_Z1, etq1, 3);
@@ -865,7 +860,6 @@ function render() {
         dibujarVector(producto, COLOR_PRODUCTO, 'z₁·z₂', 3.5);
     }
 
-    // Actualizar panel de desarrollo
     actualizarDesarrollo(z1, z2, z1Efectivo, producto);
     actualizarDescripcion(z1, z2, producto);
 }
@@ -884,17 +878,14 @@ function actualizarDesarrollo(z1, z2, z1Efectivo, producto) {
 
     var html = '';
 
-    // Paso 1: identificar componentes
     html += '<div class="paso-calculo"><span class="num">1</span><span>' +
         'Identificar componentes: $z_1 = ' + latexPar(z1) + '$, $z_2 = ' + latexPar(z2) + '$' +
         '</span></div>';
 
-    // Paso 2: aplicar fórmula
     html += '<div class="paso-calculo"><span class="num">2</span><span>' +
         'Aplicar la fórmula: $(a_1a_2 - b_1b_2,\\ a_1b_2 + b_1a_2)$' +
         '</span></div>';
 
-    // Paso 3: sustituir
     var prodA = z1Efectivo.a * z2.a - z1Efectivo.b * z2.b;
     var prodB = z1Efectivo.a * z2.b + z1Efectivo.b * z2.a;
 
@@ -910,19 +901,16 @@ function actualizarDesarrollo(z1, z2, z1Efectivo, producto) {
         formatearNumero(prodB) + '$' +
         '</span></div>';
 
-    // Paso 5: resultado
     html += '<div class="paso-calculo"><span class="num">5</span><span>' +
         'El producto es otro número complejo: $\\mathbb{C}$ es cerrado para la multiplicación.' +
         '</span></div>';
 
     pasos.innerHTML = html;
 
-    // Resultado final
     resultado.style.display = 'block';
     resultado.className = 'resultado-final';
     resultado.innerHTML = '$$z_1 \\cdot z_2 = ' + latexPar(producto) + '$$';
 
-    // Avisos pedagógicos
     aviso.style.display = 'none';
     if (esConjugado) {
         aviso.style.display = 'block';
@@ -943,9 +931,9 @@ function actualizarDesarrollo(z1, z2, z1Efectivo, producto) {
             '} \\cdot z_2$. Observa cómo el vector $z_1$ se va "enrollando" alrededor del origen.';
     }
 
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        MathJax.typesetPromise([pasos, resultado, aviso]).catch(console.log);
-    }
+    renderMath(pasos);
+    renderMath(resultado);
+    renderMath(aviso);
 }
 
 // =========================================
@@ -972,10 +960,7 @@ function actualizarDescripcion(z1, z2, producto) {
         formatearNumero(ang1) + '^\\circ + ' + formatearNumero(ang2) + '^\\circ$';
 
     texto.innerHTML = html;
-
-    if (window.MathJax && window.MathJax.typesetPromise) {
-        MathJax.typesetPromise([texto]).catch(console.log);
-    }
+    renderMath(texto);
 }
 
 // =========================================
@@ -1030,16 +1015,26 @@ document.getElementById('btnReiniciar').addEventListener('click', function() {
     });
 });
 
-// Checkboxes
-['chkZ1', 'chkZ2', 'chkProducto', 'chkArco', 'chkProyeccion'].forEach(function(id) {
-    document.getElementById(id).addEventListener('change', function() {
-        estado.mostrar.z1 = document.getElementById('chkZ1').checked;
-        estado.mostrar.z2 = document.getElementById('chkZ2').checked;
-        estado.mostrar.producto = document.getElementById('chkProducto').checked;
-        estado.mostrar.arco = document.getElementById('chkArco').checked;
-        estado.mostrar.proyeccion = document.getElementById('chkProyeccion').checked;
-        render();
-    });
+// Checkboxes — CORRECCIÓN: cada uno actualiza solo su propio estado
+document.getElementById('chkZ1').addEventListener('change', function() {
+    estado.mostrar.z1 = this.checked;
+    render();
+});
+document.getElementById('chkZ2').addEventListener('change', function() {
+    estado.mostrar.z2 = this.checked;
+    render();
+});
+document.getElementById('chkProducto').addEventListener('change', function() {
+    estado.mostrar.producto = this.checked;
+    render();
+});
+document.getElementById('chkArco').addEventListener('change', function() {
+    estado.mostrar.arco = this.checked;
+    render();
+});
+document.getElementById('chkProyeccion').addEventListener('change', function() {
+    estado.mostrar.proyeccion = this.checked;
+    render();
 });
 
 // Slider de zoom
@@ -1065,7 +1060,6 @@ canvas.addEventListener('click', function(e) {
     var py = (e.clientY - rect.top) * escalaY;
 
     var mundo = pantallaAMundo(px, py);
-    // Redondear a 0.5
     var nuevoA2 = Math.round(mundo.x * 2) / 2;
     var nuevoB2 = Math.round(mundo.y * 2) / 2;
 

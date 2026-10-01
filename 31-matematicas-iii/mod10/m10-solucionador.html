@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Fábrica de Raíces | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1280px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grupo-inputs {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .grupo-inputs .titulo-grupo {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-inputs {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .fila-inputs label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            min-width: 20px;
+            text-align: center;
+        }
+        .fila-inputs input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+        }
+        .fila-inputs input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-resultados {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+
+        .mensaje-inicial {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 30px 20px;
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .resumen-ecuacion {
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .resumen-ecuacion .titulo-resumen {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .resumen-ecuacion .expresion-resumen {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+        }
+
+        .discriminante-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 20px;
+            border-radius: var(--radio-borde);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            flex-wrap: wrap;
+        }
+        .discriminante-banner.pos {
+            background-color: rgba(39,174,96,0.1);
+            border-left: 5px solid var(--color-exito);
+        }
+        .discriminante-banner.cero {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+        }
+        .discriminante-banner.neg {
+            background-color: rgba(192,57,43,0.1);
+            border-left: 5px solid var(--color-error);
+        }
+        .discriminante-banner .etiqueta-disc {
+            font-weight: 700;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .discriminante-banner .valor-disc {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1rem;
+            color: var(--color-primario);
+        }
+        .discriminante-banner .tipo-disc {
+            font-weight: 700;
+        }
+        .discriminante-banner.pos .tipo-disc { color: var(--color-exito); }
+        .discriminante-banner.cero .tipo-disc { color: var(--color-acento); }
+        .discriminante-banner.neg .tipo-disc { color: var(--color-error); }
+
+        .columnas-metodos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .columna-metodo {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .columna-metodo .cabecera-metodo {
+            background-color: var(--color-base);
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-primario);
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .columna-metodo .cuerpo-metodo {
+            padding: 12px 14px;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            flex: 1;
+        }
+        .columna-metodo .paso {
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .columna-metodo .paso:last-child { border-bottom: none; }
+        .columna-metodo .num-paso {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            margin-right: 6px;
+        }
+
+        .mini-canvas-wrapper {
+            margin: 8px 0;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 4px;
+            padding: 4px;
+        }
+        .mini-canvas-wrapper canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .resultado-metodo {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background-color: rgba(39,174,96,0.08);
+            border-left: 4px solid var(--color-exito);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.9rem;
+        }
+        .resultado-metodo .etiqueta-resultado {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-exito);
+            margin-bottom: 4px;
+        }
+
+        .conclusion-final {
+            background-color: rgba(39,174,96,0.1);
+            border: 2px solid var(--color-exito);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .conclusion-final .icono-check {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+        .conclusion-final .titulo-conclusion {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-exito);
+            margin-bottom: 8px;
+        }
+        .conclusion-final .raices-conclusion {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 1024px) {
+            .columnas-metodos { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-resultados { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>La Fábrica de Raíces</h1>
+        <p>Solucionador comparativo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Ecuación cuadrática</h2>
+
+            <div class="grupo-inputs">
+                <div class="titulo-grupo">$ax^2 + bx + c = 0$</div>
+                <div class="fila-inputs">
+                    <label>$a$</label>
+                    <input type="number" id="in-a" value="1" step="any" aria-label="Coeficiente a">
+                </div>
+                <div class="fila-inputs">
+                    <label>$b$</label>
+                    <input type="number" id="in-b" value="-5" step="any" aria-label="Coeficiente b">
+                </div>
+                <div class="fila-inputs">
+                    <label>$c$</label>
+                    <input type="number" id="in-c" value="6" step="any" aria-label="Coeficiente c">
+                </div>
+                <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver con los 3 métodos</button>
+                <button type="button" class="btn-secundario" id="btn-reiniciar">↺ Reiniciar</button>
+            </div>
+
+            <h3>Ejemplos del Módulo 10</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $x^2 - 5x + 6 = 0$ (raíces enteras)</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $2x^2 + x - 6 = 0$ (raíces fraccionarias)</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $x^2 - 4x + 4 = 0$ (raíz doble)</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $5x^2 - 4x + 1 = 0$ (raíces complejas)</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $x^2 + 4 = 0$ (factorización compleja)</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $2x^2 - 3x - 4 = 0$ (raíces irracionales)</button>
+            </div>
+        </div>
+
+        <!-- PANEL DE RESULTADOS -->
+        <div class="panel-resultados" id="panelResultados">
+            <div class="mensaje-inicial" id="mensajeInicial">
+                ⚙️ Ingresa los coeficientes y presiona <strong>"Resolver con los 3 métodos"</strong><br>
+                para ver cómo el método gráfico, la factorización y la fórmula general<br>
+                llegan a las mismas raíces.
+            </div>
+
+            <div id="contenidoResultados" style="display:none;">
+                <div class="resumen-ecuacion">
+                    <div class="titulo-resumen">Ecuación a resolver</div>
+                    <div class="expresion-resumen" id="expresionEcuacion"></div>
+                </div>
+
+                <div class="discriminante-banner" id="bannerDiscriminante">
+                    <span class="etiqueta-disc">Discriminante:</span>
+                    <span class="valor-disc" id="valorDiscriminante"></span>
+                    <span class="tipo-disc" id="tipoDiscriminante"></span>
+                </div>
+
+                <div class="columnas-metodos">
+                    <!-- Columna 1: Gráfico -->
+                    <div class="columna-metodo">
+                        <div class="cabecera-metodo">📊 Método gráfico</div>
+                        <div class="cuerpo-metodo" id="columnaGrafico"></div>
+                    </div>
+
+                    <!-- Columna 2: Factorización -->
+                    <div class="columna-metodo">
+                        <div class="cabecera-metodo">🧩 Factorización</div>
+                        <div class="cuerpo-metodo" id="columnaFactorizacion"></div>
+                    </div>
+
+                    <!-- Columna 3: Fórmula general -->
+                    <div class="columna-metodo">
+                        <div class="cabecera-metodo">🧮 Fórmula general</div>
+                        <div class="cuerpo-metodo" id="columnaFormula"></div>
+                    </div>
+                </div>
+
+                <div class="conclusion-final" id="conclusionFinal">
+                    <div class="icono-check">✓</div>
+                    <div class="titulo-conclusion">Los tres métodos coinciden</div>
+                    <div class="raices-conclusion" id="raicesConclusion"></div>
+                </div>
+
+                <div class="aviso-pedagogico" id="avisoPedagogico"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comparar los <strong>tres métodos</strong> de solución de una ecuación
+        cuadrática (gráfico, factorización y fórmula general) aplicados a la <strong>misma ecuación</strong>,
+        mostrando paso a paso cómo cada uno llega a las mismas <strong>raíces o ceros</strong>, y comprendiendo
+        cuándo conviene usar cada método según la naturaleza del discriminante.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// MCD robusto (maneja 0 y valores negativos)
+function mcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    if (a === 0) return b || 1;
+    if (b === 0) return a;
+    while (b) { var t = b; b = a % b; a = t; }
+    return a;
+}
+
+// Simplifica √n = a√b
+function simplificarRaiz(n) {
+    if (n < 0) n = -n;
+    var exterior = 1;
+    var interior = n;
+    for (var i = 2; i * i <= interior; i++) {
+        while (interior % (i * i) === 0) {
+            exterior *= i;
+            interior /= (i * i);
+        }
+    }
+    return { exterior: exterior, interior: interior };
+}
+
+// Devuelve el string LaTeX de una raíz simplificada
+function latexRaizSimplificada(n) {
+    var s = simplificarRaiz(n);
+    if (s.interior === 1) return formatearNumero(s.exterior);
+    if (s.exterior === 1) return '\\sqrt{' + s.interior + '}';
+    return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
+}
+
+// Construye la expresión ax² + bx + c = 0
+function construirExpresion(a, b, c, sinIgual) {
+    var s = '';
+    if (a === 1) s += 'x^2';
+    else if (a === -1) s += '-x^2';
+    else s += formatearNumero(a) + 'x^2';
+
+    if (b !== 0) {
+        if (b > 0) s += ' + ' + (b === 1 ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (b === -1 ? '' : formatearNumero(-b)) + 'x';
+    }
+    if (c !== 0) {
+        if (c > 0) s += ' + ' + formatearNumero(c);
+        else s += ' - ' + formatearNumero(-c);
+    }
+    if (!sinIgual) s += ' = 0';
+    return s;
+}
+
+// =========================================
+// CÁLCULO DE RAÍCES
+// =========================================
+function calcularRaices(a, b, c) {
+    var disc = b * b - 4 * a * c;
+    if (disc > 0) {
+        var sq = Math.sqrt(disc);
+        return { tipo: 'reales', r1: (-b + sq) / (2 * a), r2: (-b - sq) / (2 * a), disc: disc };
+    } else if (Math.abs(disc) < 1e-9) {
+        return { tipo: 'reales', r1: -b / (2 * a), r2: -b / (2 * a), disc: 0 };
+    } else {
+        return { tipo: 'complejas', disc: disc };
+    }
+}
+
+// =========================================
+// MINI-CANVAS: GRÁFICA DE LA PARÁBOLA
+// =========================================
+function dibujarMiniGrafica(canvasId, a, b, c) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width;
+    var H = canvas.height;
+
+    // Configuración HiDPI
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = '100%';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Limpiar
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Calcular rango de la gráfica
+    var verticeX = -b / (2 * a);
+    var verticeY = a * verticeX * verticeX + b * verticeX + c;
+    var disc = b * b - 4 * a * c;
+
+    var xMin, xMax, yMin, yMax;
+
+    if (disc >= 0 && a !== 0) {
+        var sq = Math.sqrt(disc);
+        var r1 = (-b + sq) / (2 * a);
+        var r2 = (-b - sq) / (2 * a);
+        var rMin = Math.min(r1, r2);
+        var rMax = Math.max(r1, r2);
+        var padding = Math.max(Math.abs(rMax - rMin), 1) * 0.5;
+        xMin = rMin - padding;
+        xMax = rMax + padding;
+    } else {
+        xMin = verticeX - 3;
+        xMax = verticeX + 3;
+    }
+
+    // Calcular y en los extremos
+    var y1 = a * xMin * xMin + b * xMin + c;
+    var y2 = a * xMax * xMax + b * xMax + c;
+    yMin = Math.min(verticeY, y1, y2);
+    yMax = Math.max(verticeY, y1, y2, 0);
+    var yPadding = Math.max(Math.abs(yMax - yMin), 1) * 0.2;
+    yMin -= yPadding;
+    yMax += yPadding;
+
+    function mapear(x, y) {
+        return {
+            px: (x - xMin) / (xMax - xMin) * W,
+            py: H - (y - yMin) / (yMax - yMin) * H
+        };
+    }
+
+    // Ejes
+    ctx.strokeStyle = '#2c4966';
+    ctx.lineWidth = 1;
+    var origen = mapear(0, 0);
+    // Eje X
+    if (origen.py >= 0 && origen.py <= H) {
+        ctx.beginPath();
+        ctx.moveTo(0, origen.py);
+        ctx.lineTo(W, origen.py);
+        ctx.stroke();
+    }
+    // Eje Y
+    if (origen.px >= 0 && origen.px <= W) {
+        ctx.beginPath();
+        ctx.moveTo(origen.px, 0);
+        ctx.lineTo(origen.px, H);
+        ctx.stroke();
+    }
+
+    // Parábola
+    ctx.strokeStyle = '#5b7fa3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    var puntos = 150;
+    var primero = true;
+    for (var i = 0; i <= puntos; i++) {
+        var x = xMin + (xMax - xMin) * i / puntos;
+        var y = a * x * x + b * x + c;
+        var p = mapear(x, y);
+        if (p.py < -H * 2 || p.py > H * 3) { primero = true; continue; }
+        if (primero) { ctx.moveTo(p.px, p.py); primero = false; }
+        else ctx.lineTo(p.px, p.py);
+    }
+    ctx.stroke();
+
+    // Raíces (si Δ ≥ 0)
+    if (disc >= 0) {
+        var sq = Math.sqrt(disc);
+        var raices = disc === 0 ? [-b / (2 * a)] : [(-b + sq) / (2 * a), (-b - sq) / (2 * a)];
+        raices.forEach(function(r) {
+            var p = mapear(r, 0);
+            if (p.px >= 0 && p.px <= W && p.py >= 0 && p.py <= H) {
+                ctx.fillStyle = '#27ae60';
+                ctx.beginPath();
+                ctx.arc(p.px, p.py, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        });
+    }
+
+    // Vértice
+    var pv = mapear(verticeX, verticeY);
+    if (pv.px >= 0 && pv.px <= W && pv.py >= 0 && pv.py <= H) {
+        ctx.fillStyle = '#c0392b';
+        ctx.beginPath();
+        ctx.arc(pv.px, pv.py, 4, 0, 2 * Math.PI);
+        ctx.fill();
+    }
+}
+
+// =========================================
+// 1. MÉTODO GRÁFICO
+// =========================================
+function construirColumnaGrafico(a, b, c, idCanvas) {
+    var html = '';
+    html += '<div class="paso"><span class="num-paso">1</span>Graficar $y = ' + construirExpresion(a, b, c, true) + '$.</div>';
+    html += '<div class="mini-canvas-wrapper"><canvas id="' + idCanvas + '" width="320" height="200"></canvas></div>';
+
+    var disc = b * b - 4 * a * c;
+    var verticeX = -b / (2 * a);
+    var verticeY = a * verticeX * verticeX + b * verticeX + c;
+
+    html += '<div class="paso"><span class="num-paso">2</span>Vértice: $V(' + formatearNumero(verticeX) + ', ' + formatearNumero(verticeY) + ')$.</div>';
+
+    var textoTipo = '';
+    if (disc > 0) textoTipo = 'La parábola <strong>corta</strong> el eje $X$ en <strong>dos puntos</strong>.';
+    else if (Math.abs(disc) < 1e-9) textoTipo = 'La parábola es <strong>tangente</strong> al eje $X$ (raíz doble).';
+    else textoTipo = 'La parábola <strong>no corta</strong> el eje $X$: raíces complejas.';
+
+    html += '<div class="paso"><span class="num-paso">3</span>' + textoTipo + '</div>';
+
+    var raices = calcularRaices(a, b, c);
+    var raicesHTML = '';
+    if (raices.tipo === 'reales') {
+        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+            raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
+        } else {
+            raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
+        }
+    } else {
+        raicesHTML = '<em>Las raíces no son visibles en el plano real.</em>';
+    }
+
+    html += '<div class="resultado-metodo">' +
+        '<div class="etiqueta-resultado">Raíces (lectura gráfica)</div>' +
+        raicesHTML +
+        '</div>';
+
+    return html;
+}
+
+// =========================================
+// 2. MÉTODO DE FACTORIZACIÓN
+// =========================================
+function construirColumnaFactorizacion(a, b, c) {
+    var html = '';
+    var disc = b * b - 4 * a * c;
+
+    // Caso especial: c = 0 → factorización directa por x
+    if (c === 0) {
+        html += '<div class="paso"><span class="num-paso">1</span>Como $c = 0$, factorizamos directamente por $x$:</div>';
+        html += '<div style="text-align:center;padding:6px 0;">$$x(' + formatearNumero(a) + 'x ' + (b >= 0 ? '+ ' + formatearNumero(b) : '- ' + formatearNumero(-b)) + ') = 0$$</div>';
+        html += '<div class="paso"><span class="num-paso">2</span>Igualamos cada factor a cero: $x = 0$ ó $' + formatearNumero(a) + 'x ' + (b >= 0 ? '+ ' + formatearNumero(b) : '- ' + formatearNumero(-b)) + ' = 0$.</div>';
+        var r2 = -b / a;
+        html += '<div class="resultado-metodo">' +
+            '<div class="etiqueta-resultado">Raíces por factorización</div>' +
+            '$$x_1 = 0 \\quad ; \\quad x_2 = ' + formatearNumero(r2) + '$$' +
+            '</div>';
+        return html;
+    }
+
+    // Buscar dos números p, q con p+q = b y p*q = a*c
+    var ac = a * c;
+    var p = null, q = null;
+    var limite = Math.max(Math.abs(ac), Math.abs(b)) + 10;
+    for (var i = -limite; i <= limite; i++) {
+        if (i === 0) continue;
+        if (ac % i === 0) {
+            var j = ac / i;
+            if (i + j === b) {
+                p = i; q = j;
+                break;
+            }
+        }
+    }
+
+    // No factoriza con enteros
+    if (p === null) {
+        html += '<div class="paso"><span class="num-paso">1</span>Buscamos dos números con producto $a \\cdot c = ' + formatearNumero(ac) + '$ y suma $b = ' + formatearNumero(b) + '$.</div>';
+        html += '<div class="paso"><span class="num-paso">2</span>No existen dos <strong>enteros</strong> que cumplan ambas condiciones.</div>';
+        html += '<div class="paso"><span class="num-paso">3</span>La ecuación <strong>no factoriza sobre los enteros</strong>.</div>';
+        html += '<div class="resultado-metodo" style="background-color: rgba(192,57,43,0.08); border-left-color: var(--color-error);">' +
+            '<div class="etiqueta-resultado" style="color: var(--color-error);">Conclusión</div>' +
+            'Se requiere la <strong>fórmula general</strong>.' +
+            '</div>';
+        return html;
+    }
+
+    // Descomposición
+    html += '<div class="paso"><span class="num-paso">1</span>Producto $a \\cdot c = ' + formatearNumero(a) + ' \\cdot ' + formatearNumero(c) + ' = ' + formatearNumero(ac) + '$.</div>';
+    html += '<div class="paso"><span class="num-paso">2</span>Dos números con producto $' + formatearNumero(ac) + '$ y suma $' + formatearNumero(b) + '$: $p = ' + formatearNumero(p) + '$, $q = ' + formatearNumero(q) + '$.</div>';
+
+    html += '<div class="paso"><span class="num-paso">3</span>Descomponemos el término lineal:</div>';
+    var signoP = p >= 0 ? '+ ' + formatearNumero(p) : '- ' + formatearNumero(-p);
+    var signoQ = q >= 0 ? '+ ' + formatearNumero(q) : '- ' + formatearNumero(-q);
+    html += '<div style="text-align:center;padding:6px 0;">$$' + formatearNumero(a) + 'x^2 ' + signoP + 'x ' + signoQ + 'x ' + (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' = 0$$</div>';
+
+    // Agrupación correcta:
+    // (a x² + p x) + (q x + c)
+    // Factor común del primer par: mcd(a, p)
+    // Factor común del segundo par: mcd(q, c)
+    var g1 = mcd(a, p);
+    var g2 = mcd(q, c);
+
+    // Primer par: g1 * (a/g1 * x + p/g1) = g1 * (A1 x + B1)
+    var A1 = a / g1;
+    var B1 = p / g1;
+
+    // Segundo par: g2 * (q/g2 * x + c/g2) = g2 * (A2 x + B2)
+    var A2 = q / g2;
+    var B2 = c / g2;
+
+    // Los binomios (A1 x + B1) y (A2 x + B2) deben ser iguales salvo factor
+    // En el caso estándar A1 = A2 y B1 = B2
+
+    // Factor común del primer par
+    var signoB1 = B1 >= 0 ? '+ ' + formatearNumero(B1) : '- ' + formatearNumero(-B1);
+    var coefG1 = (g1 === 1) ? '' : formatearNumero(g1);
+    var coefA1 = (A1 === 1) ? '' : formatearNumero(A1);
+
+    // Factor común del segundo par
+    var signoB2 = B2 >= 0 ? '+ ' + formatearNumero(B2) : '- ' + formatearNumero(-B2);
+    var coefG2 = (Math.abs(g2) === 1) ? '' : formatearNumero(Math.abs(g2));
+    var coefA2 = (Math.abs(A2) === 1) ? '' : formatearNumero(Math.abs(A2));
+    var signoG2 = g2 >= 0 ? '+ ' : '- ';
+
+    html += '<div class="paso"><span class="num-paso">4</span>Agrupamos y factorizamos cada par:</div>';
+    html += '<div style="text-align:center;padding:6px 0;">$$' + coefG1 + 'x(' + coefA1 + 'x ' + signoB1 + ') ' + signoG2 + ' ' + coefG2 + '(' + coefA2 + 'x ' + signoB2 + ') = 0$$</div>';
+
+    // Verificamos si los binomios coinciden para factorizar
+    // En el caso general: g1(A1 x + B1) + g2(A2 x + B2) donde A1x+B1 = A2x+B2 = (cx + d)
+    // Si coinciden:
+    var binomioComun = '';
+    if (Math.abs(A1 - A2) < 1e-9 && Math.abs(B1 - B2) < 1e-9) {
+        // Los binomios son iguales
+        var coefX = (A1 === 1) ? '' : (A1 === -1 ? '-' : formatearNumero(A1));
+        binomioComun = '(' + coefX + 'x ' + signoB1 + ')';
+        html += '<div class="paso"><span class="num-paso">5</span>Sacamos factor común ' + binomioComun + ':</div>';
+        var sumaFactores = (g1 + g2);
+        var sumaFactoresStr = formatearNumero(g1) + ' ' + (g2 >= 0 ? '+ ' + formatearNumero(g2) : '- ' + formatearNumero(-g2));
+        html += '<div style="text-align:center;padding:6px 0;">$$(' + coefX + 'x ' + signoB1 + ')(' + formatearNumero(g1) + ' ' + (g2 >= 0 ? '+ ' + formatearNumero(g2) : '- ' + formatearNumero(-g2)) + ') = 0$$</div>';
+    }
+
+    var raices = calcularRaices(a, b, c);
+    var raicesHTML = '';
+    if (raices.tipo === 'reales') {
+        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+            raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
+        } else {
+            raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
+        }
+    } else {
+        raicesHTML = '<em>Las raíces son complejas. Requiere factorización sobre $\\mathbb{C}$.</em>';
+    }
+
+    html += '<div class="resultado-metodo">' +
+        '<div class="etiqueta-resultado">Raíces por factorización</div>' +
+        raicesHTML +
+        '</div>';
+
+    return html;
+}
+
+// =========================================
+// 3. MÉTODO DE FÓRMULA GENERAL
+// =========================================
+function construirColumnaFormula(a, b, c) {
+    var disc = b * b - 4 * a * c;
+    var html = '';
+
+    html += '<div class="paso"><span class="num-paso">1</span>Identificamos: $a = ' + formatearNumero(a) + '$, $b = ' + formatearNumero(b) + '$, $c = ' + formatearNumero(c) + '$.</div>';
+    html += '<div class="paso"><span class="num-paso">2</span>Sustituimos en la fórmula general:</div>';
+    html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{-(' + formatearNumero(b) + ') \\pm \\sqrt{(' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ')}}{2(' + formatearNumero(a) + ')}$$</div>';
+
+    html += '<div class="paso"><span class="num-paso">3</span>Discriminante:</div>';
+    html += '<div style="text-align:center;padding:6px 0;">$$\\Delta = ' + formatearNumero(disc) + '$$</div>';
+
+    if (disc > 0) {
+        var raizStr = latexRaizSimplificada(disc);
+        html += '<div class="paso"><span class="num-paso">4</span>Como $\\Delta > 0$, hay <strong>dos raíces reales distintas</strong>:</div>';
+        html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{' + formatearNumero(-b) + ' \\pm ' + raizStr + '}{' + formatearNumero(2 * a) + '}$$</div>';
+    } else if (Math.abs(disc) < 1e-9) {
+        html += '<div class="paso"><span class="num-paso">4</span>Como $\\Delta = 0$, hay <strong>una raíz doble</strong>:</div>';
+        html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{' + formatearNumero(-b) + '}{' + formatearNumero(2 * a) + '} = ' + formatearNumero(-b / (2 * a)) + '$$</div>';
+    } else {
+        var raizStr = latexRaizSimplificada(Math.abs(disc));
+        html += '<div class="paso"><span class="num-paso">4</span>Como $\\Delta < 0$, hay <strong>dos raíces complejas conjugadas</strong>:</div>';
+        html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{' + formatearNumero(-b) + ' \\pm ' + raizStr + 'i}{' + formatearNumero(2 * a) + '}$$</div>';
+    }
+
+    var raices = calcularRaices(a, b, c);
+    var raicesHTML = '';
+    if (raices.tipo === 'reales') {
+        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+            raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
+        } else {
+            raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
+        }
+    } else {
+        var simp = simplificarRaiz(Math.abs(disc));
+        var parteReal = -b / (2 * a);
+        var parteImag = simp.exterior * Math.sqrt(simp.interior) / (2 * a);
+
+        raicesHTML = '$$x_1 = ' + formatearNumero(parteReal) + ' + ' + formatearNumero(parseFloat(parteImag.toFixed(4))) + 'i$$' +
+            '$$x_2 = ' + formatearNumero(parteReal) + ' - ' + formatearNumero(parseFloat(parteImag.toFixed(4))) + 'i$$';
+    }
+
+    html += '<div class="resultado-metodo">' +
+        '<div class="etiqueta-resultado">Raíces por fórmula general</div>' +
+        raicesHTML +
+        '</div>';
+
+    return html;
+}
+
+// =========================================
+// RESOLUCIÓN PRINCIPAL
+// =========================================
+function resolver() {
+    var a = parseFloat(document.getElementById('in-a').value);
+    var b = parseFloat(document.getElementById('in-b').value);
+    var c = parseFloat(document.getElementById('in-c').value);
+
+    if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+        alert('⚠️ Debes ingresar coeficientes válidos con a ≠ 0.');
+        return;
+    }
+
+    var disc = b * b - 4 * a * c;
+
+    document.getElementById('mensajeInicial').style.display = 'none';
+    document.getElementById('contenidoResultados').style.display = 'block';
+
+    document.getElementById('expresionEcuacion').innerHTML = '$$' + construirExpresion(a, b, c, false) + '$$';
+
+    // Banner del discriminante
+    var banner = document.getElementById('bannerDiscriminante');
+    banner.className = 'discriminante-banner';
+    document.getElementById('valorDiscriminante').textContent = 'Δ = ' + formatearNumero(disc);
+
+    if (disc > 0) {
+        banner.classList.add('pos');
+        document.getElementById('tipoDiscriminante').textContent = '> 0 → Dos raíces reales distintas';
+    } else if (Math.abs(disc) < 1e-9) {
+        banner.classList.add('cero');
+        document.getElementById('tipoDiscriminante').textContent = '= 0 → Una raíz real doble';
+    } else {
+        banner.classList.add('neg');
+        document.getElementById('tipoDiscriminante').textContent = '< 0 → Dos raíces complejas conjugadas';
+    }
+
+    // Columnas de métodos
+    document.getElementById('columnaGrafico').innerHTML = construirColumnaGrafico(a, b, c, 'canvas-grafico');
+    document.getElementById('columnaFactorizacion').innerHTML = construirColumnaFactorizacion(a, b, c);
+    document.getElementById('columnaFormula').innerHTML = construirColumnaFormula(a, b, c);
+
+    // Conclusión
+    var raices = calcularRaices(a, b, c);
+    var conclusionHTML = '';
+    if (raices.tipo === 'reales') {
+        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+            conclusionHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + ' \\quad \\text{(raíz doble)}$$';
+        } else {
+            conclusionHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
+        }
+    } else {
+        var simp = simplificarRaiz(Math.abs(disc));
+        var parteReal = -b / (2 * a);
+        var parteImag = simp.exterior * Math.sqrt(simp.interior) / (2 * a);
+        conclusionHTML = '$$x_1 = ' + formatearNumero(parteReal) + ' + ' + formatearNumero(parseFloat(parteImag.toFixed(4))) + 'i$$' +
+            '$$x_2 = ' + formatearNumero(parteReal) + ' - ' + formatearNumero(parseFloat(parteImag.toFixed(4))) + 'i$$';
+    }
+    document.getElementById('raicesConclusion').innerHTML = conclusionHTML;
+
+    // Aviso pedagógico
+    var aviso = document.getElementById('avisoPedagogico');
+    var htmlAviso = '💡 <strong>Observación pedagógica:</strong> ';
+    if (disc > 0) {
+        htmlAviso += 'con Δ > 0, los <strong>tres métodos</strong> son viables. La factorización es la más rápida si los factores son sencillos. La fórmula general es universal.';
+    } else if (Math.abs(disc) < 1e-9) {
+        htmlAviso += 'con Δ = 0, la ecuación es un <strong>trinomio cuadrado perfecto</strong>. La factorización es directa: $(x - r)^2 = 0$. Los tres métodos coinciden en una raíz doble.';
+    } else {
+        htmlAviso += 'con Δ < 0, la ecuación <strong>no factoriza sobre los reales</strong> y la parábola no corta al eje $X$. Solo la <strong>fórmula general</strong> permite obtener las raíces complejas conjugadas.';
+    }
+    aviso.innerHTML = htmlAviso;
+
+    renderMath(document.getElementById('panelResultados'));
+
+    // Dibujar mini-gráfica después de que MathJax haya terminado
+    setTimeout(function() {
+        dibujarMiniGrafica('canvas-grafico', a, b, c);
+    }, 100);
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('btn-resolver').addEventListener('click', resolver);
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.getElementById('in-a').value = 1;
+    document.getElementById('in-b').value = -5;
+    document.getElementById('in-c').value = 6;
+    document.getElementById('mensajeInicial').style.display = 'block';
+    document.getElementById('contenidoResultados').style.display = 'none';
+});
+
+var ejemplos = {
+    1: { a: 1, b: -5, c: 6 },
+    2: { a: 2, b: 1, c: -6 },
+    3: { a: 1, b: -4, c: 4 },
+    4: { a: 5, b: -4, c: 1 },
+    5: { a: 1, b: 0, c: 4 },
+    6: { a: 2, b: -3, c: -4 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+        document.getElementById('in-a').value = data.a;
+        document.getElementById('in-b').value = data.b;
+        document.getElementById('in-c').value = data.c;
+        resolver();
+    });
+});
+
+document.querySelectorAll('#in-a, #in-b, #in-c').forEach(function(input) {
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') resolver();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+renderMath(document.body);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Laboratorio del Discriminante | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1280px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-slider label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .seccion-slider .valor-slider {
+            color: var(--color-acento);
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .seccion-slider .aviso-slider {
+            display: none;
+            font-size: 0.72rem;
+            color: var(--color-error);
+            font-style: italic;
+            margin-top: 4px;
+        }
+        .seccion-slider .aviso-slider.visible { display: block; }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 820 / 520;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px rgba(44,73,102,0.2);
+        }
+
+        .panel-info {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .panel-info h3 {
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+        }
+        .tabla-info {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+        .tabla-info tr { border-bottom: 1px solid var(--color-base); }
+        .tabla-info tr:last-child { border-bottom: none; }
+        .tabla-info td {
+            padding: 8px 14px;
+            color: var(--color-texto-oscuro);
+            vertical-align: top;
+        }
+        .tabla-info td:first-child {
+            width: 42%;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .tabla-info td:last-child {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .tabla-info tr.destacado td {
+            background-color: rgba(91,127,163,0.08);
+        }
+        .tabla-info tr.destacado td:first-child {
+            color: var(--color-acento);
+        }
+
+        .banner-estado {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 20px;
+            border-radius: var(--radio-borde);
+            margin-top: 14px;
+            font-size: 0.95rem;
+        }
+        .banner-estado.pos {
+            background-color: rgba(39,174,96,0.1);
+            border-left: 5px solid var(--color-exito);
+        }
+        .banner-estado.cero {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+        }
+        .banner-estado.neg {
+            background-color: rgba(192,57,43,0.1);
+            border-left: 5px solid var(--color-error);
+        }
+        .banner-estado .icono-estado {
+            font-size: 1.6rem;
+        }
+        .banner-estado .texto-estado {
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+        .banner-estado.pos .texto-estado { color: var(--color-exito); }
+        .banner-estado.cero .texto-estado { color: var(--color-acento); }
+        .banner-estado.neg .texto-estado { color: var(--color-error); }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-canvas { padding: 18px 16px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+            .tabla-info { font-size: 0.82rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>El Laboratorio del Discriminante</h1>
+        <p>Simulador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <div class="panel-control">
+            <h2>Coeficientes</h2>
+
+            <div class="seccion-slider">
+                <label>$a$: <span class="valor-slider" id="val-a">1</span></label>
+                <input type="range" id="slider-a" min="-5" max="5" step="0.5" value="1" aria-label="Coeficiente a">
+                <div class="aviso-slider" id="aviso-a">⚠️ $a$ no puede ser 0. Se ha ajustado a 0.5.</div>
+            </div>
+
+            <div class="seccion-slider">
+                <label>$b$: <span class="valor-slider" id="val-b">-5</span></label>
+                <input type="range" id="slider-b" min="-10" max="10" step="0.5" value="-5" aria-label="Coeficiente b">
+            </div>
+
+            <div class="seccion-slider">
+                <label>$c$: <span class="valor-slider" id="val-c">6</span></label>
+                <input type="range" id="slider-c" min="-10" max="10" step="0.5" value="6" aria-label="Coeficiente c">
+            </div>
+
+            <h3>Visualización</h3>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-parabola" checked> Parábola
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-raices" checked> Raíces (si existen)
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-vertice" checked> Vértice
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-eje-x" checked> Eje $X$ resaltado
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-cuadricula"> Cuadrícula
+            </label>
+
+            <h3>Zoom del plano</h3>
+            <div class="seccion-slider">
+                <label>Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
+                <input type="range" id="slider-zoom" min="15" max="50" step="1" value="30" aria-label="Zoom del plano">
+            </div>
+
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar">↺ Reiniciar</button>
+
+            <h3>Ejemplos del Módulo 10</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 Δ > 0: $x^2 - 5x + 6 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 Δ > 0: $2x^2 - 3x - 4 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 Δ = 0: $x^2 - 4x + 4 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 Δ < 0: $5x^2 - 4x + 1 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 Δ < 0: $x^2 + 4 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 Δ = 0: $4x^2 - 12x + 9 = 0$</button>
+            </div>
+        </div>
+
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="520" aria-label="Gráfica de la parábola y su relación con el eje X"></canvas>
+                <div class="canvas-instrucciones">🖱️ Mueve los sliders</div>
+            </div>
+
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>Parábola</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>Raíces reales</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>Vértice</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#2c4966;"></div>
+                    <span>Eje $X$</span>
+                </div>
+            </div>
+
+            <div class="banner-estado" id="bannerEstado">
+                <div class="icono-estado" id="iconoEstado">✅</div>
+                <div class="texto-estado" id="textoEstado">Cargando...</div>
+            </div>
+
+            <div class="panel-info">
+                <h3>📊 Análisis del discriminante</h3>
+                <table class="tabla-info">
+                    <tr>
+                        <td>Ecuación</td>
+                        <td id="info-ecuacion">—</td>
+                    </tr>
+                    <tr>
+                        <td>Discriminante $\Delta = b^2 - 4ac$</td>
+                        <td id="info-discriminante">—</td>
+                    </tr>
+                    <tr class="destacado">
+                        <td>Naturaleza de las raíces</td>
+                        <td id="info-naturaleza">—</td>
+                    </tr>
+                    <tr>
+                        <td>Raíces</td>
+                        <td id="info-raices">—</td>
+                    </tr>
+                    <tr>
+                        <td>Vértice $V(h, k)$</td>
+                        <td id="info-vertice">—</td>
+                    </tr>
+                    <tr>
+                        <td>Intersección con eje $Y$</td>
+                        <td id="info-interseccion">—</td>
+                    </tr>
+                    <tr>
+                        <td>Cortes con eje $X$</td>
+                        <td id="info-cortes">—</td>
+                    </tr>
+                </table>
+                <div class="aviso-pedagogico" id="aviso-pedagogico">
+                    💡 <strong>Exploración:</strong> mueve los sliders y observa cómo cambia el <strong>signo del discriminante</strong> y, con él, la <strong>naturaleza de las raíces</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Explorar cómo el <strong>discriminante</strong> $\Delta = b^2 - 4ac$
+        determina la <strong>naturaleza de las raíces</strong> de una ecuación cuadrática
+        (dos raíces reales distintas, una raíz doble, o dos raíces complejas conjugadas),
+        visualizando la relación entre la parábola y el eje $X$.
+    </div>
+</div>
+
+<script>
+// =========================================
+// CONFIGURACIÓN GLOBAL
+// =========================================
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var W = 820;
+var H = 520;
+
+var COLOR_PARABOLA = '#5b7fa3';
+var COLOR_VERTICE = '#c0392b';
+var COLOR_RAIZ = '#27ae60';
+var COLOR_EJE = '#2c4966';
+var COLOR_CUADRICULA = '#e8eef5';
+
+var TOL = 1e-9;
+
+var estado = {
+    a: 1,
+    b: -5,
+    c: 6,
+    zoom: 30,
+    mostrar: {
+        parabola: true,
+        raices: true,
+        vertice: true,
+        ejeX: true,
+        cuadricula: false
+    }
+};
+
+// =========================================
+// SOPORTE HIPDI
+// =========================================
+function configurarHiDPI() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(3)).toString();
+}
+
+function f(x) {
+    return estado.a * x * x + estado.b * x + estado.c;
+}
+
+function calcularDiscriminante() {
+    return estado.b * estado.b - 4 * estado.a * estado.c;
+}
+
+function calcularVertice() {
+    if (Math.abs(estado.a) < TOL) return { h: 0, k: 0 };
+    var h = -estado.b / (2 * estado.a);
+    var k = f(h);
+    return { h: h, k: k };
+}
+
+function calcularRaices() {
+    var d = calcularDiscriminante();
+    if (d < -TOL) return [];
+    if (Math.abs(d) < TOL) return [-estado.b / (2 * estado.a)];
+    var sq = Math.sqrt(d);
+    return [
+        (-estado.b - sq) / (2 * estado.a),
+        (-estado.b + sq) / (2 * estado.a)
+    ];
+}
+
+function simplificarRaiz(n) {
+    if (n < 0) n = -n;
+    var exterior = 1;
+    var interior = n;
+    for (var i = 2; i * i <= interior; i++) {
+        while (interior % (i * i) === 0) {
+            exterior *= i;
+            interior /= (i * i);
+        }
+    }
+    return { exterior: exterior, interior: interior };
+}
+
+function latexRaizSimplificada(n) {
+    var s = simplificarRaiz(n);
+    if (s.interior === 1) return formatearNumero(s.exterior);
+    if (s.exterior === 1) return '\\sqrt{' + s.interior + '}';
+    return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
+}
+
+function mundoAPantalla(x, y) {
+    return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+    };
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function construirExpresion(a, b, c) {
+    var s = '';
+    if (a === 1) s += 'x^2';
+    else if (a === -1) s += '-x^2';
+    else s += formatearNumero(a) + 'x^2';
+
+    if (b !== 0) {
+        if (b > 0) s += ' + ' + (b === 1 ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (b === -1 ? '' : formatearNumero(-b)) + 'x';
+    }
+    if (c !== 0) {
+        if (c > 0) s += ' + ' + formatearNumero(c);
+        else s += ' - ' + formatearNumero(-c);
+    }
+    s += ' = 0';
+    return s;
+}
+
+// =========================================
+// DIBUJO
+// =========================================
+function dibujarCuadricula() {
+    ctx.strokeStyle = COLOR_CUADRICULA;
+    ctx.lineWidth = 1;
+    var paso = estado.zoom;
+    for (var x = (W / 2) % paso; x < W; x += paso) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    for (var y = (H / 2) % paso; y < H; y += paso) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+}
+
+function dibujarEjes() {
+    ctx.strokeStyle = COLOR_EJE;
+    ctx.fillStyle = COLOR_EJE;
+    ctx.lineWidth = 2;
+
+    // Eje X resaltado
+    if (estado.mostrar.ejeX) {
+        ctx.save();
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2);
+        ctx.lineTo(W, H / 2);
+        ctx.stroke();
+        ctx.restore();
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2);
+        ctx.lineTo(W, H / 2);
+        ctx.stroke();
+    }
+
+    // Flecha eje X
+    ctx.beginPath();
+    ctx.moveTo(W - 12, H / 2 - 6);
+    ctx.lineTo(W, H / 2);
+    ctx.lineTo(W - 12, H / 2 + 6);
+    ctx.fill();
+
+    // Eje Y
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H);
+    ctx.lineTo(W / 2, 0);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 6, 12);
+    ctx.lineTo(W / 2, 0);
+    ctx.lineTo(W / 2 + 6, 12);
+    ctx.fill();
+
+    // Etiquetas
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_EJE;
+    ctx.textAlign = 'right';
+    ctx.fillText('x', W - 8, H / 2 + 20);
+    ctx.textAlign = 'left';
+    ctx.fillText('y', W / 2 + 8, 16);
+
+    // Marcas numéricas
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    var maxX = Math.floor((W / 2) / estado.zoom);
+    var pasoX = Math.max(1, Math.ceil(maxX / 8));
+    for (var i = -maxX; i <= maxX; i++) {
+        if (i % pasoX !== 0) continue;
+        if (i === 0) continue;
+        var p = mundoAPantalla(i, 0);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(i.toString(), p.px, p.py + 14);
+    }
+    var maxY = Math.floor((H / 2) / estado.zoom);
+    var pasoY = Math.max(1, Math.ceil(maxY / 6));
+    ctx.textAlign = 'right';
+    for (var j = -maxY; j <= maxY; j++) {
+        if (j % pasoY !== 0) continue;
+        if (j === 0) continue;
+        var q = mundoAPantalla(0, j);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(j.toString(), q.px - 6, q.py + 4);
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('0', W / 2 + 6, H / 2 + 14);
+
+    // Origen resaltado
+    ctx.fillStyle = COLOR_EJE;
+    ctx.beginPath();
+    ctx.arc(W / 2, H / 2, 3, 0, 2 * Math.PI);
+    ctx.fill();
+}
+
+function dibujarParabola() {
+    if (Math.abs(estado.a) < TOL) return; // Sin parábola si a = 0
+
+    var puntos = 400;
+    var xMin = -W / 2 / estado.zoom - 1;
+    var xMax = W / 2 / estado.zoom + 1;
+    var paso = (xMax - xMin) / puntos;
+
+    ctx.save();
+    ctx.strokeStyle = COLOR_PARABOLA;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    var trazando = false;
+    for (var i = 0; i <= puntos; i++) {
+        var x = xMin + i * paso;
+        var y = f(x);
+        var p = mundoAPantalla(x, y);
+
+        var fueraY = (p.py < -H * 2 || p.py > H * 3);
+        var fueraX = (p.px < -W * 2 || p.px > W * 3);
+
+        if (fueraY || fueraX) {
+            trazando = false;
+            continue;
+        }
+
+        if (!trazando) {
+            ctx.moveTo(p.px, p.py);
+            trazando = true;
+        } else {
+            ctx.lineTo(p.px, p.py);
+        }
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+function dibujarPuntoMundo(x, y, color, etiqueta, tamano) {
+    var p = mundoAPantalla(x, y);
+    tamano = tamano || 7;
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, tamano + 2, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, tamano, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    if (etiqueta) {
+        ctx.save();
+        ctx.font = 'bold 12px "Segoe UI", sans-serif';
+        var ancho = ctx.measureText(etiqueta).width;
+        var pad = 6;
+        var posX = p.px + 10;
+        var posY = p.py - 10;
+
+        if (posX + ancho + pad > W) posX = p.px - ancho - pad - 10;
+        if (posY < 15) posY = p.py + 22;
+
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(posX - 3, posY - 13, ancho + pad, 17);
+
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(etiqueta, posX, posY);
+        ctx.restore();
+    }
+}
+
+// =========================================
+// RENDER PRINCIPAL
+// =========================================
+function render() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    if (estado.mostrar.cuadricula) {
+        dibujarCuadricula();
+    }
+
+    dibujarEjes();
+
+    if (estado.mostrar.parabola) {
+        dibujarParabola();
+    }
+
+    if (estado.mostrar.vertice) {
+        var v = calcularVertice();
+        dibujarPuntoMundo(v.h, v.k, COLOR_VERTICE,
+            'V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')', 7);
+    }
+
+    if (estado.mostrar.raices) {
+        var raices = calcularRaices();
+        raices.forEach(function(r, i) {
+            var etiqueta = raices.length === 1
+                ? 'x = ' + formatearNumero(r) + ' (doble)'
+                : 'x' + (i + 1) + ' = ' + formatearNumero(r);
+            dibujarPuntoMundo(r, 0, COLOR_RAIZ, etiqueta, 6);
+        });
+    }
+
+    actualizarInfo();
+}
+
+// =========================================
+// ACTUALIZAR INFO
+// =========================================
+function actualizarInfo() {
+    var disc = calcularDiscriminante();
+    var v = calcularVertice();
+    var raices = calcularRaices();
+
+    document.getElementById('info-ecuacion').innerHTML = '$' + construirExpresion(estado.a, estado.b, estado.c) + '$';
+
+    var dMostrar = Math.abs(disc) < TOL ? 0 : disc;
+    document.getElementById('info-discriminante').innerHTML =
+        '$\\Delta = (' + formatearNumero(estado.b) + ')^2 - 4(' + formatearNumero(estado.a) + ')(' + formatearNumero(estado.c) + ') = ' + formatearNumero(dMostrar) + '$';
+
+    var naturaleza = '';
+    var estadoBanner = '';
+    var icono = '';
+    var textoBanner = '';
+
+    if (disc > TOL) {
+        naturaleza = 'Dos raíces reales distintas';
+        estadoBanner = 'pos';
+        icono = '✅';
+        textoBanner = 'Δ > 0 → Dos raíces reales distintas. La parábola corta el eje X en dos puntos.';
+    } else if (Math.abs(disc) < TOL) {
+        naturaleza = 'Una raíz real doble';
+        estadoBanner = 'cero';
+        icono = '🔵';
+        textoBanner = 'Δ = 0 → Una raíz real doble. La parábola es tangente al eje X.';
+    } else {
+        naturaleza = 'Dos raíces complejas conjugadas';
+        estadoBanner = 'neg';
+        icono = '❌';
+        textoBanner = 'Δ < 0 → Dos raíces complejas conjugadas. La parábola NO corta el eje X.';
+    }
+
+    document.getElementById('info-naturaleza').innerHTML = naturaleza;
+
+    var raicesHTML = '';
+    if (raices.length === 0) {
+        var absDisc = Math.abs(disc);
+        var simp = simplificarRaiz(absDisc);
+        var parteReal = -estado.b / (2 * estado.a);
+        var parteImag = simp.exterior * Math.sqrt(simp.interior) / (2 * estado.a);
+
+        raicesHTML = '$x_1 = ' + formatearNumero(parteReal) + ' + ' + formatearNumero(parseFloat(parteImag.toFixed(3))) + 'i$, ' +
+            '$x_2 = ' + formatearNumero(parteReal) + ' - ' + formatearNumero(parseFloat(parteImag.toFixed(3))) + 'i$';
+    } else if (raices.length === 1) {
+        raicesHTML = '$x_1 = x_2 = ' + formatearNumero(raices[0]) + '$';
+    } else {
+        // Verificar si son irracionales (no enteras ni fracciones simples)
+        var esIrracional = false;
+        var disc2 = calcularDiscriminante();
+        if (disc2 > 0) {
+            var sq = Math.sqrt(disc2);
+            if (Math.abs(sq - Math.round(sq)) > 1e-9) {
+                esIrracional = true;
+            }
+        }
+        raicesHTML = '$x_1 = ' + formatearNumero(raices[0]) + '$, $x_2 = ' + formatearNumero(raices[1]) + '$';
+        if (esIrracional) {
+            raicesHTML += ' <em>(raíces irracionales)</em>';
+        }
+    }
+    document.getElementById('info-raices').innerHTML = raicesHTML;
+
+    document.getElementById('info-vertice').innerHTML =
+        '$V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')$';
+
+    document.getElementById('info-interseccion').innerHTML = '$(0, ' + formatearNumero(estado.c) + ')$';
+
+    var cortesHTML = '';
+    if (raices.length === 0) {
+        cortesHTML = 'Ninguno (raíces complejas)';
+    } else if (raices.length === 1) {
+        cortesHTML = '$(' + formatearNumero(raices[0]) + ', 0)$ (tangente)';
+    } else {
+        cortesHTML = '$(' + formatearNumero(raices[0]) + ', 0)$ y $(' + formatearNumero(raices[1]) + ', 0)$';
+    }
+    document.getElementById('info-cortes').innerHTML = cortesHTML;
+
+    var banner = document.getElementById('bannerEstado');
+    banner.className = 'banner-estado ' + estadoBanner;
+    document.getElementById('iconoEstado').textContent = icono;
+    document.getElementById('textoEstado').textContent = textoBanner;
+
+    // Aviso pedagógico contextual con guía específica
+    var aviso = document.getElementById('aviso-pedagogico');
+    var htmlAviso = '💡 <strong>Exploración:</strong> ';
+    if (disc > TOL) {
+        htmlAviso += 'la parábola <strong>corta el eje X en dos puntos</strong>. Prueba <strong>aumentar $c$</strong> (o acercar $b$ a 0) para ver cómo Δ disminuye hasta volverse 0 y luego negativo.';
+    } else if (Math.abs(disc) < TOL) {
+        htmlAviso += 'la parábola es <strong>tangente al eje X</strong> en un solo punto (raíz doble). Prueba mover <strong>c</strong> hacia arriba o hacia abajo para ver cuándo Δ se vuelve positivo o negativo.';
+    } else {
+        htmlAviso += 'la parábola <strong>no corta el eje X</strong>: las raíces son complejas conjugadas. Prueba <strong>reducir $c$</strong> (o acercar $b$ a valores extremos) para ver cuándo Δ se vuelve positivo.';
+    }
+    aviso.innerHTML = htmlAviso;
+
+    renderMath(document.querySelector('.panel-info'));
+    renderMath(banner);
+}
+
+// =========================================
+// AUTO-AJUSTAR ZOOM
+// =========================================
+function autoAjustarZoom() {
+    var v = calcularVertice();
+    var raices = calcularRaices();
+
+    var maxX = Math.max(Math.abs(v.h), 1);
+    var maxY = Math.max(Math.abs(v.k), Math.abs(estado.c), 1);
+    raices.forEach(function(r) {
+        maxX = Math.max(maxX, Math.abs(r));
+    });
+
+    maxX *= 1.3;
+    maxY *= 1.3;
+
+    var zoomX = (W / 2) / maxX;
+    var zoomY = (H / 2) / maxY;
+    var nuevoZoom = Math.min(zoomX, zoomY);
+
+    nuevoZoom = Math.max(15, Math.min(50, Math.round(nuevoZoom)));
+    estado.zoom = nuevoZoom;
+    document.getElementById('slider-zoom').value = nuevoZoom;
+    document.getElementById('val-zoom').textContent = nuevoZoom;
+}
+
+// =========================================
+// SINCRONIZACIÓN
+// =========================================
+function sincronizarDesdeEstado() {
+    document.getElementById('slider-a').value = estado.a;
+    document.getElementById('val-a').textContent = formatearNumero(estado.a);
+    document.getElementById('slider-b').value = estado.b;
+    document.getElementById('val-b').textContent = formatearNumero(estado.b);
+    document.getElementById('slider-c').value = estado.c;
+    document.getElementById('val-c').textContent = formatearNumero(estado.c);
+    document.getElementById('slider-zoom').value = estado.zoom;
+    document.getElementById('val-zoom').textContent = estado.zoom;
+
+    document.getElementById('chk-parabola').checked = estado.mostrar.parabola;
+    document.getElementById('chk-raices').checked = estado.mostrar.raices;
+    document.getElementById('chk-vertice').checked = estado.mostrar.vertice;
+    document.getElementById('chk-eje-x').checked = estado.mostrar.ejeX;
+    document.getElementById('chk-cuadricula').checked = estado.mostrar.cuadricula;
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('slider-a').addEventListener('input', function() {
+    var nuevoA = parseFloat(this.value);
+    var avisoA = document.getElementById('aviso-a');
+    if (nuevoA === 0) {
+        nuevoA = 0.5;
+        this.value = 0.5;
+        avisoA.classList.add('visible');
+        setTimeout(function() { avisoA.classList.remove('visible'); }, 2500);
+    } else {
+        avisoA.classList.remove('visible');
+    }
+    estado.a = nuevoA;
+    document.getElementById('val-a').textContent = formatearNumero(estado.a);
+    render();
+});
+
+document.getElementById('slider-b').addEventListener('input', function() {
+    estado.b = parseFloat(this.value);
+    document.getElementById('val-b').textContent = formatearNumero(estado.b);
+    render();
+});
+
+document.getElementById('slider-c').addEventListener('input', function() {
+    estado.c = parseFloat(this.value);
+    document.getElementById('val-c').textContent = formatearNumero(estado.c);
+    render();
+});
+
+document.getElementById('slider-zoom').addEventListener('input', function() {
+    estado.zoom = parseInt(this.value);
+    document.getElementById('val-zoom').textContent = this.value;
+    render();
+});
+
+// Mapa explícito de checkboxes: id HTML → clave del estado
+var mapaCheckboxes = {
+    'chk-parabola': 'parabola',
+    'chk-raices': 'raices',
+    'chk-vertice': 'vertice',
+    'chk-eje-x': 'ejeX',
+    'chk-cuadricula': 'cuadricula'
+};
+
+Object.keys(mapaCheckboxes).forEach(function(idCheckbox) {
+    var clave = mapaCheckboxes[idCheckbox];
+    document.getElementById(idCheckbox).addEventListener('change', function() {
+        estado.mostrar[clave] = this.checked;
+        render();
+    });
+});
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    estado.a = 1;
+    estado.b = -5;
+    estado.c = 6;
+    estado.zoom = 30;
+    estado.mostrar = { parabola: true, raices: true, vertice: true, ejeX: true, cuadricula: false };
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// EJEMPLOS PREDEFINIDOS
+// =========================================
+var ejemplos = {
+    1: { a: 1, b: -5, c: 6 },
+    2: { a: 2, b: -3, c: -4 },
+    3: { a: 1, b: -4, c: 4 },
+    4: { a: 5, b: -4, c: 1 },
+    5: { a: 1, b: 0, c: 4 },
+    6: { a: 4, b: -12, c: 9 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        // 1. Actualizar estado
+        estado.a = data.a;
+        estado.b = data.b;
+        estado.c = data.c;
+        // 2. Auto-ajustar zoom (usa el nuevo estado)
+        autoAjustarZoom();
+        // 3. Sincronizar UI
+        sincronizarDesdeEstado();
+        // 4. Renderizar
+        render();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+function init() {
+    configurarHiDPI();
+    estado.a = 1;
+    estado.b = -5;
+    estado.c = 6;
+    autoAjustarZoom();
+    sincronizarDesdeEstado();
+    render();
+    renderMath(document.body);
+}
+
+window.addEventListener('load', init);
+
+</script>
+
+</body>
+</html>

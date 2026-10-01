@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 10 — Métodos de Solución para una Ecuación Cuadrática | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: var(--color-primario);
+            margin: 15px 0;
+        }
+
+        .alerta {
+            background-color: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--color-error);
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: var(--color-error);
+            margin: 20px 0;
+        }
+
+        .alerta strong { color: var(--color-error); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 10 — Métodos de Solución para una Ecuación Cuadrática</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo 10</h2>
+            <p>En este módulo estudiaremos los <strong>tres métodos principales</strong> para resolver una ecuación cuadrática de la forma:</p>
+            <div class="math-block">$$ax^2 + bx + c = 0, \quad a \neq 0$$</div>
+            <p>El objetivo es determinar las <strong>raíces o ceros</strong> de la ecuación, es decir, los valores de $x$ que hacen cierta la igualdad. Los tres métodos son:</p>
+            <ul>
+                <li><strong>Gráfico:</strong> interpretar las intersecciones con el eje $X$.</li>
+                <li><strong>Factorización:</strong> descomponer el trinomio en factores lineales.</li>
+                <li><strong>Fórmula general:</strong> la herramienta más poderosa y universal.</li>
+            </ul>
+        </div>
+
+        <!-- DIAPOSITIVA 2: MÉTODO GRÁFICO -->
+        <div class="diapositiva" data-indice="1">
+            <h2>1. Método Gráfico</h2>
+            <p>Consiste en determinar la <strong>abscisa</strong> de los puntos donde la gráfica de $y = ax^2 + bx + c$ interseca o es tangente al eje $X$.</p>
+
+            <h3>Ejemplos</h3>
+            <ul>
+                <li>La gráfica de $y = 2x^2 - 8x + 6$ interseca al eje $X$ en $x = 1$ ó $x = 3$.</li>
+                <li>La gráfica de $y = -2x^2 + 2x + 12$ interseca al eje $X$ en $x = -2$ ó $x = 3$.</li>
+            </ul>
+
+            <div class="nota">
+                <strong>Limitación del método gráfico:</strong> en la práctica se usa poco, ya que si las raíces no son números enteros, los puntos de intersección sólo se determinan de forma aproximada.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>📊 Simulador gráfico conceptual</h3>
+                <p>Ingresa los coeficientes y evalúa la función en distintos valores de $x$ para explorar dónde se anula:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="gr-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="gr-b" value="-8" step="any"></div>
+                    <div class="input-wrapper"><label>c =</label><input type="number" id="gr-c" value="6" step="any"></div>
+                    <button class="btn-primario" id="btn-grafico">Explorar</button>
+                </div>
+                <div class="resultado" id="res-grafico">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: FACTORIZACIÓN - INTRODUCCIÓN -->
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Método de Factorización</h2>
+            <p>Este método se usa cuando el trinomio $ax^2 + bx + c$ se puede factorizar fácilmente. Se apoya en el <strong>Teorema del producto cero</strong>:</p>
+            <div class="math-block">$$a \cdot b = 0 \iff a = 0 \quad \text{ó} \quad b = 0$$</div>
+            <p>Es decir, si un producto de factores es cero, entonces al menos uno de los factores debe ser cero.</p>
+
+            <h3>Ejemplo 1: trinomio simple</h3>
+            <p>Resolver $x^2 - 5x + 6 = 0$:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            x^2 - 5x + 6 &= (x - 3)(x - 2) = 0 \\
+            x - 3 = 0 &\quad \text{ó} \quad x - 2 = 0 \\
+            x = 3 &\quad \text{ó} \quad x = 2
+            \end{aligned}
+            $$
+            </div>
+            <p><strong>Conjunto solución:</strong> $\{3, 2\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>🧩 Factorizador de trinomios simples</h3>
+                <p>Ingresa $b$ y $c$ para factorizar $x^2 + bx + c$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="fs-b" value="-5" step="any"></div>
+                    <div class="input-wrapper"><label>c =</label><input type="number" id="fs-c" value="6" step="any"></div>
+                    <button class="btn-primario" id="btn-factor-simple">Factorizar</button>
+                </div>
+                <div class="resultado" id="res-factor-simple">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: FACTORIZACIÓN POR AGRUPACIÓN -->
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Factorización por Agrupación (Producto-Suma)</h2>
+            <p>Cuando $a \neq 1$, se aplica el método del <strong>aspa o producto-suma</strong>. Veamos el proceso completo con el ejemplo $2x^2 + x - 6 = 0$:</p>
+
+            <ol>
+                <li>Multiplicar $a \cdot c$: $(2)(-6) = -12$.</li>
+                <li>Buscar dos números cuyo producto sea $-12$ y cuya suma sea $b = 1$. Estos son $+4$ y $-3$.</li>
+                <li>Descomponer el término lineal: $2x^2 + 4x - 3x - 6 = 0$.</li>
+                <li>Agrupar: $(2x^2 + 4x) - (3x + 6) = 0$.</li>
+                <li>Factorizar por agrupación: $2x(x + 2) - 3(x + 2) = 0$.</li>
+                <li>Sacar factor común $(x + 2)$: $(2x - 3)(x + 2) = 0$.</li>
+                <li>Igualar a cero cada factor: $2x - 3 = 0$ ó $x + 2 = 0$.</li>
+                <li>Resolver: $x = \dfrac{3}{2}$ ó $x = -2$.</li>
+            </ol>
+
+            <p><strong>Conjunto solución:</strong> $\left\{\dfrac{3}{2}, -2\right\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>🔧 Factorizador por agrupación</h3>
+                <p>Ingresa $a$, $b$ y $c$ para obtener los dos números clave y la factorización final:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="fa-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="fa-b" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>c =</label><input type="number" id="fa-c" value="-6" step="any"></div>
+                    <button class="btn-primario" id="btn-factor-agrup">Factorizar</button>
+                </div>
+                <div class="resultado" id="res-factor-agrup">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: FACTORIZACIÓN EN COMPLEJOS -->
+        <div class="diapositiva" data-indice="4">
+            <h2>4. Factorización sobre los Números Complejos</h2>
+            <p>Algunas ecuaciones cuadráticas no se pueden factorizar sobre $\mathbb{R}$, pero sí sobre $\mathbb{C}$, usando $i^2 = -1$.</p>
+
+            <h3>Ejemplo: $x^2 + 4 = 0$</h3>
+            <p>Recordando que $i^2 = -1$, factorizamos como <strong>diferencia de cuadrados</strong> usando $i$:</p>
+            <div class="math-block">$$x^2 + 4 = (x - 2i)(x + 2i) = 0$$</div>
+            <div class="math-block">$$x = 2i \quad \text{ó} \quad x = -2i$$</div>
+            <p><strong>Conjunto solución:</strong> $\{2i, -2i\}$</p>
+
+            <div class="nota">
+                <strong>💡 Regla general:</strong> $x^2 + K = 0$ se factoriza como $(x - i\sqrt{K})(x + i\sqrt{K}) = 0$ cuando $K > 0$.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>💫 Factorizador complejo $x^2 + K = 0$</h3>
+                <p>Ingresa un valor positivo $K$ para factorizar $x^2 + K$ sobre los complejos:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>K =</label><input type="number" id="fc-K" value="4" step="any" min="0"></div>
+                    <button class="btn-primario" id="btn-factor-complejo">Factorizar</button>
+                </div>
+                <div class="resultado" id="res-factor-complejo">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: DEDUCCIÓN DE LA FÓRMULA GENERAL -->
+        <div class="diapositiva" data-indice="5">
+            <h2>5. Deducción de la Fórmula General</h2>
+            <p>La fórmula general se obtiene al aplicar el método de <strong>completar el cuadrado perfecto</strong> a la ecuación $ax^2 + bx + c = 0$:</p>
+
+            <ol>
+                <li>Dividir entre $a$: $x^2 + \dfrac{b}{a}x + \dfrac{c}{a} = 0$.</li>
+                <li>Pasar el término independiente: $x^2 + \dfrac{b}{a}x = -\dfrac{c}{a}$.</li>
+                <li>Sumar $\left(\dfrac{b}{2a}\right)^2$: $x^2 + \dfrac{b}{a}x + \dfrac{b^2}{4a^2} = \dfrac{b^2 - 4ac}{4a^2}$.</li>
+                <li>Escribir como binomio: $\left(x + \dfrac{b}{2a}\right)^2 = \dfrac{b^2 - 4ac}{4a^2}$.</li>
+                <li>Sacar raíz: $x + \dfrac{b}{2a} = \pm\dfrac{\sqrt{b^2 - 4ac}}{2a}$.</li>
+                <li>Despejar $x$:</li>
+            </ol>
+
+            <div class="math-block">$$\boxed{x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}}$$</div>
+
+            <p>Las dos raíces son:</p>
+            <div class="math-block">$$x_1 = \frac{-b + \sqrt{b^2 - 4ac}}{2a} \quad \text{y} \quad x_2 = \frac{-b - \sqrt{b^2 - 4ac}}{2a}$$</div>
+
+            <div class="caja-interactiva">
+                <h3>🔍 Visualizador del discriminante</h3>
+                <p>Ingresa $a$, $b$ y $c$ para observar el valor del discriminante y el tipo de raíces que produce:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="dg-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="dg-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>c =</label><input type="number" id="dg-c" value="-10" step="any"></div>
+                    <button class="btn-primario" id="btn-discriminante">Analizar</button>
+                </div>
+                <div class="resultado" id="res-discriminante">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: EJEMPLOS CON FÓRMULA GENERAL -->
+        <div class="diapositiva" data-indice="6">
+            <h2>6. Ejemplos de la Fórmula General</h2>
+            <p>La fórmula general es el método más poderoso y universal. Según el valor del <strong>discriminante</strong> $\Delta = b^2 - 4ac$, podemos tener:</p>
+            <ul>
+                <li>$\Delta > 0$: dos raíces <strong>reales distintas</strong>.</li>
+                <li>$\Delta = 0$: una raíz <strong>doble</strong> (real).</li>
+                <li>$\Delta < 0$: dos raíces <strong>complejas conjugadas</strong>.</li>
+            </ul>
+
+            <h3>Ejemplo 1: raíces reales distintas</h3>
+            <p>$x^2 + 3x - 10 = 0$ con $a = 1$, $b = 3$, $c = -10$:</p>
+            <div class="math-block">$$x = \frac{-3 \pm \sqrt{9 + 40}}{2} = \frac{-3 \pm 7}{2} \implies x_1 = 2, \ x_2 = -5$$</div>
+
+            <h3>Ejemplo 2: raíz doble</h3>
+            <p>$x^2 - 4x + 4 = 0$ con $a = 1$, $b = -4$, $c = 4$:</p>
+            <div class="math-block">$$x = \frac{4 \pm \sqrt{16 - 16}}{2} = \frac{4}{2} \implies x = 2 \text{ (doble)}$$</div>
+
+            <h3>Ejemplo 3: raíces complejas</h3>
+            <p>$5x^2 - 4x + 1 = 0$ con $a = 5$, $b = -4$, $c = 1$:</p>
+            <div class="math-block">$$x = \frac{4 \pm \sqrt{16 - 20}}{10} = \frac{4 \pm 2i}{10} = \frac{2 \pm i}{5}$$</div>
+
+            <div class="caja-interactiva">
+                <h3>🧮 Solucionador con fórmula general</h3>
+                <p>Ingresa $a$, $b$ y $c$ para obtener las raíces (reales o complejas):</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="fg-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="fg-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>c =</label><input type="number" id="fg-c" value="-10" step="any"></div>
+                    <button class="btn-primario" id="btn-formula-general">Resolver</button>
+                </div>
+                <div class="resultado" id="res-formula-general">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: RESUMEN -->
+        <div class="diapositiva" data-indice="7">
+            <h2>7. Resumen del Módulo</h2>
+            <h3>Comparación de los tres métodos</h3>
+            <ul>
+                <li><strong>Gráfico:</strong> útil para visualizar las raíces, pero poco preciso si no son enteras.</li>
+                <li><strong>Factorización:</strong> rápido y elegante cuando los factores son sencillos de encontrar.</li>
+                <li><strong>Fórmula general:</strong> método universal que funciona siempre, incluso con raíces irracionales o complejas.</li>
+            </ul>
+
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Resolver una ecuación cuadrática significa encontrar sus <strong>raíces o ceros</strong>.</li>
+                <li>La factorización se basa en el <strong>Teorema del producto cero</strong>: $a \cdot b = 0 \iff a = 0$ ó $b = 0$.</li>
+                <li>Para factorizar cuando $a \neq 1$ se usa el método del <strong>producto-suma</strong> (o aspa).</li>
+                <li>Las ecuaciones del tipo $x^2 + K = 0$ se factorizan sobre $\mathbb{C}$ como $(x - i\sqrt{K})(x + i\sqrt{K}) = 0$.</li>
+                <li>La <strong>fórmula general</strong> es $x = \dfrac{-b \pm \sqrt{b^2 - 4ac}}{2a}$.</li>
+                <li>El <strong>discriminante</strong> $\Delta = b^2 - 4ac$ determina la naturaleza de las raíces.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 10. Ahora dominas los tres métodos para resolver cualquier ecuación cuadrática.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 8</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function mcd(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b) { var t = b; b = a % b; a = t; }
+        return a;
+    }
+
+    // =========================================
+    // 1. SIMULADOR GRÁFICO CONCEPTUAL
+    // =========================================
+    document.getElementById('btn-grafico').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('gr-a').value);
+        var b = parseFloat(document.getElementById('gr-b').value);
+        var c = parseFloat(document.getElementById('gr-c').value);
+        var res = document.getElementById('res-grafico');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var html = '<p>Función: $y = ' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ')$</p>';
+        html += '<p><strong>Evaluación de la función en distintos valores de $x$:</strong></p>';
+        html += '<ul>';
+        for (var x = -3; x <= 5; x++) {
+            var y = a * x * x + b * x + c;
+            var marca = (y === 0) ? ' <span style="color: var(--color-exito); font-weight: 700;">← ¡Raíz!</span>' : '';
+            html += '<li>$f(' + x + ') = ' + formatearNumero(y) + '$' + marca + '</li>';
+        }
+        html += '</ul>';
+        html += '<p><em>Los valores donde $f(x) = 0$ son las raíces o ceros de la ecuación.</em></p>';
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================    // 2. FACTORIZADOR DE TRINOMIOS SIMPLES ($a=1$)
+    // =========================================
+    document.getElementById('btn-factor-simple').addEventListener('click', function() {
+        var b = parseFloat(document.getElementById('fs-b').value);
+        var c = parseFloat(document.getElementById('fs-c').value);
+        var res = document.getElementById('res-factor-simple');
+
+        if (isNaN(b) || isNaN(c)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar los coeficientes $b$ y $c$.';
+            renderMath(res);
+            return;
+        }
+
+        var encontrado = false;
+        var p, q;
+        for (var i = -Math.abs(c) - 10; i <= Math.abs(c) + 10; i++) {
+            if (i !== 0 && c % i === 0) {
+                var j = c / i;
+                if (i + j === b) {
+                    p = i; q = j;
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+        if (!encontrado && c === 0) {
+            p = 0; q = b;
+            encontrado = true;
+        }
+
+        if (!encontrado) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ No se pudo factorizar con coeficientes enteros. Se recomienda usar la fórmula general.';
+            renderMath(res);
+            return;
+        }
+
+        var signoP = p >= 0 ? '- ' + formatearNumero(p) : '+ ' + formatearNumero(-p);
+        var signoQ = q >= 0 ? '- ' + formatearNumero(q) : '+ ' + formatearNumero(-q);
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Factorización:</p>' +
+            '$$x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ') = (x ' + signoP + ')(x ' + signoQ + ') = 0$$' +
+            '<p>Igualando a cero cada factor:</p>' +
+            '$$x = ' + formatearNumero(p) + ' \\quad \\text{ó} \\quad x = ' + formatearNumero(q) + '$$' +
+            '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(p) + ', ' + formatearNumero(q) + '\\}$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. FACTORIZADOR POR AGRUPACIÓN (a ≠ 1)
+    // =========================================
+    document.getElementById('btn-factor-agrup').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('fa-a').value);
+        var b = parseFloat(document.getElementById('fa-b').value);
+        var c = parseFloat(document.getElementById('fa-c').value);
+        var res = document.getElementById('res-factor-agrup');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var ac = a * c;
+        var encontrado = false;
+        var p, q;
+        for (var i = -Math.abs(ac) - 10; i <= Math.abs(ac) + 10; i++) {
+            if (i !== 0 && ac % i === 0) {
+                var j = ac / i;
+                if (i + j === b) {
+                    p = i; q = j;
+                    encontrado = true;
+                    break;
+                }
+            }
+        }
+
+        if (!encontrado) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ No se encontraron dos números enteros con producto $a \\cdot c = ' + formatearNumero(ac) + '$ y suma $b = ' + formatearNumero(b) + '$. Se recomienda la fórmula general.';
+            renderMath(res);
+            return;
+        }
+
+        var html = '<p><strong>Paso 1:</strong> $a \\cdot c = (' + formatearNumero(a) + ')(' + formatearNumero(c) + ') = ' + formatearNumero(ac) + '$</p>';
+        html += '<p><strong>Paso 2:</strong> Buscamos dos números con producto $' + formatearNumero(ac) + '$ y suma $' + formatearNumero(b) + '$. Estos son $' + formatearNumero(p) + '$ y $' + formatearNumero(q) + '$.</p>';
+        html += '<p><strong>Paso 3:</strong> Descomponemos el término lineal:</p>';
+        html += '$$' + formatearNumero(a) + 'x^2 ' + (p >= 0 ? '+ ' + formatearNumero(p) : '- ' + formatearNumero(-p)) + 'x ' + (q >= 0 ? '+ ' + formatearNumero(q) : '- ' + formatearNumero(-q)) + 'x ' + (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' = 0$$';
+        html += '<p><strong>Paso 4:</strong> Agrupamos y factorizamos:</p>';
+
+        var disc = b * b - 4 * a * c;
+        if (disc >= 0) {
+            var r1 = (-b + Math.sqrt(disc)) / (2 * a);
+            var r2 = (-b - Math.sqrt(disc)) / (2 * a);
+            html += '$$x = ' + formatearNumero(r1) + ' \\quad \\text{ó} \\quad x = ' + formatearNumero(r2) + '$$';
+            html += '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(r1) + ', ' + formatearNumero(r2) + '\\}$</p>';
+        } else {
+            html += '<p style="color: var(--color-error);">El discriminante es negativo; las raíces son complejas.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. FACTORIZADOR COMPLEJO x² + K = 0
+    // =========================================
+    document.getElementById('btn-factor-complejo').addEventListener('click', function() {
+        var K = parseFloat(document.getElementById('fc-K').value);
+        var res = document.getElementById('res-factor-complejo');
+
+        if (isNaN(K) || K < 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar un número $K \\geq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        if (K === 0) {
+            res.className = 'resultado exito';
+            res.innerHTML = '$$x^2 = 0 \\implies x = 0 \\text{ (raíz doble)}$$';
+            renderMath(res);
+            return;
+        }
+
+        var raizK = Math.sqrt(K);
+        var raizKSimplificada = formatearNumero(parseFloat(raizK.toFixed(4)));
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Factorización sobre los números complejos:</p>' +
+            '$$x^2 + ' + formatearNumero(K) + ' = (x - ' + raizKSimplificada + 'i)(x + ' + raizKSimplificada + 'i) = 0$$' +
+            '<p>Igualando a cero cada factor:</p>' +
+            '$$x = ' + raizKSimplificada + 'i \\quad \\text{ó} \\quad x = -' + raizKSimplificada + 'i$$' +
+            '<p><strong>Conjunto solución:</strong> $\\{' + raizKSimplificada + 'i, -' + raizKSimplificada + 'i\\}$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. VISUALIZADOR DEL DISCRIMINANTE
+    // =========================================
+    document.getElementById('btn-discriminante').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('dg-a').value);
+        var b = parseFloat(document.getElementById('dg-b').value);
+        var c = parseFloat(document.getElementById('dg-c').value);
+        var res = document.getElementById('res-discriminante');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var tipo, color, mensaje;
+
+        if (disc > 0) {
+            tipo = 'Dos raíces reales distintas';
+            color = 'var(--color-exito)';
+            mensaje = 'La parábola corta al eje $X$ en dos puntos diferentes.';
+        } else if (disc === 0) {
+            tipo = 'Una raíz real doble';
+            color = 'var(--color-acento)';
+            mensaje = 'La parábola es tangente al eje $X$ en un solo punto.';
+        } else {
+            tipo = 'Dos raíces complejas conjugadas';
+            color = 'var(--color-error)';
+            mensaje = 'La parábola no corta al eje $X$; las soluciones son complejas.';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Ecuación: $' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ') = 0$</p>' +
+            '$$\\Delta = b^2 - 4ac = (' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ') = ' + formatearNumero(disc) + '$$' +
+            '<p><strong>Naturaleza de las raíces:</strong> <span style="color: ' + color + '; font-weight: 700;">' + tipo + '</span></p>' +
+            '<p>' + mensaje + '</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. SOLUCIONADOR CON FÓRMULA GENERAL
+    // =========================================
+    document.getElementById('btn-formula-general').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('fg-a').value);
+        var b = parseFloat(document.getElementById('fg-b').value);
+        var c = parseFloat(document.getElementById('fg-c').value);
+        var res = document.getElementById('res-formula-general');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var html = '<p>Aplicando la fórmula general:</p>' +
+            '$$x = \\frac{-(' + formatearNumero(b) + ') \\pm \\sqrt{(' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ')}}{2(' + formatearNumero(a) + ')}$$' +
+            '$$x = \\frac{' + formatearNumero(-b) + ' \\pm \\sqrt{' + formatearNumero(disc) + '}}{' + formatearNumero(2 * a) + '}$$';
+
+        if (disc >= 0) {
+            var raiz = Math.sqrt(disc);
+            var r1 = (-b + raiz) / (2 * a);
+            var r2 = (-b - raiz) / (2 * a);
+            html += '<p>Como $\\Delta = ' + formatearNumero(disc) + ' \\geq 0$, las raíces son <strong>reales</strong>:</p>';
+            html += '$$x_1 = ' + formatearNumero(r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(r2) + '$$';
+            html += '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(r1) + ', ' + formatearNumero(r2) + '\\}$</p>';
+        } else {
+            var absDisc = Math.abs(disc);
+            var factorExt = 1;
+            var radicando = absDisc;
+            for (var i = 2; i * i <= radicando; i++) {
+                while (radicando % (i * i) === 0) {
+                    factorExt *= i;
+                    radicando /= (i * i);
+                }
+            }
+
+            html += '<p>Como $\\Delta = ' + formatearNumero(disc) + ' < 0$, las raíces son <strong>complejas conjugadas</strong>:</p>';
+            html += '$$x = \\frac{' + formatearNumero(-b) + ' \\pm ' + (factorExt === 1 ? '' : formatearNumero(factorExt)) + '\\sqrt{' + formatearNumero(radicando) + '}i}{' + formatearNumero(2 * a) + '}$$';
+
+            var realParte = -b / (2 * a);
+            var imagParte = factorExt * Math.sqrt(radicando) / (2 * a);
+
+            html += '<p>Expresando en la forma $a + bi$:</p>';
+            html += '$$x_1 = ' + formatearNumero(realParte) + ' + ' + formatearNumero(parseFloat(imagParte.toFixed(4))) + 'i \\quad ; \\quad x_2 = ' + formatearNumero(realParte) + ' - ' + formatearNumero(parseFloat(imagParte.toFixed(4))) + 'i$$';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

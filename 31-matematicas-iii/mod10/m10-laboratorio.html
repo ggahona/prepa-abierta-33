@@ -1,0 +1,1514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detective de Factores | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .barra-progreso-general {
+            background-color: var(--color-base);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .barra-progreso-general .texto-progreso {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .progreso-track {
+            flex: 1;
+            height: 8px;
+            background-color: var(--color-acento-suave);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progreso-fill {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main { padding: 30px; }
+
+        .tarjeta-caso {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            border: 1px solid var(--color-acento-suave);
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-caso {
+            background-color: var(--color-base);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .numero-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nivel-caso {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nivel-caso.basico { background-color: rgba(39,174,96,0.15); color: var(--color-exito); }
+        .nivel-caso.medio  { background-color: rgba(91,127,163,0.15); color: var(--color-acento); }
+        .nivel-caso.alto   { background-color: rgba(192,57,43,0.15); color: var(--color-error); }
+
+        .enunciado {
+            padding: 20px;
+            font-size: 1.02rem;
+            color: var(--color-texto-oscuro);
+            background-color: var(--color-blanco);
+            border-bottom: 1px solid var(--color-base);
+        }
+        .enunciado .etiqueta-caso {
+            display: inline-block;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .enunciado .expresion-caso {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+            padding: 12px 0;
+            background-color: var(--color-base);
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .fase {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-base);
+        }
+        .fase:last-of-type { border-bottom: none; }
+
+        .fase-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+        .numero-fase {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fase-instruccion {
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+            padding-left: 36px;
+        }
+
+        .contador-intentos {
+            display: none;
+            background-color: var(--color-acento-suave);
+            color: var(--color-primario);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-left: 36px;
+            margin-bottom: 10px;
+        }
+        .contador-intentos.visible { display: inline-block; }
+
+        .opciones-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+        }
+        .opcion-item {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: var(--color-primario);
+            text-align: left;
+        }
+        .opcion-item:hover:not(.disabled) {
+            background-color: rgba(91,127,163,0.08);
+            border-color: var(--color-acento);
+        }
+        .opcion-item.disabled { cursor: default; }
+        .opcion-item.correcta {
+            background-color: rgba(39,174,96,0.15);
+            border-color: var(--color-exito);
+            color: #145a32;
+            font-weight: 700;
+        }
+        .opcion-item.incorrecta {
+            background-color: rgba(192,57,43,0.15);
+            border-color: var(--color-error);
+            color: #78281f;
+            font-weight: 700;
+        }
+
+        .fila-ejecucion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        input[type="text"] {
+            padding: 8px 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+            min-width: 160px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        input[type="text"]::placeholder {
+            color: #a9c1d9;
+            font-size: 0.78rem;
+            font-style: italic;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .botones-fase {
+            display: flex;
+            gap: 10px;
+            margin-left: 36px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-pista {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-pista:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+        .btn-reintentar {
+            background-color: var(--color-blanco);
+            color: var(--color-primario);
+            border: 2px solid var(--color-primario);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin-left: 36px;
+            margin-top: 10px;
+            display: none;
+        }
+        .btn-reintentar.visible { display: inline-block; }
+        .btn-reintentar:hover { background-color: var(--color-primario); color: var(--color-blanco); }
+
+        .feedback {
+            margin: 12px 0 0 36px;
+            padding: 12px 16px;
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            color: #145a32;
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            color: #78281f;
+        }
+        .feedback.pista {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+        .feedback code {
+            background-color: rgba(44,73,102,0.08);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--color-primario);
+        }
+
+        .fase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+            background-color: var(--color-base);
+        }
+        .fase.bloqueada .fase-titulo { color: #8a9bb0; }
+        .fase.bloqueada .numero-fase { background-color: #8a9bb0; }
+
+        .navegacion-casos {
+            background-color: var(--color-base);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--color-acento-suave);
+        }
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+        .indicador-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .pantalla-final {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        .pantalla-final.visible { display: block; }
+        .pantalla-final h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        .pantalla-final .puntaje-final {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin: 20px 0;
+        }
+        .pantalla-final p {
+            font-size: 1rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+        }
+        .pantalla-final .medalla {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            main { padding: 18px; }
+            .fila-ejecucion, .botones-fase, .feedback, .opciones-lista, .btn-reintentar {
+                margin-left: 0;
+            }
+            .contador-intentos { margin-left: 0; }
+            .fase-instruccion { padding-left: 0; }
+            input[type="text"] { width: 100%; min-width: 0; }
+            .input-wrapper { flex: 1 1 45%; }
+            .barra-progreso-general { padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Detective de Factores</h1>
+        <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+        <span class="texto-progreso" id="progresoTexto">Caso 1 de 8</span>
+        <div class="progreso-track">
+            <div class="progreso-fill" id="progresoFill"></div>
+        </div>
+        <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
+    </div>
+
+    <main>
+        <div class="tarjeta-caso" id="tarjetaCaso">
+
+            <div class="meta-caso">
+                <div class="numero-caso" id="numeroCaso">Caso 1 de 8</div>
+                <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+            </div>
+
+            <div class="enunciado" id="enunciadoCaso">
+                <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+                <div id="textoEnunciado">Cargando caso...</div>
+                <div class="expresion-caso" id="expresionCaso"></div>
+            </div>
+
+            <!-- FASE 1 -->
+            <div class="fase" id="fase1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span> Diagnóstico: ¿Qué método usar?
+                </div>
+                <div class="fase-instruccion" id="instruccionFase1">
+                    Identifica la estructura de la ecuación y el método más adecuado.
+                </div>
+                <div class="contador-intentos" id="contadorFase1">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase1"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar1">🔄 Reintentar</button>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="fase bloqueada" id="fase2">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span> Encontrar los dos números clave
+                </div>
+                <div class="fase-instruccion" id="instruccionFase2">
+                    Aplica el método del producto-suma: encuentra dos números cuyo producto sea <strong>$a \cdot c$</strong> y cuya suma sea <strong>$b$</strong>.
+                </div>
+                <div class="contador-intentos" id="contadorFase2">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase2"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase2">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase2">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <!-- FASE 3 -->
+            <div class="fase bloqueada" id="fase3">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span> Factorización y raíces
+                </div>
+                <div class="fase-instruccion" id="instruccionFase3">
+                    Completa la factorización y escribe las raíces de la ecuación.
+                </div>
+                <div class="contador-intentos" id="contadorFase3">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase3"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase3">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase3">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <!-- FASE 4 -->
+            <div class="fase bloqueada" id="fase4">
+                <div class="fase-titulo">
+                    <span class="numero-fase">4</span> 🎯 Trampa CENEVAL
+                </div>
+                <div class="fase-instruccion" id="instruccionFase4">
+                    ¿Cuál es el error más frecuente en este tipo de caso?
+                </div>
+                <div class="contador-intentos" id="contadorFase4">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase4"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
+                <div class="feedback" id="feedback4"></div>
+            </div>
+
+            <div class="navegacion-casos">
+                <button type="button" class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+                <span class="indicador-caso" id="indicadorCaso">Caso 1 de 8</span>
+                <button type="button" class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+            </div>
+        </div>
+
+        <div class="pantalla-final" id="pantallaFinal">
+            <div class="medalla" id="medallaFinal">🏅</div>
+            <h2>¡Investigación completada!</h2>
+            <div class="puntaje-final" id="puntajeFinal">0 / 8</div>
+            <p id="mensajeFinal"></p>
+            <button type="button" class="btn-primario" id="btnReiniciar" style="max-width:240px; margin: 0 auto;">🔄 Reiniciar investigación</button>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Dominar el <strong>método de factorización por agrupación</strong>
+        (producto-suma) para resolver ecuaciones cuadráticas, identificando los dos números clave,
+        aplicando correctamente la factorización por agrupación y encontrando las <strong>raíces o ceros</strong>
+        de la ecuación, evitando los errores CENEVAL más comunes del Módulo 10.
+    </div>
+</div>
+
+<script>
+// =========================================
+// BANCO DE CASOS — Módulo 10
+// =========================================
+var casos = [
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 1 — Trinomio simple con raíces enteras',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización e identifica sus raíces.',
+        expresion: '$$x^2 - 5x + 6 = 0$$',
+        a: 1, b: -5, c: 6,
+        fase1: {
+            opciones: [
+                'Es un trinomio simple ($a = 1$), se factoriza directamente',
+                'Es un trinomio con $a \\neq 1$, requiere producto-suma',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio simple ($a = 1$), se factoriza directamente',
+            explicacion: 'Como $a = 1$, se buscan dos números que sumen $b = -5$ y multipliquen $c = 6$. Esos números son $-2$ y $-3$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: 6, placeholder: 'Ej: 6' },
+                { id: 'n1', etiqueta: 'Número 1 (mayor):', correcta: -2, placeholder: 'Ej: -2' },
+                { id: 'n2', etiqueta: 'Número 2 (menor):', correcta: -3, placeholder: 'Ej: -3' }
+            ],
+            pista: 'Buscamos dos números que sumen $-5$ y multipliquen $6$. Prueba con $-2$ y $-3$: $(-2) + (-3) = -5$ y $(-2) \\cdot (-3) = 6$.',
+            explicacion: 'Producto $a \\cdot c = 1 \\cdot 6 = 6$. Los números son $-2$ y $-3$ porque suman $-5$ y multiplican $6$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(x-2)(x-3)', placeholder: 'Ej: (x-2)(x-3)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $', correcta: 3, placeholder: 'Ej: 3' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: 2, placeholder: 'Ej: 2' }
+            ],
+            pista: 'La factorización es $(x - 3)(x - 2) = 0$. Igualando cada factor a cero: $x = 3$ ó $x = 2$.',
+            explicacion: '$(x - 3)(x - 2) = 0 \\Rightarrow x = 3$ ó $x = 2$. Conjunto solución: $\\{2, 3\\}$.'
+        },
+        fase4: {
+            opciones: [
+                'Confundir la suma con el producto al elegir los factores',
+                'No reconocer la diferencia de cuadrados',
+                'Olvidar el signo negativo en la fórmula',
+                'No simplificar la fracción final'
+            ],
+            correcta: 'Confundir la suma con el producto al elegir los factores',
+            explicacion: 'El error típico es elegir factores como $-6$ y $1$ (producto $6$ pero suma $-5$) sin verificar que la suma coincida con $b$.'
+        }
+    },
+
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 2 — Trinomio con c negativo',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización e identifica sus raíces.',
+        expresion: '$$x^2 + 5x - 24 = 0$$',
+        a: 1, b: 5, c: -24,
+        fase1: {
+            opciones: [
+                'Es un trinomio simple ($a = 1$), se factoriza directamente',
+                'Es un trinomio con $a \\neq 1$, requiere producto-suma',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio simple ($a = 1$), se factoriza directamente',
+            explicacion: 'Como $a = 1$, buscamos dos números que sumen $b = 5$ y multipliquen $c = -24$. Esos números son $8$ y $-3$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: -24, placeholder: 'Ej: -24' },
+                { id: 'n1', etiqueta: 'Número positivo:', correcta: 8, placeholder: 'Ej: 8' },
+                { id: 'n2', etiqueta: 'Número negativo:', correcta: -3, placeholder: 'Ej: -3' }
+            ],
+            pista: 'Buscamos dos números que sumen $5$ y multipliquen $-24$. Los signos deben ser opuestos. Prueba con $8$ y $-3$.',
+            explicacion: 'Producto $a \\cdot c = -24$. Los números son $8$ y $-3$ porque $8 + (-3) = 5$ y $8 \\cdot (-3) = -24$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(x+8)(x-3)', placeholder: 'Ej: (x+8)(x-3)' },
+                { id: 'r1', etiqueta: 'Raíz positiva $x_1 = $', correcta: 3, placeholder: 'Ej: 3' },
+                { id: 'r2', etiqueta: 'Raíz negativa $x_2 = $', correcta: -8, placeholder: 'Ej: -8' }
+            ],
+            pista: 'La factorización es $(x + 8)(x - 3) = 0$. Igualando cada factor a cero: $x = -8$ ó $x = 3$.',
+            explicacion: '$(x + 8)(x - 3) = 0 \\Rightarrow x = -8$ ó $x = 3$. Conjunto solución: $\\{-8, 3\\}$.'
+        },
+        fase4: {
+            opciones: [
+                'Confundir los signos al buscar los factores',
+                'No reconocer el trinomio cuadrado perfecto',
+                'Olvidar aplicar la fórmula general',
+                'No simplificar el resultado'
+            ],
+            correcta: 'Confundir los signos al buscar los factores',
+            explicacion: 'El error común es elegir $-8$ y $3$ (que suman $-5$) o dar solo el valor absoluto sin el signo.'
+        }
+    },
+
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 3 — Trinomio con factores positivos',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización e identifica sus raíces.',
+        expresion: '$$x^2 + 8x + 15 = 0$$',
+        a: 1, b: 8, c: 15,
+        fase1: {
+            opciones: [
+                'Es un trinomio simple ($a = 1$), se factoriza directamente',
+                'Es un trinomio con $a \\neq 1$, requiere producto-suma',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio simple ($a = 1$), se factoriza directamente',
+            explicacion: 'Como $a = 1$, buscamos dos números que sumen $b = 8$ y multipliquen $c = 15$. Esos números son $3$ y $5$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: 15, placeholder: 'Ej: 15' },
+                { id: 'n1', etiqueta: 'Número 1:', correcta: 5, placeholder: 'Ej: 5' },
+                { id: 'n2', etiqueta: 'Número 2:', correcta: 3, placeholder: 'Ej: 3' }
+            ],
+            pista: 'Ambos números deben ser positivos. Prueba con $5$ y $3$.',
+            explicacion: 'Producto $a \\cdot c = 15$. Los números son $5$ y $3$ porque $5 + 3 = 8$ y $5 \\cdot 3 = 15$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(x+5)(x+3)', placeholder: 'Ej: (x+5)(x+3)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $', correcta: -3, placeholder: 'Ej: -3' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: -5, placeholder: 'Ej: -5' }
+            ],
+            pista: 'La factorización es $(x + 5)(x + 3) = 0$. Igualando cada factor: $x = -5$ ó $x = -3$.',
+            explicacion: '$(x + 5)(x + 3) = 0 \\Rightarrow x = -5$ ó $x = -3$. Conjunto solución: $\\{-5, -3\\}$.'
+        },
+        fase4: {
+            opciones: [
+                'Confundir los signos al despejar las raíces',
+                'No factorizar correctamente el coeficiente $a$',
+                'No reconocer el trinomio cuadrado perfecto',
+                'No aplicar el teorema del producto cero'
+            ],
+            correcta: 'Confundir los signos al despejar las raíces',
+            explicacion: 'Con $(x + 5)(x + 3) = 0$, las raíces son negativas. El error común es dar $x = 5$ y $x = 3$ sin cambiar el signo.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 4 — Trinomio con a ≠ 1',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización por agrupación.',
+        expresion: '$$2x^2 + x - 6 = 0$$',
+        a: 2, b: 1, c: -6,
+        fase1: {
+            opciones: [
+                'Es un trinomio con $a \\neq 1$; usar producto-suma y agrupar',
+                'Es un trinomio simple ($a = 1$)',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio con $a \\neq 1$; usar producto-suma y agrupar',
+            explicacion: 'Como $a = 2 \\neq 1$, se aplica el método del producto-suma con $a \\cdot c = -12$ y suma $b = 1$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: -12, placeholder: 'Ej: -12' },
+                { id: 'n1', etiqueta: 'Número positivo:', correcta: 4, placeholder: 'Ej: 4' },
+                { id: 'n2', etiqueta: 'Número negativo:', correcta: -3, placeholder: 'Ej: -3' }
+            ],
+            pista: 'Buscamos dos números que sumen $1$ y multipliquen $-12$. Prueba con $4$ y $-3$.',
+            explicacion: 'Producto $a \\cdot c = 2 \\cdot (-6) = -12$. Los números son $4$ y $-3$ porque suman $1$ y multiplican $-12$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(2x-3)(x+2)', placeholder: 'Ej: (2x-3)(x+2)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $ (fracción o decimal)', correcta: '3/2', placeholder: 'Ej: 3/2' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: -2, placeholder: 'Ej: -2' }
+            ],
+            pista: 'Descompón: $2x^2 + 4x - 3x - 6 = 0$. Agrupa: $2x(x+2) - 3(x+2) = (2x-3)(x+2) = 0$.',
+            explicacion: '$(2x - 3)(x + 2) = 0 \\Rightarrow x = 3/2$ ó $x = -2$.'
+        },
+        fase4: {
+            opciones: [
+                'No encontrar los dos números cuyo producto sea $a \\cdot c$',
+                'No reconocer la diferencia de cuadrados',
+                'Confundir el signo de $b$ al sustituir',
+                'No simplificar la fracción'
+            ],
+            correcta: 'No encontrar los dos números cuyo producto sea $a \\cdot c$',
+            explicacion: 'El error típico es buscar factores de $c = -6$ en lugar de factores de $a \\cdot c = -12$. El producto-suma requiere el producto de $a$ y $c$.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 5 — Producto-suma con suma grande',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización por agrupación.',
+        expresion: '$$3x^2 + 11x + 10 = 0$$',
+        a: 3, b: 11, c: 10,
+        fase1: {
+            opciones: [
+                'Es un trinomio con $a \\neq 1$; usar producto-suma y agrupar',
+                'Es un trinomio simple ($a = 1$)',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio con $a \\neq 1$; usar producto-suma y agrupar',
+            explicacion: 'Como $a = 3 \\neq 1$, se aplica producto-suma con $a \\cdot c = 30$ y suma $b = 11$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: 30, placeholder: 'Ej: 30' },
+                { id: 'n1', etiqueta: 'Número mayor:', correcta: 6, placeholder: 'Ej: 6' },
+                { id: 'n2', etiqueta: 'Número menor:', correcta: 5, placeholder: 'Ej: 5' }
+            ],
+            pista: 'Buscamos dos números que sumen $11$ y multipliquen $30$. Prueba con $6$ y $5$.',
+            explicacion: 'Producto $a \\cdot c = 3 \\cdot 10 = 30$. Los números son $6$ y $5$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(3x+5)(x+2)', placeholder: 'Ej: (3x+5)(x+2)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $ (fracción o decimal)', correcta: '-5/3', placeholder: 'Ej: -5/3' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: -2, placeholder: 'Ej: -2' }
+            ],
+            pista: 'Descompón: $3x^2 + 6x + 5x + 10 = 0$. Agrupa: $3x(x+2) + 5(x+2) = (3x+5)(x+2) = 0$.',
+            explicacion: '$(3x + 5)(x + 2) = 0 \\Rightarrow x = -5/3$ ó $x = -2$.'
+        },
+        fase4: {
+            opciones: [
+                'Elegir factores que sumen $b$ pero no multipliquen $a \\cdot c$',
+                'No reconocer el trinomio cuadrado perfecto',
+                'Olvidar cambiar el signo al despejar',
+                'No simplificar el resultado'
+            ],
+            correcta: 'Elegir factores que sumen $b$ pero no multipliquen $a \\cdot c$',
+            explicacion: 'El error típico es elegir $10$ y $1$ (suman $11$ pero multiplican $10$) en lugar de $6$ y $5$ (suman $11$ y multiplican $30$).'
+        }
+    },
+
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 6 — Factorización con factor común',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización por agrupación.',
+        expresion: '$$6x^2 + 10x - 4 = 0$$',
+        a: 6, b: 10, c: -4,
+        fase1: {
+            opciones: [
+                'Es un trinomio con $a \\neq 1$; conviene simplificar primero entre 2',
+                'Es un trinomio simple ($a = 1$)',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio con $a \\neq 1$; conviene simplificar primero entre 2',
+            explicacion: 'Se puede dividir toda la ecuación entre 2: $3x^2 + 5x - 2 = 0$. Es más simple factorizar así.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c$ (tras simplificar) = $', correcta: -6, placeholder: 'Ej: -6' },
+                { id: 'n1', etiqueta: 'Número positivo:', correcta: 6, placeholder: 'Ej: 6' },
+                { id: 'n2', etiqueta: 'Número negativo:', correcta: -1, placeholder: 'Ej: -1' }
+            ],
+            pista: 'Al simplificar entre 2: $3x^2 + 5x - 2 = 0$. Producto $a \\cdot c = -6$. Números que suman $5$ y multiplican $-6$: $6$ y $-1$.',
+            explicacion: 'Tras simplificar, $a \\cdot c = 3 \\cdot (-2) = -6$. Los números son $6$ y $-1$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(3x-1)(x+2)', placeholder: 'Ej: (3x-1)(x+2)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $ (fracción o decimal)', correcta: '1/3', placeholder: 'Ej: 1/3' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: -2, placeholder: 'Ej: -2' }
+            ],
+            pista: 'Descompón: $3x^2 + 6x - x - 2 = 0$. Agrupa: $3x(x+2) - 1(x+2) = (3x-1)(x+2) = 0$.',
+            explicacion: '$(3x - 1)(x + 2) = 0 \\Rightarrow x = 1/3$ ó $x = -2$.'
+        },
+        fase4: {
+            opciones: [
+                'No simplificar la ecuación entre el factor común antes de factorizar',
+                'No reconocer la diferencia de cuadrados',
+                'Confundir los signos al agrupar',
+                'No aplicar el teorema del producto cero'
+            ],
+            correcta: 'No simplificar la ecuación entre el factor común antes de factorizar',
+            explicacion: 'Aunque el resultado final es el mismo, simplificar entre 2 facilita el proceso: $6x^2 + 10x - 4 = 2(3x^2 + 5x - 2) = 0$.'
+        }
+    },
+
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 7 — Factorización con a negativo',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización por agrupación.',
+        expresion: '$$-2x^2 - x + 6 = 0$$',
+        a: -2, b: -1, c: 6,
+        fase1: {
+            opciones: [
+                'Es un trinomio con $a < 0$; conviene factorizar el signo negativo primero',
+                'Es un trinomio simple ($a = 1$)',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar; usar la fórmula general'
+            ],
+            correcta: 'Es un trinomio con $a < 0$; conviene factorizar el signo negativo primero',
+            explicacion: 'Se puede reescribir como $-(2x^2 + x - 6) = 0$, que equivale a $2x^2 + x - 6 = 0$. Es más fácil factorizar así.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c$ (tras factorizar $-$) = $', correcta: -12, placeholder: 'Ej: -12' },
+                { id: 'n1', etiqueta: 'Número positivo:', correcta: 4, placeholder: 'Ej: 4' },
+                { id: 'n2', etiqueta: 'Número negativo:', correcta: -3, placeholder: 'Ej: -3' }
+            ],
+            pista: 'Al factorizar el signo: $2x^2 + x - 6 = 0$. Producto $a \\cdot c = -12$. Números que suman $1$ y multiplican $-12$: $4$ y $-3$.',
+            explicacion: 'Tras factorizar el signo: $2x^2 + x - 6 = 0$. Producto $a \\cdot c = -12$. Los números son $4$ y $-3$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización (sin el signo externo):', correcta: '(2x-3)(x+2)', placeholder: 'Ej: (2x-3)(x+2)' },
+                { id: 'r1', etiqueta: 'Raíz mayor $x_1 = $ (fracción o decimal)', correcta: '3/2', placeholder: 'Ej: 3/2' },
+                { id: 'r2', etiqueta: 'Raíz menor $x_2 = $', correcta: -2, placeholder: 'Ej: -2' }
+            ],
+            pista: 'Descompón: $2x^2 + 4x - 3x - 6 = 0$. Agrupa: $2x(x+2) - 3(x+2) = (2x-3)(x+2) = 0$. El signo negativo externo no altera las raíces.',
+            explicacion: 'Factorizando $-$: $-(2x - 3)(x + 2) = 0 \\Rightarrow x = 3/2$ ó $x = -2$.'
+        },
+        fase4: {
+            opciones: [
+                'No factorizar el signo negativo antes de aplicar producto-suma',
+                'No reconocer el trinomio cuadrado perfecto',
+                'Confundir el denominador $2a$',
+                'Olvidar el signo $\\pm$'
+            ],
+            correcta: 'No factorizar el signo negativo antes de aplicar producto-suma',
+            explicacion: 'Si no se factoriza el signo negativo, el producto-suma se complica. Al factorizar $-$: $-(2x^2 + x - 6) = 0$, el análisis es más simple.'
+        }
+    },
+
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 8 — Trinomio cuadrado perfecto',
+        enunciado: 'Resuelve la ecuación cuadrática por factorización e identifica sus raíces.',
+        expresion: '$$x^2 - 8x + 16 = 0$$',
+        a: 1, b: -8, c: 16,
+        fase1: {
+            opciones: [
+                'Es un trinomio cuadrado perfecto: $(x - 4)^2 = 0$',
+                'Es un trinomio simple con raíces distintas',
+                'Es una diferencia de cuadrados',
+                'No se puede factorizar'
+            ],
+            correcta: 'Es un trinomio cuadrado perfecto: $(x - 4)^2 = 0$',
+            explicacion: 'Como $a = 1$ y $b = -8$: mitad de $b$ es $-4$, elevado al cuadrado da $16 = c$. Es un trinomio cuadrado perfecto.'
+        },
+        fase2: {
+            campos: [
+                { id: 'p', etiqueta: 'Producto $a \\cdot c = $', correcta: 16, placeholder: 'Ej: 16' },
+                { id: 'n1', etiqueta: 'Número 1 (raíz doble):', correcta: -4, placeholder: 'Ej: -4' },
+                { id: 'n2', etiqueta: 'Número 2 (raíz doble):', correcta: -4, placeholder: 'Ej: -4' }
+            ],
+            pista: 'Los dos números son iguales porque es un cuadrado perfecto. Ambos son $-4$ porque $-4 + (-4) = -8$ y $(-4) \\cdot (-4) = 16$.',
+            explicacion: 'Producto $a \\cdot c = 16$. Los dos números son $-4$ (raíz doble).'
+        },
+        fase3: {
+            campos: [
+                { id: 'fact', etiqueta: 'Factorización:', correcta: '(x-4)(x-4)', placeholder: 'Ej: (x-4)(x-4) o (x-4)^2' },
+                { id: 'r1', etiqueta: 'Raíz doble $x_1 = $', correcta: 4, placeholder: 'Ej: 4' },
+                { id: 'r2', etiqueta: 'Raíz doble $x_2 = $', correcta: 4, placeholder: 'Ej: 4' }
+            ],
+            pista: 'La factorización es $(x - 4)^2 = 0$, que equivale a $(x - 4)(x - 4) = 0$. La raíz es $x = 4$ (doble).',
+            explicacion: '$(x - 4)^2 = 0 \\Rightarrow x = 4$. Como es cuadrado perfecto, la raíz es doble: $x_1 = x_2 = 4$.'
+        },
+        fase4: {
+            opciones: [
+                'No reconocer el trinomio cuadrado perfecto',
+                'Confundir la suma con el producto',
+                'Olvidar la fórmula general',
+                'No simplificar la fracción'
+            ],
+            correcta: 'No reconocer el trinomio cuadrado perfecto',
+            explicacion: 'El error típico es intentar factorizar como dos raíces distintas y dar valores diferentes en lugar de reconocer la raíz doble.'
+        }
+    }
+];
+
+// =========================================
+// ESTADO GLOBAL
+// =========================================
+var estado = {
+    casoActual: 0,
+    completados: [],
+    puntaje: 0,
+    intentosFase1: 0,
+    intentosFase2: 0,
+    intentosFase3: 0,
+    intentosFase4: 0
+};
+
+var MAX_INTENTOS = 3;
+var TOL = 0.02;
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function normalizarFactorizacion(texto) {
+    return String(texto)
+        .trim()
+        .replace(/\s+/g, '')
+        .replace(/\*/g, '')
+        .replace(/·/g, '')
+        .replace(/²/g, '^2');
+}
+
+function verificarFactorizacion(usuario, correcta) {
+    var u = normalizarFactorizacion(usuario);
+    var c = normalizarFactorizacion(correcta);
+
+    if (u === c) return true;
+
+    var regexCuadrado = /^\(([^)]+)\)\^2$/;
+    var matchU = u.match(regexCuadrado);
+    if (matchU) {
+        var uExpandido = '(' + matchU[1] + ')(' + matchU[1] + ')';
+        if (uExpandido === c) return true;
+    }
+    var matchC = c.match(regexCuadrado);
+    if (matchC) {
+        var cExpandido = '(' + matchC[1] + ')(' + matchC[1] + ')';
+        if (u === cExpandido) return true;
+    }
+
+    var regexFactores = /^\(([^)]+)\)\(([^)]+)\)$/;
+    var matchFactorU = u.match(regexFactores);
+    var matchFactorC = c.match(regexFactores);
+    if (matchFactorU && matchFactorC) {
+        var u1 = matchFactorU[1], u2 = matchFactorU[2];
+        var c1 = matchFactorC[1], c2 = matchFactorC[2];
+        if ((u1 === c1 && u2 === c2) || (u1 === c2 && u2 === c1)) return true;
+    }
+
+    return false;
+}
+
+function parsearNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    texto = String(texto).trim().replace(',', '.');
+    if (texto === '') return NaN;
+    if (texto.indexOf('/') !== -1) {
+        var partes = texto.split('/');
+        if (partes.length !== 2) return NaN;
+        var num = parseFloat(partes[0]);
+        var den = parseFloat(partes[1]);
+        if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+        return num / den;
+    }
+    var n = parseFloat(texto);
+    return isNaN(n) ? NaN : n;
+}
+
+function verificarAproximado(valor, correcto, tolerancia) {
+    tolerancia = tolerancia || TOL;
+    return Math.abs(valor - correcto) < tolerancia;
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function actualizarContador(idContador, intentos) {
+    var el = document.getElementById(idContador);
+    if (intentos >= MAX_INTENTOS) {
+        el.textContent = 'Sin intentos restantes';
+    } else {
+        el.textContent = 'Intento ' + (intentos + 1) + ' de ' + MAX_INTENTOS;
+    }
+}
+
+// =========================================
+// CARGA DE CASO
+// =========================================
+function cargarCaso(indice) {
+    estado.casoActual = indice;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    var caso = casos[indice];
+
+    document.getElementById('numeroCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('indicadorCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('progresoTexto').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+
+    var nivelEl = document.getElementById('nivelCaso');
+    nivelEl.className = 'nivel-caso ' + caso.nivel;
+    nivelEl.textContent = caso.nivel.charAt(0).toUpperCase() + caso.nivel.slice(1);
+
+    document.getElementById('etiquetaCaso').textContent = caso.etiqueta;
+    document.getElementById('textoEnunciado').textContent = caso.enunciado;
+    document.getElementById('expresionCaso').innerHTML = caso.expresion;
+
+    document.getElementById('fase1').className = 'fase';
+    document.getElementById('fase2').className = 'fase bloqueada';
+    document.getElementById('fase3').className = 'fase bloqueada';
+    document.getElementById('fase4').className = 'fase bloqueada';
+
+    ['feedback1','feedback2','feedback3','feedback4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'feedback';
+        el.innerHTML = '';
+    });
+
+    ['btnReintentar1','btnReintentar4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
+
+    ['contadorFase1','contadorFase2','contadorFase3','contadorFase4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
+
+    document.getElementById('inputsFase2').innerHTML = '';
+    document.getElementById('inputsFase3').innerHTML = '';
+    document.getElementById('opcionesFase4').innerHTML = '';
+
+    renderizarOpciones('opcionesFase1', caso.fase1.opciones, function(op, btn) {
+        verificarFase1(op, btn);
+    });
+
+    document.getElementById('btnAnterior').disabled = (indice === 0);
+    document.getElementById('btnSiguiente').disabled = true;
+    document.getElementById('btnSiguiente').textContent = (indice === casos.length - 1) ? 'Ver resultado final' : 'Siguiente caso →';
+
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+
+    renderMath(document.getElementById('tarjetaCaso'));
+}
+
+function renderizarOpciones(contenedorId, opciones, onSelect) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    opciones.forEach(function(op, idx) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'opcion-item';
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + op.replace(/\$/g, ''));
+        btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
+        btn.dataset.opcion = op;
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            onSelect(op, this);
+        });
+        contenedor.appendChild(btn);
+    });
+    renderMath(contenedor);
+}
+
+function renderizarInputs(contenedorId, campos) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    campos.forEach(function(campo) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'input-wrapper';
+        var placeholder = campo.placeholder || 'Tu respuesta';
+        var ariaLabel = campo.etiqueta
+            .replace(/\$/g, '')
+            .replace(/\\cdot/g, '×')
+            .replace(/\\neq/g, 'distinto de')
+            .replace(/\\[a-z]+/g, '')
+            .replace(/[{}]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+        wrapper.innerHTML = '<label for="' + contenedorId + '-' + campo.id + '">' + campo.etiqueta + '</label>' +
+            '<input type="text" id="' + contenedorId + '-' + campo.id + '" placeholder="' + placeholder + '" autocomplete="off" ' +
+            'inputmode="text" aria-label="' + ariaLabel + '">';
+        contenedor.appendChild(wrapper);
+    });
+    renderMath(contenedor);
+}
+
+// =========================================
+// FASE 1
+// =========================================
+function verificarFase1(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback1');
+    var esCorrecta = (opcion === caso.fase1.correcta);
+
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase1.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase1.explicacion;
+        document.getElementById('btnReintentar1').classList.remove('visible');
+        document.getElementById('fase2').classList.remove('bloqueada');
+        renderizarInputs('inputsFase2', caso.fase2.campos);
+        document.getElementById('contadorFase2').classList.add('visible');
+        actualizarContador('contadorFase2', 0);
+    } else {
+        estado.intentosFase1++;
+        actualizarContador('contadorFase1', estado.intentosFase1);
+        document.getElementById('contadorFase1').classList.add('visible');
+
+        if (estado.intentosFase1 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. La respuesta correcta es <strong>' + caso.fase1.correcta + '</strong>. ' + caso.fase1.explicacion;
+            document.getElementById('btnReintentar1').classList.remove('visible');
+            document.getElementById('fase2').classList.remove('bloqueada');
+            renderizarInputs('inputsFase2', caso.fase2.campos);
+            document.getElementById('contadorFase2').classList.add('visible');
+            actualizarContador('contadorFase2', 0);
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase1) + ' intento(s).';
+            document.getElementById('btnReintentar1').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar1').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback1');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// FASE 2
+// =========================================
+document.getElementById('pistaFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    var todosCorrectos = true;
+    var camposVacios = [];
+    var camposNoNumericos = [];
+
+    caso.fase2.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase2-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        var num = parsearNumero(valor);
+        if (isNaN(num)) {
+            camposNoNumericos.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(num, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (camposNoNumericos.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Algunos campos no contienen un número válido.';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Números clave correctos!</strong> ' + caso.fase2.explicacion;
+        renderMath(fb);
+        document.getElementById('fase3').classList.remove('bloqueada');
+        renderizarInputs('inputsFase3', caso.fase3.campos);
+        document.getElementById('contadorFase3').classList.add('visible');
+        actualizarContador('contadorFase3', 0);
+        return;
+    }
+
+    estado.intentosFase2++;
+    actualizarContador('contadorFase2', estado.intentosFase2);
+
+    if (estado.intentosFase2 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase2) + ' intento(s). Usa 💡 para una pista.';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 3
+// =========================================
+document.getElementById('pistaFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    var todosCorrectos = true;
+    var camposVacios = [];
+
+    caso.fase3.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase3-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (campo.id === 'fact') {
+            if (!verificarFactorizacion(valor, campo.correcta)) {
+                todosCorrectos = false;
+            }
+            return;
+        }
+        var num = parsearNumero(valor);
+        if (isNaN(num)) {
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(num, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Factorización y raíces correctas!</strong> ' + caso.fase3.explicacion;
+        renderMath(fb);
+        document.getElementById('fase4').classList.remove('bloqueada');
+        renderizarOpciones('opcionesFase4', caso.fase4.opciones, function(op, b) {
+            verificarFase4(op, b);
+        });
+        return;
+    }
+
+    estado.intentosFase3++;
+    actualizarContador('contadorFase3', estado.intentosFase3);
+
+    if (estado.intentosFase3 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase3) + ' intento(s).';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 4
+// =========================================
+function verificarFase4(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback4');
+    var esCorrecta = (opcion === caso.fase4.correcta);
+
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase4.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    var btnSig = document.getElementById('btnSiguiente');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Excelente!</strong> ' + caso.fase4.explicacion;
+        document.getElementById('btnReintentar4').classList.remove('visible');
+        if (!estado.completados[estado.casoActual]) {
+            estado.completados[estado.casoActual] = true;
+            actualizarProgreso();
+        }
+        btnSig.disabled = false;
+        btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final →' : 'Siguiente caso →';
+    } else {
+        estado.intentosFase4++;
+        actualizarContador('contadorFase4', estado.intentosFase4);
+        document.getElementById('contadorFase4').classList.add('visible');
+
+        if (estado.intentosFase4 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. El error más común es: <strong>' + caso.fase4.correcta + '</strong>. ' + caso.fase4.explicacion +
+                '<br><br><em>Puedes continuar, pero este caso no se marcará como completado.</em>';
+            document.getElementById('btnReintentar4').classList.remove('visible');
+            btnSig.disabled = false;
+            btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final (sin completar) →' : 'Siguiente caso (sin completar) →';
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase4) + ' intento(s).';
+            document.getElementById('btnReintentar4').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar4').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback4');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// PROGRESO
+// =========================================
+function actualizarProgreso() {
+    var total = casos.length;
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    estado.puntaje = completados;
+    document.getElementById('progresoFill').style.width = (completados / total * 100) + '%';
+    document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
+}
+
+// =========================================
+// NAVEGACIÓN
+// =========================================
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (estado.casoActual > 0) {
+        cargarCaso(estado.casoActual - 1);
+    }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', function() {
+    if (estado.casoActual < casos.length - 1) {
+        cargarCaso(estado.casoActual + 1);
+    } else {
+        mostrarPantallaFinal();
+    }
+});
+
+// =========================================
+// PANTALLA FINAL
+// =========================================
+function mostrarPantallaFinal() {
+    document.getElementById('tarjetaCaso').style.display = 'none';
+    var pantalla = document.getElementById('pantallaFinal');
+    pantalla.classList.add('visible');
+
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    var total = casos.length;
+    document.getElementById('puntajeFinal').textContent = completados + ' / ' + total;
+
+    var medalla = document.getElementById('medallaFinal');
+    var mensaje = document.getElementById('mensajeFinal');
+
+    if (completados === total) {
+        medalla.textContent = '🏆';
+        mensaje.textContent = '¡Detective experto! Resolviste los 8 casos correctamente, dominaste el método del producto-suma y aplicaste correctamente la factorización por agrupación. Dominas la resolución de ecuaciones cuadráticas por factorización del Módulo 10.';
+    } else if (completados >= total * 0.7) {
+        medalla.textContent = '🥈';
+        mensaje.textContent = '¡Buen trabajo, detective! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del método de factorización por agrupación y la identificación de los números clave.';
+    } else {
+        medalla.textContent = '🥉';
+        mensaje.textContent = 'Continúa entrenando, detective. Te recomendamos repasar el método del producto-suma, la factorización por agrupación y el teorema del producto cero antes de reintentar los casos.';
+    }
+    renderMath(pantalla);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =========================================
+// REINICIAR
+// =========================================
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+    estado.casoActual = 0;
+    estado.completados = new Array(casos.length).fill(false);
+    estado.puntaje = 0;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    actualizarProgreso();
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+    cargarCaso(0);
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+estado.completados = new Array(casos.length).fill(false);
+cargarCaso(0);
+actualizarProgreso();
+
+</script>
+
+</body>
+</html>

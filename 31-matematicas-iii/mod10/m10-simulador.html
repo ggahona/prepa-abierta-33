@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 10: Métodos de Solución para una Ecuación Cuadrática</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.05rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration — SOLO delimitadores $ ... $ y $$ ... $$ -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 10</h1>
+            <p>Métodos de Solución para una Ecuación Cuadrática</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 10
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿En qué consiste el método gráfico para resolver una ecuación cuadrática $ax^2 + bx + c = 0$?",
+                options: [
+                    { text: "En tabular valores al azar hasta encontrar uno que anule la ecuación.", correct: false },
+                    { text: "En determinar la abscisa de los puntos donde la parábola interseca o es tangente al eje $X$.", correct: true },
+                    { text: "En calcular el vértice de la parábola y reportarlo como solución.", correct: false },
+                    { text: "En sumar y restar los coeficientes hasta obtener cero.", correct: false }
+                ],
+                feedback: "El método gráfico busca las abscisas de los puntos donde la gráfica de $y = ax^2 + bx + c$ corta o toca al eje $X$. Esas abscisas son las raíces o ceros. Su desventaja es que solo da valores aproximados cuando las raíces no son enteras."
+            },
+            {
+                id: 2,
+                text: "¿En qué teorema se basa el método de factorización para resolver ecuaciones cuadráticas?",
+                options: [
+                    { text: "En el teorema de Pitágoras.", correct: false },
+                    { text: "En la propiedad del producto cero: si $a \\cdot b = 0$, entonces $a = 0$ ó $b = 0$.", correct: true },
+                    { text: "En la fórmula general de la ecuación cuadrática.", correct: false },
+                    { text: "En el teorema fundamental del álgebra únicamente.", correct: false }
+                ],
+                feedback: "El método de factorización se basa en el teorema del producto cero: si el producto de dos o más factores es cero, entonces al menos uno de los factores debe ser cero. Esto permite igualar cada factor a cero y resolver las ecuaciones lineales resultantes."
+            },
+            {
+                id: 3,
+                text: "Resuelve por factorización la ecuación $x^2 - 5x + 6 = 0$.",
+                options: [
+                    { text: "$x = 3$ ó $x = 2$", correct: true },
+                    { text: "$x = -3$ ó $x = -2$", correct: false },
+                    { text: "$x = 6$ ó $x = 1$", correct: false },
+                    { text: "$x = 5$ ó $x = 6$", correct: false }
+                ],
+                feedback: "Factorizando: $x^2 - 5x + 6 = (x - 3)(x - 2) = 0$. Igualando cada factor a cero: $x - 3 = 0 \\Rightarrow x = 3$ ó $x - 2 = 0 \\Rightarrow x = 2$. El conjunto solución es $\\{3, 2\\}$."
+            },
+            {
+                id: 4,
+                text: "Al factorizar por agrupación la ecuación $2x^2 + x - 6 = 0$, ¿cuál es la factorización correcta?",
+                options: [
+                    { text: "$(2x - 3)(x + 2) = 0$", correct: true },
+                    { text: "$(2x + 3)(x - 2) = 0$", correct: false },
+                    { text: "$(2x - 1)(x + 6) = 0$", correct: false },
+                    { text: "$(2x + 1)(x - 6) = 0$", correct: false }
+                ],
+                feedback: "Buscamos dos números cuyo producto sea $2 \\cdot (-6) = -12$ y cuya suma sea $1$: son $+4$ y $-3$. Descomponemos: $2x^2 + 4x - 3x - 6 = 0$. Agrupamos: $2x(x + 2) - 3(x + 2) = (2x - 3)(x + 2) = 0$. Soluciones: $x = 3/2$ ó $x = -2$."
+            },
+            {
+                id: 5,
+                text: "¿Cuál es la fórmula general para resolver una ecuación cuadrática $ax^2 + bx + c = 0$?",
+                options: [
+                    { text: "$x = \\dfrac{b \\pm \\sqrt{b^2 - 4ac}}{2a}$", correct: false },
+                    { text: "$x = \\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$", correct: true },
+                    { text: "$x = \\dfrac{-b \\pm \\sqrt{b^2 + 4ac}}{2a}$", correct: false },
+                    { text: "$x = \\dfrac{b \\pm \\sqrt{b^2 - 4ac}}{a}$", correct: false }
+                ],
+                feedback: "La fórmula general es $x = \\dfrac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$. Los errores más comunes son: olvidar el signo negativo antes de $b$, olvidar el signo $\\pm$, o usar solo $a$ en lugar de $2a$ en el denominador."
+            },
+            {
+                id: 6,
+                text: "Resuelve con la fórmula general la ecuación $x^2 + 3x - 10 = 0$.",
+                options: [
+                    { text: "$x = 2$ ó $x = -5$", correct: true },
+                    { text: "$x = -2$ ó $x = 5$", correct: false },
+                    { text: "$x = 1$ ó $x = -10$", correct: false },
+                    { text: "$x = 3$ ó $x = -10$", correct: false }
+                ],
+                feedback: "Con $a = 1$, $b = 3$, $c = -10$: $x = \\dfrac{-3 \\pm \\sqrt{9 + 40}}{2} = \\dfrac{-3 \\pm 7}{2}$. Entonces $x_1 = 2$ y $x_2 = -5$. El conjunto solución es $\\{2, -5\\}$."
+            },
+            {
+                id: 7,
+                text: "Si el discriminante $b^2 - 4ac$ es igual a cero, ¿cuál es la naturaleza de las raíces de la ecuación cuadrática?",
+                options: [
+                    { text: "Dos raíces reales distintas.", correct: false },
+                    { text: "Una raíz real doble (las dos raíces coinciden).", correct: true },
+                    { text: "Dos raíces complejas conjugadas.", correct: false },
+                    { text: "Ninguna raíz real ni compleja.", correct: false }
+                ],
+                feedback: "Cuando $b^2 - 4ac = 0$, la raíz cuadrada se anula y las dos soluciones coinciden en un mismo valor: $x = \\dfrac{-b}{2a}$. Esto se conoce como raíz doble. Geométricamente, la parábola es tangente al eje $X$."
+            },
+            {
+                id: 8,
+                text: "Resuelve con la fórmula general la ecuación $5x^2 - 4x + 1 = 0$.",
+                options: [
+                    { text: "$x = \\dfrac{2 + i}{5}$ ó $x = \\dfrac{2 - i}{5}$", correct: true },
+                    { text: "$x = \\dfrac{4 + 2i}{10}$ ó $x = \\dfrac{4 - 2i}{10}$", correct: false },
+                    { text: "$x = 2 + i$ ó $x = 2 - i$", correct: false },
+                    { text: "$x = \\dfrac{-2 + i}{5}$ ó $x = \\dfrac{-2 - i}{5}$", correct: false }
+                ],
+                feedback: "Con $a = 5$, $b = -4$, $c = 1$: $x = \\dfrac{4 \\pm \\sqrt{16 - 20}}{10} = \\dfrac{4 \\pm \\sqrt{-4}}{10} = \\dfrac{4 \\pm 2i}{10}$. Simplificando entre 2: $x = \\dfrac{2 \\pm i}{5}$. El conjunto solución es $\\left\\{\\dfrac{2+i}{5}, \\dfrac{2-i}{5}\\right\\}$."
+            },
+            {
+                id: 9,
+                text: "¿Cómo se puede factorizar la ecuación $x^2 + 4 = 0$ en el conjunto de los números complejos?",
+                options: [
+                    { text: "$(x - 4)(x + 1) = 0$", correct: false },
+                    { text: "$(x - 2i)(x + 2i) = 0$", correct: true },
+                    { text: "$(x - 4i)(x + 4i) = 0$", correct: false },
+                    { text: "No se puede factorizar de ninguna manera.", correct: false }
+                ],
+                feedback: "Recordando que $i^2 = -1$, se puede factorizar como diferencia de cuadrados usando $i$: $x^2 + 4 = x^2 - (2i)^2 = (x - 2i)(x + 2i) = 0$. Las raíces son $x = 2i$ y $x = -2i$."
+            },
+            {
+                id: 10,
+                text: "Resuelve con la fórmula general la ecuación $3x^2 + 4x + 2 = 0$ y expresa la solución en la forma $a + bi$.",
+                options: [
+                    { text: "$x = \\dfrac{-2 + i\\sqrt{2}}{3}$ ó $x = \\dfrac{-2 - i\\sqrt{2}}{3}$", correct: true },
+                    { text: "$x = \\dfrac{-4 + 2i\\sqrt{2}}{6}$ ó $x = \\dfrac{-4 - 2i\\sqrt{2}}{6}$", correct: false },
+                    { text: "$x = -2 + i\\sqrt{2}$ ó $x = -2 - i\\sqrt{2}$", correct: false },
+                    { text: "$x = \\dfrac{2 + i\\sqrt{2}}{3}$ ó $x = \\dfrac{2 - i\\sqrt{2}}{3}$", correct: false }
+                ],
+                feedback: "Con $a = 3$, $b = 4$, $c = 2$: $x = \\dfrac{-4 \\pm \\sqrt{16 - 24}}{6} = \\dfrac{-4 \\pm \\sqrt{-8}}{6}$. Simplificando: $\\sqrt{-8} = 2i\\sqrt{2}$, entonces $x = \\dfrac{-4 \\pm 2i\\sqrt{2}}{6}$. Simplificando entre 2: $x = \\dfrac{-2 \\pm i\\sqrt{2}}{3}$."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('quizView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('quizView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 10 sobre los métodos gráfico, de factorización y de fórmula general para resolver ecuaciones cuadráticas, incluyendo raíces reales, dobles y complejas.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de los métodos de solución de ecuaciones cuadráticas. Repasa los detalles sobre el método de factorización por agrupación y el manejo de raíces complejas en la fórmula general para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 10 (método gráfico, factorización por agrupación, fórmula general $x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}$, discriminante y su relación con la naturaleza de las raíces, así como raíces complejas) antes de intentar nuevamente.";
+            }
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('resultsView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radar de Módulos | Matemáticas III</title>
+    <title>Visualizador: Módulo y Regiones del Plano Complejo | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -418,7 +418,7 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Radar de Módulos</h1>
+        <h1>Visualizador: Módulo y Regiones del Plano Complejo</h1>
         <p>Visualizador de correspondencias | Matemáticas III</p>
     </header>
 
@@ -444,53 +444,56 @@
             </div>
 
             <div class="seccion-slider" id="grupo-r2" style="display:none;">
-                <label>Radio exterior $r_2$: <span class="valor-slider" id="val-r2">8</span></label>
+                <label for="slider-r2">Radio exterior $r_2$: <span class="valor-slider" id="val-r2">8</span></label>
                 <input type="range" id="slider-r2" min="0" max="10" step="0.5" value="8" aria-label="Radio exterior para corona">
             </div>
 
             <h3>Región a visualizar</h3>
-            <div class="seccion-regiones">
+            <div class="seccion-regiones" role="radiogroup" aria-label="Tipo de región a visualizar">
                 <div class="titulo-region">Selecciona el tipo de región</div>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="circunferencia">
+                <label class="opcion-region" for="reg-circunferencia">
+                    <input type="radio" name="region" id="reg-circunferencia" value="circunferencia">
                     $|z| = r$ (circunferencia)
                 </label>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="disco-cerrado" checked>
+                <label class="opcion-region" for="reg-disco-cerrado">
+                    <input type="radio" name="region" id="reg-disco-cerrado" value="disco-cerrado" checked>
                     $|z| \leq r$ (disco cerrado)
                 </label>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="disco-abierto">
+                <label class="opcion-region" for="reg-disco-abierto">
+                    <input type="radio" name="region" id="reg-disco-abierto" value="disco-abierto">
                     $|z| < r$ (disco abierto)
                 </label>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="exterior-cerrado">
+                <label class="opcion-region" for="reg-exterior-cerrado">
+                    <input type="radio" name="region" id="reg-exterior-cerrado" value="exterior-cerrado">
                     $|z| \geq r$ (exterior cerrado)
                 </label>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="exterior-abierto">
+                <label class="opcion-region" for="reg-exterior-abierto">
+                    <input type="radio" name="region" id="reg-exterior-abierto" value="exterior-abierto">
                     $|z| > r$ (exterior abierto)
                 </label>
-                <label class="opcion-region">
-                    <input type="radio" name="region" value="corona">
+                <label class="opcion-region" for="reg-corona">
+                    <input type="radio" name="region" id="reg-corona" value="corona">
                     Corona: $r_1 \leq |z| \leq r_2$
                 </label>
             </div>
 
             <h3>Visualización</h3>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-triangulo" checked> Mostrar triángulo rectángulo
+            <label class="checkbox-linea" for="chk-triangulo">
+                <input type="checkbox" id="chk-triangulo" checked aria-label="Mostrar triángulo rectángulo">
+                Mostrar triángulo rectángulo
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-proyecciones" checked> Mostrar proyecciones de $z$
+            <label class="checkbox-linea" for="chk-proyecciones">
+                <input type="checkbox" id="chk-proyecciones" checked aria-label="Mostrar proyecciones de z">
+                Mostrar proyecciones de $z$
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-etiquetas" checked> Mostrar etiquetas de valores
+            <label class="checkbox-linea" for="chk-etiquetas">
+                <input type="checkbox" id="chk-etiquetas" checked aria-label="Mostrar etiquetas de valores">
+                Mostrar etiquetas de valores
             </label>
 
             <h3>Zoom del plano</h3>
             <div class="seccion-slider">
-                <label>Escala: <span class="valor-slider" id="val-zoom">22</span> px / unidad</label>
+                <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">22</span> px / unidad</label>
                 <input type="range" id="slider-zoom" min="10" max="40" step="1" value="22" aria-label="Zoom del plano">
             </div>
 
@@ -532,7 +535,7 @@
                 </div>
             </div>
 
-            <div class="panel-info">
+            <div class="panel-info" role="status" aria-live="polite">
                 <h3>📊 Propiedades de $z$ y la región</h3>
                 <table class="tabla-info">
                     <tr>
@@ -764,7 +767,6 @@ function dibujarRegion() {
     switch (estado.region) {
         case 'circunferencia':
             if (rPx < 1) {
-                // Radio 0: dibujar solo un punto en el origen
                 ctx.fillStyle = COLOR_REGION_BORDE;
                 ctx.beginPath();
                 ctx.arc(centro.px, centro.py, 5, 0, 2 * Math.PI);
@@ -841,20 +843,17 @@ function dibujarRegion() {
             var r2Px = r2 * estado.zoom;
 
             if (Math.abs(r1 - r2) < 1e-9) {
-                // r1 = r2: la corona se degenera en una circunferencia
                 ctx.strokeStyle = COLOR_REGION_BORDE;
                 ctx.lineWidth = 3;
                 ctx.beginPath();
                 ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
                 ctx.stroke();
             } else {
-                // Relleno de la corona
                 ctx.fillStyle = COLOR_REGION;
                 ctx.beginPath();
                 ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
                 ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI, true);
                 ctx.fill('evenodd');
-                // Fronteras
                 ctx.strokeStyle = COLOR_REGION_BORDE;
                 ctx.lineWidth = 2.5;
                 ctx.beginPath();
@@ -864,7 +863,6 @@ function dibujarRegion() {
                 ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
                 ctx.stroke();
             }
-            // Etiquetas r1 y r2 sobre el eje real
             ctx.font = 'bold 12px Segoe UI, sans-serif';
             ctx.fillStyle = COLOR_REGION_BORDE;
             ctx.textAlign = 'left';
@@ -934,7 +932,7 @@ function dibujarVector(z, color, etiqueta, grosor) {
     ctx.fillStyle = color;
     ctx.fill();
 
-    // Etiqueta con fondo blanco semitransparente para mejor legibilidad
+    // Etiqueta con fondo blanco
     if (etiqueta && estado.mostrar.etiquetas) {
         ctx.font = 'bold 13px Segoe UI, sans-serif';
         var anchoTexto = ctx.measureText(etiqueta).width;
@@ -959,19 +957,16 @@ function dibujarTrianguloRectangulo() {
     ctx.strokeStyle = '#5b7fa3';
     ctx.lineWidth = 2;
 
-    // Cateto horizontal (a)
     ctx.beginPath();
     ctx.moveTo(origen.px, origen.py);
     ctx.lineTo(catetoA.px, catetoA.py);
     ctx.stroke();
 
-    // Cateto vertical (b)
     ctx.beginPath();
     ctx.moveTo(catetoA.px, catetoA.py);
     ctx.lineTo(puntoZ.px, puntoZ.py);
     ctx.stroke();
 
-    // Hipotenusa punteada
     ctx.strokeStyle = COLOR_MODULO;
     ctx.setLineDash([5, 4]);
     ctx.beginPath();
@@ -980,7 +975,6 @@ function dibujarTrianguloRectangulo() {
     ctx.stroke();
     ctx.restore();
 
-    // Etiquetas de los catetos
     if (estado.mostrar.etiquetas) {
         ctx.font = 'bold 12px Segoe UI, sans-serif';
         ctx.fillStyle = '#5b7fa3';
@@ -1033,29 +1027,19 @@ function render() {
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
 
-    // 1. Cuadrícula (fondo)
     dibujarCuadricula();
-
-    // 2. Región resaltada
     dibujarRegion();
-
-    // 3. Ejes (encima de la región)
     dibujarEjes();
 
-    // 4. Proyecciones
     if (estado.mostrar.proyecciones) {
         dibujarProyecciones();
     }
-
-    // 5. Triángulo rectángulo
     if (estado.mostrar.triangulo) {
         dibujarTrianguloRectangulo();
     }
 
-    // 6. Vector z
     dibujarVector(estado.z, COLOR_Z, 'z = ' + latexComplejo(estado.z.a, estado.z.b), 3);
 
-    // 7. Actualizar info
     actualizarInfo();
 }
 
@@ -1080,7 +1064,6 @@ function actualizarInfo() {
     modEl.innerHTML = '$\\sqrt{' + formatearNumero(a2) + ' + ' + formatearNumero(b2) + '} = ' +
         formatearNumero(parseFloat(m.toFixed(4))) + '$';
 
-    // Descripción de la región
     var descRegion = '';
     switch (estado.region) {
         case 'circunferencia': descRegion = '$|z| = ' + formatearNumero(estado.r) + '$ (circunferencia)'; break;
@@ -1101,7 +1084,6 @@ function actualizarInfo() {
     }
     regEl.innerHTML = descRegion;
 
-    // Pertenencia
     var pertenece = false;
     var estadoTexto = '';
     var clase = '';
@@ -1136,7 +1118,6 @@ function actualizarInfo() {
             var r1c = Math.min(estado.r, estado.r2);
             var r2c = Math.max(estado.r, estado.r2);
             if (Math.abs(r1c - r2c) < 1e-9) {
-                // Corona degenerada
                 pertenece = Math.abs(m - r1c) < TOL;
                 estadoTexto = pertenece ? 'Sobre la circunferencia degenerada' : 'Fuera de la circunferencia degenerada';
                 clase = pertenece ? 'frontera' : 'fuera';
@@ -1154,7 +1135,6 @@ function actualizarInfo() {
     pertEl.innerHTML = '<span class="estado-pertenencia ' + clase + '">' +
         (pertenece ? '✅ ' : '❌ ') + estadoTexto + '</span>';
 
-    // Aviso pedagógico
     var htmlAviso = '💡 <strong>Hallazgo visual:</strong> ';
     if (estado.region === 'circunferencia') {
         htmlAviso += 'una circunferencia es <strong>solo la frontera</strong>: el punto debe cumplir $|z| = r$ exactamente. Si $|z| \\neq r$, el punto no pertenece.';
@@ -1199,7 +1179,6 @@ function sincronizarDesdeEstado() {
     document.getElementById('chk-proyecciones').checked = estado.mostrar.proyecciones;
     document.getElementById('chk-etiquetas').checked = estado.mostrar.etiquetas;
 
-    // Mostrar/ocultar grupo r2 y actualizar label del slider r
     var esCorona = (estado.region === 'corona');
     document.getElementById('grupo-r2').style.display = esCorona ? 'block' : 'none';
     document.getElementById('label-slider-r').innerHTML = esCorona
@@ -1294,26 +1273,12 @@ document.getElementById('btn-reiniciar').addEventListener('click', function() {
     render();
 });
 
-// =========================================
-// EJEMPLOS (con valores decimales precisos)
-// =========================================
 var ejemplos = {
-    // z = 3 + 4i, |z| = 5 exacto
     1: { z: { a: 3, b: 4 }, r: 5, r2: 8, region: 'circunferencia' },
-
-    // Aproximación decimal de √3 + √13 i ≈ 1.7321 + 3.6056 i, |z| ≈ 4
     2: { z: { a: 1.732, b: 3.606 }, r: 4, r2: 8, region: 'circunferencia' },
-
-    // Aproximación decimal de (√3/2) - (1/2)i ≈ 0.866 - 0.5 i, |z| = 1
     3: { z: { a: 0.866, b: -0.5 }, r: 1, r2: 8, region: 'circunferencia' },
-
-    // z = 1 + 0i, |z| = 1 exacto
     4: { z: { a: 1, b: 0 }, r: 1, r2: 8, region: 'circunferencia' },
-
-    // Corona 2 ≤ |z| ≤ 4, con z = 3 + 0i dentro
     5: { z: { a: 3, b: 0 }, r: 2, r2: 4, region: 'corona' },
-
-    // Exterior |z| > 3, con z = 4 + 3i (|z| = 5)
     6: { z: { a: 4, b: 3 }, r: 3, r2: 8, region: 'exterior-abierto' }
 };
 
@@ -1332,9 +1297,6 @@ document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
     });
 });
 
-// =========================================
-// INICIALIZACIÓN
-// =========================================
 function init() {
     configurarHiDPI();
     estado.z = { a: 3, b: 4 };

@@ -96,4 +96,4 @@ Este es un proyecto personal en construcción. Si encuentras errores, tienes sug
 Este proyecto es de uso educativo. Consulta con el autor antes de reutilizar el contenido con fines comerciales.
 
 **Prepa Abierta 33** · Recursos educativos en construcción
-
+```

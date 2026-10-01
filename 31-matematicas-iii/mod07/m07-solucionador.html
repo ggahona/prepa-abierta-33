@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rectangular Paso a Paso | Matemáticas III</title>
+    <title>Solucionador: Operaciones en Forma Rectangular | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -182,6 +182,16 @@
             font-style: italic;
         }
 
+        .nota-z2 {
+            display: none;
+            font-size: 0.8rem;
+            color: var(--color-acento);
+            font-style: italic;
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+        .nota-z2.visible { display: block; }
+
         .botones-accion {
             display: flex;
             gap: 8px;
@@ -279,6 +289,13 @@
             color: var(--color-primario);
         }
 
+        .contenedor-pasos {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 8px 20px;
+            border: 1px solid var(--color-acento-suave);
+        }
+
         .paso {
             display: flex;
             gap: 12px;
@@ -373,6 +390,26 @@
             margin-bottom: 4px;
         }
 
+        .aviso-inline {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background-color: rgba(91,127,163,0.1);
+            border-left: 3px solid var(--color-acento);
+            border-radius: 0 4px 4px 0;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+        }
+
+        .nota-ejemplo6 {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 14px;
+        }
+
         /* ===== FOOTER ===== */
         .footer-info {
             background-color: var(--color-base);
@@ -402,7 +439,7 @@
     <!-- HEADER -->
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Rectangular Paso a Paso</h1>
+        <h1>Solucionador: Operaciones en Forma Rectangular</h1>
         <p>Solucionador paso a paso | Matemáticas III</p>
     </header>
 
@@ -445,6 +482,7 @@
                     <input type="number" id="z2-b" value="7" step="any" aria-label="Parte imaginaria de z2">
                     <span class="simbolo-i">i</span>
                 </div>
+                <div class="nota-z2" id="nota-z2">ℹ️ Esta operación solo usa $z_1$.</div>
             </div>
 
             <div class="botones-accion">
@@ -466,7 +504,7 @@
         <!-- PANEL DE DESARROLLO -->
         <div class="panel-desarrollo">
             <h2>🧮 Desarrollo paso a paso</h2>
-            <div id="desarrollo">
+            <div id="desarrollo" aria-live="polite" aria-atomic="true">
                 <div class="placeholder-inicial">
                     ⚙️ Configura los valores y presiona <strong>"Resolver paso a paso"</strong><br>
                     para ver el desarrollo completo de la operación.
@@ -655,7 +693,7 @@ function resolverMultiplicacion(z1, z2) {
     pasos.push(construirPaso(4, '<strong>Sustituir $i^2 = -1$</strong>',
         '$$= ' + formatearNumero(p1) + ' + ' + formatearNumero(p2) + 'i' +
         ' + ' + formatearNumero(p3) + 'i + ' + formatearNumero(p4) + '(-1)$$' +
-        '<div class="aviso-pedagogico">⚠️ <strong>Paso crítico:</strong> aquí es donde suele cometerse el error más común. $i^2$ <u>siempre</u> se sustituye por $-1$.</div>'));
+        '<div class="aviso-inline">⚠️ <strong>Paso crítico:</strong> aquí es donde suele cometerse el error más común. $i^2$ <u>siempre</u> se sustituye por $-1$.</div>'));
 
     pasos.push(construirPaso(5, 'Agrupar partes real e imaginaria',
         '$$= (' + formatearNumero(p1) + ' - ' + formatearNumero(p4) + ') + (' +
@@ -710,7 +748,7 @@ function resolverProdConjugados(z1) {
 
     pasos.push(construirPaso(4, '<strong>Sustituir $i^2 = -1$</strong>',
         '$$= a^2 - b^2(-1) = a^2 + b^2$$' +
-        '<div class="aviso-pedagogico">🎯 <strong>Propiedad fundamental:</strong> el producto de un complejo por su conjugado es <u>siempre</u> un número real no negativo: $z \\cdot \\bar{z} = a^2 + b^2$.</div>'));
+        '<div class="aviso-inline">🎯 <strong>Propiedad fundamental:</strong> el producto de un complejo por su conjugado es <u>siempre</u> un número real no negativo: $z \\cdot \\bar{z} = a^2 + b^2$.</div>'));
 
     pasos.push(construirPaso(5, 'Sustituir valores',
         '$$z \\cdot \\bar{z} = (' + formatearNumero(z1.a) + ')^2 + (' + formatearNumero(z1.b) + ')^2 = ' +
@@ -742,7 +780,7 @@ function resolverDivision(z1, z2) {
     pasos.push(construirPaso(2, 'Multiplicar por el conjugado del denominador',
         'Se multiplica numerador y denominador por $\\overline{z_2} = ' + latexComplejo(z2.a, -z2.b) + '$ para eliminar la parte imaginaria del denominador:' +
         '$$= \\dfrac{(' + latexComplejo(z1.a, z1.b) + ')(' + latexComplejo(z2.a, -z2.b) + ')}{(' + latexComplejo(z2.a, z2.b) + ')(' + latexComplejo(z2.a, -z2.b) + ')}$$' +
-        '<div class="aviso-pedagogico">💡 <strong>¿Por qué funciona?</strong> porque $z_2 \\cdot \\overline{z_2} = a_2^2 + b_2^2$, un número real.</div>'));
+        '<div class="aviso-inline">💡 <strong>¿Por qué funciona?</strong> porque $z_2 \\cdot \\overline{z_2} = a_2^2 + b_2^2$, un número real.</div>'));
 
     pasos.push(construirPaso(3, 'Expandir el numerador',
         '$$(' + latexComplejo(z1.a, z1.b) + ')(' + latexComplejo(z2.a, -z2.b) + ') = ' +
@@ -798,7 +836,7 @@ function mostrarDesarrollo(operacion, z1, z2) {
 
     var html = '';
     html += bloqueEncabezado(operacion, z1, z2);
-    html += '<div style="background:#ffffff;border-radius:8px;padding:8px 20px;border:1px solid var(--color-acento-suave);">';
+    html += '<div class="contenedor-pasos">';
     resultado.pasos.forEach(function(p) { html += p; });
     html += '</div>';
 
@@ -824,12 +862,15 @@ function mostrarDesarrollo(operacion, z1, z2) {
 function actualizarVisibilidadZ2() {
     var op = document.getElementById('tipo-operacion').value;
     var grupo = document.getElementById('grupo-z2');
+    var nota = document.getElementById('nota-z2');
     if (op === 'conjugado' || op === 'prodConjugados') {
         grupo.style.opacity = '0.4';
         grupo.style.pointerEvents = 'none';
+        nota.classList.add('visible');
     } else {
         grupo.style.opacity = '1';
         grupo.style.pointerEvents = 'auto';
+        nota.classList.remove('visible');
     }
 }
 
@@ -861,9 +902,6 @@ document.getElementById('btn-reiniciar').addEventListener('click', function() {
 // =========================================
 // EJEMPLOS PREDEFINIDOS
 // =========================================
-// Los ejemplos 1-5 usan el flujo estándar.
-// El ejemplo 6 (i·(2-i)(3-4i)) se maneja con un desarrollo especial.
-
 var ejemplos = {
     1: { op: 'suma', z1: { a: 3, b: 1 }, z2: { a: -2, b: 7 } },
     2: { op: 'resta', z1: { a: 3, b: 1 }, z2: { a: -2, b: 7 } },
@@ -874,21 +912,21 @@ var ejemplos = {
 
 // ---- EJEMPLO 6: DESARROLLO ESPECIAL ----
 function mostrarEjemplo6() {
-    var z1 = { a: 0, b: 1 };              // i
-    var z2a = { a: 2, b: -1 };            // (2 - i)
-    var z2b = { a: 3, b: -4 };            // (3 - 4i)
-
-    // Paso intermedio: (2-i)(3-4i) = 2 - 11i
     var intermedio = { a: 2, b: -11 };
-    // i · (2 - 11i) = 11 + 2i
-    var productoFinal = { a: 11, b: 2 };
 
     var html = '';
+    // Nota explicativa sobre los factores involucrados
+    html += '<div class="nota-ejemplo6">' +
+        '🔍 <strong>Nota:</strong> este ejemplo es una <u>multiplicación compuesta</u> de tres factores: ' +
+        '$i$, $(2 - i)$ y $(3 - 4i)$. Los campos de entrada solo muestran los primeros dos factores; ' +
+        'el tercer factor $(3 - 4i)$ se incluye directamente en el desarrollo de abajo.' +
+        '</div>';
+
     html += '<div class="bloque-operacion">' +
         '<div class="titulo-bloque">Operación — Multiplicación compuesta</div>' +
         '<div class="expresion">$$i \\cdot (2 - i)(3 - 4i)$$</div>' +
         '</div>';
-    html += '<div style="background:#ffffff;border-radius:8px;padding:8px 20px;border:1px solid var(--color-acento-suave);">';
+    html += '<div class="contenedor-pasos">';
 
     html += construirPaso(1, 'Agrupar los dos últimos factores',
         '$$i \\cdot \\big[(2 - i)(3 - 4i)\\big]$$');
@@ -925,7 +963,6 @@ document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
 
         // Ejemplo 6: caso especial
         if (ej === '6') {
-            // Cargar valores en los inputs para que el alumno los vea
             document.getElementById('z1-a').value = 0;
             document.getElementById('z1-b').value = 1;
             document.getElementById('z2-a').value = 2;

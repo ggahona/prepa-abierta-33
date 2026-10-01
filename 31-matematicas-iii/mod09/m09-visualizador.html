@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radiografía de la Parábola | Matemáticas III</title>
+    <title>Visualizador: La Parábola y sus Elementos | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -321,7 +321,7 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Radiografía de la Parábola</h1>
+        <h1>Visualizador: La Parábola y sus Elementos</h1>
         <p>Visualizador interactivo | Matemáticas III</p>
     </header>
 
@@ -332,43 +332,49 @@
             <h2>Coeficientes</h2>
 
             <div class="seccion-slider">
-                <label>$a$: <span class="valor-slider" id="val-a">1</span></label>
+                <label for="slider-a">$a$: <span class="valor-slider" id="val-a">1</span></label>
                 <input type="range" id="slider-a" min="-5" max="5" step="0.1" value="1" aria-label="Coeficiente a">
             </div>
 
             <div class="seccion-slider">
-                <label>$b$: <span class="valor-slider" id="val-b">-6</span></label>
+                <label for="slider-b">$b$: <span class="valor-slider" id="val-b">-6</span></label>
                 <input type="range" id="slider-b" min="-10" max="10" step="0.5" value="-6" aria-label="Coeficiente b">
             </div>
 
             <div class="seccion-slider">
-                <label>$c$: <span class="valor-slider" id="val-c">5</span></label>
+                <label for="slider-c">$c$: <span class="valor-slider" id="val-c">5</span></label>
                 <input type="range" id="slider-c" min="-10" max="10" step="0.5" value="5" aria-label="Coeficiente c">
             </div>
 
             <h3>Elementos a mostrar</h3>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-vertice" checked> Vértice
+            <label class="checkbox-linea" for="chk-vertice">
+                <input type="checkbox" id="chk-vertice" checked aria-label="Mostrar vértice">
+                Vértice
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-eje" checked> Eje de simetría
+            <label class="checkbox-linea" for="chk-eje">
+                <input type="checkbox" id="chk-eje" checked aria-label="Mostrar eje de simetría">
+                Eje de simetría
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-raices" checked> Raíces
+            <label class="checkbox-linea" for="chk-raices">
+                <input type="checkbox" id="chk-raices" checked aria-label="Mostrar raíces">
+                Raíces
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-interseccion" checked> Intersección con $Y$
+            <label class="checkbox-linea" for="chk-interseccion">
+                <input type="checkbox" id="chk-interseccion" checked aria-label="Mostrar intersección con Y">
+                Intersección con $Y$
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-simetricos" checked> Puntos simétricos
+            <label class="checkbox-linea" for="chk-simetricos">
+                <input type="checkbox" id="chk-simetricos" checked aria-label="Mostrar puntos simétricos">
+                Puntos simétricos
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-cuadricula" checked> Cuadrícula
+            <label class="checkbox-linea" for="chk-cuadricula">
+                <input type="checkbox" id="chk-cuadricula" checked aria-label="Mostrar cuadrícula">
+                Cuadrícula
             </label>
 
             <h3>Zoom del plano</h3>
             <div class="seccion-slider">
-                <label>Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
+                <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
                 <input type="range" id="slider-zoom" min="15" max="50" step="1" value="30" aria-label="Zoom del plano">
             </div>
 
@@ -420,7 +426,7 @@
             </div>
 
             <!-- PANEL INFO -->
-            <div class="panel-info">
+            <div class="panel-info" role="status" aria-live="polite">
                 <h3>📊 Radiografía de la parábola</h3>
                 <table class="tabla-info">
                     <tr>
@@ -526,11 +532,17 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(3)).toString();
 }
 
+function casiIgual(x, y, tol) {
+    tol = tol || TOL;
+    return Math.abs(x - y) < tol;
+}
+
 function f(x) {
     return estado.a * x * x + estado.b * x + estado.c;
 }
 
 function calcularVertice() {
+    if (casiIgual(estado.a, 0)) return { h: 0, k: 0 };
     var h = -estado.b / (2 * estado.a);
     var k = f(h);
     return { h: h, k: k };
@@ -546,9 +558,9 @@ function calcularRaices() {
     if (Math.abs(d) < TOL) return [-estado.b / (2 * estado.a)];
     var sq = Math.sqrt(d);
     return [
-        (-estado.b + sq) / (2 * estado.a),
-        (-estado.b - sq) / (2 * estado.a)
-    ].sort(function(x, y) { return x - y; });
+        (-estado.b - sq) / (2 * estado.a),
+        (-estado.b + sq) / (2 * estado.a)
+    ];
 }
 
 function construirFormaCanonica() {
@@ -558,12 +570,12 @@ function construirFormaCanonica() {
     var k = v.k;
 
     var latex = 'y = ';
-    if (Math.abs(a - 1) < TOL) latex += '';
-    else if (Math.abs(a + 1) < TOL) latex += '-';
+    if (casiIgual(a, 1)) latex += '';
+    else if (casiIgual(a, -1)) latex += '-';
     else latex += formatearNumero(a);
 
     latex += '(x ';
-    if (Math.abs(h) < TOL) {
+    if (casiIgual(h, 0)) {
         latex += ')^2 ';
     } else if (h > 0) {
         latex += '- ' + formatearNumero(h) + ')^2 ';
@@ -571,7 +583,7 @@ function construirFormaCanonica() {
         latex += '+ ' + formatearNumero(-h) + ')^2 ';
     }
 
-    if (Math.abs(k) > TOL) {
+    if (!casiIgual(k, 0)) {
         if (k > 0) latex += '+ ' + formatearNumero(k);
         else latex += '- ' + formatearNumero(-k);
     }
@@ -582,16 +594,16 @@ function construirFormaCanonica() {
 function construirEstandar() {
     var a = estado.a, b = estado.b, c = estado.c;
     var latex = 'y = ';
-    if (Math.abs(a - 1) < TOL) latex += 'x^2';
-    else if (Math.abs(a + 1) < TOL) latex += '-x^2';
+    if (casiIgual(a, 1)) latex += 'x^2';
+    else if (casiIgual(a, -1)) latex += '-x^2';
     else latex += formatearNumero(a) + 'x^2';
 
-    if (Math.abs(b) > TOL) {
+    if (!casiIgual(b, 0)) {
         if (b > 0) latex += ' + ' + formatearNumero(b) + 'x';
         else latex += ' - ' + formatearNumero(-b) + 'x';
     }
 
-    if (Math.abs(c) > TOL) {
+    if (!casiIgual(c, 0)) {
         if (c > 0) latex += ' + ' + formatearNumero(c);
         else latex += ' - ' + formatearNumero(-c);
     }
@@ -604,30 +616,25 @@ function autoAjustarZoom() {
     var v = calcularVertice();
     var raices = calcularRaices();
 
-    // Distancias máximas a cubrir
     var maxX = Math.max(Math.abs(v.h), 1);
     var maxY = Math.max(Math.abs(v.k), Math.abs(estado.c), 1);
     raices.forEach(function(r) {
         maxX = Math.max(maxX, Math.abs(r));
     });
 
-    // Margen de seguridad del 20%
     maxX *= 1.3;
     maxY *= 1.3;
 
-    // El canvas tiene 820×560, con eje en el centro
     var zoomX = (W / 2) / maxX;
     var zoomY = (H / 2) / maxY;
     var nuevoZoom = Math.min(zoomX, zoomY);
 
-    // Limitar al rango del slider
     nuevoZoom = Math.max(15, Math.min(50, Math.round(nuevoZoom)));
     estado.zoom = nuevoZoom;
     document.getElementById('slider-zoom').value = nuevoZoom;
     document.getElementById('val-zoom').textContent = nuevoZoom;
 }
 
-// Transformación mundo ↔ pantalla
 function mundoAPantalla(x, y) {
     return {
         px: W / 2 + x * estado.zoom,
@@ -740,6 +747,8 @@ function dibujarEjes() {
 // DIBUJO DE LA PARÁBOLA
 // =========================================
 function dibujarParabola() {
+    if (casiIgual(estado.a, 0)) return;
+
     var puntos = 500;
     var xMin = -W / 2 / estado.zoom - 1;
     var xMax = W / 2 / estado.zoom + 1;
@@ -756,7 +765,6 @@ function dibujarParabola() {
         var y = f(x);
         var p = mundoAPantalla(x, y);
 
-        // Verificar si el punto está fuera del canvas (con margen)
         var fueraY = (p.py < -H * 2 || p.py > H * 3);
         var fueraX = (p.px < -W * 2 || p.px > W * 3);
 
@@ -804,7 +812,6 @@ function dibujarPuntoMundo(x, y, color, etiqueta, tamano) {
         var pad = 6;
         var posX = p.px + 10;
         var posY = p.py - 10;
-        // Ajustar si sale del canvas
         if (posX + ancho + pad > W) posX = p.px - ancho - pad - 10;
         if (posY < 15) posY = p.py + 22;
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
@@ -855,7 +862,6 @@ function dibujarRaices() {
             : 'x' + (i+1) + '=' + formatearNumero(r);
         dibujarPuntoMundo(r, 0, COLOR_RAIZ, etiqueta, esDoble ? 7 : 6);
 
-        // Si es raíz doble, añadir anillo adicional
         if (esDoble) {
             var p = mundoAPantalla(r, 0);
             ctx.save();
@@ -878,12 +884,10 @@ function dibujarSimetricos() {
     var v = calcularVertice();
     var h = v.h;
 
-    // Calcular offset de manera segura
     var maxOffsetX = (W / 2) / estado.zoom * 0.7;
     var offset = Math.min(2, maxOffsetX / 2);
     offset = Math.max(0.5, offset);
 
-    // Asegurar que el offset no sea 0
     if (offset < 0.1) return;
 
     var x1 = h - offset;
@@ -891,20 +895,17 @@ function dibujarSimetricos() {
     var y1 = f(x1);
     var y2 = f(x2);
 
-    // Verificar que ambos puntos estén dentro del canvas vertical
     var p1 = mundoAPantalla(x1, y1);
     var p2 = mundoAPantalla(x2, y2);
     if (p1.py < 0 || p1.py > H || p2.py < 0 || p2.py > H) return;
 
-    // No dibujar si coinciden con el vértice
-    if (Math.abs(x1 - h) < TOL || Math.abs(x2 - h) < TOL) return;
+    if (casiIgual(x1, h) || casiIgual(x2, h)) return;
 
     dibujarPuntoMundo(x1, y1, COLOR_SIMETRICO,
         '(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + ')', 5);
     dibujarPuntoMundo(x2, y2, COLOR_SIMETRICO,
         '(' + formatearNumero(x2) + ', ' + formatearNumero(y2) + ')', 5);
 
-    // Línea punteada horizontal conectando ambos puntos
     ctx.save();
     ctx.strokeStyle = COLOR_SIMETRICO;
     ctx.lineWidth = 1.5;
@@ -933,7 +934,6 @@ function render() {
         dibujarCuadricula();
     }
 
-    // Eje de simetría detrás de todo (con opacidad)
     if (estado.mostrar.eje) {
         dibujarEjeSimetria();
     }
@@ -984,7 +984,6 @@ function actualizarInfo() {
     document.getElementById('info-eje').innerHTML =
         '$x = ' + formatearNumero(v.h) + '$';
 
-    // Normalizar -0 a 0
     var dMostrar = Math.abs(d) < TOL ? 0 : d;
     var discrTexto = '$' + formatearNumero(dMostrar) + '$';
     if (d > TOL) discrTexto += ' &gt; 0 → dos raíces reales';
@@ -1016,7 +1015,7 @@ function actualizarInfo() {
     } else {
         html += 'como $a = ' + formatearNumero(estado.a) + ' < 0$, la parábola abre hacia abajo y el vértice es un <strong>máximo</strong>. ';
     }
-    if (Math.abs(estado.b) < TOL) {
+    if (casiIgual(estado.b, 0)) {
         html += 'Como $b = 0$, el eje de simetría es el eje $Y$ ($x = 0$).';
     } else {
         html += 'Observa cómo el valor de $b$ desplaza el vértice horizontalmente.';

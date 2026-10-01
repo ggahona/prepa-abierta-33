@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Radiografía de Raíces | Matemáticas III</title>
+    <title>Solucionador: Raíces Cuadradas de Números Negativos | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -364,7 +364,7 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Radiografía de Raíces</h1>
+        <h1>Solucionador: Raíces Cuadradas de Números Negativos</h1>
         <p>Solucionador paso a paso | Matemáticas III</p>
     </header>
 
@@ -375,25 +375,25 @@
 
             <div class="grupo-entrada">
                 <div class="titulo-grupo">Tipo de operación</div>
-                <div class="opciones-operacion">
-                    <label class="opcion-operacion">
-                        <input type="radio" name="tipo-operacion" value="raiz-simple" checked>
+                <div class="opciones-operacion" role="radiogroup" aria-label="Tipo de operación a resolver">
+                    <label class="opcion-operacion" for="op-raiz-simple">
+                        <input type="radio" name="tipo-operacion" id="op-raiz-simple" value="raiz-simple" checked aria-label="Raíz cuadrada simple">
                         <span>Raíz cuadrada: $\sqrt{-n}$</span>
                     </label>
-                    <label class="opcion-operacion">
-                        <input type="radio" name="tipo-operacion" value="producto">
+                    <label class="opcion-operacion" for="op-producto">
+                        <input type="radio" name="tipo-operacion" id="op-producto" value="producto" aria-label="Producto de dos raíces negativas">
                         <span>Producto: $\sqrt{-a} \cdot \sqrt{-b}$</span>
                     </label>
-                    <label class="opcion-operacion">
-                        <input type="radio" name="tipo-operacion" value="suma-coeficiente">
+                    <label class="opcion-operacion" for="op-suma-coeficiente">
+                        <input type="radio" name="tipo-operacion" id="op-suma-coeficiente" value="suma-coeficiente" aria-label="Suma con coeficiente">
                         <span>Suma con coeficiente: $\sqrt{-a} + c\sqrt{-b}$</span>
                     </label>
-                    <label class="opcion-operacion">
-                        <input type="radio" name="tipo-operacion" value="diferencia-cuadrados">
+                    <label class="opcion-operacion" for="op-diferencia-cuadrados">
+                        <input type="radio" name="tipo-operacion" id="op-diferencia-cuadrados" value="diferencia-cuadrados" aria-label="Diferencia de cuadrados">
                         <span>Diferencia de cuadrados: $(A-B)(A+B)$</span>
                     </label>
-                    <label class="opcion-operacion">
-                        <input type="radio" name="tipo-operacion" value="signo-externo">
+                    <label class="opcion-operacion" for="op-signo-externo">
+                        <input type="radio" name="tipo-operacion" id="op-signo-externo" value="signo-externo" aria-label="Raíz con signo externo negativo">
                         <span>Signo externo: $-\sqrt{-n}$</span>
                     </label>
                 </div>
@@ -418,9 +418,9 @@
             </div>
         </div>
 
-        <div class="panel-desarrollo">
+        <div class="panel-desarrollo" role="region" aria-label="Desarrollo paso a paso">
             <h2>🧮 Desarrollo paso a paso</h2>
-            <div id="desarrollo">
+            <div id="desarrollo" role="status" aria-live="polite" aria-atomic="true">
                 <div class="placeholder-inicial">
                     ⚙️ Selecciona el tipo de operación, ingresa los valores<br>
                     y presiona <strong>"Resolver paso a paso"</strong> para ver el desarrollo completo.
@@ -500,6 +500,11 @@ function mostrarPlaceholder() {
         '<div class="placeholder-inicial">⚙️ Ingresa los valores y presiona <strong>"Resolver paso a paso"</strong>.</div>';
 }
 
+// Limpia LaTeX para usar como aria-label
+function limpiarLatex(texto) {
+    return String(texto).replace(/\$[^$]*\$/g, '').replace(/\\[a-zA-Z]+/g, '').replace(/[{}]/g, '').replace(/\s+/g, ' ').trim();
+}
+
 // =========================================
 // CONFIGURACIÓN DE TIPOS DE OPERACIÓN
 // =========================================
@@ -552,10 +557,11 @@ function renderizarInputs() {
     config.campos.forEach(function(campo) {
         var wrapper = document.createElement('div');
         wrapper.className = 'input-dinamico';
+        var idInput = 'input-' + campo.id;
         wrapper.innerHTML =
-            '<label for="input-' + campo.id + '">' + campo.etiqueta + '</label>' +
-            '<input type="number" id="input-' + campo.id + '" value="' + campo.valorPorDefecto +
-            '" min="' + campo.min + '" step="1">';
+            '<label for="' + idInput + '">' + campo.etiqueta + '</label>' +
+            '<input type="number" id="' + idInput + '" value="' + campo.valorPorDefecto +
+            '" min="' + campo.min + '" step="1" aria-label="' + limpiarLatex(campo.etiqueta) + '">';
         contenedor.appendChild(wrapper);
     });
 
@@ -864,7 +870,6 @@ document.getElementById('btn-reiniciar').addEventListener('click', function() {
     renderizarInputs();
 });
 
-// Ejemplos predefinidos
 var ejemplos = {
     1: { tipo: 'raiz-simple', valores: { n: 50 } },
     2: { tipo: 'producto', valores: { a: 25, b: 16 } },

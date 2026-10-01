@@ -412,37 +412,37 @@
 
             <h3>Sliders de exploración</h3>
             <div class="seccion-slider">
-                <label>Parte real $a$: <span class="valor-slider" id="val-slider-a">2</span></label>
+                <label for="slider-a">Parte real $a$: <span class="valor-slider" id="val-slider-a">2</span></label>
                 <input type="range" id="slider-a" min="-8" max="8" step="0.5" value="2" aria-label="Deslizador para parte real">
             </div>
             <div class="seccion-slider">
-                <label>Parte imaginaria $b$: <span class="valor-slider" id="val-slider-b">3</span></label>
+                <label for="slider-b">Parte imaginaria $b$: <span class="valor-slider" id="val-slider-b">3</span></label>
                 <input type="range" id="slider-b" min="-8" max="8" step="0.5" value="3" aria-label="Deslizador para parte imaginaria">
             </div>
 
             <h3>Visualización</h3>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-z" checked> Mostrar $z$
+                <input type="checkbox" id="chk-z" checked aria-label="Mostrar z"> Mostrar $z$
             </label>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-conj" checked> Mostrar $\bar{z}$ (conjugado)
+                <input type="checkbox" id="chk-conj" checked aria-label="Mostrar el conjugado de z"> Mostrar $\bar{z}$ (conjugado)
             </label>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-eje" checked> Mostrar eje de simetría
+                <input type="checkbox" id="chk-eje" checked aria-label="Mostrar eje de simetría"> Mostrar eje de simetría
             </label>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-prod" checked> Mostrar $z \cdot \bar{z}$
+                <input type="checkbox" id="chk-prod" checked aria-label="Mostrar producto z por su conjugado"> Mostrar $z \cdot \bar{z}$
             </label>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-circ" checked> Mostrar círculo $|z|$
+                <input type="checkbox" id="chk-circ" checked aria-label="Mostrar círculo de la norma"> Mostrar círculo $|z|$
             </label>
             <label class="checkbox-linea">
-                <input type="checkbox" id="chk-arco" checked> Mostrar arco de simetría
+                <input type="checkbox" id="chk-arco" checked aria-label="Mostrar arco de simetría"> Mostrar arco de simetría
             </label>
 
             <h3>Zoom del plano</h3>
             <div class="seccion-slider">
-                <label>Escala: <span class="valor-slider" id="val-zoom">25</span> px / unidad</label>
+                <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">25</span> px / unidad</label>
                 <input type="range" id="slider-zoom" min="12" max="45" step="1" value="25" aria-label="Zoom del plano">
             </div>
 
@@ -450,12 +450,12 @@
 
             <h3>Ejemplos predefinidos</h3>
             <div class="seccion-ejemplos">
-                <button type="button" class="btn-ejemplo" data-ej="1">📐 $z = 2 + 3i$</button>
-                <button type="button" class="btn-ejemplo" data-ej="2">📐 $z = 5 - 2i$</button>
-                <button type="button" class="btn-ejemplo" data-ej="3">📐 $z = -6 + 3i$</button>
-                <button type="button" class="btn-ejemplo" data-ej="4">📐 $z = -4 - 4i$</button>
-                <button type="button" class="btn-ejemplo" data-ej="5">📐 $z = 5i$ (imaginario puro)</button>
-                <button type="button" class="btn-ejemplo" data-ej="6">📐 $z = 6$ (real puro)</button>
+                <button type="button" class="btn-ejemplo" data-ej="1" aria-label="Ejemplo z igual a 2 más 3i">📐 $z = 2 + 3i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2" aria-label="Ejemplo z igual a 5 menos 2i">📐 $z = 5 - 2i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3" aria-label="Ejemplo z igual a menos 6 más 3i">📐 $z = -6 + 3i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4" aria-label="Ejemplo z igual a menos 4 menos 4i">📐 $z = -4 - 4i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5" aria-label="Ejemplo z igual a 5i imaginario puro">📐 $z = 5i$ (imaginario puro)</button>
+                <button type="button" class="btn-ejemplo" data-ej="6" aria-label="Ejemplo z igual a 6 real puro">📐 $z = 6$ (real puro)</button>
             </div>
         </div>
 
@@ -577,6 +577,7 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(3)).toString();
 }
 
+// Texto plano para canvas (evita caracteres Unicode frágiles como z̄)
 function latexComplejo(a, b) {
     a = parseFloat(a); b = parseFloat(b);
     if (a === 0 && b === 0) return '0';
@@ -796,6 +797,10 @@ function dibujarProyecciones(z, color) {
 // =========================================
 // ARCO DE SIMETRÍA
 // =========================================
+// Dibuja un arco punteado que va del ángulo de z al ángulo del conjugado,
+// atravesando el eje real. En canvas el ángulo 0 está a la derecha y
+// el sentido positivo es horario (a diferencia del plano matemático).
+// Por eso se invierte el signo de los ángulos al llamar ctx.arc.
 function dibujarArcoSimetria(z) {
     if (Math.abs(z.b) < 1e-9) return;
 
@@ -803,13 +808,13 @@ function dibujarArcoSimetria(z) {
     var radio = Math.min(Math.abs(z.b) * estado.zoom * 0.5, 100);
     if (radio < 25) radio = 25;
 
-    // Ángulo del vector z (matemático)
+    // Ángulo matemático de z (positivo = antihorario)
     var ang = Math.atan2(z.b, z.a);
-    // En canvas el eje Y está invertido: angCanvasZ = -ang
-    var angCanvasZ = -ang;
-    var angCanvasConj = ang;
 
-    var sentidoHorario = z.b > 0;
+    // Conversión a canvas: el eje Y está invertido, así que invertimos el signo
+    var angCanvasZ = -ang;              // ángulo de z en canvas
+    var angCanvasConj = ang;            // ángulo del conjugado en canvas
+    var sentidoHorario = z.b > 0;       // si z está arriba, el arco baja (horario en canvas)
 
     ctx.save();
     ctx.strokeStyle = COLOR_SIMETRIA;
@@ -882,14 +887,15 @@ function render() {
     }
 
     // 7. Vectores
+    // Etiquetas en canvas: se usa "z*" en lugar de "z̄" (Unicode frágil)
     if (estado.mostrar.z) {
         dibujarVector(z, COLOR_Z, 'z = ' + latexComplejo(z.a, z.b), 3);
     }
     if (estado.mostrar.conj) {
-        dibujarVector(conj, COLOR_CONJ, 'z̄ = ' + latexComplejo(conj.a, conj.b), 3);
+        dibujarVector(conj, COLOR_CONJ, 'z* = ' + latexComplejo(conj.a, conj.b), 3);
     }
     if (estado.mostrar.prod) {
-        dibujarVector(producto, COLOR_PROD, 'z·z̄ = ' + formatearNumero(producto.a), 3.5);
+        dibujarVector(producto, COLOR_PROD, 'z·z* = ' + formatearNumero(producto.a), 3.5);
     }
 
     actualizarInfo(z, conj, producto, norma);

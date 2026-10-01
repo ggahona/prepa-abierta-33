@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 10 — Métodos de Solución para una Ecuación Cuadrática | Matemáticas III</title>
-    
+
     <script>
         window.MathJax = {
             tex: {
@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7fa;
@@ -301,7 +301,7 @@
 
     <main>
         <!-- DIAPOSITIVA 1: BIENVENIDA -->
-        <div class="diapositiva activa" data-indice="0">
+        <div class="diapositiva activa">
             <h2>Bienvenida al Módulo 10</h2>
             <p>En este módulo estudiaremos los <strong>tres métodos principales</strong> para resolver una ecuación cuadrática de la forma:</p>
             <div class="math-block">$$ax^2 + bx + c = 0, \quad a \neq 0$$</div>
@@ -314,7 +314,7 @@
         </div>
 
         <!-- DIAPOSITIVA 2: MÉTODO GRÁFICO -->
-        <div class="diapositiva" data-indice="1">
+        <div class="diapositiva">
             <h2>1. Método Gráfico</h2>
             <p>Consiste en determinar la <strong>abscisa</strong> de los puntos donde la gráfica de $y = ax^2 + bx + c$ interseca o es tangente al eje $X$.</p>
 
@@ -332,17 +332,17 @@
                 <h3>📊 Simulador gráfico conceptual</h3>
                 <p>Ingresa los coeficientes y evalúa la función en distintos valores de $x$ para explorar dónde se anula:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="gr-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="gr-b" value="-8" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="gr-c" value="6" step="any"></div>
+                    <div class="input-wrapper"><label for="gr-a">a =</label><input type="number" id="gr-a" value="2" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="gr-b">b =</label><input type="number" id="gr-b" value="-8" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="gr-c">c =</label><input type="number" id="gr-c" value="6" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-grafico">Explorar</button>
                 </div>
-                <div class="resultado" id="res-grafico">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-grafico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 3: FACTORIZACIÓN - INTRODUCCIÓN -->
-        <div class="diapositiva" data-indice="2">
+        <div class="diapositiva">
             <h2>2. Método de Factorización</h2>
             <p>Este método se usa cuando el trinomio $ax^2 + bx + c$ se puede factorizar fácilmente. Se apoya en el <strong>Teorema del producto cero</strong>:</p>
             <div class="math-block">$$a \cdot b = 0 \iff a = 0 \quad \text{ó} \quad b = 0$$</div>
@@ -365,16 +365,16 @@
                 <h3>🧩 Factorizador de trinomios simples</h3>
                 <p>Ingresa $b$ y $c$ para factorizar $x^2 + bx + c$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="fs-b" value="-5" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="fs-c" value="6" step="any"></div>
+                    <div class="input-wrapper"><label for="fs-b">b =</label><input type="number" id="fs-b" value="-5" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="fs-c">c =</label><input type="number" id="fs-c" value="6" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-factor-simple">Factorizar</button>
                 </div>
-                <div class="resultado" id="res-factor-simple">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-factor-simple" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 4: FACTORIZACIÓN POR AGRUPACIÓN -->
-        <div class="diapositiva" data-indice="3">
+        <div class="diapositiva">
             <h2>3. Factorización por Agrupación (Producto-Suma)</h2>
             <p>Cuando $a \neq 1$, se aplica el método del <strong>aspa o producto-suma</strong>. Veamos el proceso completo con el ejemplo $2x^2 + x - 6 = 0$:</p>
 
@@ -395,17 +395,17 @@
                 <h3>🔧 Factorizador por agrupación</h3>
                 <p>Ingresa $a$, $b$ y $c$ para obtener los dos números clave y la factorización final:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="fa-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="fa-b" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="fa-c" value="-6" step="any"></div>
+                    <div class="input-wrapper"><label for="fa-a">a =</label><input type="number" id="fa-a" value="2" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="fa-b">b =</label><input type="number" id="fa-b" value="1" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="fa-c">c =</label><input type="number" id="fa-c" value="-6" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-factor-agrup">Factorizar</button>
                 </div>
-                <div class="resultado" id="res-factor-agrup">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-factor-agrup" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 5: FACTORIZACIÓN EN COMPLEJOS -->
-        <div class="diapositiva" data-indice="4">
+        <div class="diapositiva">
             <h2>4. Factorización sobre los Números Complejos</h2>
             <p>Algunas ecuaciones cuadráticas no se pueden factorizar sobre $\mathbb{R}$, pero sí sobre $\mathbb{C}$, usando $i^2 = -1$.</p>
 
@@ -423,15 +423,15 @@
                 <h3>💫 Factorizador complejo $x^2 + K = 0$</h3>
                 <p>Ingresa un valor positivo $K$ para factorizar $x^2 + K$ sobre los complejos:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>K =</label><input type="number" id="fc-K" value="4" step="any" min="0"></div>
+                    <div class="input-wrapper"><label for="fc-K">K =</label><input type="number" id="fc-K" value="4" step="any" min="0" aria-label="Valor K positivo"></div>
                     <button class="btn-primario" id="btn-factor-complejo">Factorizar</button>
                 </div>
-                <div class="resultado" id="res-factor-complejo">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-factor-complejo" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 6: DEDUCCIÓN DE LA FÓRMULA GENERAL -->
-        <div class="diapositiva" data-indice="5">
+        <div class="diapositiva">
             <h2>5. Deducción de la Fórmula General</h2>
             <p>La fórmula general se obtiene al aplicar el método de <strong>completar el cuadrado perfecto</strong> a la ecuación $ax^2 + bx + c = 0$:</p>
 
@@ -453,17 +453,17 @@
                 <h3>🔍 Visualizador del discriminante</h3>
                 <p>Ingresa $a$, $b$ y $c$ para observar el valor del discriminante y el tipo de raíces que produce:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="dg-a" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="dg-b" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="dg-c" value="-10" step="any"></div>
+                    <div class="input-wrapper"><label for="dg-a">a =</label><input type="number" id="dg-a" value="1" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="dg-b">b =</label><input type="number" id="dg-b" value="3" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="dg-c">c =</label><input type="number" id="dg-c" value="-10" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-discriminante">Analizar</button>
                 </div>
-                <div class="resultado" id="res-discriminante">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-discriminante" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 7: EJEMPLOS CON FÓRMULA GENERAL -->
-        <div class="diapositiva" data-indice="6">
+        <div class="diapositiva">
             <h2>6. Ejemplos de la Fórmula General</h2>
             <p>La fórmula general es el método más poderoso y universal. Según el valor del <strong>discriminante</strong> $\Delta = b^2 - 4ac$, podemos tener:</p>
             <ul>
@@ -488,17 +488,17 @@
                 <h3>🧮 Solucionador con fórmula general</h3>
                 <p>Ingresa $a$, $b$ y $c$ para obtener las raíces (reales o complejas):</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="fg-a" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="fg-b" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="fg-c" value="-10" step="any"></div>
+                    <div class="input-wrapper"><label for="fg-a">a =</label><input type="number" id="fg-a" value="1" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="fg-b">b =</label><input type="number" id="fg-b" value="3" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="fg-c">c =</label><input type="number" id="fg-c" value="-10" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-formula-general">Resolver</button>
                 </div>
-                <div class="resultado" id="res-formula-general">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-formula-general" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 8: RESUMEN -->
-        <div class="diapositiva" data-indice="7">
+        <div class="diapositiva">
             <h2>7. Resumen del Módulo</h2>
             <h3>Comparación de los tres métodos</h3>
             <ul>
@@ -588,13 +588,21 @@
     // UTILIDADES
     // =========================================
     function formatearNumero(n) {
-        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
         return parseFloat(n.toFixed(4)).toString();
     }
 
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
+    }
+
+    // MCD robusto (maneja 0 y valores negativos)
     function mcd(a, b) {
         a = Math.abs(a);
         b = Math.abs(b);
+        if (a === 0) return b || 1;
+        if (b === 0) return a;
         while (b) { var t = b; b = a % b; a = t; }
         return a;
     }
@@ -608,7 +616,7 @@
         var c = parseFloat(document.getElementById('gr-c').value);
         var res = document.getElementById('res-grafico');
 
-        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
             res.className = 'resultado error';
             res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
             renderMath(res);
@@ -620,7 +628,7 @@
         html += '<ul>';
         for (var x = -3; x <= 5; x++) {
             var y = a * x * x + b * x + c;
-            var marca = (y === 0) ? ' <span style="color: var(--color-exito); font-weight: 700;">← ¡Raíz!</span>' : '';
+            var marca = casiIgual(y, 0) ? ' <span style="color: var(--color-exito); font-weight: 700;">← ¡Raíz!</span>' : '';
             html += '<li>$f(' + x + ') = ' + formatearNumero(y) + '$' + marca + '</li>';
         }
         html += '</ul>';
@@ -631,7 +639,8 @@
         renderMath(res);
     });
 
-    // =========================================    // 2. FACTORIZADOR DE TRINOMIOS SIMPLES ($a=1$)
+    // =========================================
+    // 2. FACTORIZADOR DE TRINOMIOS SIMPLES ($a=1$)
     // =========================================
     document.getElementById('btn-factor-simple').addEventListener('click', function() {
         var b = parseFloat(document.getElementById('fs-b').value);
@@ -690,7 +699,7 @@
         var c = parseFloat(document.getElementById('fa-c').value);
         var res = document.getElementById('res-factor-agrup');
 
-        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
             res.className = 'resultado error';
             res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
             renderMath(res);
@@ -722,16 +731,57 @@
         html += '<p><strong>Paso 2:</strong> Buscamos dos números con producto $' + formatearNumero(ac) + '$ y suma $' + formatearNumero(b) + '$. Estos son $' + formatearNumero(p) + '$ y $' + formatearNumero(q) + '$.</p>';
         html += '<p><strong>Paso 3:</strong> Descomponemos el término lineal:</p>';
         html += '$$' + formatearNumero(a) + 'x^2 ' + (p >= 0 ? '+ ' + formatearNumero(p) : '- ' + formatearNumero(-p)) + 'x ' + (q >= 0 ? '+ ' + formatearNumero(q) : '- ' + formatearNumero(-q)) + 'x ' + (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' = 0$$';
-        html += '<p><strong>Paso 4:</strong> Agrupamos y factorizamos:</p>';
 
-        var disc = b * b - 4 * a * c;
-        if (disc >= 0) {
-            var r1 = (-b + Math.sqrt(disc)) / (2 * a);
-            var r2 = (-b - Math.sqrt(disc)) / (2 * a);
-            html += '$$x = ' + formatearNumero(r1) + ' \\quad \\text{ó} \\quad x = ' + formatearNumero(r2) + '$$';
-            html += '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(r1) + ', ' + formatearNumero(r2) + '\\}$</p>';
+        html += '<p><strong>Paso 4:</strong> Agrupamos y factorizamos por agrupación:</p>';
+
+        // Agrupación: (a x² + p x) + (q x + c)
+        var g1 = mcd(a, p);
+        var g2 = mcd(q, c);
+        var A1 = a / g1;
+        var B1 = p / g1;
+        var A2 = q / g2;
+        var B2 = c / g2;
+
+        // Signos para mostrar
+        var signoB1 = B1 >= 0 ? '+ ' + formatearNumero(B1) : '- ' + formatearNumero(-B1);
+        var signoB2 = B2 >= 0 ? '+ ' + formatearNumero(B2) : '- ' + formatearNumero(-B2);
+
+        var coefG1 = (g1 === 1) ? '' : formatearNumero(g1);
+        var coefA1 = (A1 === 1) ? '' : formatearNumero(A1);
+        var coefG2 = (Math.abs(g2) === 1) ? '' : formatearNumero(Math.abs(g2));
+        var coefA2 = (Math.abs(A2) === 1) ? '' : formatearNumero(Math.abs(A2));
+        var signoG2 = g2 >= 0 ? '+' : '-';
+
+        html += '$$' + coefG1 + 'x(' + coefA1 + 'x ' + signoB1 + ') ' + signoG2 + ' ' + coefG2 + '(' + coefA2 + 'x ' + signoB2 + ') = 0$$';
+
+        // Verificamos si los binomios coinciden (deben coincidir para factorizar)
+        if (casiIgual(A1, A2) && casiIgual(B1, B2)) {
+            var coefX = (A1 === 1) ? '' : (A1 === -1 ? '-' : formatearNumero(A1));
+            var sumaFactores = g1 + g2;
+            html += '<p><strong>Paso 5:</strong> Sacamos factor común $(' + coefX + 'x ' + signoB1 + ')$:</p>';
+            html += '$$(' + coefX + 'x ' + signoB1 + ')(' + formatearNumero(g1) + ' ' + (g2 >= 0 ? '+ ' + formatearNumero(g2) : '- ' + formatearNumero(-g2)) + ') = 0$$';
+
+            var disc = b * b - 4 * a * c;
+            if (disc >= 0) {
+                var r1 = (-b + Math.sqrt(disc)) / (2 * a);
+                var r2 = (-b - Math.sqrt(disc)) / (2 * a);
+                html += '<p><strong>Raíces:</strong></p>';
+                html += '$$x = ' + formatearNumero(r1) + ' \\quad \\text{ó} \\quad x = ' + formatearNumero(r2) + '$$';
+                html += '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(r1) + ', ' + formatearNumero(r2) + '\\}$</p>';
+            } else {
+                html += '<p style="color: var(--color-error);">El discriminante es negativo; las raíces son complejas.</p>';
+            }
         } else {
-            html += '<p style="color: var(--color-error);">El discriminante es negativo; las raíces son complejas.</p>';
+            // Si los binomios no coinciden (por ejemplo, con factor común negativo),
+            // mostramos la factorización con las raíces
+            var disc = b * b - 4 * a * c;
+            if (disc >= 0) {
+                var r1 = (-b + Math.sqrt(disc)) / (2 * a);
+                var r2 = (-b - Math.sqrt(disc)) / (2 * a);
+                html += '<p><strong>Raíces:</strong></p>';
+                html += '$$x = ' + formatearNumero(r1) + ' \\quad \\text{ó} \\quad x = ' + formatearNumero(r2) + '$$';
+                html += '<p><strong>Conjunto solución:</strong> $\\{' + formatearNumero(r1) + ', ' + formatearNumero(r2) + '\\}$</p>';
+            }
         }
 
         res.className = 'resultado exito';
@@ -753,7 +803,7 @@
             return;
         }
 
-        if (K === 0) {
+        if (casiIgual(K, 0)) {
             res.className = 'resultado exito';
             res.innerHTML = '$$x^2 = 0 \\implies x = 0 \\text{ (raíz doble)}$$';
             renderMath(res);
@@ -781,7 +831,7 @@
         var c = parseFloat(document.getElementById('dg-c').value);
         var res = document.getElementById('res-discriminante');
 
-        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
             res.className = 'resultado error';
             res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
             renderMath(res);
@@ -791,11 +841,11 @@
         var disc = b * b - 4 * a * c;
         var tipo, color, mensaje;
 
-        if (disc > 0) {
+        if (disc > 1e-9) {
             tipo = 'Dos raíces reales distintas';
             color = 'var(--color-exito)';
             mensaje = 'La parábola corta al eje $X$ en dos puntos diferentes.';
-        } else if (disc === 0) {
+        } else if (casiIgual(disc, 0)) {
             tipo = 'Una raíz real doble';
             color = 'var(--color-acento)';
             mensaje = 'La parábola es tangente al eje $X$ en un solo punto.';
@@ -822,7 +872,7 @@
         var c = parseFloat(document.getElementById('fg-c').value);
         var res = document.getElementById('res-formula-general');
 
-        if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
             res.className = 'resultado error';
             res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
             renderMath(res);

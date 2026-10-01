@@ -139,6 +139,11 @@
             border-color: var(--accent-main);
         }
 
+        .option-item:focus {
+            outline: 3px solid var(--accent-main);
+            outline-offset: 2px;
+        }
+
         .option-item.disabled {
             cursor: default;
         }
@@ -199,6 +204,11 @@
             background-color: var(--text-primary);
         }
 
+        .btn-next:focus {
+            outline: 3px solid var(--accent-main);
+            outline-offset: 2px;
+        }
+
         .results-view {
             text-align: center;
             display: none;
@@ -245,10 +255,28 @@
             background-color: var(--text-primary);
         }
 
+        .btn-restart:focus {
+            outline: 3px solid var(--accent-main);
+            outline-offset: 2px;
+        }
+
         .clearfix::after {
             content: "";
             clear: both;
             display: table;
+        }
+
+        /* Accesibilidad: solo visible para lectores de pantalla */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         @media (max-width: 600px) {
@@ -282,16 +310,16 @@
         </header>
 
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Progreso del simulador" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
 
         <!-- Vista del Quiz -->
         <div id="quizView" class="quiz-view clearfix">
             <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
             <div class="question-text" id="questionText">Cargando pregunta...</div>
-            <ul class="options-list" id="optionsList"></ul>
-            <div class="feedback-box" id="feedbackBox"></div>
-            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+            <ul class="options-list" id="optionsList" role="list"></ul>
+            <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()" aria-label="Avanzar al siguiente reactivo">Siguiente Reactivo →</button>
         </div>
 
         <!-- Vista de Resultados -->
@@ -299,7 +327,7 @@
             <h2>Evaluación Finalizada</h2>
             <div class="score-display" id="finalScore">0/10</div>
             <div class="results-message" id="resultsMessage"></div>
-            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+            <button class="btn-restart" onclick="restartQuiz()" aria-label="Reiniciar la evaluación">Intentar de nuevo</button>
         </div>
     </div>
 
@@ -474,8 +502,22 @@
             q.options.forEach((opt, idx) => {
                 const li = document.createElement('li');
                 li.className = 'option-item';
+                li.setAttribute('role', 'button');
+                li.setAttribute('tabindex', '0');
+                li.setAttribute('aria-label', `Opción ${String.fromCharCode(97 + idx)}: ${opt.text}`);
                 li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+
+                // Selección con ratón
                 li.onclick = () => selectOption(opt.correct, li);
+
+                // Selección con teclado (Enter o Espacio)
+                li.onkeydown = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectOption(opt.correct, li);
+                    }
+                };
+
                 optionsList.appendChild(li);
             });
 
@@ -501,13 +543,17 @@
             const optionItems = document.querySelectorAll('.option-item');
             optionItems.forEach(item => {
                 item.classList.add('disabled');
+                item.setAttribute('tabindex', '-1');
+                item.setAttribute('aria-disabled', 'true');
             });
 
             if (isCorrect) {
                 selectedElement.classList.add('es-correcta');
+                selectedElement.setAttribute('aria-label', 'Opción correcta');
                 score++;
             } else {
                 selectedElement.classList.add('es-incorrecta');
+                selectedElement.setAttribute('aria-label', 'Opción incorrecta');
                 const q = questions[currentQuestionIndex];
                 optionItems.forEach((item, idx) => {
                     if (q.options[idx].correct) {
@@ -523,10 +569,13 @@
             const btnNext = document.getElementById('btnNext');
             if (currentQuestionIndex === questions.length - 1) {
                 btnNext.innerText = "Ver Resultados Finales →";
+                btnNext.setAttribute('aria-label', 'Ver resultados finales');
             } else {
                 btnNext.innerText = "Siguiente Reactivo →";
+                btnNext.setAttribute('aria-label', 'Avanzar al siguiente reactivo');
             }
             btnNext.classList.add('visible');
+            btnNext.focus();
 
             if (window.MathJax) {
                 MathJax.typeset();
@@ -550,7 +599,9 @@
         // =========================================
         function updateProgress() {
             const progress = ((currentQuestionIndex) / questions.length) * 100;
-            document.getElementById('progressBar').style.width = `${progress}%`;
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${progress}%`;
+            bar.setAttribute('aria-valuenow', Math.round(progress));
         }
 
         // =========================================
@@ -559,7 +610,9 @@
         function showResults() {
             document.getElementById('quizView').classList.add('hidden');
             document.getElementById('resultsView').classList.add('visible');
-            document.getElementById('progressBar').style.width = '100%';
+            const bar = document.getElementById('progressBar');
+            bar.style.width = '100%';
+            bar.setAttribute('aria-valuenow', '100');
 
             document.getElementById('finalScore').innerText = `${score} / 10`;
 

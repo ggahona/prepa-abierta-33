@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 8 — Raíces Cuadradas, Representación Geométrica y Valor Absoluto | Matemáticas III</title>
-    
+
     <script>
         window.MathJax = {
             tex: {
@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7fa;
@@ -301,7 +301,7 @@
 
     <main>
         <!-- DIAPOSITIVA 1: BIENVENIDA -->
-        <div class="diapositiva activa" data-indice="0">
+        <div class="diapositiva activa">
             <h2>Bienvenida al Módulo 8</h2>
             <p>En este módulo cerramos el estudio de los números complejos abordando tres aplicaciones fundamentales: las <strong>raíces cuadradas</strong> de números negativos, la <strong>representación geométrica</strong> en el plano complejo y el <strong>valor absoluto</strong> (o módulo) de un número complejo.</p>
             <div class="math-block">$$|z| = |a + bi| = \sqrt{a^2 + b^2}$$</div>
@@ -309,7 +309,7 @@
         </div>
 
         <!-- DIAPOSITIVA 2: RAÍCES CUADRADAS -->
-        <div class="diapositiva" data-indice="1">
+        <div class="diapositiva">
             <h2>1. Raíces Cuadradas de Números Negativos</h2>
             <p>Recordemos que la razón para introducir $\mathbb{C}$ fue resolver ecuaciones del tipo $x^2 + K = 0$ con $K > 0$. Partimos del caso más simple $x^2 = -1$:</p>
             <div class="math-block">$$x^2 = -1 \implies x = i \quad \text{ó} \quad x = -i$$</div>
@@ -331,15 +331,15 @@
                 <h3>√ Calculadora de raíces cuadradas</h3>
                 <p>Ingresa un número entero (positivo o negativo) para obtener sus raíces cuadradas en $\mathbb{C}$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>Número K =</label><input type="number" id="rc-K" value="-16" step="any"></div>
+                    <div class="input-wrapper"><label for="rc-K">Número K =</label><input type="number" id="rc-K" value="-16" step="any" aria-label="Número K para calcular raíces"></div>
                     <button class="btn-primario" id="btn-raices">Calcular raíces</button>
                 </div>
-                <div class="resultado" id="res-raices">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-raices" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 3: ECUACIONES CUADRÁTICAS -->
-        <div class="diapositiva" data-indice="2">
+        <div class="diapositiva">
             <h2>2. Conjuntos Solución de Ecuaciones</h2>
             <p>Aplicando las raíces cuadradas de números negativos, podemos resolver ecuaciones cuadráticas que no tienen solución en $\mathbb{R}$.</p>
 
@@ -369,15 +369,15 @@
                 <h3>🧮 Solucionador de ecuaciones $x^2 + K = 0$</h3>
                 <p>Ingresa el valor de $K$ para obtener las dos soluciones en la forma $a + bi$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>K =</label><input type="number" id="ec-K" value="5" step="any"></div>
+                    <div class="input-wrapper"><label for="ec-K">K =</label><input type="number" id="ec-K" value="5" step="any" aria-label="Valor de K para resolver x cuadrada más K igual a cero"></div>
                     <button class="btn-primario" id="btn-ecuacion">Resolver</button>
                 </div>
-                <div class="resultado" id="res-ecuacion">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-ecuacion" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 4: PRODUCTO DE RAÍCES NEGATIVAS -->
-        <div class="diapositiva" data-indice="3">
+        <div class="diapositiva">
             <h2>3. Cuidado con el Producto de Raíces Negativas</h2>
             <p>La propiedad $\sqrt{a} \cdot \sqrt{b} = \sqrt{ab}$ <strong>sólo es válida cuando $a \geq 0$ y $b \geq 0$</strong>. Cuando ambos radicandos son negativos, primero convertimos cada raíz a su forma con $i$ y luego multiplicamos.</p>
 
@@ -407,16 +407,16 @@
                 <h3>🧪 Verificador de producto de raíces</h3>
                 <p>Dados dos números positivos $a$ y $b$, verifica el producto $\sqrt{-a} \cdot \sqrt{-b}$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="pr-a" value="25" step="any" min="1"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="pr-b" value="16" step="any" min="1"></div>
+                    <div class="input-wrapper"><label for="pr-a">a =</label><input type="number" id="pr-a" value="25" step="any" min="1" aria-label="Valor a positivo"></div>
+                    <div class="input-wrapper"><label for="pr-b">b =</label><input type="number" id="pr-b" value="16" step="any" min="1" aria-label="Valor b positivo"></div>
                     <button class="btn-primario" id="btn-producto">Verificar</button>
                 </div>
-                <div class="resultado" id="res-producto">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-producto" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 5: REPRESENTACIÓN GEOMÉTRICA -->
-        <div class="diapositiva" data-indice="4">
+        <div class="diapositiva">
             <h2>4. Representación Geométrica en el Plano Complejo</h2>
             <p>Cada número complejo $z = a + bi$ se representa como el punto $(a, b)$ en el <strong>plano complejo</strong>:</p>
             <ul>
@@ -439,16 +439,16 @@
                 <h3>📍 Ubicador en el plano complejo</h3>
                 <p>Ingresa $a$ y $b$ para obtener la descripción geométrica de $z = a + bi$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="rg-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="rg-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="rg-a">a =</label><input type="number" id="rg-a" value="2" step="any" aria-label="Parte real a"></div>
+                    <div class="input-wrapper"><label for="rg-b">b =</label><input type="number" id="rg-b" value="3" step="any" aria-label="Parte imaginaria b"></div>
                     <button class="btn-primario" id="btn-representar">Ubicar</button>
                 </div>
-                <div class="resultado" id="res-representar">La descripción aparecerá aquí...</div>
+                <div class="resultado" id="res-representar" role="status" aria-live="polite">La descripción aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 6: VALOR ABSOLUTO -->
-        <div class="diapositiva" data-indice="5">
+        <div class="diapositiva">
             <h2>5. Valor Absoluto (Módulo) de un Número Complejo</h2>
             <p>La distancia del punto $(a, b)$ al origen se calcula con el teorema de Pitágoras, ya que $a$ y $b$ son los catetos de un triángulo rectángulo:</p>
             <div class="math-block">$$|z| = |a + bi| = \sqrt{a^2 + b^2}$$</div>
@@ -466,16 +466,16 @@
                 <h3>📏 Calculadora de valor absoluto</h3>
                 <p>Ingresa $a$ y $b$ para calcular $|a + bi|$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="va-a" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="va-b" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="va-a">a =</label><input type="number" id="va-a" value="3" step="any" aria-label="Parte real a"></div>
+                    <div class="input-wrapper"><label for="va-b">b =</label><input type="number" id="va-b" value="4" step="any" aria-label="Parte imaginaria b"></div>
                     <button class="btn-primario" id="btn-valor-abs">Calcular |z|</button>
                 </div>
-                <div class="resultado" id="res-valor-abs">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-valor-abs" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 7: CIRCUNFERENCIA UNITARIA -->
-        <div class="diapositiva" data-indice="6">
+        <div class="diapositiva">
             <h2>6. La Circunferencia Unitaria $|z| = 1$</h2>
             <p>Consideremos el conjunto de números complejos $z$ que satisfacen $|z| = 1$. Geométricamente, $|z|$ representa la distancia de $z$ al origen, por lo que los números complejos que cumplen $|z| = 1$ son todos aquellos cuya gráfica está a una unidad del origen.</p>
             <p>Este conjunto de puntos forma una <strong>circunferencia</strong> de radio 1 centrada en el origen:</p>
@@ -493,16 +493,16 @@
                 <h3>⭕ Verificador de puntos en la circunferencia unitaria</h3>
                 <p>Ingresa $a$ y $b$ para comprobar si $z = a + bi$ pertenece a la circunferencia $|z| = 1$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="cu-a" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="cu-b" value="0" step="any"></div>
+                    <div class="input-wrapper"><label for="cu-a">a =</label><input type="number" id="cu-a" value="1" step="any" aria-label="Parte real a"></div>
+                    <div class="input-wrapper"><label for="cu-b">b =</label><input type="number" id="cu-b" value="0" step="any" aria-label="Parte imaginaria b"></div>
                     <button class="btn-primario" id="btn-unitaria">Verificar</button>
                 </div>
-                <div class="resultado" id="res-unitaria">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-unitaria" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 8: REGIONES DEL PLANO -->
-        <div class="diapositiva" data-indice="7">
+        <div class="diapositiva">
             <h2>7. Regiones del Plano Definidas por Desigualdades</h2>
             <p>Las desigualdades con el módulo describen <strong>regiones</strong> del plano complejo, no solo curvas:</p>
 
@@ -519,17 +519,17 @@
                 <h3>🗺️ Identificador de regiones</h3>
                 <p>Ingresa un número complejo $z = a + bi$ y un radio $r$ para determinar la posición de $z$ respecto a la circunferencia $|z| = r$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="rg2-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="rg2-b" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>Radio r =</label><input type="number" id="rg2-r" value="3" step="any" min="0"></div>
+                    <div class="input-wrapper"><label for="rg2-a">a =</label><input type="number" id="rg2-a" value="2" step="any" aria-label="Parte real a"></div>
+                    <div class="input-wrapper"><label for="rg2-b">b =</label><input type="number" id="rg2-b" value="1" step="any" aria-label="Parte imaginaria b"></div>
+                    <div class="input-wrapper"><label for="rg2-r">Radio r =</label><input type="number" id="rg2-r" value="3" step="any" min="0" aria-label="Radio de comparación"></div>
                     <button class="btn-primario" id="btn-region">Identificar región</button>
                 </div>
-                <div class="resultado" id="res-region">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-region" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 9: RESUMEN -->
-        <div class="diapositiva" data-indice="8">
+        <div class="diapositiva">
             <h2>8. Resumen del Módulo</h2>
             <h3>Ideas clave</h3>
             <ul>
@@ -614,7 +614,7 @@
     // UTILIDADES
     // =========================================
     function formatearNumero(n) {
-        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
         return parseFloat(n.toFixed(4)).toString();
     }
 
@@ -633,6 +633,11 @@
         }
         if (latex === '') latex = '0';
         return latex;
+    }
+
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
     }
 
     // =========================================
@@ -829,8 +834,8 @@
         var modulo = Math.sqrt(a * a + b * b);
         var descripcion = '';
 
-        if (r === 0) {
-            if (modulo === 0) descripcion = 'está en el origen $(0, 0)$';
+        if (casiIgual(r, 0)) {
+            if (casiIgual(modulo, 0)) descripcion = 'está en el origen $(0, 0)$';
             else descripcion = 'está fuera del conjunto $\\{|z| \\leq 0\\} = \\{(0,0)\\}$';
         } else {
             if (Math.abs(modulo - r) < 0.001) {

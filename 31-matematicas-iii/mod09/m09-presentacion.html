@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 9 — La Función Cuadrática y su Gráfica | Matemáticas III</title>
-    
+
     <script>
         window.MathJax = {
             tex: {
@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7fa;
@@ -301,7 +301,7 @@
 
     <main>
         <!-- DIAPOSITIVA 1: BIENVENIDA -->
-        <div class="diapositiva activa" data-indice="0">
+        <div class="diapositiva activa">
             <h2>Bienvenida al Módulo 9</h2>
             <p>En este módulo estudiamos la <strong>función cuadrática</strong>, una función polinomial de segundo grado cuya gráfica es una curva llamada <strong>parábola</strong>. Es uno de los modelos matemáticos más utilizados para describir fenómenos como el movimiento de proyectiles, la optimización de áreas y muchos otros problemas prácticos.</p>
             <div class="math-block">$$f(x) = ax^2 + bx + c, \quad a \neq 0$$</div>
@@ -309,7 +309,7 @@
         </div>
 
         <!-- DIAPOSITIVA 2: DEFINICIÓN -->
-        <div class="diapositiva" data-indice="1">
+        <div class="diapositiva">
             <h2>1. Definición de Función Cuadrática</h2>
             <p>Una <strong>función cuadrática</strong> es una función polinomial de segundo grado que se puede expresar en la forma estándar:</p>
             <div class="math-block">$$f(x) = ax^2 + bx + c$$</div>
@@ -332,17 +332,17 @@
                 <h3>📐 Analizador de función cuadrática</h3>
                 <p>Ingresa los coeficientes $a$, $b$ y $c$ para identificar el tipo de parábola:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="def-a" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="def-b" value="-6" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="def-c" value="5" step="any"></div>
+                    <div class="input-wrapper"><label for="def-a">a =</label><input type="number" id="def-a" value="1" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="def-b">b =</label><input type="number" id="def-b" value="-6" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="def-c">c =</label><input type="number" id="def-c" value="5" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-definicion">Analizar</button>
                 </div>
-                <div class="resultado" id="res-definicion">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-definicion" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 3: SIMETRÍA -->
-        <div class="diapositiva" data-indice="2">
+        <div class="diapositiva">
             <h2>2. Simetría y Elementos de la Parábola</h2>
             <p>Una gráfica es <strong>simétrica</strong> con respecto a una recta o eje si, al trazar rectas perpendiculares al eje, estas intersecan a la gráfica en puntos que <strong>equidistan</strong> del eje.</p>
             <p>En toda parábola vertical, el <strong>eje de simetría</strong> es una recta vertical que pasa exactamente por el vértice, dividiendo la parábola en dos mitades idénticas (como un espejo).</p>
@@ -363,17 +363,17 @@
                 <h3>🪞 Encontrar punto simétrico</h3>
                 <p>Dado el vértice $x = h$ y un punto $x_1$, encuentra el punto simétrico:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>h (vértice) =</label><input type="number" id="sim-h" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>x₁ =</label><input type="number" id="sim-x1" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>y₁ =</label><input type="number" id="sim-y1" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="sim-h">h (vértice) =</label><input type="number" id="sim-h" value="3" step="any" aria-label="Coordenada x del vértice"></div>
+                    <div class="input-wrapper"><label for="sim-x1">x₁ =</label><input type="number" id="sim-x1" value="1" step="any" aria-label="Coordenada x del punto"></div>
+                    <div class="input-wrapper"><label for="sim-y1">y₁ =</label><input type="number" id="sim-y1" value="4" step="any" aria-label="Coordenada y del punto"></div>
                     <button class="btn-primario" id="btn-simetrico">Calcular simétrico</button>
                 </div>
-                <div class="resultado" id="res-simetrico">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-simetrico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 4: COMPLETAR EL CUADRADO -->
-        <div class="diapositiva" data-indice="3">
+        <div class="diapositiva">
             <h2>3. Método 1: Completar el Cuadrado</h2>
             <p>Este método transforma la forma estándar $y = ax^2 + bx + c$ en la <strong>forma canónica</strong> (o del vértice):</p>
             <div class="math-block">$$y = a(x - h)^2 + k$$</div>
@@ -400,17 +400,17 @@
                 <h3>🧩 Conversor a forma canónica</h3>
                 <p>Ingresa $a$, $b$ y $c$ para obtener la forma $a(x-h)^2 + k$ y el vértice:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="cc-a" value="-2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="cc-b" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="cc-c" value="12" step="any"></div>
+                    <div class="input-wrapper"><label for="cc-a">a =</label><input type="number" id="cc-a" value="-2" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="cc-b">b =</label><input type="number" id="cc-b" value="2" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="cc-c">c =</label><input type="number" id="cc-c" value="12" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-canonica">Convertir</button>
                 </div>
-                <div class="resultado" id="res-canonica">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-canonica" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 5: FÓRMULA DEL VÉRTICE -->
-        <div class="diapositiva" data-indice="4">
+        <div class="diapositiva">
             <h2>4. Método 2: Fórmula del Vértice</h2>
             <p>Un camino más directo para encontrar el vértice sin completar el cuadrado es usar las <strong>fórmulas del vértice</strong>:</p>
             <div class="math-block">$$x = -\frac{b}{2a} \quad ; \quad y = \frac{4ac - b^2}{4a}$$</div>
@@ -444,17 +444,17 @@
                 <h3>📍 Calculadora de vértice por fórmula</h3>
                 <p>Ingresa $a$, $b$ y $c$ para obtener el vértice con el método de la fórmula:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="fv-a" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="fv-b" value="-4" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="fv-c" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="fv-a">a =</label><input type="number" id="fv-a" value="3" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="fv-b">b =</label><input type="number" id="fv-b" value="-4" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="fv-c">c =</label><input type="number" id="fv-c" value="2" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-vertice-formula">Calcular vértice</button>
                 </div>
-                <div class="resultado" id="res-vertice-formula">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-vertice-formula" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 6: GRAFICACIÓN -->
-        <div class="diapositiva" data-indice="5">
+        <div class="diapositiva">
             <h2>5. Graficación de la Parábola</h2>
             <p>Para trazar la gráfica de una parábola con precisión se siguen estos pasos:</p>
             <ol>
@@ -481,17 +481,17 @@
                 <h3>📊 Analizador completo de parábola</h3>
                 <p>Ingresa $a$, $b$ y $c$ para obtener un análisis completo: concavidad, vértice, eje de simetría, intersección con $Y$ y raíces (si existen):</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="an-a" value="-2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="an-b" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>c =</label><input type="number" id="an-c" value="12" step="any"></div>
+                    <div class="input-wrapper"><label for="an-a">a =</label><input type="number" id="an-a" value="-2" step="any" aria-label="Coeficiente a"></div>
+                    <div class="input-wrapper"><label for="an-b">b =</label><input type="number" id="an-b" value="2" step="any" aria-label="Coeficiente b"></div>
+                    <div class="input-wrapper"><label for="an-c">c =</label><input type="number" id="an-c" value="12" step="any" aria-label="Coeficiente c"></div>
                     <button class="btn-primario" id="btn-analisis">Analizar parábola</button>
                 </div>
-                <div class="resultado" id="res-analisis">El resultado aparecerá aquí...</div>
+                <div class="resultado" id="res-analisis" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
             </div>
         </div>
 
         <!-- DIAPOSITIVA 7: RESUMEN -->
-        <div class="diapositiva" data-indice="6">
+        <div class="diapositiva">
             <h2>6. Resumen del Módulo</h2>
             <h3>Ideas clave</h3>
             <ul>
@@ -586,15 +586,13 @@
     // UTILIDADES
     // =========================================
     function formatearNumero(n) {
-        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
         return parseFloat(n.toFixed(4)).toString();
     }
 
-    function formatearFraccion(n) {
-        // Intenta representar como fracción simple si es posible
-        if (Number.isInteger(n)) return n.toString();
-        var redondeado = parseFloat(n.toFixed(4));
-        return redondeado.toString();
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
     }
 
     // =========================================
@@ -612,9 +610,9 @@
             return;
         }
 
-        if (a === 0) {
+        if (casiIgual(a, 0)) {
             res.className = 'resultado error';
-            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática sino lineal.';
+            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática sino <strong>lineal</strong>. Debes ingresar $a \\neq 0$.';
             renderMath(res);
             return;
         }
@@ -670,9 +668,9 @@
             return;
         }
 
-        if (a === 0) {
+        if (casiIgual(a, 0)) {
             res.className = 'resultado error';
-            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática.';
+            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática. Debes ingresar $a \\neq 0$.';
             renderMath(res);
             return;
         }
@@ -683,12 +681,12 @@
 
         // Construcción del texto de la forma canónica
         var latex = 'y = ';
-        if (a === 1) latex += '';
-        else if (a === -1) latex += '-';
+        if (casiIgual(a, 1)) latex += '';
+        else if (casiIgual(a, -1)) latex += '-';
         else latex += formatearNumero(a);
 
         latex += '(x ';
-        if (h === 0) {
+        if (casiIgual(h, 0)) {
             latex += ')^2 ';
         } else if (h > 0) {
             latex += '- ' + formatearNumero(h) + ')^2 ';
@@ -696,7 +694,7 @@
             latex += '+ ' + formatearNumero(-h) + ')^2 ';
         }
 
-        if (k !== 0) {
+        if (!casiIgual(k, 0)) {
             if (k > 0) latex += '+ ' + formatearNumero(k);
             else latex += '- ' + formatearNumero(-k);
         }
@@ -728,9 +726,9 @@
             return;
         }
 
-        if (a === 0) {
+        if (casiIgual(a, 0)) {
             res.className = 'resultado error';
-            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática.';
+            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática. Debes ingresar $a \\neq 0$.';
             renderMath(res);
             return;
         }
@@ -764,9 +762,9 @@
             return;
         }
 
-        if (a === 0) {
+        if (casiIgual(a, 0)) {
             res.className = 'resultado error';
-            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática.';
+            res.innerHTML = '⚠️ Si $a = 0$, la función no es cuadrática. Debes ingresar $a \\neq 0$.';
             renderMath(res);
             return;
         }
@@ -781,12 +779,12 @@
         var discriminante = b * b - 4 * a * c;
         var raicesTexto = '';
 
-        if (discriminante > 0) {
+        if (discriminante > 1e-9) {
             var r1 = (-b + Math.sqrt(discriminante)) / (2 * a);
             var r2 = (-b - Math.sqrt(discriminante)) / (2 * a);
             raicesTexto = 'Dos raíces reales: $x_1 = ' + formatearNumero(r1) + '$ y $x_2 = ' + formatearNumero(r2) + '$<br>' +
                 'Puntos de corte con eje X: $(' + formatearNumero(r1) + ', 0)$ y $(' + formatearNumero(r2) + ', 0)$';
-        } else if (discriminante === 0) {
+        } else if (casiIgual(discriminante, 0, 1e-9)) {
             var r = -b / (2 * a);
             raicesTexto = 'Una raíz doble: $x = ' + formatearNumero(r) + '$<br>' +
                 'La parábola es tangente al eje X en $(' + formatearNumero(r) + ', 0)$';

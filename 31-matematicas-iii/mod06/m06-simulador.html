@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 6: Multiplicación de Números Complejos y el Campo ℂ</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.1rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 6</h1>
+            <p>Multiplicación de Números Complejos y el Campo $\mathbb{C}$</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 6
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cómo se define la multiplicación de dos números complejos $Z_1 = (a_1, b_1)$ y $Z_2 = (a_2, b_2)$?",
+                options: [
+                    { text: "$Z_1 \\cdot Z_2 = (a_1 + a_2, \\ b_1 + b_2)$", correct: false },
+                    { text: "$Z_1 \\cdot Z_2 = (a_1 a_2 - b_1 b_2, \\ a_1 b_2 + b_1 a_2)$", correct: true },
+                    { text: "$Z_1 \\cdot Z_2 = (a_1 a_2 + b_1 b_2, \\ a_1 b_2 - b_1 a_2)$", correct: false },
+                    { text: "$Z_1 \\cdot Z_2 = (a_1 b_1, \\ a_2 b_2)$", correct: false }
+                ],
+                feedback: "La multiplicación de números complejos se define como $Z_1 \\cdot Z_2 = (a_1 a_2 - b_1 b_2, \\ a_1 b_2 + b_1 a_2)$. Esta definición garantiza que $\\mathbb{C}$ sea cerrado respecto a la multiplicación."
+            },
+            {
+                id: 2,
+                text: "Calcula el resultado de la multiplicación $(3, -1) \\cdot (2, 5)$.",
+                options: [
+                    { text: "$(11, 13)$", correct: true },
+                    { text: "$(6, -5)$", correct: false },
+                    { text: "$(13, 11)$", correct: false },
+                    { text: "$(5, 7)$", correct: false }
+                ],
+                feedback: "Aplicando la fórmula: $(3)(2) - (-1)(5) = 6 + 5 = 11$ y $(3)(5) + (-1)(2) = 15 - 2 = 13$. Resultado: $(11, 13)$."
+            },
+            {
+                id: 3,
+                text: "¿Por qué se dice que la multiplicación de números complejos es conmutativa?",
+                options: [
+                    { text: "Porque $Z_1 \\cdot Z_2 = Z_2 \\cdot Z_1$ se demuestra usando la conmutatividad de la suma y multiplicación en $\\mathbb{R}$.", correct: true },
+                    { text: "Porque el resultado siempre es un número real.", correct: false },
+                    { text: "Porque la suma de sus componentes es igual en ambos casos.", correct: false },
+                    { text: "Porque el producto siempre da como resultado $(0, 0)$.", correct: false }
+                ],
+                feedback: "Al expandir $Z_1 \\cdot Z_2$ y $Z_2 \\cdot Z_1$, ambos se reducen a $(a_1a_2 - b_1b_2, \\ a_1b_2 + b_1a_2)$ gracias a la conmutatividad de la multiplicación y suma en $\\mathbb{R}$. Por la propiedad transitiva de las igualdades, $Z_1 \\cdot Z_2 = Z_2 \\cdot Z_1$."
+            },
+            {
+                id: 4,
+                text: "¿Cuál es el elemento identidad para la multiplicación en $\\mathbb{C}$?",
+                options: [
+                    { text: "$(0, 0)$", correct: false },
+                    { text: "$(1, 0)$", correct: true },
+                    { text: "$(0, 1)$", correct: false },
+                    { text: "$(1, 1)$", correct: false }
+                ],
+                feedback: "El elemento identidad para la multiplicación es $(1, 0)$, ya que $(a, b)(1, 0) = (a \\cdot 1 - b \\cdot 0, \\ a \\cdot 0 + b \\cdot 1) = (a, b)$ para todo $(a, b) \\in \\mathbb{C}$."
+            },
+            {
+                id: 5,
+                text: "¿Cuál es el inverso multiplicativo del número complejo $(1, 2)$?",
+                options: [
+                    { text: "$\\left(\\frac{1}{5}, -\\frac{2}{5}\\right)$", correct: true },
+                    { text: "$\\left(-\\frac{1}{5}, \\frac{2}{5}\\right)$", correct: false },
+                    { text: "$(-1, -2)$", correct: false },
+                    { text: "$\\left(\\frac{2}{5}, \\frac{1}{5}\\right)$", correct: false }
+                ],
+                feedback: "Para $(a, b) = (1, 2)$: $x = \\frac{a}{a^2 + b^2} = \\frac{1}{1 + 4} = \\frac{1}{5}$ y $y = \\frac{-b}{a^2 + b^2} = \\frac{-2}{1 + 4} = -\\frac{2}{5}$. El inverso multiplicativo es $\\left(\\frac{1}{5}, -\\frac{2}{5}\\right)$."
+            },
+            {
+                id: 6,
+                text: "¿Qué sucede con el elemento $(0, 0)$ respecto al inverso multiplicativo?",
+                options: [
+                    { text: "Su inverso multiplicativo es él mismo.", correct: false },
+                    { text: "No tiene inverso multiplicativo porque $(0, 0)(x, y) = (0, 0) \\neq (1, 0)$ para todo $(x, y)$.", correct: true },
+                    { text: "Su inverso es $(1, 0)$ porque la multiplicación es conmutativa.", correct: false },
+                    { text: "Su inverso es $(-1, 0)$ porque es el opuesto aditivo.", correct: false }
+                ],
+                feedback: "El elemento $(0, 0)$ no tiene inverso multiplicativo, ya que $(0, 0)(x, y) = (0, 0) \\neq (1, 0)$ para cualquier $(x, y) \\in \\mathbb{C}$. Por esta razón se excluye en el postulado de inversos multiplicativos."
+            },
+            {
+                id: 7,
+                text: "¿Cuáles son los seis postulados que debe cumplir un conjunto para ser considerado un campo?",
+                options: [
+                    { text: "Cerradura, orden, simetría, distributiva, transitividad e inversos.", correct: false },
+                    { text: "Cerradura, conmutativa, asociativa, distributiva, identidades e inversos.", correct: true },
+                    { text: "Suma, resta, multiplicación, división, potenciación y radicación.", correct: false },
+                    { text: "Reflexiva, simétrica, transitiva, aditiva, multiplicativa y sustitutiva.", correct: false }
+                ],
+                feedback: "Un campo cumple seis postulados: (1) Cerradura, (2) Conmutativa, (3) Asociativa, (4) Distributiva, (5) Existencia de identidades para suma y multiplicación, (6) Existencia de inversos aditivos y multiplicativos (excepto para el cero). $\\mathbb{C}$ satisface los seis."
+            },
+            {
+                id: 8,
+                text: "¿Cuál es la correspondencia biunívoca que se establece entre $\\mathbb{R}$ y $\\mathbb{C}$?",
+                options: [
+                    { text: "Cada real $a$ se asocia con el complejo $(0, a)$.", correct: false },
+                    { text: "Cada real $a$ se asocia con el complejo $(a, 0)$.", correct: true },
+                    { text: "Cada real $a$ se asocia con el complejo $(a, a)$.", correct: false },
+                    { text: "Cada real $a$ se asocia con el complejo $(1, a)$.", correct: false }
+                ],
+                feedback: "Cada número real $a$ se identifica con el complejo $(a, 0)$. Esta correspondencia se preserva a través de la suma y la multiplicación: $(a, 0) + (b, 0) = (a+b, 0)$ y $(a, 0)(b, 0) = (ab, 0)$."
+            },
+            {
+                id: 9,
+                text: "¿Por qué NO usamos los complejos de la forma $(0, b)$ para representar a los números reales?",
+                options: [
+                    { text: "Porque no existe una correspondencia biunívoca entre $\\mathbb{R}$ y $\\{z \\mid z = (0, b)\\}$.", correct: false },
+                    { text: "Porque la correspondencia $a \\leftrightarrow (0, a)$ no se preserva en la multiplicación: $(0, a)(0, b) = (-ab, 0) \\neq (0, ab)$.", correct: true },
+                    { text: "Porque $(0, b)$ siempre es igual a cero.", correct: false },
+                    { text: "Porque $(0, b)$ no está en el conjunto $\\mathbb{C}$.", correct: false }
+                ],
+                feedback: "Aunque existe una correspondencia biunívoca entre $\\mathbb{R}$ y $\\{z \\mid z = (0, b)\\}$, esta NO se preserva en la multiplicación: $2 \\cdot 3 = 6$ en $\\mathbb{R}$, pero $(0, 2)(0, 3) = (-6, 0) \\neq (0, 6)$. Por eso se usa $(a, 0)$."
+            },
+            {
+                id: 10,
+                text: "Si $k = -1$ es un número real y $(a, b) = (3, -4)$ es un número complejo, ¿cuál es el resultado de $k(a, b)$?",
+                options: [
+                    { text: "$(-3, 4)$", correct: true },
+                    { text: "$(3, -4)$", correct: false },
+                    { text: "$(-3, -4)$", correct: false },
+                    { text: "$(3, 4)$", correct: false }
+                ],
+                feedback: "Aplicando $k(a, b) = (k, 0)(a, b) = (ka, kb)$ con $k = -1$: $-1(3, -4) = (-3, 4)$. Es decir, multiplicar por $-1$ cambia el signo de ambas componentes."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 6 sobre multiplicación de números complejos, el elemento identidad, el inverso multiplicativo y la estructura de campo de ℂ.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de la multiplicación de números complejos y la estructura de campo. Repasa los detalles sobre la correspondencia biunívoca ℝ ⊂ ℂ y el inverso multiplicativo para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 6 (definición de multiplicación, elemento identidad (1,0), inverso multiplicativo, los 6 postulados de campo, y la identificación de ℝ como subconjunto de ℂ mediante (a, 0)) antes de intentar nuevamente.";
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 6 — Multiplicación de Números Complejos y el Campo ℂ | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: var(--color-primario);
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.4rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 6 — Multiplicación de Números Complejos y el Campo $\mathbb{C}$</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo 6</h2>
+            <p>En este módulo continuamos el estudio del <strong>Conjunto de los Números Complejos</strong> $\mathbb{C}$. Ahora nos enfocamos en la <strong>multiplicación</strong>, sus propiedades, el elemento identidad, el inverso multiplicativo y la razón por la cual $\mathbb{C}$ es un <strong>campo</strong>.</p>
+            <div class="math-block">$$(a_1, b_1) \cdot (a_2, b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$$</div>
+            <p>También estudiaremos la <strong>correspondencia biunívoca</strong> entre $\mathbb{C}$ y los puntos del plano, y veremos cómo los números reales se consideran un <strong>subconjunto</strong> de los complejos.</p>
+            <div class="nota">
+                <strong>Nota pedagógica:</strong> en este módulo trabajamos con la <strong>forma de par ordenado</strong> $(a, b)$. La unidad imaginaria $i$ y la forma rectangular $a + bi$ se introducirán en el Módulo 7.
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 2: MULTIPLICACIÓN -->
+        <div class="diapositiva" data-indice="1">
+            <h2>1. Multiplicación de Números Complejos</h2>
+            <p>Recordemos que un número complejo es un par ordenado con componentes reales: $z = (a, b)$. La multiplicación se define así:</p>
+            <div class="math-block">$$(a_1, b_1) \cdot (a_2, b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$$</div>
+            <p>El primer componente del producto es $a_1a_2 - b_1b_2$ y el segundo es $a_1b_2 + b_1a_2$. Como $\mathbb{R}$ es cerrado respecto a la suma, resta y multiplicación, ambas componentes son números reales. Por lo tanto, <strong>$\mathbb{C}$ es cerrado respecto a la multiplicación</strong>: el producto de dos números complejos es a su vez un número complejo.</p>
+
+            <h3>Ejemplo</h3>
+            <p>Calcula $(3, -1) \cdot (2, 5)$:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            (3, -1) \cdot (2, 5) &= (3 \cdot 2 - (-1) \cdot 5, \ 3 \cdot 5 + (-1) \cdot 2) \\
+            &= (6 + 5, \ 15 - 2) \\
+            &= (11, 13)
+            \end{aligned}
+            $$
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>✖️ Calculadora de multiplicación</h3>
+                <p>Ingresa las componentes de dos números complejos $(a_1, b_1)$ y $(a_2, b_2)$ para multiplicarlos:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="mu-a1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="mu-b1" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="mu-a2" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="mu-b2" placeholder="0" step="any"></div>
+                    <button class="btn-primario" id="btn-multiplicar">Multiplicar</button>
+                </div>
+                <div class="resultado" id="res-multiplicar">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: CONMUTATIVA -->
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Propiedad Conmutativa de la Multiplicación</h2>
+            <p>Para toda $Z_1, Z_2 \in \mathbb{C}$, se cumple que:</p>
+            <div class="math-block">$$Z_1 \cdot Z_2 = Z_2 \cdot Z_1$$</div>
+
+            <h3>Demostración</h3>
+            <p>Sean $Z_1 = (a_1, b_1)$ y $Z_2 = (a_2, b_2)$. Entonces:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            Z_1 \cdot Z_2 &= (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2) \\
+            Z_2 \cdot Z_1 &= (a_2a_1 - b_2b_1, \ a_2b_1 + b_2a_1) \\
+            &= (a_1a_2 - b_1b_2, \ b_1a_2 + a_1b_2) \\
+            &= (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2) \\
+            &= Z_1 \cdot Z_2
+            \end{aligned}
+            $$
+            </div>
+            <p>La igualdad se apoya en la propiedad conmutativa de la suma y la multiplicación en $\mathbb{R}$.</p>
+
+            <div class="caja-interactiva">
+                <h3>🔄 Verificador de conmutatividad</h3>
+                <p>Ingresa dos números complejos y comprueba que el orden no altera el producto:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="co-a1" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="co-b1" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="co-a2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="co-b2" value="-2" step="any"></div>
+                    <button class="btn-primario" id="btn-conmutativa">Verificar</button>
+                </div>
+                <div class="resultado" id="res-conmutativa">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: IDENTIDAD -->
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Identidad Multiplicativa en $\mathbb{C}$</h2>
+            <p>El elemento identidad para la multiplicación debe satisfacer, para todo $(a, b) \in \mathbb{C}$:</p>
+            <div class="math-block">$$(a, b) \cdot (x, y) = (a, b)$$</div>
+            <p>Aplicando la definición de multiplicación tenemos:</p>
+            <div class="math-block">$$(ax - by, \ ay + bx) = (a, b)$$</div>
+            <p>Por la definición de igualdad de números complejos, se obtiene el sistema:</p>
+            <div class="math-block">$$ax - by = a \quad ; \quad ay + bx = b$$</div>
+            <p>Cuya solución es $x = 1$, $y = 0$. Por lo tanto, el <strong>elemento identidad multiplicativo es el par ordenado $(1, 0)$</strong>.</p>
+
+            <h3>Comprobación</h3>
+            <div class="math-block">$$(3, 4) \cdot (1, 0) = (3 \cdot 1 - 4 \cdot 0, \ 3 \cdot 0 + 4 \cdot 1) = (3, 4)$$</div>
+
+            <div class="caja-interactiva">
+                <h3>1️⃣ Verificador de identidad multiplicativa</h3>
+                <p>Ingresa un número complejo $(a, b)$ y comprueba que multiplicarlo por $(1, 0)$ lo deja igual:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="idn-a" value="5" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="idn-b" value="-3" step="any"></div>
+                    <button class="btn-primario" id="btn-identidad-mult">Comprobar</button>
+                </div>
+                <div class="resultado" id="res-identidad-mult">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: INVERSO MULTIPLICATIVO -->
+        <div class="diapositiva" data-indice="4">
+            <h2>4. Inverso Multiplicativo en $\mathbb{C}$</h2>
+            <p>Buscamos $(x, y)$ tal que $(a, b) \cdot (x, y) = (1, 0)$. Resolviendo el sistema:</p>
+            <div class="math-block">$$ax - by = 1 \quad ; \quad ay + bx = 0$$</div>
+            <p>Se obtiene, para $(a, b) \neq (0, 0)$:</p>
+            <div class="math-block">$$(a, b)^{-1} = \left( \frac{a}{a^2 + b^2}, \ \frac{-b}{a^2 + b^2} \right)$$</div>
+            <p>Observa que el denominador $a^2 + b^2$ es la <strong>norma</strong> del número complejo. El elemento $(0, 0)$ no tiene inverso multiplicativo, pues no existe ningún par $(x, y)$ que haga $(0, 0) \cdot (x, y) = (1, 0)$.</p>
+
+            <h3>Ejemplo</h3>
+            <p>El recíproco de $(1, 2)$ es:</p>
+            <div class="math-block">$$\left( \frac{1}{1^2 + 2^2}, \ \frac{-2}{1^2 + 2^2} \right) = \left( \frac{1}{5}, \ -\frac{2}{5} \right)$$</div>
+
+            <div class="caja-interactiva">
+                <h3>🔁 Calculadora de inverso multiplicativo</h3>
+                <p>Ingresa un número complejo $(a, b)$ para obtener su inverso multiplicativo:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="inv-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="inv-b" value="2" step="any"></div>
+                    <button class="btn-primario" id="btn-inverso">Calcular inverso</button>
+                </div>
+                <div class="resultado" id="res-inverso">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: CAMPO -->
+        <div class="diapositiva" data-indice="5">
+            <h2>5. El Conjunto $\mathbb{C}$ es un Campo</h2>
+            <p>Un campo es un conjunto con dos operaciones (suma y multiplicación) que satisface seis postulados. En $\mathbb{C}$ se cumplen todos:</p>
+
+            <h3>Los 6 postulados de campo</h3>
+            <ul>
+                <li><strong>Cerradura:</strong> $Z_1 + Z_2 \in \mathbb{C}$ y $Z_1 \cdot Z_2 \in \mathbb{C}$.</li>
+                <li><strong>Conmutativa:</strong> $Z_1 + Z_2 = Z_2 + Z_1$ y $Z_1 \cdot Z_2 = Z_2 \cdot Z_1$.</li>
+                <li><strong>Asociativa:</strong> $Z_1 + (Z_2 + Z_3) = (Z_1 + Z_2) + Z_3$ y análogamente para la multiplicación.</li>
+                <li><strong>Distributiva:</strong> $Z_1 \cdot (Z_2 + Z_3) = Z_1 \cdot Z_2 + Z_1 \cdot Z_3$.</li>
+                <li><strong>Identidades:</strong> Existen $(0, 0)$ y $(1, 0)$ en $\mathbb{C}$ tales que $z + (0, 0) = z$ y $z \cdot (1, 0) = z$.</li>
+                <li><strong>Inversos:</strong> Todo $z$ tiene inverso aditivo $-z$, y todo $z \neq (0, 0)$ tiene inverso multiplicativo $z^{-1}$.</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>✅ Verificador de postulados</h3>
+                <p>Ingresa dos números complejos y comprueba varios postulados a la vez:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="ca-a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="ca-b1" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="ca-a2" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="ca-b2" value="-1" step="any"></div>
+                    <button class="btn-primario" id="btn-campo">Verificar postulados</button>
+                </div>
+                <div class="resultado" id="res-campo">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: CORRESPONDENCIA -->
+        <div class="diapositiva" data-indice="6">
+            <h2>6. Correspondencia Biunívoca con el Plano</h2>
+            <p>Existe una <strong>correspondencia biunívoca</strong> entre los elementos de $\mathbb{C}$ (pares ordenados con componentes reales) y los puntos del plano:</p>
+            <div class="math-block">$$z = (a, b) \quad \longleftrightarrow \quad \text{punto } (a, b)$$</div>
+            <p>La componente $a$ se ubica en el <strong>eje real</strong> (eje $X$) y la componente $b$ en el <strong>eje imaginario</strong> (eje $Y$). A este plano se le llama <strong>plano complejo</strong>.</p>
+
+            <h3>Ejemplo</h3>
+            <p>El número complejo $z = (3, 2)$ corresponde al punto $(3, 2)$: tres unidades a la derecha y dos unidades hacia arriba desde el origen.</p>
+
+            <div class="caja-interactiva">
+                <h3>📍 Ubicador en el plano complejo</h3>
+                <p>Ingresa $(a, b)$ para obtener su descripción como punto del plano:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="ub-a" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="ub-b" value="2" step="any"></div>
+                    <button class="btn-primario" id="btn-ubicar">Ubicar</button>
+                </div>
+                <div class="resultado" id="res-ubicar">La descripción aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: R SUBCONJUNTO DE C -->
+        <div class="diapositiva" data-indice="7">
+            <h2>7. $\mathbb{R}$ como Subconjunto de $\mathbb{C}$</h2>
+            <p>A cada número real $a$ le corresponde el complejo $(a, 0)$. Esta correspondencia <strong>se preserva a través de la suma y la multiplicación</strong>:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            a + b &\longleftrightarrow (a, 0) + (b, 0) = (a + b, \ 0) \\
+            a \cdot b &\longleftrightarrow (a, 0) \cdot (b, 0) = (ab, \ 0)
+            \end{aligned}
+            $$
+            </div>
+            <p>Por lo tanto, podemos escribir $\mathbb{R} \subset \mathbb{C}$. Escribir $a$ en lugar de $(a, 0)$ no genera ningún conflicto algebraico.</p>
+
+            <h3>¿Por qué no usar $(0, b)$ para representar reales?</h3>
+            <p>Porque la correspondencia <strong>no se preserva en la multiplicación</strong>: $(0, 2) \cdot (0, 3) = (-6, 0) \neq (0, 6)$. La forma correcta es $(a, 0)$.</p>
+
+            <div class="caja-interactiva">
+                <h3>🔗 Verificador de correspondencia</h3>
+                <p>Ingresa dos números reales y comprueba que sus operaciones coinciden con las de sus complejos asociados:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="rc-a" value="4" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="rc-b" value="3" step="any"></div>
+                    <button class="btn-primario" id="btn-correspondencia">Verificar</button>
+                </div>
+                <div class="resultado" id="res-correspondencia">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: RESUMEN -->
+        <div class="diapositiva" data-indice="8">
+            <h2>8. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>La multiplicación en $\mathbb{C}$ se define como $(a_1, b_1) \cdot (a_2, b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$.</li>
+                <li>La multiplicación es <strong>cerrada</strong>, <strong>conmutativa</strong> y <strong>asociativa</strong> en $\mathbb{C}$.</li>
+                <li>El <strong>elemento identidad multiplicativo</strong> es $(1, 0)$.</li>
+                <li>El <strong>inverso multiplicativo</strong> de $(a, b)$ (con $(a, b) \neq (0, 0)$) es $\left( \dfrac{a}{a^2 + b^2}, \ \dfrac{-b}{a^2 + b^2} \right)$.</li>
+                <li>El elemento $(0, 0)$ no tiene inverso multiplicativo.</li>
+                <li>$\mathbb{C}$ es un <strong>campo</strong> porque cumple los 6 postulados: cerradura, conmutativa, asociativa, distributiva, identidades e inversos.</li>
+                <li>Existe una <strong>correspondencia biunívoca</strong> entre $\mathbb{C}$ y los puntos del plano: $(a, b) \leftrightarrow$ punto $(a, b)$.</li>
+                <li>$\mathbb{R}$ es un <strong>subconjunto</strong> de $\mathbb{C}$ mediante la identificación $a \leftrightarrow (a, 0)$.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 6. Ahora dominas la multiplicación de números complejos, el concepto de campo y la relación entre $\mathbb{R}$ y $\mathbb{C}$.</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">En el Módulo 7 se introducirá la <strong>forma rectangular</strong> $a + bi$ y la unidad imaginaria $i$, que darán una notación más cómoda para todos estos conceptos.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 9</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function latexPar(a, b) {
+        return '(' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ')';
+    }
+
+    // =========================================
+    // 1. CALCULADORA DE MULTIPLICACIÓN
+    // =========================================
+    document.getElementById('btn-multiplicar').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('mu-a1').value);
+        var b1 = parseFloat(document.getElementById('mu-b1').value);
+        var a2 = parseFloat(document.getElementById('mu-a2').value);
+        var b2 = parseFloat(document.getElementById('mu-b2').value);
+        var res = document.getElementById('res-multiplicar');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var prodA = a1 * a2 - b1 * b2;
+        var prodB = a1 * b2 + b1 * a2;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$' + latexPar(a1, b1) + ' \\cdot ' + latexPar(a2, b2) + ' = ' + latexPar(prodA, prodB) + '$$' +
+            '<em>El producto es otro número complejo: $\\mathbb{C}$ es cerrado para la multiplicación.</em>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. VERIFICADOR DE CONMUTATIVIDAD
+    // =========================================
+    document.getElementById('btn-conmutativa').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('co-a1').value);
+        var b1 = parseFloat(document.getElementById('co-b1').value);
+        var a2 = parseFloat(document.getElementById('co-a2').value);
+        var b2 = parseFloat(document.getElementById('co-b2').value);
+        var res = document.getElementById('res-conmutativa');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var prod1A = a1 * a2 - b1 * b2;
+        var prod1B = a1 * b2 + b1 * a2;
+        var prod2A = a2 * a1 - b2 * b1;
+        var prod2B = a2 * b1 + b2 * a1;
+
+        if (prod1A === prod2A && prod1B === prod2B) {
+            res.className = 'resultado exito';
+            res.innerHTML = '✅ Propiedad conmutativa verificada:<br>' +
+                '$$Z_1 \\cdot Z_2 = ' + latexPar(prod1A, prod1B) + '$$' +
+                '$$Z_2 \\cdot Z_1 = ' + latexPar(prod2A, prod2B) + '$$' +
+                'Ambos productos son iguales.';
+        } else {
+            res.className = 'resultado error';
+            res.innerHTML = '❌ Error inesperado en la verificación.';
+        }
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. VERIFICADOR DE IDENTIDAD MULTIPLICATIVA
+    // =========================================
+    document.getElementById('btn-identidad-mult').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('idn-a').value);
+        var b = parseFloat(document.getElementById('idn-b').value);
+        var res = document.getElementById('res-identidad-mult');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var prodA = a * 1 - b * 0;
+        var prodB = a * 0 + b * 1;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$' + latexPar(a, b) + ' \\cdot (1, 0) = (' + formatearNumero(a) + ' \\cdot 1 - ' + formatearNumero(b) + ' \\cdot 0, \\ ' + formatearNumero(a) + ' \\cdot 0 + ' + formatearNumero(b) + ' \\cdot 1)$$' +
+            '$$= ' + latexPar(prodA, prodB) + '$$' +
+            '✅ El número complejo queda inalterado al multiplicarlo por $(1, 0)$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. CALCULADORA DE INVERSO MULTIPLICATIVO
+    // =========================================
+    document.getElementById('btn-inverso').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('inv-a').value);
+        var b = parseFloat(document.getElementById('inv-b').value);
+        var res = document.getElementById('res-inverso');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        if (a === 0 && b === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ El elemento $(0, 0)$ <strong>no tiene inverso multiplicativo</strong>.<br>' +
+                'No existe $(x, y)$ tal que $(0, 0) \\cdot (x, y) = (1, 0)$.';
+            renderMath(res);
+            return;
+        }
+
+        var norma = a * a + b * b;
+        var invA = a / norma;
+        var invB = -b / norma;
+
+        var verA = a * invA - b * invB;
+        var verB = a * invB + b * invA;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p><strong>Inverso multiplicativo</strong> de $' + latexPar(a, b) + '$:</p>' +
+            '$$\\left( \\frac{' + formatearNumero(a) + '}{' + formatearNumero(a) + '^2 + (' + formatearNumero(b) + ')^2}, \\ \\frac{' + formatearNumero(-b) + '}{' + formatearNumero(a) + '^2 + (' + formatearNumero(b) + ')^2} \\right) = \\left( \\frac{' + formatearNumero(a) + '}{' + formatearNumero(norma) + '}, \\ \\frac{' + formatearNumero(-b) + '}{' + formatearNumero(norma) + '} \\right)$$' +
+            '$$= ' + latexPar(invA, invB) + '$$' +
+            '<p><strong>Comprobación:</strong> $' + latexPar(a, b) + ' \\cdot ' + latexPar(invA, invB) + ' = ' + latexPar(verA, verB) + '$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. VERIFICADOR DE POSTULADOS DE CAMPO
+    // =========================================
+    document.getElementById('btn-campo').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('ca-a1').value);
+        var b1 = parseFloat(document.getElementById('ca-b1').value);
+        var a2 = parseFloat(document.getElementById('ca-a2').value);
+        var b2 = parseFloat(document.getElementById('ca-b2').value);
+        var res = document.getElementById('res-campo');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var sumaA = a1 + a2, sumaB = b1 + b2;
+        var mulA = a1 * a2 - b1 * b2, mulB = a1 * b2 + b1 * a2;
+        var mul2A = a2 * a1 - b2 * b1, mul2B = a2 * b1 + b2 * a1;
+        var idA = a1 * 1 - b1 * 0, idB = a1 * 0 + b1 * 1;
+
+        var html = '<p><strong>Cerradura de la suma:</strong> $' + latexPar(a1, b1) + ' + ' + latexPar(a2, b2) + ' = ' + latexPar(sumaA, sumaB) + '$ ✅</p>';
+        html += '<p><strong>Cerradura de la multiplicación:</strong> $' + latexPar(a1, b1) + ' \\cdot ' + latexPar(a2, b2) + ' = ' + latexPar(mulA, mulB) + '$ ✅</p>';
+        html += '<p><strong>Conmutativa de la multiplicación:</strong> $Z_1 \\cdot Z_2 = ' + latexPar(mulA, mulB) + '$ y $Z_2 \\cdot Z_1 = ' + latexPar(mul2A, mul2B) + '$ ' + ((mulA === mul2A && mulB === mul2B) ? '✅' : '❌') + '</p>';
+        html += '<p><strong>Identidad multiplicativa:</strong> $' + latexPar(a1, b1) + ' \\cdot (1, 0) = ' + latexPar(idA, idB) + '$ ✅</p>';
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. UBICADOR EN EL PLANO COMPLEJO
+    // =========================================
+    document.getElementById('btn-ubicar').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('ub-a').value);
+        var b = parseFloat(document.getElementById('ub-b').value);
+        var res = document.getElementById('res-ubicar');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var cuadrante = '';
+        if (a > 0 && b > 0) cuadrante = 'primer cuadrante';
+        else if (a < 0 && b > 0) cuadrante = 'segundo cuadrante';
+        else if (a < 0 && b < 0) cuadrante = 'tercer cuadrante';
+        else if (a > 0 && b < 0) cuadrante = 'cuarto cuadrante';
+        else if (a === 0 && b !== 0) cuadrante = 'sobre el eje imaginario';
+        else if (b === 0 && a !== 0) cuadrante = 'sobre el eje real';
+        else cuadrante = 'en el origen';
+
+        var movH = a > 0 ? formatearNumero(a) + ' unidades a la derecha' : (a < 0 ? formatearNumero(Math.abs(a)) + ' unidades a la izquierda' : 'sin desplazamiento horizontal');
+        var movV = b > 0 ? formatearNumero(b) + ' unidades hacia arriba' : (b < 0 ? formatearNumero(Math.abs(b)) + ' unidades hacia abajo' : 'sin desplazamiento vertical');
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>El número complejo $z = ' + latexPar(a, b) + '$ se ubica en el punto $(' + formatearNumero(a) + ', ' + formatearNumero(b) + ')$ del plano complejo.</p>' +
+            '<p>Está en el <strong>' + cuadrante + '</strong>.</p>' +
+            '<p>Desde el origen: ' + movH + ' y ' + movV + '.</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 7. VERIFICADOR DE CORRESPONDENCIA R ⊂ C
+    // =========================================
+    document.getElementById('btn-correspondencia').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('rc-a').value);
+        var b = parseFloat(document.getElementById('rc-b').value);
+        var res = document.getElementById('res-correspondencia');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos números reales.';
+            return;
+        }
+
+        var sumaReal = a + b;
+        var sumaComplejaA = (a + 0) + (b + 0);
+        var sumaComplejaB = (0 + 0) + (0 + 0);
+
+        var prodReal = a * b;
+        var prodComplejaA = a * b - 0 * 0;
+        var prodComplejaB = a * 0 + 0 * b;
+
+        var html = '<p><strong>Suma:</strong> $' + formatearNumero(a) + ' + ' + formatearNumero(b) + ' = ' + formatearNumero(sumaReal) + '$</p>';
+        html += '<p>$' + latexPar(a, 0) + ' + ' + latexPar(b, 0) + ' = ' + latexPar(sumaComplejaA, sumaComplejaB) + '$ ' + (sumaComplejaA === sumaReal ? '✅' : '❌') + '</p>';
+        html += '<p><strong>Multiplicación:</strong> $' + formatearNumero(a) + ' \\cdot ' + formatearNumero(b) + ' = ' + formatearNumero(prodReal) + '$</p>';
+        html += '<p>$' + latexPar(a, 0) + ' \\cdot ' + latexPar(b, 0) + ' = ' + latexPar(prodComplejaA, prodComplejaB) + '$ ' + (prodComplejaA === prodReal ? '✅' : '❌') + '</p>';
+        html += '<p>✅ La correspondencia $a \\leftrightarrow (a, 0)$ se preserva en suma y multiplicación.</p>';
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

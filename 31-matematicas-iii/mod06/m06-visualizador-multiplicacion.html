@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplicación en el Plano Complejo | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        /* ===== LAYOUT ===== */
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        /* ===== PANEL DE CONTROL ===== */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 14px 0 6px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grupo-vectores {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .grupo-vectores .titulo-vector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .muestra-color {
+            width: 14px; height: 14px;
+            border-radius: 3px;
+            display: inline-block;
+        }
+        .fila-inputs {
+            display: flex;
+            gap: 10px;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .input-wrapper label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 3px;
+        }
+        input[type="number"] {
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 100%;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos {
+            margin-top: 16px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+        }
+        .seccion-slider label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 4px;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+        }
+
+        /* ===== PANEL CANVAS ===== */
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda-regiones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 4px;
+            border: 1px solid rgba(44,73,102,0.2);
+        }
+
+        .descripcion-region {
+            margin-top: 14px;
+            padding: 12px 16px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+        }
+        .descripcion-region strong { color: var(--color-primario); }
+
+        /* ===== PANEL DESARROLLO ===== */
+        .panel-desarrollo {
+            margin-top: 14px;
+            padding: 14px 18px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            border-left: 5px solid var(--color-acento);
+        }
+        .panel-desarrollo h3 {
+            font-size: 1rem;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .paso-calculo {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .paso-calculo:last-child { border-bottom: none; }
+        .paso-calculo .num {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .resultado-final {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background-color: rgba(39, 174, 96, 0.08);
+            border-left: 4px solid var(--color-exito);
+            border-radius: 0 6px 6px 0;
+            font-weight: 700;
+            color: var(--color-exito);
+            font-size: 1rem;
+        }
+        .resultado-error {
+            background-color: rgba(192, 57, 43, 0.08);
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .aviso-conjugado {
+            margin-top: 10px;
+            padding: 10px 14px;
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            .panel-control, .panel-canvas { padding: 16px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <!-- HEADER -->
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Multiplicación en el Plano Complejo</h1>
+        <p>Visualizador de correspondencias | Matemáticas III</p>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Datos de entrada</h2>
+
+            <div class="grupo-vectores">
+                <div class="titulo-vector">
+                    <span class="muestra-color" style="background:#5b7fa3;"></span>
+                    Vector $z_1 = (a_1, b_1)$
+                </div>
+                <div class="fila-inputs">
+                    <div class="input-wrapper">
+                        <label>$a_1$</label>
+                        <input type="number" id="a1" value="3" step="0.5">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$b_1$</label>
+                        <input type="number" id="b1" value="-1" step="0.5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="grupo-vectores">
+                <div class="titulo-vector">
+                    <span class="muestra-color" style="background:#27ae60;"></span>
+                    Vector $z_2 = (a_2, b_2)$
+                </div>
+                <div class="fila-inputs">
+                    <div class="input-wrapper">
+                        <label>$a_2$</label>
+                        <input type="number" id="a2" value="2" step="0.5">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$b_2$</label>
+                        <input type="number" id="b2" value="5" step="0.5">
+                    </div>
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button class="btn-primario" id="btnCalcular">🔄 Calcular producto</button>
+                <button class="btn-secundario" id="btnReiniciar">↺ Reiniciar</button>
+            </div>
+
+            <h3>Opciones de visualización</h3>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chkZ1" checked> Mostrar $z_1$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chkZ2" checked> Mostrar $z_2$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chkProducto" checked> Mostrar producto $z_1 z_2$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chkArco" checked> Mostrar arco de rotación
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chkProyeccion" checked> Mostrar proyecciones
+            </label>
+
+            <h3>Zoom del plano</h3>
+            <div class="seccion-slider">
+                <label>Escala: <span id="valZoom">20</span> px / unidad</label>
+                <input type="range" id="sliderZoom" min="8" max="40" step="1" value="20">
+            </div>
+
+            <h3>Exponente (potencias)</h3>
+            <div class="seccion-slider">
+                <label>$z_1^n$ con $n = $ <span id="valExp">1</span></label>
+                <input type="range" id="sliderExp" min="1" max="5" step="1" value="1">
+            </div>
+
+            <h3>Ejemplos predefinidos</h3>
+            <div class="seccion-ejemplos">
+                <button class="btn-ejemplo" data-ej="1">📐 $(3,-1)·(2,5) = (11,13)$</button>
+                <button class="btn-ejemplo" data-ej="2">📐 $(0,1)·(0,1) = (-1,0)$ — rotación 90°</button>
+                <button class="btn-ejemplo" data-ej="3">📐 $(1,2)·(1,-2) = (5,0)$ — conjugados</button>
+                <button class="btn-ejemplo" data-ej="4">📐 $(2,0)·(3,4) = (6,8)$ — escalamiento real</button>
+            </div>
+        </div>
+
+        <!-- PANEL CANVAS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560"></canvas>
+                <div class="canvas-instrucciones">🖱️ Clic para fijar $z_2$</div>
+            </div>
+
+            <div class="leyenda-regiones">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>$z_1$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>$z_2$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>Producto $z_1 z_2$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#e8eef5; border:1px solid #5b7fa3;"></div>
+                    <span>Arco de rotación</span>
+                </div>
+            </div>
+
+            <div class="descripcion-region" id="descripcionRegion">
+                <strong>Interpretación geométrica:</strong>
+                <span id="textoRegion">Configura dos números complejos para ver su producto.</span>
+            </div>
+
+            <!-- DESARROLLO PASO A PASO -->
+            <div class="panel-desarrollo" id="panelDesarrollo">
+                <h3>📝 Desarrollo paso a paso</h3>
+                <div id="pasosDesarrollo">
+                    <div class="paso-calculo">
+                        <span class="num">1</span>
+                        <span>Ingresa $z_1$ y $z_2$ para ver el cálculo.</span>
+                    </div>
+                </div>
+                <div class="resultado-final" id="resultadoFinal" style="display:none;"></div>
+                <div class="aviso-conjugado" id="avisoConjugado" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comprender geométricamente la multiplicación de números complejos
+        como una transformación del plano (rotación + escalamiento), relacionando la fórmula
+        $(a_1a_2 - b_1b_2,\ a_1b_2 + b_1a_2)$ con la representación vectorial y los casos
+        especiales de conjugados y potencias.
+    </div>
+</div>
+
+<script>
+// =========================================
+// CONFIGURACIÓN Y ESTADO GLOBAL
+// =========================================
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+
+var W = canvas.width;
+var H = canvas.height;
+
+var estado = {
+    z1: { a: 3, b: -1 },
+    z2: { a: 2, b: 5 },
+    zoom: 20,        // píxeles por unidad
+    exponente: 1,    // para z1^n
+    mostrar: {
+        z1: true,
+        z2: true,
+        producto: true,
+        arco: true,
+        proyeccion: true
+    }
+};
+
+// Colores (leídos de la paleta institucional)
+var COLOR_Z1 = '#5b7fa3';
+var COLOR_Z2 = '#27ae60';
+var COLOR_PRODUCTO = '#c0392b';
+var COLOR_ARCO = '#a9c1d9';
+var COLOR_EJE = '#2c4966';
+var COLOR_CUADRICULA = '#e8eef5';
+var COLOR_TEXTO = '#1a2a3a';
+
+// =========================================
+// UTILIDADES MATEMÁTICAS
+// =========================================
+function multiplicar(z1, z2) {
+    return {
+        a: z1.a * z2.a - z1.b * z2.b,
+        b: z1.a * z2.b + z1.b * z2.a
+    };
+}
+
+function potencia(z, n) {
+    var resultado = { a: 1, b: 0 };
+    for (var i = 0; i < n; i++) {
+        resultado = multiplicar(resultado, z);
+    }
+    return resultado;
+}
+
+function norma(z) {
+    return Math.sqrt(z.a * z.a + z.b * z.b);
+}
+
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(2)).toString();
+}
+
+function latexPar(z) {
+    return '(' + formatearNumero(z.a) + ', \\ ' + formatearNumero(z.b) + ')';
+}
+
+// =========================================
+// TRANSFORMACIONES DE COORDENADAS
+// =========================================
+function mundoAPantalla(x, y) {
+    return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+    };
+}
+
+function pantallaAMundo(px, py) {
+    return {
+        x: (px - W / 2) / estado.zoom,
+        y: (H / 2 - py) / estado.zoom
+    };
+}
+
+// =========================================
+// DIBUJO DEL PLANO
+// =========================================
+function dibujarCuadricula() {
+    ctx.strokeStyle = COLOR_CUADRICULA;
+    ctx.lineWidth = 1;
+    var paso = estado.zoom;
+
+    // Líneas verticales
+    for (var x = W / 2 % paso; x < W; x += paso) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    // Líneas horizontales
+    for (var y = H / 2 % paso; y < H; y += paso) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+}
+
+function dibujarEjes() {
+    ctx.strokeStyle = COLOR_EJE;
+    ctx.fillStyle = COLOR_EJE;
+    ctx.lineWidth = 2;
+
+    // Eje X
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+    // Flecha eje X
+    ctx.beginPath();
+    ctx.moveTo(W - 12, H / 2 - 6);
+    ctx.lineTo(W, H / 2);
+    ctx.lineTo(W - 12, H / 2 + 6);
+    ctx.fill();
+
+    // Eje Y
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H);
+    ctx.lineTo(W / 2, 0);
+    ctx.stroke();
+    // Flecha eje Y
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 6, 12);
+    ctx.lineTo(W / 2, 0);
+    ctx.lineTo(W / 2 + 6, 12);
+    ctx.fill();
+
+    // Etiquetas
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_EJE;
+    ctx.textAlign = 'right';
+    ctx.fillText('Re', W - 8, H / 2 + 20);
+    ctx.textAlign = 'left';
+    ctx.fillText('Im', W / 2 + 8, 16);
+
+    // Marcas numéricas
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    var maxX = Math.floor((W / 2) / estado.zoom);
+    for (var i = -maxX; i <= maxX; i++) {
+        if (i === 0) continue;
+        var p = mundoAPantalla(i, 0);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(i.toString(), p.px, p.py + 16);
+    }
+    var maxY = Math.floor((H / 2) / estado.zoom);
+    ctx.textAlign = 'right';
+    for (var j = -maxY; j <= maxY; j++) {
+        if (j === 0) continue;
+        var q = mundoAPantalla(0, j);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(j.toString(), q.px - 8, q.py + 4);
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('0', W / 2 + 6, H / 2 + 16);
+}
+
+// =========================================
+// DIBUJO DE VECTORES
+// =========================================
+function dibujarVector(z, color, etiqueta, grosor) {
+    var origen = mundoAPantalla(0, 0);
+    var destino = mundoAPantalla(z.a, z.b);
+
+    // Línea
+    ctx.strokeStyle = color;
+    ctx.lineWidth = grosor || 3;
+    ctx.beginPath();
+    ctx.moveTo(origen.px, origen.py);
+    ctx.lineTo(destino.px, destino.py);
+    ctx.stroke();
+
+    // Flecha
+    var angulo = Math.atan2(destino.py - origen.py, destino.px - origen.px);
+    var tamFlecha = 12;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(destino.px, destino.py);
+    ctx.lineTo(
+        destino.px - tamFlecha * Math.cos(angulo - Math.PI / 7),
+        destino.py - tamFlecha * Math.sin(angulo - Math.PI / 7)
+    );
+    ctx.lineTo(
+        destino.px - tamFlecha * Math.cos(angulo + Math.PI / 7),
+        destino.py - tamFlecha * Math.sin(angulo + Math.PI / 7)
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // Punto en el extremo
+    ctx.beginPath();
+    ctx.arc(destino.px, destino.py, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Etiqueta
+    if (etiqueta) {
+        ctx.font = 'bold 13px Segoe UI, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(etiqueta, destino.px + 10, destino.py - 8);
+    }
+}
+
+// =========================================
+// DIBUJO DE PROYECCIONES PUNTEADAS
+// =========================================
+function dibujarProyecciones(z, color) {
+    var p = mundoAPantalla(z.a, z.b);
+    var px = mundoAPantalla(z.a, 0);
+    var py = mundoAPantalla(0, z.b);
+
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+    ctx.globalAlpha = 0.6;
+
+    // Proyección al eje X
+    ctx.beginPath();
+    ctx.moveTo(p.px, p.py);
+    ctx.lineTo(px.px, px.py);
+    ctx.stroke();
+
+    // Proyección al eje Y
+    ctx.beginPath();
+    ctx.moveTo(p.px, p.py);
+    ctx.lineTo(py.px, py.py);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+// =========================================
+// DIBUJO DEL ARCO DE ROTACIÓN
+// =========================================
+function dibujarArcoRotacion(z1, z2) {
+    var ang1 = Math.atan2(z1.b, z1.a);
+    var ang2 = Math.atan2(z2.b, z2.a);
+    var radio = Math.min(norma(z1), norma(z2)) * estado.zoom * 0.4;
+    if (radio < 20) radio = 20;
+
+    var centro = mundoAPantalla(0, 0);
+
+    ctx.save();
+    ctx.strokeStyle = COLOR_ARCO;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    // En canvas, el ángulo positivo va en sentido horario, así que invertimos
+    ctx.arc(centro.px, centro.py, radio, -ang1, -ang2, ang2 < ang1);
+    ctx.stroke();
+    ctx.restore();
+
+    // Etiqueta del ángulo
+    var angMedio = (ang1 + ang2) / 2;
+    var etiquetaX = centro.px + (radio + 18) * Math.cos(angMedio);
+    var etiquetaY = centro.py - (radio + 18) * Math.sin(angMedio);
+
+    var grados1 = ang1 * 180 / Math.PI;
+    var grados2 = ang2 * 180 / Math.PI;
+    var diferencia = grados2 - grados1;
+
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_ARCO;
+    ctx.textAlign = 'center';
+    ctx.fillText('θ = ' + formatearNumero(diferencia) + '°', etiquetaX, etiquetaY);
+}
+
+// =========================================
+// RENDER PRINCIPAL
+// =========================================
+function render() {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    dibujarCuadricula();
+    dibujarEjes();
+
+    var z1 = estado.z1;
+    var z2 = estado.z2;
+
+    // Si el exponente es > 1, z1 se eleva a esa potencia para el producto
+    var z1Efectivo = estado.exponente > 1 ? potencia(z1, estado.exponente) : z1;
+    var producto = multiplicar(z1Efectivo, z2);
+
+    // Proyecciones (primero, para que queden detrás)
+    if (estado.mostrar.proyeccion) {
+        if (estado.mostrar.z1) dibujarProyecciones(z1, COLOR_Z1);
+        if (estado.mostrar.z2) dibujarProyecciones(z2, COLOR_Z2);
+        if (estado.mostrar.producto) dibujarProyecciones(producto, COLOR_PRODUCTO);
+    }
+
+    // Arco de rotación
+    if (estado.mostrar.arco && estado.mostrar.z1 && estado.mostrar.z2) {
+        dibujarArcoRotacion(z1Efectivo, z2);
+    }
+
+    // Vectores
+    if (estado.mostrar.z1) {
+        var etq1 = estado.exponente > 1 ? 'z₁^' + estado.exponente : 'z₁';
+        dibujarVector(z1Efectivo, COLOR_Z1, etq1, 3);
+    }
+    if (estado.mostrar.z2) {
+        dibujarVector(z2, COLOR_Z2, 'z₂', 3);
+    }
+    if (estado.mostrar.producto) {
+        dibujarVector(producto, COLOR_PRODUCTO, 'z₁·z₂', 3.5);
+    }
+
+    // Actualizar panel de desarrollo
+    actualizarDesarrollo(z1, z2, z1Efectivo, producto);
+    actualizarDescripcion(z1, z2, producto);
+}
+
+// =========================================
+// ACTUALIZAR PANEL DE DESARROLLO
+// =========================================
+function actualizarDesarrollo(z1, z2, z1Efectivo, producto) {
+    var pasos = document.getElementById('pasosDesarrollo');
+    var resultado = document.getElementById('resultadoFinal');
+    var aviso = document.getElementById('avisoConjugado');
+
+    var esConjugado = (Math.abs(z1.a - z2.a) < 1e-9 && Math.abs(z1.b + z2.b) < 1e-9);
+    var esReal = (Math.abs(z2.b) < 1e-9);
+    var esImaginarioPuro = (Math.abs(z1.a) < 1e-9 && Math.abs(z2.a) < 1e-9);
+
+    var html = '';
+
+    // Paso 1: identificar componentes
+    html += '<div class="paso-calculo"><span class="num">1</span><span>' +
+        'Identificar componentes: $z_1 = ' + latexPar(z1) + '$, $z_2 = ' + latexPar(z2) + '$' +
+        '</span></div>';
+
+    // Paso 2: aplicar fórmula
+    html += '<div class="paso-calculo"><span class="num">2</span><span>' +
+        'Aplicar la fórmula: $(a_1a_2 - b_1b_2,\\ a_1b_2 + b_1a_2)$' +
+        '</span></div>';
+
+    // Paso 3: sustituir
+    var prodA = z1Efectivo.a * z2.a - z1Efectivo.b * z2.b;
+    var prodB = z1Efectivo.a * z2.b + z1Efectivo.b * z2.a;
+
+    html += '<div class="paso-calculo"><span class="num">3</span><span>' +
+        'Primera componente: $(' + formatearNumero(z1Efectivo.a) + ')(' + formatearNumero(z2.a) + ') - (' +
+        formatearNumero(z1Efectivo.b) + ')(' + formatearNumero(z2.b) + ') = ' +
+        formatearNumero(prodA) + '$' +
+        '</span></div>';
+
+    html += '<div class="paso-calculo"><span class="num">4</span><span>' +
+        'Segunda componente: $(' + formatearNumero(z1Efectivo.a) + ')(' + formatearNumero(z2.b) + ') + (' +
+        formatearNumero(z1Efectivo.b) + ')(' + formatearNumero(z2.a) + ') = ' +
+        formatearNumero(prodB) + '$' +
+        '</span></div>';
+
+    // Paso 5: resultado
+    html += '<div class="paso-calculo"><span class="num">5</span><span>' +
+        'El producto es otro número complejo: $\\mathbb{C}$ es cerrado para la multiplicación.' +
+        '</span></div>';
+
+    pasos.innerHTML = html;
+
+    // Resultado final
+    resultado.style.display = 'block';
+    resultado.className = 'resultado-final';
+    resultado.innerHTML = '$$z_1 \\cdot z_2 = ' + latexPar(producto) + '$$';
+
+    // Avisos pedagógicos
+    aviso.style.display = 'none';
+    if (esConjugado) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '💡 <strong>Caso especial — producto de conjugados:</strong> ' +
+            'el resultado es un número real puro: $(a^2 + b^2, 0)$. ' +
+            'Geométricamente, los ángulos opuestos se cancelan y solo queda el escalamiento.';
+    } else if (esReal) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '💡 <strong>Escalamiento real:</strong> $z_2$ es un número real puro, ' +
+            'así que multiplicar por él solo cambia la escala de $z_1$, sin rotarlo.';
+    } else if (esImaginarioPuro) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '💡 <strong>Rotación pura:</strong> ambos vectores están sobre el eje imaginario. ' +
+            'El producto cae sobre el eje real (rotación de 90° + 90° = 180°).';
+    } else if (estado.exponente > 1) {
+        aviso.style.display = 'block';
+        aviso.innerHTML = '💡 <strong>Potencia:</strong> estás calculando $z_1^{' + estado.exponente +
+            '} \\cdot z_2$. Observa cómo el vector $z_1$ se va "enrollando" alrededor del origen.';
+    }
+
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([pasos, resultado, aviso]).catch(console.log);
+    }
+}
+
+// =========================================
+// ACTUALIZAR DESCRIPCIÓN GEOMÉTRICA
+// =========================================
+function actualizarDescripcion(z1, z2, producto) {
+    var texto = document.getElementById('textoRegion');
+    var ang1 = Math.atan2(z1.b, z1.a) * 180 / Math.PI;
+    var ang2 = Math.atan2(z2.b, z2.a) * 180 / Math.PI;
+    var angProd = Math.atan2(producto.b, producto.a) * 180 / Math.PI;
+
+    var n1 = norma(z1);
+    var n2 = norma(z2);
+    var nProd = norma(producto);
+
+    var html = '';
+    html += 'La multiplicación $z_1 \\cdot z_2$ combina dos transformaciones: ';
+    html += '<strong>rotación</strong> (suma de ángulos) y <strong>escalamiento</strong> (producto de normas).<br><br>';
+    html += '• $|z_1| = ' + formatearNumero(n1) + '$, ángulo $= ' + formatearNumero(ang1) + '^\\circ$<br>';
+    html += '• $|z_2| = ' + formatearNumero(n2) + '$, ángulo $= ' + formatearNumero(ang2) + '^\\circ$<br>';
+    html += '• $|z_1 z_2| = ' + formatearNumero(nProd) + ' = |z_1| \\cdot |z_2| = ' +
+        formatearNumero(n1) + ' \\cdot ' + formatearNumero(n2) + '$<br>';
+    html += '• Ángulo del producto $= ' + formatearNumero(angProd) + '^\\circ = ' +
+        formatearNumero(ang1) + '^\\circ + ' + formatearNumero(ang2) + '^\\circ$';
+
+    texto.innerHTML = html;
+
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([texto]).catch(console.log);
+    }
+}
+
+// =========================================
+// LEER ESTADO DESDE INPUTS
+// =========================================
+function leerInputs() {
+    var a1 = parseFloat(document.getElementById('a1').value);
+    var b1 = parseFloat(document.getElementById('b1').value);
+    var a2 = parseFloat(document.getElementById('a2').value);
+    var b2 = parseFloat(document.getElementById('b2').value);
+
+    if (isNaN(a1)) a1 = 0;
+    if (isNaN(b1)) b1 = 0;
+    if (isNaN(a2)) a2 = 0;
+    if (isNaN(b2)) b2 = 0;
+
+    estado.z1 = { a: a1, b: b1 };
+    estado.z2 = { a: a2, b: b2 };
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+
+// Botón calcular
+document.getElementById('btnCalcular').addEventListener('click', function() {
+    leerInputs();
+    render();
+});
+
+// Botón reiniciar
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+    document.getElementById('a1').value = 3;
+    document.getElementById('b1').value = -1;
+    document.getElementById('a2').value = 2;
+    document.getElementById('b2').value = 5;
+    document.getElementById('sliderZoom').value = 20;
+    document.getElementById('sliderExp').value = 1;
+    document.getElementById('valZoom').textContent = '20';
+    document.getElementById('valExp').textContent = '1';
+    estado.zoom = 20;
+    estado.exponente = 1;
+    leerInputs();
+    render();
+});
+
+// Inputs numéricos: recalcular al cambiar
+['a1', 'b1', 'a2', 'b2'].forEach(function(id) {
+    document.getElementById(id).addEventListener('input', function() {
+        leerInputs();
+        render();
+    });
+});
+
+// Checkboxes
+['chkZ1', 'chkZ2', 'chkProducto', 'chkArco', 'chkProyeccion'].forEach(function(id) {
+    document.getElementById(id).addEventListener('change', function() {
+        estado.mostrar.z1 = document.getElementById('chkZ1').checked;
+        estado.mostrar.z2 = document.getElementById('chkZ2').checked;
+        estado.mostrar.producto = document.getElementById('chkProducto').checked;
+        estado.mostrar.arco = document.getElementById('chkArco').checked;
+        estado.mostrar.proyeccion = document.getElementById('chkProyeccion').checked;
+        render();
+    });
+});
+
+// Slider de zoom
+document.getElementById('sliderZoom').addEventListener('input', function() {
+    estado.zoom = parseInt(this.value);
+    document.getElementById('valZoom').textContent = this.value;
+    render();
+});
+
+// Slider de exponente
+document.getElementById('sliderExp').addEventListener('input', function() {
+    estado.exponente = parseInt(this.value);
+    document.getElementById('valExp').textContent = this.value;
+    render();
+});
+
+// Clic en el canvas: fija z2 en el punto clicado
+canvas.addEventListener('click', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var escalaX = canvas.width / rect.width;
+    var escalaY = canvas.height / rect.height;
+    var px = (e.clientX - rect.left) * escalaX;
+    var py = (e.clientY - rect.top) * escalaY;
+
+    var mundo = pantallaAMundo(px, py);
+    // Redondear a 0.5
+    var nuevoA2 = Math.round(mundo.x * 2) / 2;
+    var nuevoB2 = Math.round(mundo.y * 2) / 2;
+
+    document.getElementById('a2').value = nuevoA2;
+    document.getElementById('b2').value = nuevoB2;
+
+    leerInputs();
+    render();
+});
+
+// Botones de ejemplos
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var config;
+        switch (ej) {
+            case '1':
+                config = { a1: 3, b1: -1, a2: 2, b2: 5 };
+                break;
+            case '2':
+                config = { a1: 0, b1: 1, a2: 0, b2: 1 };
+                break;
+            case '3':
+                config = { a1: 1, b1: 2, a2: 1, b2: -2 };
+                break;
+            case '4':
+                config = { a1: 2, b1: 0, a2: 3, b2: 4 };
+                break;
+        }
+        document.getElementById('a1').value = config.a1;
+        document.getElementById('b1').value = config.b1;
+        document.getElementById('a2').value = config.a2;
+        document.getElementById('b2').value = config.b2;
+        document.getElementById('sliderExp').value = 1;
+        document.getElementById('valExp').textContent = '1';
+        estado.exponente = 1;
+        leerInputs();
+        render();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+leerInputs();
+render();
+</script>
+
+</body>
+</html>

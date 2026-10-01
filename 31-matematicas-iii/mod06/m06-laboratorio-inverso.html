@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inverso Multiplicativo Paso a Paso | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        /* ===== BARRA DE PROGRESO GENERAL ===== */
+        .barra-progreso-general {
+            background-color: var(--color-base);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .barra-progreso-general .texto-progreso {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .progreso-track {
+            flex: 1;
+            height: 8px;
+            background-color: var(--color-acento-suave);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progreso-fill {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* ===== MAIN ===== */
+        main { padding: 30px; }
+
+        /* ===== TARJETA DE PROBLEMA ===== */
+        .tarjeta-problema {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            border: 1px solid var(--color-acento-suave);
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-problema {
+            background-color: var(--color-base);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .numero-problema {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nivel-problema {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nivel-problema.basico { background-color: rgba(39,174,96,0.15); color: var(--color-exito); }
+        .nivel-problema.medio  { background-color: rgba(91,127,163,0.15); color: var(--color-acento); }
+        .nivel-problema.alto   { background-color: rgba(192,57,43,0.15); color: var(--color-error); }
+
+        .enunciado {
+            padding: 20px;
+            font-size: 1.02rem;
+            color: var(--color-texto-oscuro);
+            background-color: var(--color-blanco);
+            border-bottom: 1px solid var(--color-base);
+        }
+        .enunciado strong { color: var(--color-primario); }
+
+        /* ===== FASES ===== */
+        .fase {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-base);
+        }
+        .fase:last-of-type { border-bottom: none; }
+
+        .fase-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+        .numero-fase {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fase-instruccion {
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+            padding-left: 36px;
+        }
+
+        .fila-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 8px 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+        input[type="number"]:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        input.ancho {
+            width: 180px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            letter-spacing: 0.5px;
+        }
+        input.ancho::placeholder {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.82rem;
+            color: #a9c1d9;
+            letter-spacing: 0;
+            font-style: italic;
+        }
+        input.medio {
+            width: 140px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        input.medio::placeholder {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-size: 0.82rem;
+            color: #a9c1d9;
+            letter-spacing: 0;
+            font-style: italic;
+        }
+
+        .botones-fase {
+            display: flex;
+            gap: 10px;
+            margin-left: 36px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-pista {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-pista:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        /* ===== FEEDBACK ===== */
+        .feedback {
+            margin: 12px 0 0 36px;
+            padding: 12px 16px;
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            color: #145a32;
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            color: #78281f;
+        }
+        .feedback.pista {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+        .feedback strong { font-weight: 700; }
+        .feedback code {
+            background-color: rgba(44,73,102,0.08);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--color-primario);
+        }
+
+        /* ===== SUB-FASES (dentro de la Fase 4) ===== */
+        .subfase {
+            margin: 16px 0 0 36px;
+            padding: 16px 18px;
+            background-color: rgba(232,238,245,0.5);
+            border-radius: var(--radio-borde);
+            border-left: 4px solid var(--color-acento-suave);
+        }
+        .subfase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+        .subfase-titulo {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .subfase-numero {
+            background-color: var(--color-acento-suave);
+            color: var(--color-primario);
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .subfase-formula {
+            background-color: var(--color-blanco);
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            border: 1px solid var(--color-acento-suave);
+        }
+
+        /* ===== PANEL DESARROLLO PASO A PASO ===== */
+        .panel-desarrollo {
+            margin: 16px 0 0 36px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+        }
+        .panel-desarrollo.visible { display: block; }
+        .panel-desarrollo .titulo-desarrollo {
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+        .paso-desarrollo {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+        }
+        .paso-desarrollo:last-child { border-bottom: none; }
+        .paso-desarrollo .num {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        /* ===== BLOQUE BLOQUEADO ===== */
+        .fase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+            background-color: var(--color-base);
+        }
+        .fase.bloqueada .fase-titulo { color: #8a9bb0; }
+        .fase.bloqueada .numero-fase { background-color: #8a9bb0; }
+
+        /* ===== NAVEGACIÓN ===== */
+        .navegacion-problemas {
+            background-color: var(--color-base);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--color-acento-suave);
+        }
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+        .indicador-problema {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        /* ===== VISUALIZACIÓN CANVAS ===== */
+        .canvas-wrapper {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            margin-left: 36px;
+            margin-top: 8px;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            main { padding: 18px; }
+            .fila-inputs, .botones-fase, .feedback, .canvas-wrapper, .subfase, .panel-desarrollo {
+                margin-left: 0;
+            }
+            .fase-instruccion { padding-left: 0; }
+            input[type="number"], input[type="text"] { width: 100%; }
+            .input-wrapper { flex: 1 1 45%; }
+            input.ancho, input.medio { width: 100%; }
+            .barra-progreso-general { padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <!-- HEADER -->
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Inverso Multiplicativo Paso a Paso</h1>
+        <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <!-- BARRA DE PROGRESO GENERAL -->
+    <div class="barra-progreso-general">
+        <span class="texto-progreso" id="progresoTexto">Problema 1 de 8</span>
+        <div class="progreso-track">
+            <div class="progreso-fill" id="progresoFill"></div>
+        </div>
+        <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
+    </div>
+
+    <main>
+        <div class="tarjeta-problema">
+
+            <!-- META DEL PROBLEMA -->
+            <div class="meta-problema">
+                <div class="numero-problema" id="numeroProblema">Problema 1 de 8</div>
+                <div class="nivel-problema basico" id="nivelProblema">Básico</div>
+            </div>
+
+            <!-- ENUNCIADO -->
+            <div class="enunciado" id="enunciado">
+                Cargando problema...
+            </div>
+
+            <!-- FASE 1: IDENTIFICAR a Y b -->
+            <div class="fase" id="fase1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span> Identifica las componentes
+                </div>
+                <div class="fase-instruccion">
+                    Escribe el valor de $a$ y de $b$ del número complejo $z = (a, b)$.
+                </div>
+                <div class="fila-inputs">
+                    <div class="input-wrapper">
+                        <label>$a = $</label>
+                        <input type="number" id="f1a" step="any">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$b = $</label>
+                        <input type="number" id="f1b" step="any">
+                    </div>
+                </div>
+                <div class="botones-fase">
+                    <button class="btn-pista" id="pista1">💡 Pista</button>
+                    <button class="btn-primario" id="verificar1">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <!-- FASE 2: CALCULAR LA NORMA -->
+            <div class="fase bloqueada" id="fase2">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span> Calcula la norma $a^2 + b^2$
+                </div>
+                <div class="fase-instruccion">
+                    Eleva al cuadrado cada componente y súmalas.
+                </div>
+                <div class="fila-inputs">
+                    <div class="input-wrapper">
+                        <label>$a^2 = $</label>
+                        <input type="number" id="f2a2" step="any">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$b^2 = $</label>
+                        <input type="number" id="f2b2" step="any">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$a^2 + b^2 = $</label>
+                        <input type="number" id="f2norma" step="any">
+                    </div>
+                </div>
+                <div class="botones-fase">
+                    <button class="btn-pista" id="pista2">💡 Pista</button>
+                    <button class="btn-primario" id="verificar2">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <!-- FASE 3: CONSTRUIR EL INVERSO -->
+            <div class="fase bloqueada" id="fase3">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span> Construye el inverso multiplicativo
+                </div>
+                <div class="fase-instruccion">
+                    Aplica la fórmula:
+                    $$z^{-1} = \left( \frac{a}{a^2+b^2}, \ \frac{-b}{a^2+b^2} \right)$$
+                    <br>
+                    <strong>Formato de respuesta:</strong> puedes escribir fracciones
+                    (por ejemplo <code>3/4</code>, <code>-2/3</code>) o su equivalente decimal
+                    (<code>0.75</code>, <code>-0.667</code>).
+                </div>
+                <div class="fila-inputs">
+                    <div class="input-wrapper">
+                        <label>$x = \dfrac{a}{a^2+b^2} = $</label>
+                        <input type="text" id="f3x" class="ancho" placeholder="Escribe tu resultado" inputmode="text" autocomplete="off">
+                    </div>
+                    <div class="input-wrapper">
+                        <label>$y = \dfrac{-b}{a^2+b^2} = $</label>
+                        <input type="text" id="f3y" class="ancho" placeholder="Escribe tu resultado" inputmode="text" autocomplete="off">
+                    </div>
+                </div>
+                <div class="botones-fase">
+                    <button class="btn-pista" id="pista3">💡 Pista</button>
+                    <button class="btn-primario" id="verificar3">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <!-- FASE 4: COMPROBAR z · z⁻¹ = (1,0) -->
+            <div class="fase bloqueada" id="fase4">
+                <div class="fase-titulo">
+                    <span class="numero-fase">4</span> Comprueba que $z \cdot z^{-1} = (1, 0)$
+                </div>
+                <div class="fase-instruccion">
+                    Vamos a multiplicar $z = (a, b)$ por $z^{-1} = (x, y)$ paso a paso,
+                    aplicando la fórmula de multiplicación del Módulo 6:
+                    $$(a, b) \cdot (x, y) = (a x - b y, \ a y + b x)$$
+                    <br>
+                    <strong>Formato de respuesta:</strong> fracciones (<code>3/4</code>) o decimales (<code>0.75</code>).
+                </div>
+
+                <!-- SUB-FASE 4.1: PRIMERA COMPONENTE -->
+                <div class="subfase bloqueada" id="sub41">
+                    <div class="subfase-titulo">
+                        <span class="subfase-numero">a</span> Calcula la PRIMERA componente: $a x - b y$
+                    </div>
+                    <div class="subfase-formula">
+                        <strong>Fórmula:</strong> $\text{Primera} = a \cdot x - b \cdot y$
+                    </div>
+                    <div class="fila-inputs" style="margin-left:0;">
+                        <div class="input-wrapper">
+                            <label>$a \cdot x = $</label>
+                            <input type="text" id="f41ax" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>$b \cdot y = $</label>
+                            <input type="text" id="f41by" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Primera componente $= a x - b y$</label>
+                            <input type="text" id="f41res" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="botones-fase" style="margin-left:0;">
+                        <button class="btn-pista" id="pista41">💡 Pista</button>
+                        <button class="btn-primario" id="verificar41">Verificar</button>
+                    </div>
+                    <div class="feedback" id="feedback41"></div>
+                </div>
+
+                <!-- SUB-FASE 4.2: SEGUNDA COMPONENTE -->
+                <div class="subfase bloqueada" id="sub42">
+                    <div class="subfase-titulo">
+                        <span class="subfase-numero">b</span> Calcula la SEGUNDA componente: $a y + b x$
+                    </div>
+                    <div class="subfase-formula">
+                        <strong>Fórmula:</strong> $\text{Segunda} = a \cdot y + b \cdot x$
+                    </div>
+                    <div class="fila-inputs" style="margin-left:0;">
+                        <div class="input-wrapper">
+                            <label>$a \cdot y = $</label>
+                            <input type="text" id="f42ay" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>$b \cdot x = $</label>
+                            <input type="text" id="f42bx" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Segunda componente $= a y + b x$</label>
+                            <input type="text" id="f42res" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="botones-fase" style="margin-left:0;">
+                        <button class="btn-pista" id="pista42">💡 Pista</button>
+                        <button class="btn-primario" id="verificar42">Verificar</button>
+                    </div>
+                    <div class="feedback" id="feedback42"></div>
+                </div>
+
+                <!-- SUB-FASE 4.3: CONCLUSIÓN -->
+                <div class="subfase bloqueada" id="sub43">
+                    <div class="subfase-titulo">
+                        <span class="subfase-numero">c</span> Concluye: ¿cuál es el producto?
+                    </div>
+                    <div class="subfase-formula">
+                        Escribe el producto final $z \cdot z^{-1} = (\text{primera}, \ \text{segunda})$.
+                    </div>
+                    <div class="fila-inputs" style="margin-left:0;">
+                        <div class="input-wrapper">
+                            <label>Primera componente</label>
+                            <input type="text" id="f43c1" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                        <div class="input-wrapper">
+                            <label>Segunda componente</label>
+                            <input type="text" id="f43c2" class="medio" placeholder="Resultado" inputmode="text" autocomplete="off">
+                        </div>
+                    </div>
+                    <div class="botones-fase" style="margin-left:0;">
+                        <button class="btn-pista" id="pista43">💡 Pista</button>
+                        <button class="btn-primario" id="verificar43">Verificar y concluir</button>
+                    </div>
+                    <div class="feedback" id="feedback43"></div>
+                </div>
+
+                <!-- PANEL DE DESARROLLO (se muestra al verificar la sub-fase c) -->
+                <div class="panel-desarrollo" id="panelDesarrollo">
+                    <div class="titulo-desarrollo">📝 Desarrollo completo de la multiplicación</div>
+                    <div id="pasosDesarrolloMultiplicacion"></div>
+                </div>
+            </div>
+
+            <!-- FASE 5: VISUALIZACIÓN -->
+            <div class="fase bloqueada" id="fase5">
+                <div class="fase-titulo">
+                    <span class="numero-fase">5</span> Visualiza $z$ y $z^{-1}$
+                </div>
+                <div class="fase-instruccion">
+                    Observa cómo el inverso multiplicativo se relaciona geométricamente con $z$.
+                    El producto $z \cdot z^{-1}$ siempre cae en el punto $(1, 0)$.
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="canvas" width="820" height="360"></canvas>
+                </div>
+                <div class="feedback correcto visible" id="feedback5" style="margin-top:12px;">
+                    <strong>🎉 ¡Problema completado!</strong> Has dominado el cálculo del inverso multiplicativo
+                    y la comprobación $z \cdot z^{-1} = (1, 0)$.
+                </div>
+            </div>
+
+            <!-- NAVEGACIÓN -->
+            <div class="navegacion-problemas">
+                <button class="btn-navegacion secundario" id="btnAnterior">← Anterior</button>
+                <span class="indicador-problema" id="indicadorProblema">Problema 1 de 8</span>
+                <button class="btn-navegacion" id="btnSiguiente">Siguiente →</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Dominar el procedimiento para calcular el inverso multiplicativo
+        $z^{-1} = \left( \frac{a}{a^2+b^2}, \ \frac{-b}{a^2+b^2} \right)$ en $\mathbb{C}$, aplicando
+        la fórmula de multiplicación $(a_1,b_1) \cdot (a_2,b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$
+        para comprobar $z \cdot z^{-1} = (1, 0)$, y reconociendo el caso especial $(0, 0)$
+        que no tiene inverso multiplicativo.
+    </div>
+</div>
+
+<script>
+// =========================================
+// BANCO DE PROBLEMAS
+// =========================================
+var problemas = [
+    { a: 1, b: 2, nivel: 'basico', enunciado: 'Calcula el inverso multiplicativo de $z = (1, 2)$ y comprueba que $z \\cdot z^{-1} = (1, 0)$.' },
+    { a: 3, b: 4, nivel: 'basico', enunciado: 'Calcula el inverso multiplicativo de $z = (3, 4)$ y comprueba que $z \\cdot z^{-1} = (1, 0)$.' },
+    { a: -2, b: 1, nivel: 'medio', enunciado: 'Calcula el inverso multiplicativo de $z = (-2, 1)$ y comprueba que $z \\cdot z^{-1} = (1, 0)$.' },
+    { a: 0, b: 1, nivel: 'medio', enunciado: 'Calcula el inverso multiplicativo de $z = (0, 1)$. Observa qué ocurre con la rotación y comprueba el producto.' },
+    { a: 1, b: -1, nivel: 'medio', enunciado: 'Calcula el inverso multiplicativo de $z = (1, -1)$ y comprueba que $z \\cdot z^{-1} = (1, 0)$.' },
+    { a: -3, b: -4, nivel: 'medio', enunciado: 'Calcula el inverso multiplicativo de $z = (-3, -4)$ y comprueba que $z \\cdot z^{-1} = (1, 0)$.' },
+    { a: 5, b: 0, nivel: 'alto', enunciado: 'Calcula el inverso multiplicativo de $z = (5, 0)$. ¿Qué relación tiene con el inverso real $\\frac{1}{5}$?' },
+    { a: 0, b: 0, nivel: 'alto', enunciado: 'Analiza el caso $z = (0, 0)$. ¿Existe su inverso multiplicativo? Justifica.' }
+];
+
+// =========================================
+// ESTADO GLOBAL
+// =========================================
+var estado = {
+    indiceActual: 0,
+    completados: [],
+    faseActual: 1,
+    subFaseActual: 0,
+    pistaUsada: { 1: false, 2: false, 3: false, 41: false, 42: false, 43: false }
+};
+
+var esCasoCero = false;
+var inversoActual = { x: 0, y: 0 };  // almacena z^{-1} calculado en Fase 3
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(3)).toString();
+}
+
+function latexPar(a, b) {
+    return '(' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ')';
+}
+
+// Convierte "1/5" -> 0.2 ; "-2/5" -> -0.4 ; "0.5" -> 0.5 ; "3" -> 3 ; "" -> NaN
+function parsearFraccion(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    texto = String(texto).trim();
+    if (texto === '') return NaN;
+
+    if (texto.indexOf('/') !== -1) {
+        var partes = texto.split('/');
+        if (partes.length !== 2) return NaN;
+        var num = parseFloat(partes[0].trim());
+        var den = parseFloat(partes[1].trim());
+        if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+        return num / den;
+    }
+
+    var n = parseFloat(texto);
+    return isNaN(n) ? NaN : n;
+}
+
+function casiIgual(x, y, tol) {
+    tol = tol || 1e-6;
+    return Math.abs(x - y) < tol;
+}
+
+function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(console.log);
+    }
+}
+
+// =========================================
+// CARGAR PROBLEMA
+// =========================================
+function cargarProblema(indice) {
+    estado.indiceActual = indice;
+    estado.faseActual = 1;
+    estado.subFaseActual = 0;
+    estado.pistaUsada = { 1: false, 2: false, 3: false, 41: false, 42: false, 43: false };
+    esCasoCero = (problemas[indice].a === 0 && problemas[indice].b === 0);
+    inversoActual = { x: 0, y: 0 };
+
+    var p = problemas[indice];
+
+    document.getElementById('numeroProblema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    document.getElementById('indicadorProblema').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+    document.getElementById('progresoTexto').textContent = 'Problema ' + (indice + 1) + ' de ' + problemas.length;
+
+    var nivelEl = document.getElementById('nivelProblema');
+    nivelEl.className = 'nivel-problema ' + p.nivel;
+    nivelEl.textContent = p.nivel.charAt(0).toUpperCase() + p.nivel.slice(1);
+
+    document.getElementById('enunciado').innerHTML = p.enunciado;
+
+    // Resetear fases
+    document.getElementById('fase1').className = 'fase';
+    document.getElementById('fase2').className = 'fase bloqueada';
+    document.getElementById('fase3').className = 'fase bloqueada';
+    document.getElementById('fase4').className = 'fase bloqueada';
+    document.getElementById('fase5').className = 'fase bloqueada';
+
+    // Resetear sub-fases
+    document.getElementById('sub41').className = 'subfase bloqueada';
+    document.getElementById('sub42').className = 'subfase bloqueada';
+    document.getElementById('sub43').className = 'subfase bloqueada';
+    document.getElementById('panelDesarrollo').classList.remove('visible');
+
+    // Limpiar inputs
+    ['f1a','f1b','f2a2','f2b2','f2norma','f3x','f3y',
+     'f41ax','f41by','f41res','f42ay','f42bx','f42res','f43c1','f43c2'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    // Limpiar feedbacks
+    ['feedback1','feedback2','feedback3','feedback41','feedback42','feedback43'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'feedback';
+        el.innerHTML = '';
+    });
+    var fb5 = document.getElementById('feedback5');
+    fb5.className = 'feedback correcto';
+    fb5.style.display = 'none';
+
+    // Habilitar fase 1
+    habilitarFase(1);
+
+    // Aplicar caso especial (0,0) o restaurar comportamiento normal
+    if (esCasoCero) {
+        adaptarCasoCero();
+    } else {
+        restaurarComportamientoNormal();
+    }
+
+    actualizarProgresoGeneral();
+
+    document.getElementById('btnAnterior').disabled = (indice === 0);
+    document.getElementById('btnSiguiente').disabled = (indice === problemas.length - 1);
+
+    renderMath(document.body);
+}
+
+function habilitarFase(num) {
+    for (var i = 1; i <= 5; i++) {
+        var el = document.getElementById('fase' + i);
+        if (i <= num) {
+            el.classList.remove('bloqueada');
+        } else {
+            el.classList.add('bloqueada');
+        }
+    }
+}
+
+function actualizarProgresoGeneral() {
+    var total = problemas.length;
+    var completados = estado.completados.filter(function(x){ return x; }).length;
+    var porcentaje = (completados / total) * 100;
+    document.getElementById('progresoFill').style.width = porcentaje + '%';
+    document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
+}
+
+function marcarCompletado() {
+    estado.completados[estado.indiceActual] = true;
+    actualizarProgresoGeneral();
+}
+
+function mostrarPista(num, texto) {
+    var fb = document.getElementById('feedback' + num);
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + texto;
+    renderMath(fb);
+}
+
+// =========================================
+// CASO ESPECIAL (0,0)
+// =========================================
+function adaptarCasoCero() {
+    document.getElementById('fase3').querySelector('.fase-instruccion').innerHTML =
+        'Como la norma es $0$, la fórmula $\\left( \\frac{a}{0}, \\frac{-b}{0} \\right)$ no está definida. ' +
+        'Por lo tanto, <strong>no existe</strong> inverso multiplicativo para $(0,0)$.<br><br>' +
+        'Comprobación: $(0,0) \\cdot (x, y) = (0, 0) \\neq (1, 0)$ para cualquier $(x, y)$.<br><br>' +
+        '<strong>Conclusión:</strong> $(0,0)$ no tiene inverso multiplicativo.';
+    document.getElementById('fase3').querySelector('.fila-inputs').style.display = 'none';
+    document.getElementById('fase3').querySelector('.botones-fase').style.display = 'none';
+}
+
+function restaurarComportamientoNormal() {
+    document.getElementById('fase3').querySelector('.fase-instruccion').innerHTML =
+        'Aplica la fórmula:' +
+        '$$z^{-1} = \\left( \\frac{a}{a^2+b^2}, \\ \\frac{-b}{a^2+b^2} \\right)$$' +
+        '<br>' +
+        '<strong>Formato de respuesta:</strong> puedes escribir fracciones ' +
+        '(por ejemplo <code>3/4</code>, <code>-2/3</code>) o su equivalente decimal ' +
+        '(<code>0.75</code>, <code>-0.667</code>).';
+    document.getElementById('fase3').querySelector('.fila-inputs').style.display = '';
+    document.getElementById('fase3').querySelector('.botones-fase').style.display = '';
+}
+
+// =========================================
+// FASE 1
+// =========================================
+document.getElementById('verificar1').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    var f1a = document.getElementById('f1a').value.trim();
+    var f1b = document.getElementById('f1b').value.trim();
+    var fb = document.getElementById('feedback1');
+
+    if (f1a === '' || f1b === '') {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar ambos campos.';
+        return;
+    }
+
+    var a = parseFloat(f1a);
+    var b = parseFloat(f1b);
+
+    if (casiIgual(a, p.a) && casiIgual(b, p.b)) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Correcto! Identificaste $a = ' + formatearNumero(p.a) + '$ y $b = ' + formatearNumero(p.b) + '$.';
+        renderMath(fb);
+        habilitarFase(2);
+        estado.faseActual = 2;
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Revisa los valores. Recuerda que $z = ' + latexPar(p.a, p.b) + '$. El primer componente es $a$ y el segundo es $b$.';
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista1').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    mostrarPista(1, 'El número complejo está escrito como $z = (a, b)$. En este caso $z = ' + latexPar(p.a, p.b) + '$.');
+});
+
+// =========================================
+// FASE 2
+// =========================================
+document.getElementById('verificar2').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    var a2 = parseFloat(document.getElementById('f2a2').value);
+    var b2 = parseFloat(document.getElementById('f2b2').value);
+    var norma = parseFloat(document.getElementById('f2norma').value);
+    var fb = document.getElementById('feedback2');
+
+    if (isNaN(a2) || isNaN(b2) || isNaN(norma)) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar los tres campos.';
+        return;
+    }
+
+    var a2Correcto = p.a * p.a;
+    var b2Correcto = p.b * p.b;
+    var normaCorrecta = a2Correcto + b2Correcto;
+
+    if (esCasoCero) {
+        if (casiIgual(norma, 0)) {
+            fb.className = 'feedback correcto visible';
+            fb.innerHTML = '✅ ¡Correcto! La norma es $0$. No podemos dividir entre ella, así que <strong>no existe inverso multiplicativo</strong> para $(0,0)$.<br><br>Observa la conclusión en la Fase 3.';
+            renderMath(fb);
+            habilitarFase(3);
+            marcarCompletado();
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La norma de $(0,0)$ es $0^2 + 0^2 = 0$. Revisa tu cálculo.';
+        }
+        return;
+    }
+
+    if (casiIgual(a2, a2Correcto) && casiIgual(b2, b2Correcto) && casiIgual(norma, normaCorrecta)) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Correcto! $a^2 = ' + formatearNumero(a2Correcto) + '$, $b^2 = ' + formatearNumero(b2Correcto) + '$, norma $= ' + formatearNumero(normaCorrecta) + '$.';
+        renderMath(fb);
+        habilitarFase(3);
+        estado.faseActual = 3;
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        var err = '';
+        if (!casiIgual(a2, a2Correcto)) err += '$a^2$ debe ser $(' + formatearNumero(p.a) + ')^2 = ' + formatearNumero(a2Correcto) + '$. ';
+        if (!casiIgual(b2, b2Correcto)) err += '$b^2$ debe ser $(' + formatearNumero(p.b) + ')^2 = ' + formatearNumero(b2Correcto) + '$. ';
+        if (!casiIgual(norma, normaCorrecta)) err += 'La norma es la suma: $' + formatearNumero(a2Correcto) + ' + ' + formatearNumero(b2Correcto) + ' = ' + formatearNumero(normaCorrecta) + '$.';
+        fb.innerHTML = '❌ ' + err;
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista2').addEventListener('click', function() {
+    mostrarPista(2, 'La norma se calcula como $a^2 + b^2$. Recuerda que un número negativo elevado al cuadrado da positivo.');
+});
+
+// =========================================
+// FASE 3
+// =========================================
+document.getElementById('verificar3').addEventListener('click', function() {
+    if (esCasoCero) return;
+
+    var p = problemas[estado.indiceActual];
+    var x = parsearFraccion(document.getElementById('f3x').value);
+    var y = parsearFraccion(document.getElementById('f3y').value);
+    var fb = document.getElementById('feedback3');
+
+    if (isNaN(x) || isNaN(y)) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar ambos campos. Puedes escribir fracciones como <code>3/4</code> o decimales como <code>0.75</code>.';
+        return;
+    }
+
+    var norma = p.a * p.a + p.b * p.b;
+    var xCorrecto = p.a / norma;
+    var yCorrecto = -p.b / norma;
+
+    if (casiIgual(x, xCorrecto) && casiIgual(y, yCorrecto)) {
+        // Guardar el inverso para usarlo en Fase 4
+        inversoActual = { x: xCorrecto, y: yCorrecto };
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Correcto! El inverso es $z^{-1} = ' + latexPar(xCorrecto, yCorrecto) + '$.' +
+            '<br>Ahora vamos a comprobar que $z \\cdot z^{-1} = (1, 0)$ en la Fase 4.';
+        renderMath(fb);
+        habilitarFase(4);
+        // Habilitar sub-fase 4.1
+        document.getElementById('sub41').classList.remove('bloqueada');
+        estado.faseActual = 4;
+        estado.subFaseActual = 1;
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        var err = 'Recuerda la fórmula: $z^{-1} = \\left( \\dfrac{a}{a^2+b^2}, \\ \\dfrac{-b}{a^2+b^2} \\right)$. ';
+        err += 'Con $a = ' + formatearNumero(p.a) + '$, $b = ' + formatearNumero(p.b) + '$, norma $= ' + formatearNumero(norma) + '$: ';
+        err += 'aplica la fórmula componente por componente. Recuerda que la segunda componente lleva el signo opuesto de $b$.';
+        fb.innerHTML = '❌ ' + err;
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista3').addEventListener('click', function() {
+    mostrarPista(3, 'Aplica la fórmula del inverso: la primera componente es $a$ dividido entre la norma, y la segunda es $-b$ dividido entre la norma. ¡Cuidado con el signo del segundo componente!');
+});
+
+// =========================================
+// FASE 4 — SUB-FASE 4.1: PRIMERA COMPONENTE
+// =========================================
+document.getElementById('verificar41').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    var ax = parsearFraccion(document.getElementById('f41ax').value);
+    var by = parsearFraccion(document.getElementById('f41by').value);
+    var res = parsearFraccion(document.getElementById('f41res').value);
+    var fb = document.getElementById('feedback41');
+
+    if (isNaN(ax) || isNaN(by) || isNaN(res)) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar los tres campos. Puedes escribir fracciones como <code>3/4</code> o decimales como <code>0.75</code>.';
+        return;
+    }
+
+    var axCorrecto = p.a * inversoActual.x;
+    var byCorrecto = p.b * inversoActual.y;
+    var resCorrecto = axCorrecto - byCorrecto;
+
+    if (casiIgual(ax, axCorrecto) && casiIgual(by, byCorrecto) && casiIgual(res, resCorrecto)) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Correcto! ' +
+            '$a \\cdot x = ' + formatearNumero(p.a) + ' \\cdot ' + formatearNumero(inversoActual.x) + ' = ' + formatearNumero(axCorrecto) + '$, ' +
+            '$b \\cdot y = ' + formatearNumero(p.b) + ' \\cdot ' + formatearNumero(inversoActual.y) + ' = ' + formatearNumero(byCorrecto) + '$.<br>' +
+            'Primera componente: $' + formatearNumero(axCorrecto) + ' - (' + formatearNumero(byCorrecto) + ') = ' + formatearNumero(resCorrecto) + '$.';
+        renderMath(fb);
+        document.getElementById('sub42').classList.remove('bloqueada');
+        estado.subFaseActual = 2;
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        var err = 'Recuerda: $a \\cdot x - b \\cdot y$.<br>';
+        err += 'Con $a = ' + formatearNumero(p.a) + '$, $x = ' + formatearNumero(inversoActual.x) + '$: $a \\cdot x = ' + formatearNumero(axCorrecto) + '$<br>';
+        err += 'Con $b = ' + formatearNumero(p.b) + '$, $y = ' + formatearNumero(inversoActual.y) + '$: $b \\cdot y = ' + formatearNumero(byCorrecto) + '$<br>';
+        err += 'Primera componente $= ' + formatearNumero(axCorrecto) + ' - (' + formatearNumero(byCorrecto) + ') = ' + formatearNumero(resCorrecto) + '$.';
+        fb.innerHTML = '❌ ' + err;
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista41').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    mostrarPista(41, 'La primera componente es $a \\cdot x - b \\cdot y$. Aquí $a = ' + formatearNumero(p.a) +
+        '$, $x = ' + formatearNumero(inversoActual.x) + '$, $b = ' + formatearNumero(p.b) +
+        '$, $y = ' + formatearNumero(inversoActual.y) + '$. Recuerda que restar un negativo equivale a sumar.');
+});
+
+// =========================================
+// FASE 4 — SUB-FASE 4.2: SEGUNDA COMPONENTE
+// =========================================
+document.getElementById('verificar42').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    var ay = parsearFraccion(document.getElementById('f42ay').value);
+    var bx = parsearFraccion(document.getElementById('f42bx').value);
+    var res = parsearFraccion(document.getElementById('f42res').value);
+    var fb = document.getElementById('feedback42');
+
+    if (isNaN(ay) || isNaN(bx) || isNaN(res)) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar los tres campos.';
+        return;
+    }
+
+    var ayCorrecto = p.a * inversoActual.y;
+    var bxCorrecto = p.b * inversoActual.x;
+    var resCorrecto = ayCorrecto + bxCorrecto;
+
+    if (casiIgual(ay, ayCorrecto) && casiIgual(bx, bxCorrecto) && casiIgual(res, resCorrecto)) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Correcto! ' +
+            '$a \\cdot y = ' + formatearNumero(p.a) + ' \\cdot ' + formatearNumero(inversoActual.y) + ' = ' + formatearNumero(ayCorrecto) + '$, ' +
+            '$b \\cdot x = ' + formatearNumero(p.b) + ' \\cdot ' + formatearNumero(inversoActual.x) + ' = ' + formatearNumero(bxCorrecto) + '$.<br>' +
+            'Segunda componente: $' + formatearNumero(ayCorrecto) + ' + (' + formatearNumero(bxCorrecto) + ') = ' + formatearNumero(resCorrecto) + '$.';
+        renderMath(fb);
+        document.getElementById('sub43').classList.remove('bloqueada');
+        estado.subFaseActual = 3;
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        var err = 'Recuerda: $a \\cdot y + b \\cdot x$.<br>';
+        err += 'Con $a = ' + formatearNumero(p.a) + '$, $y = ' + formatearNumero(inversoActual.y) + '$: $a \\cdot y = ' + formatearNumero(ayCorrecto) + '$<br>';
+        err += 'Con $b = ' + formatearNumero(p.b) + '$, $x = ' + formatearNumero(inversoActual.x) + '$: $b \\cdot x = ' + formatearNumero(bxCorrecto) + '$<br>';
+        err += 'Segunda componente $= ' + formatearNumero(ayCorrecto) + ' + (' + formatearNumero(bxCorrecto) + ') = ' + formatearNumero(resCorrecto) + '$.';
+        fb.innerHTML = '❌ ' + err;
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista42').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    mostrarPista(42, 'La segunda componente es $a \\cdot y + b \\cdot x$. Aquí $a = ' + formatearNumero(p.a) +
+        '$, $y = ' + formatearNumero(inversoActual.y) + '$, $b = ' + formatearNumero(p.b) +
+        '$, $x = ' + formatearNumero(inversoActual.x) + '$. Observa que los signos opuestos suelen cancelarse.');
+});
+
+// =========================================
+// FASE 4 — SUB-FASE 4.3: CONCLUSIÓN
+// =========================================
+document.getElementById('verificar43').addEventListener('click', function() {
+    var p = problemas[estado.indiceActual];
+    var c1 = parsearFraccion(document.getElementById('f43c1').value);
+    var c2 = parsearFraccion(document.getElementById('f43c2').value);
+    var fb = document.getElementById('feedback43');
+
+    if (isNaN(c1) || isNaN(c2)) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar ambos campos.';
+        return;
+    }
+
+    if (casiIgual(c1, 1) && casiIgual(c2, 0)) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ ¡Perfecto! $z \\cdot z^{-1} = (1, 0)$. Esto confirma que $z^{-1}$ es realmente el inverso multiplicativo y que $(1,0)$ es el elemento identidad.';
+        renderMath(fb);
+
+        // Mostrar el desarrollo completo
+        mostrarDesarrolloCompleto(p);
+
+        // Habilitar Fase 5
+        habilitarFase(5);
+        estado.faseActual = 5;
+        document.getElementById('feedback5').style.display = 'block';
+        dibujarVisualizacion();
+        marcarCompletado();
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ El producto debe ser $(1, 0)$ porque $(1,0)$ es el elemento identidad multiplicativo. Revisa tus componentes: la primera debe ser $1$ y la segunda $0$.';
+        renderMath(fb);
+    }
+});
+
+document.getElementById('pista43').addEventListener('click', function() {
+    mostrarPista(43, 'El producto de cualquier número complejo (distinto de cero) por su inverso siempre da $(1, 0)$. La primera componente debe ser $1$ y la segunda $0$.');
+});
+
+// =========================================
+// MOSTRAR DESARROLLO COMPLETO
+// =========================================
+function mostrarDesarrolloCompleto(p) {
+    var panel = document.getElementById('panelDesarrollo');
+    var pasos = document.getElementById('pasosDesarrolloMultiplicacion');
+
+    var ax = p.a * inversoActual.x;
+    var by = p.b * inversoActual.y;
+    var ay = p.a * inversoActual.y;
+    var bx = p.b * inversoActual.x;
+    var primera = ax - by;
+    var segunda = ay + bx;
+
+    var html = '';
+    html += '<div class="paso-desarrollo"><span class="num">1</span> ' +
+        '<strong>Fórmula de multiplicación:</strong> $(a, b) \\cdot (x, y) = (a x - b y, \\ a y + b x)$</div>';
+
+    html += '<div class="paso-desarrollo"><span class="num">2</span> ' +
+        '<strong>Sustituyendo valores:</strong> $z = ' + latexPar(p.a, p.b) + '$ y $z^{-1} = ' +
+        latexPar(inversoActual.x, inversoActual.y) + '$</div>';
+
+    html += '<div class="paso-desarrollo"><span class="num">3</span> ' +
+        '<strong>Primera componente:</strong> $a x - b y = (' + formatearNumero(p.a) + ')(' + formatearNumero(inversoActual.x) + ') - (' +
+        formatearNumero(p.b) + ')(' + formatearNumero(inversoActual.y) + ') = ' +
+        formatearNumero(ax) + ' - (' + formatearNumero(by) + ') = ' + formatearNumero(primera) + '$</div>';
+
+    html += '<div class="paso-desarrollo"><span class="num">4</span> ' +
+        '<strong>Segunda componente:</strong> $a y + b x = (' + formatearNumero(p.a) + ')(' + formatearNumero(inversoActual.y) + ') + (' +
+        formatearNumero(p.b) + ')(' + formatearNumero(inversoActual.x) + ') = ' +
+        formatearNumero(ay) + ' + (' + formatearNumero(bx) + ') = ' + formatearNumero(segunda) + '$</div>';
+
+    html += '<div class="paso-desarrollo"><span class="num">5</span> ' +
+        '<strong>Resultado:</strong> $z \\cdot z^{-1} = ' + latexPar(primera, segunda) + '$. ' +
+        'Como $(1, 0)$ es el elemento identidad multiplicativo, esto confirma que $z^{-1}$ es el inverso.</div>';
+
+    pasos.innerHTML = html;
+    panel.classList.add('visible');
+    renderMath(panel);
+}
+
+// =========================================
+// NAVEGACIÓN
+// =========================================
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (estado.indiceActual > 0) {
+        cargarProblema(estado.indiceActual - 1);
+    }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', function() {
+    if (estado.indiceActual < problemas.length - 1) {
+        cargarProblema(estado.indiceActual + 1);
+    }
+});
+
+// =========================================
+// VISUALIZACIÓN CANVAS
+// =========================================
+function dibujarVisualizacion() {
+    var canvas = document.getElementById('canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width;
+    var H = canvas.height;
+
+    var p = problemas[estado.indiceActual];
+    var norma = p.a * p.a + p.b * p.b;
+    if (norma === 0) return;
+
+    var x = p.a / norma;
+    var y = -p.b / norma;
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    var maxAbs = Math.max(Math.abs(p.a), Math.abs(p.b), Math.abs(x), Math.abs(y), 1);
+    var escala = Math.min(W, H) / (2 * maxAbs * 1.4);
+    var cx = W / 2;
+    var cy = H / 2;
+
+    function mapear(px, py) {
+        return { x: cx + px * escala, y: cy - py * escala };
+    }
+
+    // Cuadrícula
+    ctx.strokeStyle = '#e8eef5';
+    ctx.lineWidth = 1;
+    for (var gx = cx % escala; gx < W; gx += escala) {
+        ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+    }
+    for (var gy = cy % escala; gy < H; gy += escala) {
+        ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+    }
+
+    // Ejes
+    ctx.strokeStyle = '#2c4966';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
+
+    ctx.fillStyle = '#2c4966';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('Re', W - 25, cy - 6);
+    ctx.fillText('Im', cx + 6, 16);
+
+    // Círculo unitario
+    ctx.strokeStyle = '#a9c1d9';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.arc(cx, cy, escala, 0, 2 * Math.PI);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Vector z
+    var pz = mapear(p.a, p.b);
+    ctx.strokeStyle = '#5b7fa3';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pz.x, pz.y); ctx.stroke();
+    ctx.fillStyle = '#5b7fa3';
+    ctx.beginPath(); ctx.arc(pz.x, pz.y, 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText('z = ' + latexPar(p.a, p.b), pz.x + 10, pz.y - 8);
+
+    // Vector z^{-1}
+    var pzInv = mapear(x, y);
+    ctx.strokeStyle = '#c0392b';
+    ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(pzInv.x, pzInv.y); ctx.stroke();
+    ctx.fillStyle = '#c0392b';
+    ctx.beginPath(); ctx.arc(pzInv.x, pzInv.y, 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#c0392b';
+    ctx.fillText('z⁻¹ = ' + latexPar(x, y), pzInv.x + 10, pzInv.y + 18);
+
+    // Punto (1,0)
+    var pUno = mapear(1, 0);
+    ctx.fillStyle = '#27ae60';
+    ctx.beginPath(); ctx.arc(pUno.x, pUno.y, 5, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = '#27ae60';
+    ctx.font = 'bold 12px Segoe UI';
+    ctx.fillText('z·z⁻¹ = (1, 0)', pUno.x + 8, pUno.y - 8);
+}
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+estado.completados = new Array(problemas.length).fill(false);
+cargarProblema(0);
+
+</script>
+
+</body>
+</html>

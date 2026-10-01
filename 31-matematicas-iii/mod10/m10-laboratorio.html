@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detective de Factores | Matemáticas III</title>
+    <title>Laboratorio: Factorización por Agrupación | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -236,6 +236,10 @@
         .opcion-item:hover:not(.disabled) {
             background-color: rgba(91,127,163,0.08);
             border-color: var(--color-acento);
+        }
+        .opcion-item:focus {
+            outline: 3px solid var(--color-acento);
+            outline-offset: 2px;
         }
         .opcion-item.disabled { cursor: default; }
         .opcion-item.correcta {
@@ -479,14 +483,14 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Detective de Factores</h1>
+        <h1>Laboratorio: Factorización por Agrupación</h1>
         <p>Laboratorio de práctica | Matemáticas III</p>
     </header>
 
     <div class="barra-progreso-general">
         <span class="texto-progreso" id="progresoTexto">Caso 1 de 8</span>
         <div class="progreso-track">
-            <div class="progreso-fill" id="progresoFill"></div>
+            <div class="progreso-fill" id="progresoFill" role="progressbar" aria-label="Progreso del laboratorio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
         <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
     </div>
@@ -513,10 +517,10 @@
                 <div class="fase-instruccion" id="instruccionFase1">
                     Identifica la estructura de la ecuación y el método más adecuado.
                 </div>
-                <div class="contador-intentos" id="contadorFase1">Intento 1 de 3</div>
-                <div class="opciones-lista" id="opcionesFase1"></div>
+                <div class="contador-intentos" id="contadorFase1" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase1" role="group" aria-label="Opciones de diagnóstico"></div>
                 <button type="button" class="btn-reintentar" id="btnReintentar1">🔄 Reintentar</button>
-                <div class="feedback" id="feedback1"></div>
+                <div class="feedback" id="feedback1" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 2 -->
@@ -527,13 +531,13 @@
                 <div class="fase-instruccion" id="instruccionFase2">
                     Aplica el método del producto-suma: encuentra dos números cuyo producto sea <strong>$a \cdot c$</strong> y cuya suma sea <strong>$b$</strong>.
                 </div>
-                <div class="contador-intentos" id="contadorFase2">Intento 1 de 3</div>
+                <div class="contador-intentos" id="contadorFase2" aria-live="polite">Intento 1 de 3</div>
                 <div class="fila-ejecucion" id="inputsFase2"></div>
                 <div class="botones-fase">
                     <button type="button" class="btn-pista" id="pistaFase2">💡 Pista</button>
                     <button type="button" class="btn-primario" id="verificarFase2">Verificar</button>
                 </div>
-                <div class="feedback" id="feedback2"></div>
+                <div class="feedback" id="feedback2" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 3 -->
@@ -544,13 +548,13 @@
                 <div class="fase-instruccion" id="instruccionFase3">
                     Completa la factorización y escribe las raíces de la ecuación.
                 </div>
-                <div class="contador-intentos" id="contadorFase3">Intento 1 de 3</div>
+                <div class="contador-intentos" id="contadorFase3" aria-live="polite">Intento 1 de 3</div>
                 <div class="fila-ejecucion" id="inputsFase3"></div>
                 <div class="botones-fase">
                     <button type="button" class="btn-pista" id="pistaFase3">💡 Pista</button>
                     <button type="button" class="btn-primario" id="verificarFase3">Verificar</button>
                 </div>
-                <div class="feedback" id="feedback3"></div>
+                <div class="feedback" id="feedback3" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 4 -->
@@ -561,10 +565,10 @@
                 <div class="fase-instruccion" id="instruccionFase4">
                     ¿Cuál es el error más frecuente en este tipo de caso?
                 </div>
-                <div class="contador-intentos" id="contadorFase4">Intento 1 de 3</div>
-                <div class="opciones-lista" id="opcionesFase4"></div>
+                <div class="contador-intentos" id="contadorFase4" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase4" role="group" aria-label="Opciones de trampa CENEVAL"></div>
                 <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
-                <div class="feedback" id="feedback4"></div>
+                <div class="feedback" id="feedback4" role="status" aria-live="polite"></div>
             </div>
 
             <div class="navegacion-casos">
@@ -1064,6 +1068,18 @@ function actualizarContador(idContador, intentos) {
     }
 }
 
+// Limpia LaTeX para usar como aria-label
+function limpiarLatex(texto) {
+    return String(texto)
+        .replace(/\$[^$]*\$/g, '')
+        .replace(/\\cdot/g, '×')
+        .replace(/\\neq/g, 'distinto de')
+        .replace(/\\[a-zA-Z]+/g, '')
+        .replace(/[{}]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
 // =========================================
 // CARGA DE CASO
 // =========================================
@@ -1098,9 +1114,8 @@ function cargarCaso(indice) {
         el.innerHTML = '';
     });
 
-    ['btnReintentar1','btnReintentar4'].forEach(function(id) {
-        document.getElementById(id).classList.remove('visible');
-    });
+    document.getElementById('btnReintentar1').classList.remove('visible');
+    document.getElementById('btnReintentar4').classList.remove('visible');
 
     ['contadorFase1','contadorFase2','contadorFase3','contadorFase4'].forEach(function(id) {
         document.getElementById(id).classList.remove('visible');
@@ -1131,7 +1146,7 @@ function renderizarOpciones(contenedorId, opciones, onSelect) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'opcion-item';
-        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + op.replace(/\$/g, ''));
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + limpiarLatex(op));
         btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
         btn.dataset.opcion = op;
         btn.addEventListener('click', function() {
@@ -1146,21 +1161,14 @@ function renderizarOpciones(contenedorId, opciones, onSelect) {
 function renderizarInputs(contenedorId, campos) {
     var contenedor = document.getElementById(contenedorId);
     contenedor.innerHTML = '';
-    campos.forEach(function(campo) {
+    campos.forEach(function(campo, idx) {
         var wrapper = document.createElement('div');
         wrapper.className = 'input-wrapper';
+        var idInput = contenedorId + '-' + campo.id;
         var placeholder = campo.placeholder || 'Tu respuesta';
-        var ariaLabel = campo.etiqueta
-            .replace(/\$/g, '')
-            .replace(/\\cdot/g, '×')
-            .replace(/\\neq/g, 'distinto de')
-            .replace(/\\[a-z]+/g, '')
-            .replace(/[{}]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-        wrapper.innerHTML = '<label for="' + contenedorId + '-' + campo.id + '">' + campo.etiqueta + '</label>' +
-            '<input type="text" id="' + contenedorId + '-' + campo.id + '" placeholder="' + placeholder + '" autocomplete="off" ' +
-            'inputmode="text" aria-label="' + ariaLabel + '">';
+        wrapper.innerHTML = '<label for="' + idInput + '">' + campo.etiqueta + '</label>' +
+            '<input type="text" id="' + idInput + '" placeholder="' + placeholder + '" autocomplete="off" ' +
+            'inputmode="text" aria-label="' + limpiarLatex(campo.etiqueta) + '">';
         contenedor.appendChild(wrapper);
     });
     renderMath(contenedor);
@@ -1434,7 +1442,9 @@ function actualizarProgreso() {
     var total = casos.length;
     var completados = estado.completados.filter(function(x) { return x; }).length;
     estado.puntaje = completados;
-    document.getElementById('progresoFill').style.width = (completados / total * 100) + '%';
+    var porcentaje = completados / total * 100;
+    document.getElementById('progresoFill').style.width = porcentaje + '%';
+    document.getElementById('progresoFill').setAttribute('aria-valuenow', Math.round(porcentaje));
     document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
 }
 
@@ -1470,15 +1480,16 @@ function mostrarPantallaFinal() {
     var medalla = document.getElementById('medallaFinal');
     var mensaje = document.getElementById('mensajeFinal');
 
+    // Usar innerHTML para que MathJax procese las fórmulas
     if (completados === total) {
         medalla.textContent = '🏆';
-        mensaje.textContent = '¡Detective experto! Resolviste los 8 casos correctamente, dominaste el método del producto-suma y aplicaste correctamente la factorización por agrupación. Dominas la resolución de ecuaciones cuadráticas por factorización del Módulo 10.';
+        mensaje.innerHTML = '¡Detective experto! Resolviste los 8 casos correctamente, dominaste el método del producto-suma y aplicaste correctamente la factorización por agrupación. Dominas la resolución de ecuaciones cuadráticas por factorización del Módulo 10.';
     } else if (completados >= total * 0.7) {
         medalla.textContent = '🥈';
-        mensaje.textContent = '¡Buen trabajo, detective! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del método de factorización por agrupación y la identificación de los números clave.';
+        mensaje.innerHTML = '¡Buen trabajo, detective! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del método de factorización por agrupación y la identificación de los números clave.';
     } else {
         medalla.textContent = '🥉';
-        mensaje.textContent = 'Continúa entrenando, detective. Te recomendamos repasar el método del producto-suma, la factorización por agrupación y el teorema del producto cero antes de reintentar los casos.';
+        mensaje.innerHTML = 'Continúa entrenando, detective. Te recomendamos repasar el método del producto-suma (buscar dos números cuyo producto sea $a \\cdot c$ y cuya suma sea $b$), la factorización por agrupación y el teorema del producto cero antes de reintentar los casos.';
     }
     renderMath(pantalla);
     window.scrollTo({ top: 0, behavior: 'smooth' });

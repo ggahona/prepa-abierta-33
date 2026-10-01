@@ -1,4 +1,3 @@
-```markdown
 ## Prepa Abierta 33
 
 Recursos educativos interactivos para las asignaturas del plan de estudios de **Preparatoria Abierta 33**.

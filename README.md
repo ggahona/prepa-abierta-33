@@ -1,3 +1,4 @@
+```markdown
 ## Prepa Abierta 33
 
 Recursos educativos interactivos para las asignaturas del plan de estudios de **Preparatoria Abierta 33**.
@@ -75,6 +76,10 @@ No requiere instalación ni conexión permanente después de la primera carga.
 
 | Módulo | Tema | Estado |
 |---|---|---|
+| Módulo 1 | Ecuaciones lineales | ✅ Disponible |
+| Módulo 2 | Sistemas de ecuaciones | ✅ Disponible |
+| Módulo 3 | Determinantes y Regla de Cramer | ✅ Disponible |
+| Módulo 4 | Desigualdades y programación lineal | ✅ Disponible |
 | Módulo 5 | Números Complejos: Suma y Propiedades | ✅ Disponible |
 | Módulo 6 | Multiplicación de Números Complejos y el Campo ℂ | ✅ Disponible |
 | Módulo 7 | Forma Rectangular, Resta, División y Conjugados | ✅ Disponible |
@@ -91,3 +96,4 @@ Este es un proyecto personal en construcción. Si encuentras errores, tienes sug
 Este proyecto es de uso educativo. Consulta con el autor antes de reutilizar el contenido con fines comerciales.
 
 **Prepa Abierta 33** · Recursos educativos en construcción
+```

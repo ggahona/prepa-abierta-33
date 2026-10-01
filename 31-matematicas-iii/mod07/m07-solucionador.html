@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rectangular Paso a Paso | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        /* ===== LAYOUT ===== */
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 0;
+        }
+
+        /* ===== PANEL DE CONTROL ===== */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-operacion {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-operacion label.etiqueta {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        select#tipo-operacion {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        select#tipo-operacion:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .grupo-input {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento-suave);
+            transition: opacity 0.3s;
+        }
+        .grupo-input .titulo-input {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-complejo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+        }
+        .fila-complejo input {
+            width: 70px;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        .fila-complejo input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        .fila-complejo .operador {
+            font-weight: 700;
+            color: var(--color-acento);
+            font-size: 1.05rem;
+        }
+        .fila-complejo .simbolo-i {
+            font-weight: 700;
+            color: var(--color-acento);
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos {
+            margin-top: 8px;
+        }
+        .seccion-ejemplos h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        /* ===== PANEL DESARROLLO ===== */
+        .panel-desarrollo {
+            padding: 24px 28px;
+            background-color: var(--color-blanco);
+        }
+        .panel-desarrollo h2 {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+            margin-bottom: 16px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .bloque-operacion {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            border-left: 5px solid var(--color-acento);
+        }
+        .bloque-operacion .titulo-bloque {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .bloque-operacion .expresion {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+        }
+
+        .paso {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .paso:last-child { border-bottom: none; }
+        .paso .num-paso {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .paso .cuerpo-paso {
+            flex: 1;
+            min-width: 0;
+        }
+        .paso .titulo-paso {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        .paso .detalle-paso {
+            font-size: 0.98rem;
+            color: var(--color-texto-oscuro);
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .resultado-final {
+            margin-top: 16px;
+            padding: 16px 20px;
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .resultado-final .titulo-final {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-exito);
+            margin-bottom: 6px;
+        }
+        .resultado-final .expresion-final {
+            font-size: 1.15rem;
+            color: var(--color-texto-oscuro);
+        }
+
+        .mensaje-error {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #78281f;
+            margin-top: 12px;
+            display: none;
+        }
+        .mensaje-error.visible { display: block; }
+
+        .placeholder-inicial {
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 60px 20px;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 14px;
+        }
+        .aviso-pedagogico ul {
+            margin-left: 20px;
+            margin-top: 6px;
+        }
+        .aviso-pedagogico li {
+            margin-bottom: 4px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-desarrollo { padding: 18px 16px; }
+            .fila-complejo input { width: 60px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <!-- HEADER -->
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Rectangular Paso a Paso</h1>
+        <p>Solucionador paso a paso | Matemáticas III</p>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Operación a resolver</h2>
+
+            <div class="seccion-operacion">
+                <label class="etiqueta" for="tipo-operacion">Selecciona la operación</label>
+                <select id="tipo-operacion" aria-label="Tipo de operación a resolver">
+                    <option value="suma">Suma: z₁ + z₂</option>
+                    <option value="resta">Resta: z₁ − z₂</option>
+                    <option value="mult">Multiplicación: z₁ · z₂</option>
+                    <option value="div">División: z₁ / z₂</option>
+                    <option value="conjugado">Conjugado: z̄</option>
+                    <option value="prodConjugados">Producto de conjugados: z · z̄</option>
+                </select>
+            </div>
+
+            <h3>Datos</h3>
+
+            <div class="grupo-input">
+                <div class="titulo-input">$z_1 = a_1 + b_1 i$</div>
+                <div class="fila-complejo">
+                    <input type="number" id="z1-a" value="3" step="any" aria-label="Parte real de z1">
+                    <span class="operador">+</span>
+                    <input type="number" id="z1-b" value="1" step="any" aria-label="Parte imaginaria de z1">
+                    <span class="simbolo-i">i</span>
+                </div>
+            </div>
+
+            <div class="grupo-input" id="grupo-z2">
+                <div class="titulo-input">$z_2 = a_2 + b_2 i$</div>
+                <div class="fila-complejo">
+                    <input type="number" id="z2-a" value="-2" step="any" aria-label="Parte real de z2">
+                    <span class="operador">+</span>
+                    <input type="number" id="z2-b" value="7" step="any" aria-label="Parte imaginaria de z2">
+                    <span class="simbolo-i">i</span>
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver paso a paso</button>
+                <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar">↺</button>
+            </div>
+
+            <div class="seccion-ejemplos">
+                <h3>📚 Ejemplos del Módulo 7</h3>
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $(3 + i) + (-2 + 7i)$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $(3 + i) - (-2 + 7i)$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $(3 + i)(-2 + 7i)$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $(1 - 3i) \div (1 + 2i)$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 Conjugado de $5 - 2i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $i \cdot (2 - i)(3 - 4i)$</button>
+            </div>
+        </div>
+
+        <!-- PANEL DE DESARROLLO -->
+        <div class="panel-desarrollo">
+            <h2>🧮 Desarrollo paso a paso</h2>
+            <div id="desarrollo">
+                <div class="placeholder-inicial">
+                    ⚙️ Configura los valores y presiona <strong>"Resolver paso a paso"</strong><br>
+                    para ver el desarrollo completo de la operación.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Resolver operaciones con números complejos en forma rectangular
+        $a + bi$ mostrando cada paso algebraico, con especial énfasis en la sustitución $i^2 = -1$
+        y en la separación de las partes real e imaginaria del resultado.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+// Formatea un complejo en notación a + bi (omite términos nulos)
+function latexComplejo(a, b) {
+    a = parseFloat(a); b = parseFloat(b);
+    if (a === 0 && b === 0) return '0';
+    var partes = [];
+    if (a !== 0) partes.push(formatearNumero(a));
+    if (b !== 0) {
+        var signo = '';
+        if (b > 0 && a !== 0) signo = ' + ';
+        else if (b < 0 && a !== 0) signo = ' - ';
+        else if (b < 0) signo = '-';
+        var absB = Math.abs(b);
+        if (Math.abs(absB - 1) < 1e-9) partes.push(signo + 'i');
+        else partes.push(signo + formatearNumero(absB) + 'i');
+    }
+    return partes.join('');
+}
+
+function leerComplejo(prefijo) {
+    var aEl = document.getElementById(prefijo + '-a');
+    var bEl = document.getElementById(prefijo + '-b');
+    var aStr = aEl.value.trim();
+    var bStr = bEl.value.trim();
+    if (aStr === '' || bStr === '') return null;
+    var a = parseFloat(aStr);
+    var b = parseFloat(bStr);
+    if (isNaN(a) || isNaN(b)) return null;
+    return { a: a, b: b };
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// =========================================
+// CONSTRUCCIÓN DE PASOS
+// =========================================
+function bloqueEncabezado(operacion, z1, z2) {
+    var titulo = '';
+    var expr = '';
+    switch (operacion) {
+        case 'suma':
+            titulo = 'Suma';
+            expr = '$$(' + latexComplejo(z1.a, z1.b) + ') + (' + latexComplejo(z2.a, z2.b) + ')$$';
+            break;
+        case 'resta':
+            titulo = 'Resta';
+            expr = '$$(' + latexComplejo(z1.a, z1.b) + ') - (' + latexComplejo(z2.a, z2.b) + ')$$';
+            break;
+        case 'mult':
+            titulo = 'Multiplicación';
+            expr = '$$(' + latexComplejo(z1.a, z1.b) + ') \\cdot (' + latexComplejo(z2.a, z2.b) + ')$$';
+            break;
+        case 'div':
+            titulo = 'División';
+            expr = '$$\\dfrac{' + latexComplejo(z1.a, z1.b) + '}{' + latexComplejo(z2.a, z2.b) + '}$$';
+            break;
+        case 'conjugado':
+            titulo = 'Conjugado';
+            expr = '$$z = ' + latexComplejo(z1.a, z1.b) + ' \\quad \\Rightarrow \\quad \\bar{z} = \\, ?$$';
+            break;
+        case 'prodConjugados':
+            titulo = 'Producto de conjugados';
+            expr = '$$z \\cdot \\bar{z} = (' + latexComplejo(z1.a, z1.b) + ')(\\overline{' + latexComplejo(z1.a, z1.b) + '})$$';
+            break;
+    }
+    return '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — ' + titulo + '</div>' +
+        '<div class="expresion">' + expr + '</div>' +
+        '</div>';
+}
+
+function construirPaso(num, titulo, detalle) {
+    return '<div class="paso">' +
+        '<div class="num-paso">' + num + '</div>' +
+        '<div class="cuerpo-paso">' +
+        '<div class="titulo-paso">' + titulo + '</div>' +
+        '<div class="detalle-paso">' + detalle + '</div>' +
+        '</div>' +
+        '</div>';
+}
+
+// =========================================
+// RESOLUCIÓN POR OPERACIÓN
+// =========================================
+
+// ---- SUMA ----
+function resolverSuma(z1, z2) {
+    var pasos = [];
+    var resA = z1.a + z2.a;
+    var resB = z1.b + z2.b;
+
+    pasos.push(construirPaso(1, 'Sustitución',
+        '$$(' + latexComplejo(z1.a, z1.b) + ') + (' + latexComplejo(z2.a, z2.b) + ')$$'));
+
+    pasos.push(construirPaso(2, 'Agrupar partes reales e imaginarias',
+        '$$= (' + formatearNumero(z1.a) + ' + ' + formatearNumero(z2.a) + ') + (' +
+        formatearNumero(z1.b) + ' + ' + formatearNumero(z2.b) + ')i$$'));
+
+    pasos.push(construirPaso(3, 'Operar cada parte',
+        '$$= ' + formatearNumero(resA) + ' + ' + formatearNumero(resB) + 'i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: resA, b: resB },
+        aviso: null
+    };
+}
+
+// ---- RESTA ----
+function resolverResta(z1, z2) {
+    var pasos = [];
+    var resA = z1.a - z2.a;
+    var resB = z1.b - z2.b;
+
+    pasos.push(construirPaso(1, 'Sustitución',
+        '$$(' + latexComplejo(z1.a, z1.b) + ') - (' + latexComplejo(z2.a, z2.b) + ')$$'));
+
+    pasos.push(construirPaso(2, 'Aplicar el inverso aditivo al sustraendo',
+        '$$= (' + latexComplejo(z1.a, z1.b) + ') + (' + latexComplejo(-z2.a, -z2.b) + ')$$'));
+
+    pasos.push(construirPaso(3, 'Agrupar partes reales e imaginarias',
+        '$$= (' + formatearNumero(z1.a) + ' - (' + formatearNumero(z2.a) + ')) + (' +
+        formatearNumero(z1.b) + ' - (' + formatearNumero(z2.b) + '))i$$'));
+
+    pasos.push(construirPaso(4, 'Operar cada parte',
+        '$$= ' + formatearNumero(resA) + ' + ' + formatearNumero(resB) + 'i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: resA, b: resB },
+        aviso: 'Recuerda: restar un complejo equivale a sumar su opuesto. El signo negativo se distribuye a <strong>ambas componentes</strong> del sustraendo.'
+    };
+}
+
+// ---- MULTIPLICACIÓN ----
+function resolverMultiplicacion(z1, z2) {
+    var pasos = [];
+    var p1 = z1.a * z2.a;
+    var p2 = z1.a * z2.b;
+    var p3 = z1.b * z2.a;
+    var p4 = z1.b * z2.b;
+    var realTotal = p1 - p4;
+    var imagTotal = p2 + p3;
+
+    pasos.push(construirPaso(1, 'Sustitución',
+        '$$(' + latexComplejo(z1.a, z1.b) + ')(' + latexComplejo(z2.a, z2.b) + ')$$'));
+
+    pasos.push(construirPaso(2, 'Aplicar la propiedad distributiva',
+        '$$= ' + formatearNumero(z1.a) + ' \\cdot ' + formatearNumero(z2.a) +
+        ' + ' + formatearNumero(z1.a) + ' \\cdot ' + formatearNumero(z2.b) + 'i' +
+        ' + ' + formatearNumero(z1.b) + 'i \\cdot ' + formatearNumero(z2.a) +
+        ' + ' + formatearNumero(z1.b) + 'i \\cdot ' + formatearNumero(z2.b) + 'i$$'));
+
+    pasos.push(construirPaso(3, 'Reescribir los productos',
+        '$$= ' + formatearNumero(p1) + ' + ' + formatearNumero(p2) + 'i' +
+        ' + ' + formatearNumero(p3) + 'i + ' + formatearNumero(p4) + 'i^2$$'));
+
+    pasos.push(construirPaso(4, '<strong>Sustituir $i^2 = -1$</strong>',
+        '$$= ' + formatearNumero(p1) + ' + ' + formatearNumero(p2) + 'i' +
+        ' + ' + formatearNumero(p3) + 'i + ' + formatearNumero(p4) + '(-1)$$' +
+        '<div class="aviso-pedagogico">⚠️ <strong>Paso crítico:</strong> aquí es donde suele cometerse el error más común. $i^2$ <u>siempre</u> se sustituye por $-1$.</div>'));
+
+    pasos.push(construirPaso(5, 'Agrupar partes real e imaginaria',
+        '$$= (' + formatearNumero(p1) + ' - ' + formatearNumero(p4) + ') + (' +
+        formatearNumero(p2) + ' + ' + formatearNumero(p3) + ')i$$' +
+        '$$= ' + formatearNumero(realTotal) + ' + ' + formatearNumero(imagTotal) + 'i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: realTotal, b: imagTotal },
+        aviso: null
+    };
+}
+
+// ---- CONJUGADO ----
+function resolverConjugado(z1) {
+    var pasos = [];
+    var resA = z1.a;
+    var resB = -z1.b;
+
+    pasos.push(construirPaso(1, 'Identificar $z$',
+        '$$z = ' + latexComplejo(z1.a, z1.b) + '$$'));
+
+    pasos.push(construirPaso(2, 'Aplicar la definición de conjugado',
+        'El conjugado $\\bar{z}$ solo cambia el signo de la <strong>parte imaginaria</strong>: ' +
+        '$$\\bar{z} = a - bi$$'));
+
+    pasos.push(construirPaso(3, 'Sustituir valores',
+        '$$\\bar{z} = ' + formatearNumero(resA) + ' + (' + formatearNumero(resB) + ')i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: resA, b: resB },
+        aviso: 'El conjugado refleja el número sobre el eje real del plano complejo. La parte real se conserva; la parte imaginaria cambia de signo.'
+    };
+}
+
+// ---- PRODUCTO DE CONJUGADOS ----
+function resolverProdConjugados(z1) {
+    var pasos = [];
+    var resA = z1.a * z1.a + z1.b * z1.b;
+
+    pasos.push(construirPaso(1, 'Identificar $z$ y su conjugado',
+        '$$z = ' + latexComplejo(z1.a, z1.b) + ' \\quad , \\quad \\bar{z} = ' + latexComplejo(z1.a, -z1.b) + '$$'));
+
+    pasos.push(construirPaso(2, 'Expandir el producto',
+        '$$(a + bi)(a - bi) = a \\cdot a - a \\cdot bi + bi \\cdot a - bi \\cdot bi$$' +
+        '$$= a^2 - abi + abi - b^2 i^2$$'));
+
+    pasos.push(construirPaso(3, 'Cancelar términos opuestos',
+        'Los términos $-abi$ y $+abi$ se cancelan:' +
+        '$$= a^2 - b^2 i^2$$'));
+
+    pasos.push(construirPaso(4, '<strong>Sustituir $i^2 = -1$</strong>',
+        '$$= a^2 - b^2(-1) = a^2 + b^2$$' +
+        '<div class="aviso-pedagogico">🎯 <strong>Propiedad fundamental:</strong> el producto de un complejo por su conjugado es <u>siempre</u> un número real no negativo: $z \\cdot \\bar{z} = a^2 + b^2$.</div>'));
+
+    pasos.push(construirPaso(5, 'Sustituir valores',
+        '$$z \\cdot \\bar{z} = (' + formatearNumero(z1.a) + ')^2 + (' + formatearNumero(z1.b) + ')^2 = ' +
+        formatearNumero(resA) + '$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: resA, b: 0 },
+        aviso: 'Este resultado es la <strong>norma al cuadrado</strong> de $z$, es decir, el cuadrado de su distancia al origen.'
+    };
+}
+
+// ---- DIVISIÓN ----
+function resolverDivision(z1, z2) {
+    if (z2.a === 0 && z2.b === 0) {
+        return { error: 'No se puede dividir entre $0 + 0i$ (el denominador es cero).' };
+    }
+
+    var pasos = [];
+    var numReal = z1.a * z2.a + z1.b * z2.b;
+    var numImag = z1.b * z2.a - z1.a * z2.b;
+    var denom = z2.a * z2.a + z2.b * z2.b;
+    var resA = numReal / denom;
+    var resB = numImag / denom;
+
+    pasos.push(construirPaso(1, 'Plantear el cociente',
+        '$$\\dfrac{' + latexComplejo(z1.a, z1.b) + '}{' + latexComplejo(z2.a, z2.b) + '}$$'));
+
+    pasos.push(construirPaso(2, 'Multiplicar por el conjugado del denominador',
+        'Se multiplica numerador y denominador por $\\overline{z_2} = ' + latexComplejo(z2.a, -z2.b) + '$ para eliminar la parte imaginaria del denominador:' +
+        '$$= \\dfrac{(' + latexComplejo(z1.a, z1.b) + ')(' + latexComplejo(z2.a, -z2.b) + ')}{(' + latexComplejo(z2.a, z2.b) + ')(' + latexComplejo(z2.a, -z2.b) + ')}$$' +
+        '<div class="aviso-pedagogico">💡 <strong>¿Por qué funciona?</strong> porque $z_2 \\cdot \\overline{z_2} = a_2^2 + b_2^2$, un número real.</div>'));
+
+    pasos.push(construirPaso(3, 'Expandir el numerador',
+        '$$(' + latexComplejo(z1.a, z1.b) + ')(' + latexComplejo(z2.a, -z2.b) + ') = ' +
+        formatearNumero(numReal) + ' + ' + formatearNumero(numImag) + 'i$$'));
+
+    pasos.push(construirPaso(4, 'Simplificar el denominador',
+        '$$(' + latexComplejo(z2.a, z2.b) + ')(' + latexComplejo(z2.a, -z2.b) + ') = ' +
+        formatearNumero(z2.a) + '^2 + ' + formatearNumero(z2.b) + '^2 = ' +
+        formatearNumero(denom) + '$$'));
+
+    pasos.push(construirPaso(5, 'Separar en parte real e imaginaria',
+        '$$= \\dfrac{' + formatearNumero(numReal) + '}{' + formatearNumero(denom) + '} + ' +
+        '\\dfrac{' + formatearNumero(numImag) + '}{' + formatearNumero(denom) + '}i$$'));
+
+    pasos.push(construirPaso(6, 'Resultado',
+        '$$= ' + latexComplejo(resA, resB) + '$$'));
+
+    return {
+        pasos: pasos,
+        resultado: { a: resA, b: resB },
+        aviso: 'Observa que el resultado ya está en forma rectangular $a + bi$, con el denominador eliminado.'
+    };
+}
+
+// =========================================
+// RENDERIZADO DEL DESARROLLO
+// =========================================
+function mostrarDesarrollo(operacion, z1, z2) {
+    var resultado;
+    var desarrolloEl = document.getElementById('desarrollo');
+
+    if (!z1 || (operacion !== 'conjugado' && operacion !== 'prodConjugados' && !z2)) {
+        desarrolloEl.innerHTML = '<div class="mensaje-error visible">⚠️ Debes completar todos los campos antes de resolver. Revisa los valores de entrada.</div>';
+        renderMath(desarrolloEl);
+        return;
+    }
+
+    switch (operacion) {
+        case 'suma':           resultado = resolverSuma(z1, z2); break;
+        case 'resta':          resultado = resolverResta(z1, z2); break;
+        case 'mult':           resultado = resolverMultiplicacion(z1, z2); break;
+        case 'div':            resultado = resolverDivision(z1, z2); break;
+        case 'conjugado':      resultado = resolverConjugado(z1); break;
+        case 'prodConjugados': resultado = resolverProdConjugados(z1); break;
+        default:               resultado = { error: 'Operación no reconocida.' };
+    }
+
+    if (resultado.error) {
+        desarrolloEl.innerHTML = '<div class="mensaje-error visible">⚠️ ' + resultado.error + '</div>';
+        renderMath(desarrolloEl);
+        return;
+    }
+
+    var html = '';
+    html += bloqueEncabezado(operacion, z1, z2);
+    html += '<div style="background:#ffffff;border-radius:8px;padding:8px 20px;border:1px solid var(--color-acento-suave);">';
+    resultado.pasos.forEach(function(p) { html += p; });
+    html += '</div>';
+
+    // Resultado final
+    var res = resultado.resultado;
+    html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final en forma rectangular</div>' +
+        '<div class="expresion-final">$$z = ' + latexComplejo(res.a, res.b) + '$$</div>' +
+        '</div>';
+
+    // Aviso pedagógico contextual
+    if (resultado.aviso) {
+        html += '<div class="aviso-pedagogico">' + resultado.aviso + '</div>';
+    }
+
+    desarrolloEl.innerHTML = html;
+    renderMath(desarrolloEl);
+}
+
+// =========================================
+// CONTROL DE VISIBILIDAD DE z₂
+// =========================================
+function actualizarVisibilidadZ2() {
+    var op = document.getElementById('tipo-operacion').value;
+    var grupo = document.getElementById('grupo-z2');
+    if (op === 'conjugado' || op === 'prodConjugados') {
+        grupo.style.opacity = '0.4';
+        grupo.style.pointerEvents = 'none';
+    } else {
+        grupo.style.opacity = '1';
+        grupo.style.pointerEvents = 'auto';
+    }
+}
+
+document.getElementById('tipo-operacion').addEventListener('change', actualizarVisibilidadZ2);
+
+// =========================================
+// EVENTOS PRINCIPALES
+// =========================================
+document.getElementById('btn-resolver').addEventListener('click', function() {
+    var op = document.getElementById('tipo-operacion').value;
+    var z1 = leerComplejo('z1');
+    var z2 = leerComplejo('z2');
+    mostrarDesarrollo(op, z1, z2);
+});
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.getElementById('tipo-operacion').value = 'suma';
+    document.getElementById('z1-a').value = 3;
+    document.getElementById('z1-b').value = 1;
+    document.getElementById('z2-a').value = -2;
+    document.getElementById('z2-b').value = 7;
+    actualizarVisibilidadZ2();
+    var desarrolloEl = document.getElementById('desarrollo');
+    desarrolloEl.innerHTML =
+        '<div class="placeholder-inicial">⚙️ Configura los valores y presiona <strong>"Resolver paso a paso"</strong><br>para ver el desarrollo completo de la operación.</div>';
+    renderMath(desarrolloEl);
+});
+
+// =========================================
+// EJEMPLOS PREDEFINIDOS
+// =========================================
+// Los ejemplos 1-5 usan el flujo estándar.
+// El ejemplo 6 (i·(2-i)(3-4i)) se maneja con un desarrollo especial.
+
+var ejemplos = {
+    1: { op: 'suma', z1: { a: 3, b: 1 }, z2: { a: -2, b: 7 } },
+    2: { op: 'resta', z1: { a: 3, b: 1 }, z2: { a: -2, b: 7 } },
+    3: { op: 'mult', z1: { a: 3, b: 1 }, z2: { a: -2, b: 7 } },
+    4: { op: 'div', z1: { a: 1, b: -3 }, z2: { a: 1, b: 2 } },
+    5: { op: 'conjugado', z1: { a: 5, b: -2 }, z2: { a: 0, b: 0 } }
+};
+
+// ---- EJEMPLO 6: DESARROLLO ESPECIAL ----
+function mostrarEjemplo6() {
+    var z1 = { a: 0, b: 1 };              // i
+    var z2a = { a: 2, b: -1 };            // (2 - i)
+    var z2b = { a: 3, b: -4 };            // (3 - 4i)
+
+    // Paso intermedio: (2-i)(3-4i) = 2 - 11i
+    var intermedio = { a: 2, b: -11 };
+    // i · (2 - 11i) = 11 + 2i
+    var productoFinal = { a: 11, b: 2 };
+
+    var html = '';
+    html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — Multiplicación compuesta</div>' +
+        '<div class="expresion">$$i \\cdot (2 - i)(3 - 4i)$$</div>' +
+        '</div>';
+    html += '<div style="background:#ffffff;border-radius:8px;padding:8px 20px;border:1px solid var(--color-acento-suave);">';
+
+    html += construirPaso(1, 'Agrupar los dos últimos factores',
+        '$$i \\cdot \\big[(2 - i)(3 - 4i)\\big]$$');
+
+    html += construirPaso(2, 'Expandir el producto interior',
+        '$$(2 - i)(3 - 4i) = 2 \\cdot 3 + 2 \\cdot (-4i) + (-i) \\cdot 3 + (-i) \\cdot (-4i)$$' +
+        '$$= 6 - 8i - 3i + 4i^2$$');
+
+    html += construirPaso(3, '<strong>Sustituir $i^2 = -1$</strong>',
+        '$$= 6 - 8i - 3i + 4(-1) = 6 - 11i - 4 = 2 - 11i$$');
+
+    html += construirPaso(4, 'Multiplicar por el factor exterior $i$',
+        '$$i \\cdot (2 - 11i) = 2i - 11i^2$$');
+
+    html += construirPaso(5, '<strong>Sustituir $i^2 = -1$</strong> nuevamente',
+        '$$= 2i + 11 = 11 + 2i$$');
+
+    html += '</div>';
+    html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final en forma rectangular</div>' +
+        '<div class="expresion-final">$$z = 11 + 2i$$</div>' +
+        '</div>';
+    html += '<div class="aviso-pedagogico">🔍 <strong>Observación:</strong> en operaciones compuestas conviene avanzar paso a paso, sustituyendo $i^2 = -1$ <em>cada vez</em> que aparezca.</div>';
+
+    var desarrolloEl = document.getElementById('desarrollo');
+    desarrolloEl.innerHTML = html;
+    renderMath(desarrolloEl);
+}
+
+// ---- HANDLER DE EJEMPLOS ----
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+
+        // Ejemplo 6: caso especial
+        if (ej === '6') {
+            // Cargar valores en los inputs para que el alumno los vea
+            document.getElementById('z1-a').value = 0;
+            document.getElementById('z1-b').value = 1;
+            document.getElementById('z2-a').value = 2;
+            document.getElementById('z2-b').value = -1;
+            document.getElementById('tipo-operacion').value = 'mult';
+            actualizarVisibilidadZ2();
+            mostrarEjemplo6();
+            return;
+        }
+
+        // Ejemplos 1-5: flujo estándar
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        document.getElementById('tipo-operacion').value = data.op;
+        document.getElementById('z1-a').value = data.z1.a;
+        document.getElementById('z1-b').value = data.z1.b;
+        document.getElementById('z2-a').value = data.z2.a;
+        document.getElementById('z2-b').value = data.z2.b;
+
+        actualizarVisibilidadZ2();
+        mostrarDesarrollo(data.op, data.z1, data.z2);
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+actualizarVisibilidadZ2();
+renderMath(document.body);
+</script>
+
+</body>
+</html>

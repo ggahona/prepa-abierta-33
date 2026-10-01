@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 7: Forma Rectangular, Resta, División y Conjugados</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.1rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 7</h1>
+            <p>Forma Rectangular, Resta, División y Conjugados</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 7
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cuál es la forma rectangular de un número complejo y qué representa cada parte?",
+                options: [
+                    { text: "$z = a \\cdot bi$, donde $a$ es la parte imaginaria y $b$ es la parte real.", correct: false },
+                    { text: "$z = a + bi$, donde $a$ es la parte real y $b$ es la parte imaginaria.", correct: true },
+                    { text: "$z = (a, b)$, donde $a$ y $b$ son ambas partes reales.", correct: false },
+                    { text: "$z = a - bi$, donde $a$ es la parte imaginaria.", correct: false }
+                ],
+                feedback: "La forma rectangular de un número complejo es $z = a + bi$, donde $a$ es la parte real y $b$ es la parte imaginaria (coeficiente de la unidad imaginaria $i$). Es equivalente al par ordenado $(a, b)$."
+            },
+            {
+                id: 2,
+                text: "¿Cuál es el valor de $i^2$ y por qué?",
+                options: [
+                    { text: "$i^2 = 1$, porque $i$ es la unidad imaginaria.", correct: false },
+                    { text: "$i^2 = -1$, porque $i = (0, 1)$ y $(0, 1)(0, 1) = (-1, 0) = -1$.", correct: true },
+                    { text: "$i^2 = 0$, porque $i$ es un número imaginario puro.", correct: false },
+                    { text: "$i^2 = i$, porque $i$ es idempotente.", correct: false }
+                ],
+                feedback: "Como $i = (0, 1)$, entonces $i^2 = (0, 1)(0, 1) = (0 \\cdot 0 - 1 \\cdot 1, \\ 0 \\cdot 1 + 1 \\cdot 0) = (-1, 0) = -1$. Esta propiedad es fundamental para operar con la forma rectangular."
+            },
+            {
+                id: 3,
+                text: "¿Cuál es el resultado de la resta $(3 + i) - (-2 + 7i)$?",
+                options: [
+                    { text: "$1 + 8i$", correct: false },
+                    { text: "$5 - 6i$", correct: true },
+                    { text: "$1 - 6i$", correct: false },
+                    { text: "$5 + 8i$", correct: false }
+                ],
+                feedback: "Aplicando $z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i$: $(3 - (-2)) + (1 - 7)i = 5 - 6i$. La resta se realiza restando componente a componente."
+            },
+            {
+                id: 4,
+                text: "¿Cómo se define el conjugado de un número complejo $z = a + bi$?",
+                options: [
+                    { text: "$\\bar{z} = -a - bi$", correct: false },
+                    { text: "$\\bar{z} = a - bi$", correct: true },
+                    { text: "$\\bar{z} = -a + bi$", correct: false },
+                    { text: "$\\bar{z} = b + ai$", correct: false }
+                ],
+                feedback: "El conjugado de $z = a + bi$ es $\\bar{z} = a - bi$. La única diferencia es el signo de la parte imaginaria. La parte real se conserva y la parte imaginaria cambia de signo."
+            },
+            {
+                id: 5,
+                text: "¿Cuál es el resultado del producto $z \\cdot \\bar{z}$ para $z = a + bi$?",
+                options: [
+                    { text: "$a^2 - b^2$", correct: false },
+                    { text: "$a^2 + b^2$", correct: true },
+                    { text: "$(a + b)^2$", correct: false },
+                    { text: "$2abi$", correct: false }
+                ],
+                feedback: "Al multiplicar $(a + bi)(a - bi) = a^2 - abi + abi - b^2i^2 = a^2 - b^2(-1) = a^2 + b^2$. Este resultado es siempre un número real no negativo. Es la propiedad fundamental del conjugado."
+            },
+            {
+                id: 6,
+                text: "Al racionalizar el cociente $\\dfrac{5 + 2i}{3 - i}$, ¿por qué factor se debe multiplicar el numerador y el denominador?",
+                options: [
+                    { text: "Por $3 - i$ (el mismo denominador).", correct: false },
+                    { text: "Por $-3 + i$ (el opuesto del denominador).", correct: false },
+                    { text: "Por $3 + i$ (el conjugado del denominador).", correct: true },
+                    { text: "Por $5 - 2i$ (el conjugado del numerador).", correct: false }
+                ],
+                feedback: "Para dividir números complejos se multiplica el numerador y el denominador por el conjugado del denominador. Para $3 - i$, el conjugado es $3 + i$, ya que $(3 - i)(3 + i) = 9 + 1 = 10$, un número real."
+            },
+            {
+                id: 7,
+                text: "¿Cuál es el resultado de la división $\\dfrac{1 - 3i}{1 + 2i}$?",
+                options: [
+                    { text: "$-1 - i$", correct: true },
+                    { text: "$-1 + i$", correct: false },
+                    { text: "$1 - i$", correct: false },
+                    { text: "$1 + i$", correct: false }
+                ],
+                feedback: "Multiplicamos numerador y denominador por $1 - 2i$: $\\frac{(1 - 3i)(1 - 2i)}{(1 + 2i)(1 - 2i)} = \\frac{1 - 2i - 3i + 6i^2}{1 + 4} = \\frac{1 - 5i - 6}{5} = \\frac{-5 - 5i}{5} = -1 - i$."
+            },
+            {
+                id: 8,
+                text: "Calcula el resultado de la multiplicación $(1 - i)(1 + 2i)$.",
+                options: [
+                    { text: "$3 + i$", correct: true },
+                    { text: "$3 - i$", correct: false },
+                    { text: "$1 + i$", correct: false },
+                    { text: "$-1 + i$", correct: false }
+                ],
+                feedback: "Expandiendo: $(1)(1) + (1)(2i) + (-i)(1) + (-i)(2i) = 1 + 2i - i - 2i^2 = 1 + i - 2(-1) = 1 + i + 2 = 3 + i$."
+            },
+            {
+                id: 9,
+                text: "¿Qué es un imaginario puro y cómo se expresa en la forma rectangular?",
+                options: [
+                    { text: "Un número complejo cuya parte real es cero; se expresa como $bi$ (por ejemplo, $3i$).", correct: true },
+                    { text: "Un número complejo cuya parte imaginaria es cero; se expresa como $a$ (por ejemplo, $5$).", correct: false },
+                    { text: "Un número complejo cuyas partes real e imaginaria son iguales.", correct: false },
+                    { text: "Un número complejo cuyo módulo es igual a 1.", correct: false }
+                ],
+                feedback: "Un imaginario puro (o complejo puro) es un número complejo de la forma $(0, b)$, que en notación rectangular se escribe como $bi$. Su parte real es cero y su parte imaginaria es $b$."
+            },
+            {
+                id: 10,
+                text: "Calcula $2i(5 - 2i)$ y expresa el resultado en forma rectangular $a + bi$.",
+                options: [
+                    { text: "$4 + 10i$", correct: true },
+                    { text: "$-4 + 10i$", correct: false },
+                    { text: "$4 - 10i$", correct: false },
+                    { text: "$10 + 4i$", correct: false }
+                ],
+                feedback: "Aplicando distributiva: $2i \\cdot 5 + 2i \\cdot (-2i) = 10i - 4i^2 = 10i - 4(-1) = 10i + 4 = 4 + 10i$. Recuerda escribir el resultado con la parte real primero."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 7 sobre la forma rectangular, resta, división y conjugados de números complejos.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de la forma rectangular y las operaciones con complejos. Repasa los detalles sobre la racionalización con el conjugado y las operaciones combinadas para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 7 (forma rectangular $a + bi$, valor de $i^2 = -1$, resta componente a componente, conjugado $\\bar{z} = a - bi$ y división multiplicando por el conjugado del denominador) antes de intentar nuevamente.";
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 7 — Forma Rectangular, Resta, División y Conjugados | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: var(--color-primario);
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 7 — Forma Rectangular, Resta, División y Conjugados</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo 7</h2>
+            <p>En este módulo introducimos la <strong>forma rectangular</strong> de los números complejos, $z = a + bi$, que simplifica enormemente su manejo algebraico. Con esta notación podremos operar con los números complejos como si fueran expresiones algebraicas ordinarias.</p>
+            <div class="math-block">$$z = a + bi, \quad \text{donde } i^2 = -1$$</div>
+            <p>Estudiaremos cuatro temas fundamentales:</p>
+            <ul>
+                <li><strong>Forma rectangular</strong> y la unidad imaginaria $i$.</li>
+                <li><strong>Resta</strong> de números complejos.</li>
+                <li><strong>División</strong> de números complejos.</li>
+                <li><strong>Complejos conjugados</strong> y su propiedad fundamental.</li>
+            </ul>
+        </div>
+
+        <!-- DIAPOSITIVA 2: FORMA RECTANGULAR -->
+        <div class="diapositiva" data-indice="1">
+            <h2>1. Forma Rectangular de los Números Complejos</h2>
+            <p>Como $\mathbb{R} \subset \mathbb{C}$, cada número complejo $(a, b)$ puede expresarse como:</p>
+            <div class="math-block">$$(a, b) = (a, 0) + (b, 0) \cdot (0, 1)$$</div>
+            <p>Representando $(a, 0)$ como $a$ y llamando $i$ al par ordenado $(0, 1)$, obtenemos la <strong>forma rectangular</strong>:</p>
+            <div class="math-block">$$z = a + bi$$</div>
+
+            <h3>Propiedad fundamental de $i$</h3>
+            <p>Como $i = (0, 1)$, entonces:</p>
+            <div class="math-block">$$i^2 = (0, 1) \cdot (0, 1) = (-1, 0) = -1$$</div>
+            <div class="math-block">$$\boxed{i^2 = -1}$$</div>
+
+            <h3>Ejemplos de conversión</h3>
+            <ul>
+                <li>$(2, 3) = 2 + 3i$</li>
+                <li>$(-3, 5) = -3 + 5i$</li>
+                <li>$(0, -1) = -i$</li>
+                <li>$(1, 0) = 1$</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>🔄 Conversor a forma rectangular</h3>
+                <p>Ingresa las componentes $(a, b)$ para obtener la forma rectangular $a + bi$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="fr-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="fr-b" value="3" step="any"></div>
+                    <button class="btn-primario" id="btn-rectangular">Convertir</button>
+                </div>
+                <div class="resultado" id="res-rectangular">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: OPERACIONES EN FORMA RECTANGULAR -->
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Operaciones en Forma Rectangular</h2>
+            <p>La gran ventaja de la forma rectangular es que podemos operar con los números complejos como si fueran expresiones algebraicas, usando siempre $i^2 = -1$.</p>
+
+            <h3>Suma y multiplicación</h3>
+            <div class="math-block">$$(a_1 + b_1i) + (a_2 + b_2i) = (a_1 + a_2) + (b_1 + b_2)i$$</div>
+            <div class="math-block">$$(a_1 + b_1i)(a_2 + b_2i) = (a_1a_2 - b_1b_2) + (a_1b_2 + b_1a_2)i$$</div>
+
+            <h3>Ejemplo de multiplicación paso a paso</h3>
+            <p>Calcula $(3 + i)(-2 + 7i)$:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            (3 + i)(-2 + 7i) &= -6 + 21i - 2i + 7i^2 \\
+            &= -6 + 19i + 7(-1) \\
+            &= -13 + 19i
+            \end{aligned}
+            $$
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>✖️ Multiplicador en forma rectangular</h3>
+                <p>Ingresa dos números complejos y multiplica mostrando el uso de $i^2 = -1$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="mr-a1" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="mr-b1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="mr-a2" value="-2" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="mr-b2" value="7" step="any"></div>
+                    <button class="btn-primario" id="btn-mult-rect">Multiplicar</button>
+                </div>
+                <div class="resultado" id="res-mult-rect">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: RESTA -->
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Resta de Números Complejos</h2>
+            <p>La resta se define como la suma con el inverso aditivo:</p>
+            <div class="math-block">$$z_1 - z_2 = z_1 + (-z_2)$$</div>
+            <p>Desarrollando la expresión:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            z_1 - z_2 &= (a_1 + b_1i) - (a_2 + b_2i) \\
+            &= (a_1 + b_1i) + (-a_2 - b_2i) \\
+            &= (a_1 - a_2) + (b_1 - b_2)i
+            \end{aligned}
+            $$
+            </div>
+
+            <h3>Ejemplo</h3>
+            <p>Calcula $(-3 + 2i) - (1 + 4i)$:</p>
+            <div class="math-block">$$(-3 + 2i) - (1 + 4i) = (-3 - 1) + (2 - 4)i = -4 - 2i$$</div>
+
+            <div class="caja-interactiva">
+                <h3>➖ Calculadora de resta</h3>
+                <p>Ingresa dos números complejos para restarlos:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="re-a1" value="-3" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="re-b1" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="re-a2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="re-b2" value="4" step="any"></div>
+                    <button class="btn-primario" id="btn-resta">Restar</button>
+                </div>
+                <div class="resultado" id="res-resta">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: CONJUGADO -->
+        <div class="diapositiva" data-indice="4">
+            <h2>4. El Conjugado de un Número Complejo</h2>
+            <p>El <strong>conjugado</strong> de un número complejo $z = a + bi$ es otro número complejo que sólo difiere en el signo de su parte imaginaria:</p>
+            <div class="math-block">$$\bar{z} = a - bi$$</div>
+
+            <h3>Ejemplos</h3>
+            <ul>
+                <li>Si $z = 2 + 3i$, entonces $\bar{z} = 2 - 3i$.</li>
+                <li>Si $z = 5 - 2i$, entonces $\bar{z} = 5 + 2i$.</li>
+                <li>Si $z = -6 + 3i$, entonces $\bar{z} = -6 - 3i$.</li>
+            </ul>
+
+            <h3>Propiedad fundamental del conjugado</h3>
+            <p>Al multiplicar un número complejo por su conjugado, se obtiene siempre un <strong>número real no negativo</strong>:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            z \cdot \bar{z} &= (a + bi)(a - bi) \\
+            &= a^2 - abi + abi - b^2i^2 \\
+            &= a^2 - b^2(-1) \\
+            &= a^2 + b^2
+            \end{aligned}
+            $$
+            </div>
+            <div class="math-block">$$\boxed{z \cdot \bar{z} = a^2 + b^2}$$</div>
+
+            <div class="caja-interactiva">
+                <h3>🔁 Calculadora de conjugado</h3>
+                <p>Ingresa un número complejo $z = a + bi$ para obtener su conjugado y verificar la propiedad fundamental:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="cj-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="cj-b" value="3" step="any"></div>
+                    <button class="btn-primario" id="btn-conjugado">Calcular</button>
+                </div>
+                <div class="resultado" id="res-conjugado">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: DIVISIÓN -->
+        <div class="diapositiva" data-indice="5">
+            <h2>5. División de Números Complejos</h2>
+            <p>Para dividir dos números complejos, se multiplica el numerador y el denominador por el <strong>conjugado del denominador</strong>. Este proceso elimina la parte imaginaria del denominador y permite expresar el cociente en forma rectangular.</p>
+
+            <p>Si $z_1 = a_1 + b_1i$ y $z_2 = a_2 + b_2i$ (con $z_2 \neq 0$):</p>
+            <div class="math-block">
+            $$
+            \frac{z_1}{z_2} = \frac{a_1 + b_1i}{a_2 + b_2i} \cdot \frac{a_2 - b_2i}{a_2 - b_2i} = \frac{(a_1a_2 + b_1b_2) + (b_1a_2 - a_1b_2)i}{a_2^2 + b_2^2}
+            $$
+            </div>
+
+            <h3>Ejemplo paso a paso</h3>
+            <p>Calcula $\dfrac{1 - 3i}{1 + 2i}$:</p>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            \frac{1 - 3i}{1 + 2i} &= \frac{(1 - 3i)(1 - 2i)}{(1 + 2i)(1 - 2i)} \\
+            &= \frac{1 - 2i - 3i + 6i^2}{1^2 + 2^2} \\
+            &= \frac{1 - 5i + 6(-1)}{5} \\
+            &= \frac{-5 - 5i}{5} \\
+            &= -1 - i
+            \end{aligned}
+            $$
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>➗ Calculadora de división</h3>
+                <p>Ingresa dos números complejos para calcular su cociente:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="dv-a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="dv-b1" value="-3" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="dv-a2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="dv-b2" value="2" step="any"></div>
+                    <button class="btn-primario" id="btn-division">Dividir</button>
+                </div>
+                <div class="resultado" id="res-division">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: OPERACIONES COMBINADAS -->
+        <div class="diapositiva" data-indice="6">
+            <h2>6. Operaciones Combinadas</h2>
+            <p>La forma rectangular permite combinar todas las operaciones vistas. Veamos ejemplos con $z = -2 + 7i$:</p>
+
+            <ul>
+                <li><strong>Suma:</strong> $(3 + i) + (-2 + 7i) = 1 + 8i$</li>
+                <li><strong>Resta:</strong> $(3 + i) - (-2 + 7i) = 5 - 6i$</li>
+                <li><strong>Multiplicación:</strong> $(3 + i)(-2 + 7i) = -13 + 19i$</li>
+                <li><strong>División:</strong> $\dfrac{3 + i}{-2 + 7i} = \dfrac{1}{53} - \dfrac{23}{53}i$</li>
+            </ul>
+
+            <h3>Casos especiales</h3>
+            <ul>
+                <li><strong>Multiplicación por un real:</strong> $3(-2 + 7i) = -6 + 21i$</li>
+                <li><strong>Multiplicación por $i$:</strong> $i(-2 + 7i) = -7 - 2i$</li>
+                <li><strong>Resta de un real:</strong> $3 - (-2 + 7i) = 5 - 7i$</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>🧮 Operaciones combinadas</h3>
+                <p>Elige la operación y ingresa los dos complejos:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper">
+                        <label>Operación:</label>
+                        <select id="op-tipo" style="padding: 10px; border: 2px solid var(--color-acento-suave); border-radius: 6px; font-size: 1rem; color: var(--color-primario); background-color: var(--color-blanco); width: 160px;">
+                            <option value="suma">Suma (+)</option>
+                            <option value="resta">Resta (−)</option>
+                            <option value="mult">Multiplicación (×)</option>
+                            <option value="div">División (÷)</option>
+                        </select>
+                    </div>
+                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="oc-a1" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="oc-b1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="oc-a2" value="-2" step="any"></div>
+                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="oc-b2" value="7" step="any"></div>
+                    <button class="btn-primario" id="btn-combinada">Calcular</button>
+                </div>
+                <div class="resultado" id="res-combinada">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: RESUMEN -->
+        <div class="diapositiva" data-indice="7">
+            <h2>7. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>La <strong>forma rectangular</strong> de un número complejo es $z = a + bi$, donde $i^2 = -1$.</li>
+                <li>La <strong>parte real</strong> es $a$ y la <strong>parte imaginaria</strong> es $b$.</li>
+                <li>Los números de la forma $bi$ se llaman <strong>imaginarios puros</strong>.</li>
+                <li>La <strong>resta</strong> se define como $z_1 - z_2 = (a_1 - a_2) + (b_1 - b_2)i$.</li>
+                <li>El <strong>conjugado</strong> de $z = a + bi$ es $\bar{z} = a - bi$.</li>
+                <li>La propiedad fundamental del conjugado es $z \cdot \bar{z} = a^2 + b^2$ (siempre real no negativo).</li>
+                <li>Para <strong>dividir</strong> dos complejos se multiplica numerador y denominador por el conjugado del denominador.</li>
+                <li>Con la forma rectangular, todas las operaciones se realizan como en álgebra ordinaria, recordando siempre que $i^2 = -1$.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 7. Ahora dominas la forma rectangular, la resta, la división y los complejos conjugados.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 8</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function latexComplejo(a, b) {
+        var latex = '';
+        if (a !== 0) latex += formatearNumero(a);
+        if (b !== 0) {
+            if (latex !== '') {
+                latex += (b > 0 ? ' + ' : ' - ');
+            } else if (b < 0) {
+                latex += '-';
+            }
+            var absB = Math.abs(b);
+            if (absB === 1) latex += 'i';
+            else latex += formatearNumero(absB) + 'i';
+        }
+        if (latex === '') latex = '0';
+        return latex;
+    }
+
+    // =========================================
+    // 1. CONVERSOR A FORMA RECTANGULAR
+    // =========================================
+    document.getElementById('btn-rectangular').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('fr-a').value);
+        var b = parseFloat(document.getElementById('fr-b').value);
+        var res = document.getElementById('res-rectangular');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$(' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ') = ' + latexComplejo(a, b) + '$$' +
+            '<p>Parte real: $a = ' + formatearNumero(a) + '$, parte imaginaria: $b = ' + formatearNumero(b) + '$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. MULTIPLICADOR EN FORMA RECTANGULAR
+    // =========================================
+    document.getElementById('btn-mult-rect').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('mr-a1').value);
+        var b1 = parseFloat(document.getElementById('mr-b1').value);
+        var a2 = parseFloat(document.getElementById('mr-a2').value);
+        var b2 = parseFloat(document.getElementById('mr-b2').value);
+        var res = document.getElementById('res-mult-rect');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var prodA = a1 * a2 - b1 * b2;
+        var prodB = a1 * b2 + b1 * a2;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$(' + latexComplejo(a1, b1) + ')(' + latexComplejo(a2, b2) + ') = ' +
+            formatearNumero(a1) + formatearNumero(a2) + ' + ' + formatearNumero(a1) + formatearNumero(b2) + 'i + ' +
+            formatearNumero(b1) + formatearNumero(a2) + 'i + ' + formatearNumero(b1) + formatearNumero(b2) + 'i^2$$' +
+            '$$= (' + formatearNumero(a1 * a2) + ' - ' + formatearNumero(b1 * b2) + ') + (' + formatearNumero(a1 * b2) + ' + ' + formatearNumero(b1 * a2) + ')i$$' +
+            '$$= ' + latexComplejo(prodA, prodB) + '$$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. CALCULADORA DE RESTA
+    // =========================================
+    document.getElementById('btn-resta').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('re-a1').value);
+        var b1 = parseFloat(document.getElementById('re-b1').value);
+        var a2 = parseFloat(document.getElementById('re-a2').value);
+        var b2 = parseFloat(document.getElementById('re-b2').value);
+        var res = document.getElementById('res-resta');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var resA = a1 - a2;
+        var resB = b1 - b2;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '$$(' + latexComplejo(a1, b1) + ') - (' + latexComplejo(a2, b2) + ') = (' +
+            formatearNumero(a1) + ' - ' + formatearNumero(a2) + ') + (' +
+            formatearNumero(b1) + ' - ' + formatearNumero(b2) + ')i$$' +
+            '$$= ' + latexComplejo(resA, resB) + '$$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. CALCULADORA DE CONJUGADO
+    // =========================================
+    document.getElementById('btn-conjugado').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('cj-a').value);
+        var b = parseFloat(document.getElementById('cj-b').value);
+        var res = document.getElementById('res-conjugado');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var producto = a * a + b * b;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Si $z = ' + latexComplejo(a, b) + '$, entonces $\\bar{z} = ' + latexComplejo(a, -b) + '$.</p>' +
+            '<p><strong>Verificación de la propiedad fundamental:</strong></p>' +
+            '$$z \\cdot \\bar{z} = (' + latexComplejo(a, b) + ')(' + latexComplejo(a, -b) + ') = ' + formatearNumero(a) + '^2 + ' + formatearNumero(b) + '^2 = ' + formatearNumero(producto) + '$$' +
+            '<p>El resultado es un número real no negativo ✅</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. CALCULADORA DE DIVISIÓN
+    // =========================================
+    document.getElementById('btn-division').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('dv-a1').value);
+        var b1 = parseFloat(document.getElementById('dv-b1').value);
+        var a2 = parseFloat(document.getElementById('dv-a2').value);
+        var b2 = parseFloat(document.getElementById('dv-b2').value);
+        var res = document.getElementById('res-division');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        if (a2 === 0 && b2 === 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ No se puede dividir entre $0$.';
+            renderMath(res);
+            return;
+        }
+
+        var denom = a2 * a2 + b2 * b2;
+        var resA = (a1 * a2 + b1 * b2) / denom;
+        var resB = (b1 * a2 - a1 * b2) / denom;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Multiplicamos numerador y denominador por el conjugado del denominador $' + latexComplejo(a2, -b2) + '$:</p>' +
+            '$$\\frac{' + latexComplejo(a1, b1) + '}{' + latexComplejo(a2, b2) + '} \\cdot \\frac{' + latexComplejo(a2, -b2) + '}{' + latexComplejo(a2, -b2) + '} = \\frac{' +
+            formatearNumero(a1 * a2 + b1 * b2) + ' + ' + formatearNumero(b1 * a2 - a1 * b2) + 'i}{' + formatearNumero(denom) + '}$$' +
+            '$$= ' + latexComplejo(resA, resB) + '$$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. OPERACIONES COMBINADAS
+    // =========================================
+    document.getElementById('btn-combinada').addEventListener('click', function() {
+        var tipo = document.getElementById('op-tipo').value;
+        var a1 = parseFloat(document.getElementById('oc-a1').value);
+        var b1 = parseFloat(document.getElementById('oc-b1').value);
+        var a2 = parseFloat(document.getElementById('oc-a2').value);
+        var b2 = parseFloat(document.getElementById('oc-b2').value);
+        var res = document.getElementById('res-combinada');
+
+        if (isNaN(a1) || isNaN(b1) || isNaN(a2) || isNaN(b2)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes completar los cuatro componentes.';
+            return;
+        }
+
+        var resA, resB, latex, signo;
+
+        if (tipo === 'suma') {
+            resA = a1 + a2;
+            resB = b1 + b2;
+            signo = '+';
+            latex = '$$(' + latexComplejo(a1, b1) + ') + (' + latexComplejo(a2, b2) + ') = ' + latexComplejo(resA, resB) + '$$';
+        } else if (tipo === 'resta') {
+            resA = a1 - a2;
+            resB = b1 - b2;
+            signo = '-';
+            latex = '$$(' + latexComplejo(a1, b1) + ') - (' + latexComplejo(a2, b2) + ') = ' + latexComplejo(resA, resB) + '$$';
+        } else if (tipo === 'mult') {
+            resA = a1 * a2 - b1 * b2;
+            resB = a1 * b2 + b1 * a2;
+            signo = '×';
+            latex = '$$(' + latexComplejo(a1, b1) + ')(' + latexComplejo(a2, b2) + ') = ' + latexComplejo(resA, resB) + '$$';
+        } else {
+            if (a2 === 0 && b2 === 0) {
+                res.className = 'resultado error';
+                res.innerHTML = '⚠️ No se puede dividir entre $0$.';
+                renderMath(res);
+                return;
+            }
+            var denom = a2 * a2 + b2 * b2;
+            resA = (a1 * a2 + b1 * b2) / denom;
+            resB = (b1 * a2 - a1 * b2) / denom;
+            signo = '÷';
+            latex = '$$\\frac{' + latexComplejo(a1, b1) + '}{' + latexComplejo(a2, b2) + '} = ' + latexComplejo(resA, resB) + '$$';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p><strong>Operación ' + signo + ':</strong></p>' + latex;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

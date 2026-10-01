@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detective de Complejos | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .barra-progreso-general {
+            background-color: var(--color-base);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .barra-progreso-general .texto-progreso {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .progreso-track {
+            flex: 1;
+            height: 8px;
+            background-color: var(--color-acento-suave);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progreso-fill {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main { padding: 30px; }
+
+        .tarjeta-caso {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            border: 1px solid var(--color-acento-suave);
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-caso {
+            background-color: var(--color-base);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .numero-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nivel-caso {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nivel-caso.basico { background-color: rgba(39,174,96,0.15); color: var(--color-exito); }
+        .nivel-caso.medio  { background-color: rgba(91,127,163,0.15); color: var(--color-acento); }
+        .nivel-caso.alto   { background-color: rgba(192,57,43,0.15); color: var(--color-error); }
+
+        .enunciado {
+            padding: 20px;
+            font-size: 1.02rem;
+            color: var(--color-texto-oscuro);
+            background-color: var(--color-blanco);
+            border-bottom: 1px solid var(--color-base);
+        }
+        .enunciado .etiqueta-caso {
+            display: inline-block;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .enunciado .expresion-caso {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+            padding: 12px 0;
+            background-color: var(--color-base);
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .fase {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-base);
+        }
+        .fase:last-of-type { border-bottom: none; }
+
+        .fase-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+        .numero-fase {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fase-instruccion {
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+            padding-left: 36px;
+        }
+
+        .contador-intentos {
+            display: none;
+            background-color: var(--color-acento-suave);
+            color: var(--color-primario);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-left: 36px;
+            margin-bottom: 10px;
+        }
+        .contador-intentos.visible { display: inline-block; }
+
+        .opciones-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+        }
+        .opcion-item {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: var(--color-primario);
+            text-align: left;
+        }
+        .opcion-item:hover:not(.disabled) {
+            background-color: rgba(91,127,163,0.08);
+            border-color: var(--color-acento);
+        }
+        .opcion-item.disabled { cursor: default; }
+        .opcion-item.correcta {
+            background-color: rgba(39,174,96,0.15);
+            border-color: var(--color-exito);
+            color: #145a32;
+            font-weight: 700;
+        }
+        .opcion-item.incorrecta {
+            background-color: rgba(192,57,43,0.15);
+            border-color: var(--color-error);
+            color: #78281f;
+            font-weight: 700;
+        }
+
+        .fila-ejecucion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        input[type="text"] {
+            padding: 8px 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+            min-width: 140px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        input[type="text"]::placeholder {
+            color: #a9c1d9;
+            font-size: 0.8rem;
+            font-style: italic;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .botones-fase {
+            display: flex;
+            gap: 10px;
+            margin-left: 36px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-pista {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-pista:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+        .btn-reintentar {
+            background-color: var(--color-blanco);
+            color: var(--color-primario);
+            border: 2px solid var(--color-primario);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin-left: 36px;
+            margin-top: 10px;
+            display: none;
+        }
+        .btn-reintentar.visible { display: inline-block; }
+        .btn-reintentar:hover { background-color: var(--color-primario); color: var(--color-blanco); }
+
+        .feedback {
+            margin: 12px 0 0 36px;
+            padding: 12px 16px;
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            color: #145a32;
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            color: #78281f;
+        }
+        .feedback.pista {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+        .feedback code {
+            background-color: rgba(44,73,102,0.08);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--color-primario);
+        }
+
+        .fase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+            background-color: var(--color-base);
+        }
+        .fase.bloqueada .fase-titulo { color: #8a9bb0; }
+        .fase.bloqueada .numero-fase { background-color: #8a9bb0; }
+
+        .navegacion-casos {
+            background-color: var(--color-base);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--color-acento-suave);
+        }
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+        .indicador-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .pantalla-final {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        .pantalla-final.visible { display: block; }
+        .pantalla-final h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        .pantalla-final .puntaje-final {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin: 20px 0;
+        }
+        .pantalla-final p {
+            font-size: 1rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+        }
+        .pantalla-final .medalla {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            main { padding: 18px; }
+            .fila-ejecucion, .botones-fase, .feedback, .opciones-lista, .btn-reintentar {
+                margin-left: 0;
+            }
+            .contador-intentos { margin-left: 0; }
+            .fase-instruccion { padding-left: 0; }
+            input[type="text"] { width: 100%; }
+            .input-wrapper { flex: 1 1 45%; }
+            .barra-progreso-general { padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Detective de Complejos</h1>
+        <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+        <span class="texto-progreso" id="progresoTexto">Caso 1 de 5</span>
+        <div class="progreso-track">
+            <div class="progreso-fill" id="progresoFill"></div>
+        </div>
+        <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 5</span>
+    </div>
+
+    <main>
+        <div class="tarjeta-caso" id="tarjetaCaso">
+
+            <div class="meta-caso">
+                <div class="numero-caso" id="numeroCaso">Caso 1 de 5</div>
+                <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+            </div>
+
+            <div class="enunciado" id="enunciadoCaso">
+                <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+                <div id="textoEnunciado">Cargando caso...</div>
+                <div class="expresion-caso" id="expresionCaso"></div>
+            </div>
+
+            <!-- FASE 1 -->
+            <div class="fase" id="fase1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span> Diagnóstico: ¿Qué tipo de operación es?
+                </div>
+                <div class="fase-instruccion">
+                    Identifica el tipo de operación y la trampa principal que encierra este caso.
+                </div>
+                <div class="contador-intentos" id="contadorFase1">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase1"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar1">🔄 Reintentar</button>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="fase bloqueada" id="fase2">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span> Estrategia: ¿Qué propiedad aplicarás?
+                </div>
+                <div class="fase-instruccion">
+                    Elige la herramienta matemática principal que resolverá el caso.
+                </div>
+                <div class="contador-intentos" id="contadorFase2">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase2"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar2">🔄 Reintentar</button>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <!-- FASE 3 -->
+            <div class="fase bloqueada" id="fase3">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span> Ejecución: completa el desarrollo
+                </div>
+                <div class="fase-instruccion" id="instruccionEjecucion">
+                    Escribe los valores intermedios y el resultado final.
+                </div>
+                <div class="contador-intentos" id="contadorFase3">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsEjecucion"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaEjecucion">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarEjecucion">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <!-- FASE 4 -->
+            <div class="fase bloqueada" id="fase4">
+                <div class="fase-titulo">
+                    <span class="numero-fase">4</span> 🎯 Trampa CENEVAL
+                </div>
+                <div class="fase-instruccion">
+                    ¿Cuál es el error más frecuente que se comete en este tipo de caso?
+                </div>
+                <div class="contador-intentos" id="contadorFase4">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase4"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
+                <div class="feedback" id="feedback4"></div>
+            </div>
+
+            <div class="navegacion-casos">
+                <button type="button" class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+                <span class="indicador-caso" id="indicadorCaso">Caso 1 de 5</span>
+                <button type="button" class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+            </div>
+        </div>
+
+        <div class="pantalla-final" id="pantallaFinal">
+            <div class="medalla" id="medallaFinal">🏅</div>
+            <h2>¡Investigación completada!</h2>
+            <div class="puntaje-final" id="puntajeFinal">0 / 5</div>
+            <p id="mensajeFinal"></p>
+            <button type="button" class="btn-primario" id="btnReiniciar" style="max-width:240px; margin: 0 auto;">🔄 Reiniciar investigación</button>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Desarrollar estrategia matemática identificando el <strong>tipo de operación</strong>,
+        la <strong>propiedad o identidad</strong> a aplicar, ejecutando el <strong>desarrollo algebraico</strong>
+        paso a paso, y reconociendo los <strong>errores típicos CENEVAL</strong> en operaciones con
+        números complejos en forma rectangular.
+    </div>
+</div>
+
+<script>
+// =========================================
+// BANCO DE CASOS — Módulo 7
+// =========================================
+var casos = [
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 1 — Suma con anulación',
+        enunciado: 'Resuelve la siguiente suma de números complejos en forma rectangular.',
+        expresion: '$$(3 + 7i) + (-6 - 7i)$$',
+        fase1: {
+            opciones: [
+                'Suma de dos números complejos',
+                'Resta de dos números complejos',
+                'Producto de conjugados',
+                'División de complejos'
+            ],
+            correcta: 'Suma de dos números complejos',
+            explicacion: 'Es una suma: se agrupan partes reales e imaginarias por separado.'
+        },
+        fase2: {
+            opciones: [
+                'Agrupación de partes reales e imaginarias',
+                'Sustitución de $i^2 = -1$',
+                'Multiplicar por el conjugado',
+                'Distributiva'
+            ],
+            correcta: 'Agrupación de partes reales e imaginarias',
+            explicacion: 'En la suma solo agrupamos: $(a_1 + a_2) + (b_1 + b_2)i$. No hay productos, así que $i^2$ no aparece.'
+        },
+        fase3: {
+            instruccion: 'Completa los valores del desarrollo.',
+            campos: [
+                { id: 'suma', etiqueta: 'Parte real: $3 + (-6) =$', correcta: -3 },
+                { id: 'sumb', etiqueta: 'Parte imaginaria: $7 + (-7) =$', correcta: 0 },
+                { id: 'res', etiqueta: 'Resultado final en forma $a + bi$:', correcta: '-3', esResultado: true }
+            ],
+            pista: 'La parte imaginaria $7 + (-7) = 0$ se anula. El resultado es un número real negativo.',
+            explicacion: 'La parte imaginaria se anula: $7i - 7i = 0$. El resultado es un número real: $-3$.'
+        },
+        fase4: {
+            opciones: [
+                'No reconocer que las partes imaginarias se anulan',
+                'No sustituir $i^2 = -1$',
+                'No racionalizar el denominador',
+                'Cambiar el signo de la parte real'
+            ],
+            correcta: 'No reconocer que las partes imaginarias se anulan',
+            explicacion: 'El error típico es dejar el resultado como $-3 + 14i$ sumando mal los signos. Aquí $7i$ y $-7i$ se cancelan.'
+        }
+    },
+
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 2 — Producto de tres factores',
+        enunciado: 'Resuelve la multiplicación compuesta y expresa el resultado en forma rectangular.',
+        expresion: '$$i \\cdot (2 - i)(3 - 4i)$$',
+        fase1: {
+            opciones: [
+                'Suma de tres complejos',
+                'Producto de tres factores complejos',
+                'División compuesta',
+                'Producto de conjugados'
+            ],
+            correcta: 'Producto de tres factores complejos',
+            explicacion: 'Hay tres factores: $i$, $(2-i)$ y $(3-4i)$. Es una multiplicación compuesta.'
+        },
+        fase2: {
+            opciones: [
+                'Multiplicar dos factores y luego por el tercero, sustituyendo $i^2 = -1$ en cada paso',
+                'Sumar primero los tres factores',
+                'Racionalizar el denominador',
+                'Aplicar solo la distributiva sin sustituir $i^2$'
+            ],
+            correcta: 'Multiplicar dos factores y luego por el tercero, sustituyendo $i^2 = -1$ en cada paso',
+            explicacion: 'Conviene multiplicar primero $(2-i)(3-4i)$, sustituir $i^2=-1$, y luego multiplicar por $i$.'
+        },
+        fase3: {
+            instruccion: 'Completa los valores clave del desarrollo.',
+            campos: [
+                { id: 'par1', etiqueta: 'Producto $(2-i)(3-4i)$: parte real $=$', correcta: 2 },
+                { id: 'par2', etiqueta: 'Producto $(2-i)(3-4i)$: parte imaginaria $=$', correcta: -11 },
+                { id: 'res', etiqueta: 'Resultado final (formato $a+bi$):', correcta: '11+2i', esResultado: true }
+            ],
+            pista: 'Primero $(2-i)(3-4i) = 6 - 8i - 3i + 4i^2 = 2 - 11i$. Luego $i(2-11i) = 2i + 11 = 11 + 2i$.',
+            explicacion: '$(2-i)(3-4i) = 2 - 11i$. Luego $i(2-11i) = 2i - 11i^2 = 2i + 11 = 11 + 2i$.'
+        },
+        fase4: {
+            opciones: [
+                'Sustituir $i^2 = -1$ correctamente',
+                'Errores de signo en cadena al multiplicar varios factores',
+                'Sumar los exponentes de $i$',
+                'Aplicar la distributiva dos veces'
+            ],
+            correcta: 'Errores de signo en cadena al multiplicar varios factores',
+            explicacion: 'Al multiplicar varios factores, un error de signo temprano se propaga. Conviene sustituir $i^2 = -1$ después de cada producto parcial.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 3 — División con denominador complejo',
+        enunciado: 'Calcula el cociente y exprésalo en forma rectangular.',
+        expresion: '$$\\dfrac{5 + 2i}{3 - i}$$',
+        fase1: {
+            opciones: [
+                'Suma de complejos',
+                'Multiplicación de complejos',
+                'División de complejos',
+                'Producto de conjugados'
+            ],
+            correcta: 'División de complejos',
+            explicacion: 'Es una división: $\\dfrac{5+2i}{3-i}$. El denominador tiene parte imaginaria no nula.'
+        },
+        fase2: {
+            opciones: [
+                'Multiplicar numerador y denominador por el conjugado del denominador',
+                'Sumar directamente numerador y denominador',
+                'Sustituir $i^2 = -1$ sin más',
+                'Aplicar la distributiva a los dos términos'
+            ],
+            correcta: 'Multiplicar numerador y denominador por el conjugado del denominador',
+            explicacion: 'El conjugado del denominador $3 - i$ es $3 + i$. Multiplicar por él elimina la parte imaginaria del denominador.'
+        },
+        fase3: {
+            instruccion: 'Completa los valores clave del desarrollo.',
+            campos: [
+                { id: 'den', etiqueta: 'Denominador simplificado: $3^2 + 1^2 =$', correcta: 10 },
+                { id: 'numr', etiqueta: 'Numerador expandido: parte real $=$', correcta: 13 },
+                { id: 'numi', etiqueta: 'Numerador expandido: parte imaginaria $=$', correcta: 11 },
+                { id: 'res', etiqueta: 'Resultado final (formato $a+bi$, fracciones $a/b$):', correcta: '13/10+11/10i', esResultado: true }
+            ],
+            pista: 'Multiplica $(5+2i)(3+i)$ en el numerador y $(3-i)(3+i) = 10$ en el denominador.',
+            explicacion: '$(5+2i)(3+i) = 15 + 5i + 6i + 2i^2 = 13 + 11i$. Denominador: $(3-i)(3+i) = 10$. Resultado: $\\dfrac{13}{10} + \\dfrac{11}{10}i$.'
+        },
+        fase4: {
+            opciones: [
+                'No multiplicar por el conjugado del denominador en numerador y denominador',
+                'Olvidar que $i^2 = -1$',
+                'Sumar mal las partes reales',
+                'No simplificar la fracción final'
+            ],
+            correcta: 'No multiplicar por el conjugado del denominador en numerador y denominador',
+            explicacion: 'Si solo se multiplica el numerador (o solo el denominador), el cociente cambia. Siempre debe hacerse en <strong>ambos</strong>.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 4 — Producto de conjugados',
+        enunciado: 'Calcula el producto y expresa el resultado.',
+        expresion: '$$(\\sqrt{2} - \\sqrt{2}i)(\\sqrt{2} + \\sqrt{2}i)$$',
+        fase1: {
+            opciones: [
+                'Suma de complejos',
+                'Producto de dos complejos que son conjugados entre sí',
+                'División de complejos',
+                'Producto de dos complejos cualesquiera'
+            ],
+            correcta: 'Producto de dos complejos que son conjugados entre sí',
+            explicacion: 'Los factores son $\\sqrt{2} - \\sqrt{2}i$ y $\\sqrt{2} + \\sqrt{2}i$, que son conjugados (mismo $a$, $b$ opuestos).'
+        },
+        fase2: {
+            opciones: [
+                'Distributiva completa con $i^2 = -1$',
+                'Propiedad $z \\cdot \\bar{z} = a^2 + b^2$',
+                'Multiplicar por el conjugado del denominador',
+                'Agrupación de partes reales e imaginarias'
+            ],
+            correcta: 'Propiedad $z \\cdot \\bar{z} = a^2 + b^2$',
+            explicacion: 'Al ser conjugados, $z \\cdot \\bar{z} = a^2 + b^2 = (\\sqrt{2})^2 + (\\sqrt{2})^2 = 4$. Es una propiedad directa.'
+        },
+        fase3: {
+            instruccion: 'Completa el cálculo usando la propiedad del conjugado.',
+            campos: [
+                { id: 'a2', etiqueta: '$a^2 = (\\sqrt{2})^2 =$', correcta: 2 },
+                { id: 'b2', etiqueta: '$b^2 = (\\sqrt{2})^2 =$', correcta: 2 },
+                { id: 'res', etiqueta: 'Resultado final $z \\cdot \\bar{z} = a^2 + b^2 =$', correcta: 4, esResultado: true }
+            ],
+            pista: 'Recuerda que $(\\sqrt{2})^2 = 2$. La suma $2 + 2 = 4$ es un número real.',
+            explicacion: '$z \\cdot \\bar{z} = a^2 + b^2 = 2 + 2 = 4$. El resultado es siempre un número real no negativo.'
+        },
+        fase4: {
+            opciones: [
+                'Calcular $a^2 - b^2$ en lugar de $a^2 + b^2$',
+                'No sustituir $i^2 = -1$',
+                'Sumar mal los signos',
+                'No racionalizar el denominador'
+            ],
+            correcta: 'Calcular $a^2 - b^2$ en lugar de $a^2 + b^2$',
+            explicacion: 'Al expandir $(a+bi)(a-bi)$, el término $-b^2 i^2$ se convierte en $+b^2$ porque $i^2 = -1$. El resultado es $a^2 + b^2$, no $a^2 - b^2$.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 5 — División entre imaginario puro',
+        enunciado: 'Calcula el cociente y exprésalo en forma rectangular.',
+        expresion: '$$\\dfrac{1 + 3i}{-2i}$$',
+        fase1: {
+            opciones: [
+                'Producto de conjugados',
+                'Suma con imaginario puro',
+                'División entre un imaginario puro',
+                'Multiplicación por un real'
+            ],
+            correcta: 'División entre un imaginario puro',
+            explicacion: 'El denominador $-2i$ es un imaginario puro (sin parte real). Se trata de una división particular.'
+        },
+        fase2: {
+            opciones: [
+                'Multiplicar por el conjugado del denominador, que es $+2i$',
+                'Sumar el denominador al numerador',
+                'Aplicar la propiedad $z \\cdot \\bar{z} = a^2 + b^2$ directamente',
+                'No hacer nada, ya está simplificado'
+            ],
+            correcta: 'Multiplicar por el conjugado del denominador, que es $+2i$',
+            explicacion: 'El conjugado de $-2i$ es $+2i$. Multiplicar numerador y denominador por $2i$ elimina la parte imaginaria del denominador.'
+        },
+        fase3: {
+            instruccion: 'Completa el cálculo paso a paso.',
+            campos: [
+                { id: 'den', etiqueta: 'Denominador: $(-2i)(2i) = -4i^2 =$', correcta: 4 },
+                { id: 'numr', etiqueta: 'Numerador expandido: parte real $=$', correcta: -6 },
+                { id: 'numi', etiqueta: 'Numerador expandido: parte imaginaria $=$', correcta: 2 },
+                { id: 'res', etiqueta: 'Resultado final (formato $a+bi$, fracciones $a/b$):', correcta: '-3/2+1/2i', esResultado: true }
+            ],
+            pista: 'Multiplica arriba y abajo por $2i$: $(1+3i)(2i) = 2i + 6i^2 = -6 + 2i$. Denominador: $-4i^2 = 4$.',
+            explicacion: '$(1+3i)(2i) = 2i + 6i^2 = -6 + 2i$. Denominador: $(-2i)(2i) = -4i^2 = 4$. Resultado: $\\dfrac{-6+2i}{4} = -\\dfrac{3}{2} + \\dfrac{1}{2}i$.'
+        },
+        fase4: {
+            opciones: [
+                'Confundir el conjugado: usar $-2i$ en lugar de $+2i$',
+                'No sustituir $i^2 = -1$ al simplificar el denominador',
+                'Sumar mal las fracciones',
+                'No cambiar el signo de la parte real'
+            ],
+            correcta: 'Confundir el conjugado: usar $-2i$ en lugar de $+2i$',
+            explicacion: 'El conjugado de $-2i$ es $+2i$ (se cambia el signo de la parte imaginaria). Si se multiplica por $-2i$ (el mismo denominador), no se elimina la parte imaginaria.'
+        }
+    }
+];
+
+// =========================================
+// ESTADO GLOBAL
+// =========================================
+var estado = {
+    casoActual: 0,
+    completados: [],
+    puntaje: 0,
+    intentosFase1: 0,
+    intentosFase2: 0,
+    intentosFase3: 0,
+    intentosFase4: 0
+};
+
+var MAX_INTENTOS = 3;
+var TOL = 1e-6;
+
+// =========================================
+// UTILIDADES
+// =========================================
+function parsearFraccion(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    texto = String(texto).trim();
+    if (texto === '') return NaN;
+    if (texto.indexOf('/') !== -1) {
+        var partes = texto.split('/');
+        if (partes.length !== 2) return NaN;
+        var num = parseFloat(partes[0]);
+        var den = parseFloat(partes[1]);
+        if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+        return num / den;
+    }
+    var n = parseFloat(texto);
+    return isNaN(n) ? NaN : n;
+}
+
+function parsearComplejo(texto) {
+    if (!texto) return null;
+    texto = String(texto).trim().replace(/\s+/g, '');
+    if (texto === '') return null;
+
+    if (texto.indexOf('i') === -1) {
+        var soloReal = parsearFraccion(texto);
+        if (isNaN(soloReal)) return null;
+        return { a: soloReal, b: 0 };
+    }
+
+    var soloImagRegex = /^([+-]?)(\d+(?:\.\d+)?(?:\/\d+(?:\.\d+)?)?)?i$/;
+    var soloImagMatch = texto.match(soloImagRegex);
+    if (soloImagMatch) {
+        var signoI = soloImagMatch[1];
+        var coefIStr = soloImagMatch[2];
+        if (!coefIStr) coefIStr = '1';
+        var coefI = parsearFraccion(coefIStr);
+        if (isNaN(coefI)) return null;
+        if (signoI === '-') coefI = -coefI;
+        return { a: 0, b: coefI };
+    }
+
+    if (texto.charAt(texto.length - 1) !== 'i') return null;
+    var sinI = texto.slice(0, -1);
+    var posSep = -1;
+    for (var k = sinI.length - 1; k > 0; k--) {
+        var ch = sinI.charAt(k);
+        if ((ch === '+' || ch === '-') && sinI.charAt(k - 1) !== '/') {
+            posSep = k;
+            break;
+        }
+    }
+
+    if (posSep === -1) {
+        var val = parsearFraccion(sinI);
+        if (isNaN(val)) {
+            if (sinI === '' || sinI === '+') return { a: 0, b: 1 };
+            if (sinI === '-') return { a: 0, b: -1 };
+            return null;
+        }
+        return { a: 0, b: val };
+    }
+
+    var parteA = sinI.substring(0, posSep);
+    var signo = sinI.charAt(posSep);
+    var parteB = sinI.substring(posSep + 1);
+    if (parteB === '') parteB = '1';
+
+    var a = parsearFraccion(parteA);
+    var bAbs = parsearFraccion(parteB);
+    if (isNaN(a) || isNaN(bAbs)) return null;
+
+    var b = (signo === '-') ? -bAbs : bAbs;
+    return { a: a, b: b };
+}
+
+function verificarValor(valorUsuario, valorCorrecto, esResultado) {
+    if (esResultado) {
+        return verificarResultadoComplejo(valorUsuario, valorCorrecto);
+    }
+    if (typeof valorCorrecto === 'number') {
+        var num = parsearFraccion(valorUsuario);
+        if (isNaN(num)) return false;
+        return Math.abs(num - valorCorrecto) < TOL;
+    }
+    return verificarResultadoComplejo(valorUsuario, valorCorrecto);
+}
+
+function verificarResultadoComplejo(textoUsuario, textoCorrecto) {
+    var u = parsearComplejo(textoUsuario);
+    var c = parsearComplejo(String(textoCorrecto));
+    if (!u || !c) return false;
+    return Math.abs(u.a - c.a) < TOL && Math.abs(u.b - c.b) < TOL;
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function actualizarContador(idContador, intentos) {
+    var el = document.getElementById(idContador);
+    if (intentos >= MAX_INTENTOS) {
+        el.textContent = 'Sin intentos restantes';
+    } else {
+        el.textContent = 'Intento ' + (intentos + 1) + ' de ' + MAX_INTENTOS;
+    }
+}
+
+// =========================================
+// CARGA DE CASO
+// =========================================
+function cargarCaso(indice) {
+    estado.casoActual = indice;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    var caso = casos[indice];
+
+    document.getElementById('numeroCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('indicadorCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('progresoTexto').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+
+    var nivelEl = document.getElementById('nivelCaso');
+    nivelEl.className = 'nivel-caso ' + caso.nivel;
+    nivelEl.textContent = caso.nivel.charAt(0).toUpperCase() + caso.nivel.slice(1);
+
+    document.getElementById('etiquetaCaso').textContent = caso.etiqueta;
+    document.getElementById('textoEnunciado').textContent = caso.enunciado;
+    document.getElementById('expresionCaso').innerHTML = caso.expresion;
+
+    document.getElementById('fase1').className = 'fase';
+    document.getElementById('fase2').className = 'fase bloqueada';
+    document.getElementById('fase3').className = 'fase bloqueada';
+    document.getElementById('fase4').className = 'fase bloqueada';
+
+    ['feedback1','feedback2','feedback3','feedback4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'feedback';
+        el.innerHTML = '';
+    });
+
+    ['btnReintentar1','btnReintentar2','btnReintentar4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
+
+    ['contadorFase1','contadorFase2','contadorFase3','contadorFase4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
+
+    document.getElementById('opcionesFase2').innerHTML = '';
+    document.getElementById('inputsEjecucion').innerHTML = '';
+    document.getElementById('instruccionEjecucion').innerHTML = caso.fase3.instruccion;
+    document.getElementById('opcionesFase4').innerHTML = '';
+
+    renderizarOpciones('opcionesFase1', caso.fase1.opciones, function(op, btn) {
+        verificarFase1(op, btn);
+    });
+
+    document.getElementById('btnAnterior').disabled = (indice === 0);
+    document.getElementById('btnSiguiente').disabled = true;
+    document.getElementById('btnSiguiente').textContent = (indice === casos.length - 1) ? 'Ver resultado final' : 'Siguiente caso →';
+
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+
+    renderMath(document.getElementById('tarjetaCaso'));
+}
+
+function renderizarOpciones(contenedorId, opciones, onSelect) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    opciones.forEach(function(op, idx) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'opcion-item';
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + op.replace(/\$/g, ''));
+        btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
+        btn.dataset.opcion = op;
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            onSelect(op, this);
+        });
+        contenedor.appendChild(btn);
+    });
+    renderMath(contenedor);
+}
+
+function renderizarInputs(contenedorId, campos) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    campos.forEach(function(campo) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'input-wrapper';
+        wrapper.innerHTML = '<label for="' + contenedorId + '-' + campo.id + '">' + campo.etiqueta + '</label>' +
+            '<input type="text" id="' + contenedorId + '-' + campo.id + '" placeholder="Tu respuesta" autocomplete="off">';
+        contenedor.appendChild(wrapper);
+    });
+    renderMath(contenedor);
+}
+
+// =========================================
+// FASE 1
+// =========================================
+function verificarFase1(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback1');
+    var esCorrecta = (opcion === caso.fase1.correcta);
+
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase1.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase1.explicacion;
+        document.getElementById('btnReintentar1').classList.remove('visible');
+        document.getElementById('fase2').classList.remove('bloqueada');
+        renderizarOpciones('opcionesFase2', caso.fase2.opciones, function(op, b) {
+            verificarFase2(op, b);
+        });
+    } else {
+        estado.intentosFase1++;
+        actualizarContador('contadorFase1', estado.intentosFase1);
+        document.getElementById('contadorFase1').classList.add('visible');
+
+        if (estado.intentosFase1 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. La respuesta correcta es <strong>' + caso.fase1.correcta + '</strong>. ' + caso.fase1.explicacion;
+            document.getElementById('btnReintentar1').classList.remove('visible');
+            document.getElementById('fase2').classList.remove('bloqueada');
+            renderizarOpciones('opcionesFase2', caso.fase2.opciones, function(op, b) {
+                verificarFase2(op, b);
+            });
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase1) + ' intento(s).';
+            document.getElementById('btnReintentar1').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar1').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback1');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// FASE 2
+// =========================================
+function verificarFase2(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    var esCorrecta = (opcion === caso.fase2.correcta);
+
+    document.querySelectorAll('#opcionesFase2 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase2.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Estrategia correcta!</strong> ' + caso.fase2.explicacion;
+        document.getElementById('btnReintentar2').classList.remove('visible');
+        document.getElementById('fase3').classList.remove('bloqueada');
+        renderizarInputs('inputsEjecucion', caso.fase3.campos);
+        document.getElementById('contadorFase3').classList.add('visible');
+        actualizarContador('contadorFase3', 0);
+    } else {
+        estado.intentosFase2++;
+        actualizarContador('contadorFase2', estado.intentosFase2);
+        document.getElementById('contadorFase2').classList.add('visible');
+
+        if (estado.intentosFase2 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. La estrategia correcta es <strong>' + caso.fase2.correcta + '</strong>. ' + caso.fase2.explicacion;
+            document.getElementById('btnReintentar2').classList.remove('visible');
+            document.getElementById('fase3').classList.remove('bloqueada');
+            renderizarInputs('inputsEjecucion', caso.fase3.campos);
+            document.getElementById('contadorFase3').classList.add('visible');
+            actualizarContador('contadorFase3', 0);
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase2) + ' intento(s).';
+            document.getElementById('btnReintentar2').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar2').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase2 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback2');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// FASE 3
+// =========================================
+document.getElementById('pistaEjecucion').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarEjecucion').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    var todosCorrectos = true;
+    var camposVacios = [];
+
+    caso.fase3.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsEjecucion-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarValor(valor, campo.correcta, campo.esResultado)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Desarrollo correcto!</strong> ' + caso.fase3.explicacion;
+        renderMath(fb);
+        document.getElementById('fase4').classList.remove('bloqueada');
+        renderizarOpciones('opcionesFase4', caso.fase4.opciones, function(op, b) {
+            verificarFase4(op, b);
+        });
+        return;
+    }
+
+    estado.intentosFase3++;
+    actualizarContador('contadorFase3', estado.intentosFase3);
+
+    if (estado.intentosFase3 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase3) + ' intento(s). Puedes pedir una pista con el botón 💡.';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 4
+// =========================================
+function verificarFase4(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback4');
+    var esCorrecta = (opcion === caso.fase4.correcta);
+
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase4.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    var btnSig = document.getElementById('btnSiguiente');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Excelente!</strong> ' + caso.fase4.explicacion;
+        document.getElementById('btnReintentar4').classList.remove('visible');
+        if (!estado.completados[estado.casoActual]) {
+            estado.completados[estado.casoActual] = true;
+            actualizarProgreso();
+        }
+        btnSig.disabled = false;
+        btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final →' : 'Siguiente caso →';
+    } else {
+        estado.intentosFase4++;
+        actualizarContador('contadorFase4', estado.intentosFase4);
+        document.getElementById('contadorFase4').classList.add('visible');
+
+        if (estado.intentosFase4 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. El error más común es: <strong>' + caso.fase4.correcta + '</strong>. ' + caso.fase4.explicacion +
+                '<br><br><em>Puedes continuar, pero este caso no se marcará como completado.</em>';
+            document.getElementById('btnReintentar4').classList.remove('visible');
+            btnSig.disabled = false;
+            btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final (sin completar) →' : 'Siguiente caso (sin completar) →';
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase4) + ' intento(s).';
+            document.getElementById('btnReintentar4').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar4').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback4');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// PROGRESO
+// =========================================
+function actualizarProgreso() {
+    var total = casos.length;
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    estado.puntaje = completados;
+    document.getElementById('progresoFill').style.width = (completados / total * 100) + '%';
+    document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
+}
+
+// =========================================
+// NAVEGACIÓN
+// =========================================
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (estado.casoActual > 0) {
+        cargarCaso(estado.casoActual - 1);
+    }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', function() {
+    if (estado.casoActual < casos.length - 1) {
+        cargarCaso(estado.casoActual + 1);
+    } else {
+        mostrarPantallaFinal();
+    }
+});
+
+// =========================================
+// PANTALLA FINAL
+// =========================================
+function mostrarPantallaFinal() {
+    document.getElementById('tarjetaCaso').style.display = 'none';
+    var pantalla = document.getElementById('pantallaFinal');
+    pantalla.classList.add('visible');
+
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    var total = casos.length;
+    document.getElementById('puntajeFinal').textContent = completados + ' / ' + total;
+
+    var medalla = document.getElementById('medallaFinal');
+    var mensaje = document.getElementById('mensajeFinal');
+
+    if (completados === total) {
+        medalla.textContent = '🏆';
+        mensaje.textContent = '¡Detective experto! Resolviste los 5 casos correctamente, identificaste las estrategias adecuadas y anticipaste las trampas CENEVAL. Dominas las operaciones con números complejos en forma rectangular.';
+    } else if (completados >= total * 0.7) {
+        medalla.textContent = '🥈';
+        mensaje.textContent = '¡Buen trabajo, detective! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio de la forma rectangular, el conjugado y la división de complejos.';
+    } else {
+        medalla.textContent = '🥉';
+        mensaje.textContent = 'Continúa entrenando, detective. Te recomendamos repasar la forma rectangular $a+bi$, la sustitución $i^2=-1$, el conjugado $\\bar{z}=a-bi$ y la racionalización del denominador antes de reintentar los casos.';
+    }
+    renderMath(pantalla);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =========================================
+// REINICIAR
+// =========================================
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+    estado.casoActual = 0;
+    estado.completados = new Array(casos.length).fill(false);
+    estado.puntaje = 0;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    actualizarProgreso();
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+    cargarCaso(0);
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+estado.completados = new Array(casos.length).fill(false);
+cargarCaso(0);
+actualizarProgreso();
+
+</script>
+
+</body>
+</html>

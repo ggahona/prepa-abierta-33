@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Espejo Complejo | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        /* ===== LAYOUT ===== */
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        /* ===== PANEL DE CONTROL ===== */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grupo-input {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .grupo-input .titulo-input {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-complejo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+        }
+        .fila-complejo input {
+            width: 80px;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+        .fila-complejo input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        .fila-complejo input::placeholder {
+            color: #a9c1d9;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+        .fila-complejo .operador {
+            font-weight: 700;
+            color: var(--color-acento);
+            font-size: 1.05rem;
+        }
+        .fila-complejo .simbolo-i {
+            font-weight: 700;
+            color: var(--color-acento);
+            font-size: 1.05rem;
+            font-style: italic;
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento-suave);
+        }
+        .seccion-slider label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 4px;
+        }
+        .seccion-slider .valor-slider {
+            color: var(--color-acento);
+            font-weight: 700;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos {
+            margin-top: 8px;
+        }
+        .seccion-ejemplos h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        /* ===== PANEL CANVAS ===== */
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 820 / 560;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda-regiones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 4px;
+            border: 1px solid rgba(44,73,102,0.2);
+        }
+
+        /* ===== PANEL INFO ===== */
+        .panel-info {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .panel-info h3 {
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tabla-info {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .tabla-info tr {
+            border-bottom: 1px solid var(--color-base);
+        }
+        .tabla-info tr:last-child { border-bottom: none; }
+        .tabla-info td {
+            padding: 8px 14px;
+            color: var(--color-texto-oscuro);
+            vertical-align: top;
+        }
+        .tabla-info td:first-child {
+            width: 42%;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+        }
+        .aviso-pedagogico .tag-caso {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-right: 6px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-canvas { padding: 18px 16px; }
+            .fila-complejo input { width: 65px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <!-- HEADER -->
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>El Espejo Complejo</h1>
+        <p>Visualizador de correspondencias | Matemáticas III</p>
+    </header>
+
+    <!-- LAYOUT PRINCIPAL -->
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Parámetros</h2>
+
+            <div class="grupo-input">
+                <div class="titulo-input">$z = a + bi$</div>
+                <div class="fila-complejo">
+                    <input type="number" id="z-a" value="2" step="0.5" min="-8" max="8" placeholder="[-8, 8]" aria-label="Parte real de z">
+                    <span class="operador">+</span>
+                    <input type="number" id="z-b" value="3" step="0.5" min="-8" max="8" placeholder="[-8, 8]" aria-label="Parte imaginaria de z">
+                    <span class="simbolo-i">i</span>
+                </div>
+            </div>
+
+            <h3>Sliders de exploración</h3>
+            <div class="seccion-slider">
+                <label>Parte real $a$: <span class="valor-slider" id="val-slider-a">2</span></label>
+                <input type="range" id="slider-a" min="-8" max="8" step="0.5" value="2" aria-label="Deslizador para parte real">
+            </div>
+            <div class="seccion-slider">
+                <label>Parte imaginaria $b$: <span class="valor-slider" id="val-slider-b">3</span></label>
+                <input type="range" id="slider-b" min="-8" max="8" step="0.5" value="3" aria-label="Deslizador para parte imaginaria">
+            </div>
+
+            <h3>Visualización</h3>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z" checked> Mostrar $z$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-conj" checked> Mostrar $\bar{z}$ (conjugado)
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-eje" checked> Mostrar eje de simetría
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-prod" checked> Mostrar $z \cdot \bar{z}$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-circ" checked> Mostrar círculo $|z|$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-arco" checked> Mostrar arco de simetría
+            </label>
+
+            <h3>Zoom del plano</h3>
+            <div class="seccion-slider">
+                <label>Escala: <span class="valor-slider" id="val-zoom">25</span> px / unidad</label>
+                <input type="range" id="slider-zoom" min="12" max="45" step="1" value="25" aria-label="Zoom del plano">
+            </div>
+
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar valores">↺ Reiniciar</button>
+
+            <h3>Ejemplos predefinidos</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $z = 2 + 3i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $z = 5 - 2i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $z = -6 + 3i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $z = -4 - 4i$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $z = 5i$ (imaginario puro)</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $z = 6$ (real puro)</button>
+            </div>
+        </div>
+
+        <!-- PANEL CANVAS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560" aria-label="Plano complejo mostrando z, su conjugado y su producto"></canvas>
+                <div class="canvas-instrucciones">🖱️ Clic para fijar $z$</div>
+            </div>
+
+            <div class="leyenda-regiones">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>$z$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>$\bar{z}$ conjugado</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>$z \cdot \bar{z}$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#a9c1d9; border:1px dashed #5b7fa3;"></div>
+                    <span>Eje de simetría</span>
+                </div>
+            </div>
+
+            <!-- PANEL INFO -->
+            <div class="panel-info">
+                <h3>📊 Propiedades de $z$ y $\bar{z}$</h3>
+                <table class="tabla-info">
+                    <tr>
+                        <td>Número complejo $z$</td>
+                        <td id="info-z">—</td>
+                    </tr>
+                    <tr>
+                        <td>Conjugado $\bar{z}$</td>
+                        <td id="info-conj">—</td>
+                    </tr>
+                    <tr>
+                        <td>Producto $z \cdot \bar{z} = a^2 + b^2$</td>
+                        <td id="info-prod">—</td>
+                    </tr>
+                    <tr>
+                        <td>Norma $|z| = \sqrt{a^2+b^2}$</td>
+                        <td id="info-norma">—</td>
+                    </tr>
+                    <tr>
+                        <td>Partes real e imaginaria</td>
+                        <td id="info-partes">—</td>
+                    </tr>
+                </table>
+                <div class="aviso-pedagogico" id="aviso-caso">
+                    💡 <strong>Hallazgo visual:</strong> al mover $z$ con los sliders o haciendo clic en el canvas,
+                    observa que $\bar{z}$ siempre es el <strong>reflejo</strong> de $z$ sobre el eje real
+                    y que $z \cdot \bar{z}$ cae <strong>siempre</strong> sobre el eje real positivo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comprender geométricamente el conjugado de un número complejo
+        $\bar{z} = a - bi$ como el <strong>reflejo</strong> de $z$ sobre el eje real, y visualizar
+        la propiedad fundamental $z \cdot \bar{z} = a^2 + b^2$ como la norma al cuadrado del número.
+    </div>
+</div>
+
+<script>
+// =========================================
+// CONFIGURACIÓN GLOBAL
+// =========================================
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var W = 820;   // ancho lógico
+var H = 560;   // alto lógico
+
+// Colores institucionales
+var COLOR_Z = '#5b7fa3';
+var COLOR_CONJ = '#27ae60';
+var COLOR_PROD = '#c0392b';
+var COLOR_EJE = '#2c4966';
+var COLOR_CUADRICULA = '#e8eef5';
+var COLOR_SIMETRIA = '#a9c1d9';
+var COLOR_CIRCULO = '#a9c1d9';
+
+// Estado global
+var estado = {
+    z: { a: 2, b: 3 },
+    zoom: 25,
+    mostrar: {
+        z: true,
+        conj: true,
+        eje: true,
+        prod: true,
+        circ: true,
+        arco: true
+    }
+};
+
+// =========================================
+// SOPORTE HIPDI (Retina)
+// =========================================
+function configurarHiDPI() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(3)).toString();
+}
+
+function latexComplejo(a, b) {
+    a = parseFloat(a); b = parseFloat(b);
+    if (a === 0 && b === 0) return '0';
+    var partes = [];
+    if (a !== 0) partes.push(formatearNumero(a));
+    if (b !== 0) {
+        var signo = '';
+        if (b > 0 && a !== 0) signo = ' + ';
+        else if (b < 0 && a !== 0) signo = ' - ';
+        else if (b < 0) signo = '-';
+        var absB = Math.abs(b);
+        if (Math.abs(absB - 1) < 1e-9) partes.push(signo + 'i');
+        else partes.push(signo + formatearNumero(absB) + 'i');
+    }
+    return partes.join('');
+}
+
+function mundoAPantalla(x, y) {
+    return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+    };
+}
+
+function pantallaAMundo(px, py) {
+    return {
+        x: (px - W / 2) / estado.zoom,
+        y: (H / 2 - py) / estado.zoom
+    };
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// =========================================
+// DIBUJO DEL PLANO
+// =========================================
+function dibujarCuadricula() {
+    ctx.strokeStyle = COLOR_CUADRICULA;
+    ctx.lineWidth = 1;
+    var paso = estado.zoom;
+
+    for (var x = (W / 2) % paso; x < W; x += paso) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    for (var y = (H / 2) % paso; y < H; y += paso) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+}
+
+function dibujarEjes() {
+    ctx.strokeStyle = COLOR_EJE;
+    ctx.fillStyle = COLOR_EJE;
+    ctx.lineWidth = 2;
+
+    // Eje X
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W - 12, H / 2 - 6);
+    ctx.lineTo(W, H / 2);
+    ctx.lineTo(W - 12, H / 2 + 6);
+    ctx.fill();
+
+    // Eje Y
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H);
+    ctx.lineTo(W / 2, 0);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 6, 12);
+    ctx.lineTo(W / 2, 0);
+    ctx.lineTo(W / 2 + 6, 12);
+    ctx.fill();
+
+    // Etiquetas
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_EJE;
+    ctx.textAlign = 'right';
+    ctx.fillText('Re', W - 8, H / 2 + 20);
+    ctx.textAlign = 'left';
+    ctx.fillText('Im', W / 2 + 8, 16);
+
+    // Marcas numéricas eje X
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    var maxX = Math.floor((W / 2) / estado.zoom);
+    for (var i = -maxX; i <= maxX; i++) {
+        if (i === 0) continue;
+        var p = mundoAPantalla(i, 0);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(i.toString(), p.px, p.py + 16);
+    }
+    // Marcas numéricas eje Y
+    var maxY = Math.floor((H / 2) / estado.zoom);
+    ctx.textAlign = 'right';
+    for (var j = -maxY; j <= maxY; j++) {
+        if (j === 0) continue;
+        var q = mundoAPantalla(0, j);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(j.toString(), q.px - 8, q.py + 4);
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('0', W / 2 + 6, H / 2 + 16);
+}
+
+// =========================================
+// DIBUJO DE VECTORES
+// =========================================
+function dibujarVector(z, color, etiqueta, grosor) {
+    var origen = mundoAPantalla(0, 0);
+    var destino = mundoAPantalla(z.a, z.b);
+
+    // Caso especial: vector nulo
+    var esNulo = (Math.abs(z.a) < 1e-9 && Math.abs(z.b) < 1e-9);
+
+    if (esNulo) {
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(origen.px, origen.py, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        if (etiqueta) {
+            ctx.font = 'bold 13px Segoe UI, sans-serif';
+            ctx.fillStyle = color;
+            ctx.textAlign = 'left';
+            ctx.fillText(etiqueta + ' (0)', origen.px + 12, origen.py + 4);
+        }
+        return;
+    }
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = grosor || 3;
+    ctx.beginPath();
+    ctx.moveTo(origen.px, origen.py);
+    ctx.lineTo(destino.px, destino.py);
+    ctx.stroke();
+
+    // Flecha
+    var angulo = Math.atan2(destino.py - origen.py, destino.px - origen.px);
+    var tamFlecha = 12;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(destino.px, destino.py);
+    ctx.lineTo(
+        destino.px - tamFlecha * Math.cos(angulo - Math.PI / 7),
+        destino.py - tamFlecha * Math.sin(angulo - Math.PI / 7)
+    );
+    ctx.lineTo(
+        destino.px - tamFlecha * Math.cos(angulo + Math.PI / 7),
+        destino.py - tamFlecha * Math.sin(angulo + Math.PI / 7)
+    );
+    ctx.closePath();
+    ctx.fill();
+
+    // Punto en el extremo
+    ctx.beginPath();
+    ctx.arc(destino.px, destino.py, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Etiqueta
+    if (etiqueta) {
+        ctx.font = 'bold 13px Segoe UI, sans-serif';
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(etiqueta, destino.px + 10, destino.py - 8);
+    }
+}
+
+// =========================================
+// PROYECCIONES PUNTEADAS
+// =========================================
+function dibujarProyecciones(z, color) {
+    var p = mundoAPantalla(z.a, z.b);
+    var px = mundoAPantalla(z.a, 0);
+    var py = mundoAPantalla(0, z.b);
+
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.2;
+    ctx.globalAlpha = 0.55;
+
+    ctx.beginPath();
+    ctx.moveTo(p.px, p.py);
+    ctx.lineTo(px.px, px.py);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(p.px, p.py);
+    ctx.lineTo(py.px, py.py);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+// =========================================
+// ARCO DE SIMETRÍA
+// =========================================
+function dibujarArcoSimetria(z) {
+    if (Math.abs(z.b) < 1e-9) return;
+
+    var centro = mundoAPantalla(0, 0);
+    var radio = Math.min(Math.abs(z.b) * estado.zoom * 0.5, 100);
+    if (radio < 25) radio = 25;
+
+    // Ángulo del vector z (matemático)
+    var ang = Math.atan2(z.b, z.a);
+    // En canvas el eje Y está invertido: angCanvasZ = -ang
+    var angCanvasZ = -ang;
+    var angCanvasConj = ang;
+
+    var sentidoHorario = z.b > 0;
+
+    ctx.save();
+    ctx.strokeStyle = COLOR_SIMETRIA;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 4]);
+    ctx.beginPath();
+    ctx.arc(centro.px, centro.py, radio, angCanvasZ, angCanvasConj, !sentidoHorario);
+    ctx.stroke();
+    ctx.restore();
+}
+
+// =========================================
+// RENDER PRINCIPAL
+// =========================================
+function render() {
+    // Limpiar con dimensiones físicas
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    // Fondo blanco
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    var z = estado.z;
+    var conj = { a: z.a, b: -z.b };
+    var norma = Math.sqrt(z.a * z.a + z.b * z.b);
+    var producto = { a: z.a * z.a + z.b * z.b, b: 0 };
+
+    // 1. Cuadrícula
+    dibujarCuadricula();
+
+    // 2. Círculo |z|
+    if (estado.mostrar.circ && norma > 1e-9) {
+        var centro = mundoAPantalla(0, 0);
+        ctx.save();
+        ctx.strokeStyle = COLOR_CIRCULO;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        ctx.arc(centro.px, centro.py, norma * estado.zoom, 0, 2 * Math.PI);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // 3. Ejes
+    dibujarEjes();
+
+    // 4. Eje de simetría
+    if (estado.mostrar.eje) {
+        ctx.save();
+        ctx.strokeStyle = COLOR_SIMETRIA;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([8, 5]);
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2);
+        ctx.lineTo(W, H / 2);
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    // 5. Proyecciones
+    if (estado.mostrar.z) dibujarProyecciones(z, COLOR_Z);
+    if (estado.mostrar.conj) dibujarProyecciones(conj, COLOR_CONJ);
+
+    // 6. Arco de simetría
+    if (estado.mostrar.arco && estado.mostrar.z && estado.mostrar.conj) {
+        dibujarArcoSimetria(z);
+    }
+
+    // 7. Vectores
+    if (estado.mostrar.z) {
+        dibujarVector(z, COLOR_Z, 'z = ' + latexComplejo(z.a, z.b), 3);
+    }
+    if (estado.mostrar.conj) {
+        dibujarVector(conj, COLOR_CONJ, 'z̄ = ' + latexComplejo(conj.a, conj.b), 3);
+    }
+    if (estado.mostrar.prod) {
+        dibujarVector(producto, COLOR_PROD, 'z·z̄ = ' + formatearNumero(producto.a), 3.5);
+    }
+
+    actualizarInfo(z, conj, producto, norma);
+}
+
+// =========================================
+// ACTUALIZAR INFO
+// =========================================
+function actualizarInfo(z, conj, producto, norma) {
+    var infoZ = document.getElementById('info-z');
+    var infoConj = document.getElementById('info-conj');
+    var infoProd = document.getElementById('info-prod');
+    var infoNorma = document.getElementById('info-norma');
+    var infoPartes = document.getElementById('info-partes');
+    var aviso = document.getElementById('aviso-caso');
+
+    infoZ.innerHTML = '$' + latexComplejo(z.a, z.b) + '$';
+    infoConj.innerHTML = '$' + latexComplejo(conj.a, conj.b) + '$';
+
+    var a2 = z.a * z.a;
+    var b2 = z.b * z.b;
+    infoProd.innerHTML = '$' + formatearNumero(a2) + ' + ' + formatearNumero(b2) +
+        ' = ' + formatearNumero(producto.a) + '$';
+
+    infoNorma.innerHTML = '$\\sqrt{' + formatearNumero(a2) + ' + ' + formatearNumero(b2) +
+        '} = ' + formatearNumero(norma) + '$';
+
+    var caso = '';
+    var esCero = (Math.abs(z.a) < 1e-9 && Math.abs(z.b) < 1e-9);
+    var esRealPuro = (Math.abs(z.b) < 1e-9 && Math.abs(z.a) > 1e-9);
+    var esImagPuro = (Math.abs(z.a) < 1e-9 && Math.abs(z.b) > 1e-9);
+
+    if (esCero) caso = ' <span class="tag-caso">Cero</span>';
+    else if (esRealPuro) caso = ' <span class="tag-caso">Real puro</span>';
+    else if (esImagPuro) caso = ' <span class="tag-caso">Imaginario puro</span>';
+
+    infoPartes.innerHTML = 'Re $= ' + formatearNumero(z.a) + '$, Im $= ' + formatearNumero(z.b) + '$' + caso;
+
+    var htmlAviso = '💡 <strong>Hallazgo visual:</strong> ';
+    if (esCero) {
+        htmlAviso += 'en el origen, $z = \\bar{z} = 0$ y $z \\cdot \\bar{z} = 0$. El reflejo coincide con el punto mismo.';
+    } else if (esRealPuro) {
+        htmlAviso += 'cuando $z$ es <strong>real puro</strong> ($b = 0$), el conjugado es idéntico: $\\bar{z} = z$. El "espejo" no produce cambio visible.';
+    } else if (esImagPuro) {
+        htmlAviso += 'cuando $z$ es <strong>imaginario puro</strong> ($a = 0$), el conjugado es $\\bar{z} = -z$. La reflexión produce el simétrico exacto.';
+    } else {
+        htmlAviso += 'al mover $z$ con los sliders o haciendo clic en el canvas, observa que $\\bar{z}$ siempre es el <strong>reflejo</strong> de $z$ sobre el eje real y que $z \\cdot \\bar{z}$ cae <strong>siempre</strong> sobre el eje real positivo.';
+    }
+    aviso.innerHTML = htmlAviso;
+
+    renderMath(document.querySelector('.panel-info'));
+}
+
+// =========================================
+// SINCRONIZACIÓN INPUTS ↔ SLIDERS ↔ ESTADO
+// =========================================
+function sincronizarDesdeEstado() {
+    document.getElementById('z-a').value = estado.z.a;
+    document.getElementById('z-b').value = estado.z.b;
+    document.getElementById('slider-a').value = estado.z.a;
+    document.getElementById('slider-b').value = estado.z.b;
+    document.getElementById('val-slider-a').textContent = formatearNumero(estado.z.a);
+    document.getElementById('val-slider-b').textContent = formatearNumero(estado.z.b);
+}
+
+function leerZ() {
+    var a = parseFloat(document.getElementById('z-a').value);
+    var b = parseFloat(document.getElementById('z-b').value);
+    if (isNaN(a)) a = 0;
+    if (isNaN(b)) b = 0;
+    a = Math.max(-8, Math.min(8, a));
+    b = Math.max(-8, Math.min(8, b));
+    return { a: a, b: b };
+}
+
+function actualizarDesdeInputs() {
+    estado.z = leerZ();
+    sincronizarDesdeEstado();
+    render();
+}
+
+document.getElementById('z-a').addEventListener('input', actualizarDesdeInputs);
+document.getElementById('z-b').addEventListener('input', actualizarDesdeInputs);
+
+// =========================================
+// SLIDERS
+// =========================================
+document.getElementById('slider-a').addEventListener('input', function() {
+    estado.z.a = parseFloat(this.value);
+    sincronizarDesdeEstado();
+    render();
+});
+
+document.getElementById('slider-b').addEventListener('input', function() {
+    estado.z.b = parseFloat(this.value);
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// CHECKBOXES
+// =========================================
+['z', 'conj', 'eje', 'prod', 'circ', 'arco'].forEach(function(key) {
+    var el = document.getElementById('chk-' + key);
+    if (el) {
+        el.addEventListener('change', function() {
+            estado.mostrar[key] = this.checked;
+            render();
+        });
+    }
+});
+
+// =========================================
+// ZOOM
+// =========================================
+document.getElementById('slider-zoom').addEventListener('input', function() {
+    estado.zoom = parseInt(this.value);
+    document.getElementById('val-zoom').textContent = this.value;
+    render();
+});
+
+// =========================================
+// CLIC EN CANVAS
+// =========================================
+canvas.addEventListener('click', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var escalaX = W / rect.width;
+    var escalaY = H / rect.height;
+    var px = (e.clientX - rect.left) * escalaX;
+    var py = (e.clientY - rect.top) * escalaY;
+
+    var mundo = pantallaAMundo(px, py);
+    var nuevoA = Math.round(mundo.x * 2) / 2;
+    var nuevoB = Math.round(mundo.y * 2) / 2;
+
+    nuevoA = Math.max(-8, Math.min(8, nuevoA));
+    nuevoB = Math.max(-8, Math.min(8, nuevoB));
+
+    estado.z = { a: nuevoA, b: nuevoB };
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// BOTÓN REINICIAR
+// =========================================
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    estado.z = { a: 2, b: 3 };
+    estado.zoom = 25;
+    document.getElementById('slider-zoom').value = 25;
+    document.getElementById('val-zoom').textContent = '25';
+    estado.mostrar = { z: true, conj: true, eje: true, prod: true, circ: true, arco: true };
+    ['z', 'conj', 'eje', 'prod', 'circ', 'arco'].forEach(function(key) {
+        var el = document.getElementById('chk-' + key);
+        if (el) el.checked = true;
+    });
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// EJEMPLOS PREDEFINIDOS
+// =========================================
+var ejemplos = {
+    1: { a: 2, b: 3 },
+    2: { a: 5, b: -2 },
+    3: { a: -6, b: 3 },
+    4: { a: -4, b: -4 },
+    5: { a: 0, b: 5 },
+    6: { a: 6, b: 0 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        estado.z = { a: data.a, b: data.b };
+        sincronizarDesdeEstado();
+        render();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+function init() {
+    configurarHiDPI();
+    estado.z = { a: 2, b: 3 };
+    sincronizarDesdeEstado();
+    render();
+    renderMath(document.body);
+}
+
+window.addEventListener('load', init);
+
+</script>
+
+</body>
+</html>

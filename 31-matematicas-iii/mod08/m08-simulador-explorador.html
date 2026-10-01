@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explorador de Circunferencias | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        /* ===== PANEL DE CONTROL ===== */
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-slider label {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .seccion-slider .valor-slider {
+            color: var(--color-acento);
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .seccion-slider .aviso-intercambio {
+            font-size: 0.75rem;
+            color: var(--color-error);
+            font-style: italic;
+            font-weight: 600;
+            display: none;
+        }
+        .seccion-slider .aviso-intercambio.visible { display: block; }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .seccion-regiones {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-regiones .titulo-region {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .opcion-region {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="radio"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .btn-peligro {
+            background-color: var(--color-blanco);
+            color: var(--color-error);
+            border: 2px solid var(--color-error);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-peligro:hover { background-color: var(--color-error); color: var(--color-blanco); }
+
+        .contador-puntos {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 10px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento-suave);
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .contador-puntos strong { color: var(--color-acento); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .seccion-ejemplos h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        /* ===== PANEL CANVAS ===== */
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 820 / 560;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda-regiones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px rgba(44,73,102,0.2);
+        }
+
+        /* ===== PANEL INFO / TABLA DINÁMICA ===== */
+        .panel-info {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .panel-info h3 {
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+        }
+        .tabla-puntos {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+        .tabla-puntos thead {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+        }
+        .tabla-puntos th {
+            padding: 8px 12px;
+            text-align: left;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+        .tabla-puntos td {
+            padding: 8px 12px;
+            color: var(--color-texto-oscuro);
+            border-bottom: 1px solid var(--color-base);
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85rem;
+        }
+        .tabla-puntos tbody tr:nth-child(even) {
+            background-color: var(--color-base);
+        }
+        .tabla-puntos tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .estado-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 700;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .estado-badge .punto-color {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .estado-badge.dentro { color: var(--color-exito); }
+        .estado-badge.dentro .punto-color { background: var(--color-exito); }
+        .estado-badge.fuera { color: var(--color-error); }
+        .estado-badge.fuera .punto-color { background: var(--color-error); }
+        .estado-badge.frontera { color: var(--color-acento); }
+        .estado-badge.frontera .punto-color { background: var(--color-acento); }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-canvas { padding: 18px 16px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+            .tabla-puntos { font-size: 0.78rem; }
+            .tabla-puntos th, .tabla-puntos td { padding: 6px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Explorador de Circunferencias</h1>
+        <p>Simulador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Radios de comparación</h2>
+
+            <div class="seccion-slider">
+                <label>Radio $r_1$: <span class="valor-slider" id="val-r1">2</span></label>
+                <input type="range" id="slider-r1" min="0" max="10" step="0.5" value="2" aria-label="Radio r1">
+                <div class="aviso-intercambio" id="aviso-intercambio">
+                    ⚠️ $r_1 > r_2$: los radios se intercambian al dibujar.
+                </div>
+            </div>
+
+            <div class="seccion-slider">
+                <label>Radio $r_2$: <span class="valor-slider" id="val-r2">4</span></label>
+                <input type="range" id="slider-r2" min="0" max="10" step="0.5" value="4" aria-label="Radio r2">
+            </div>
+
+            <h3>Región a visualizar</h3>
+            <div class="seccion-regiones">
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="corona" checked>
+                    Corona: $r_1 \leq |z| \leq r_2$
+                </label>
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="disco-cerrado">
+                    Disco cerrado: $|z| \leq r_2$
+                </label>
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="disco-abierto">
+                    Disco abierto: $|z| < r_2$
+                </label>
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="exterior-cerrado">
+                    Exterior cerrado: $|z| \geq r_1$
+                </label>
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="exterior-abierto">
+                    Exterior abierto: $|z| > r_1$
+                </label>
+                <label class="opcion-region">
+                    <input type="radio" name="region" value="fronteras">
+                    Solo fronteras (circunferencias)
+                </label>
+            </div>
+
+            <h3>Puntos de prueba</h3>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-notables" checked> Puntos notables $(1,0),(0,1),(-1,0),(0,-1)$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z1" checked> $z = 3 + 2i$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z2" checked> $z = 1 + 0i$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z3" checked> $z = 0 + 1i$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z4" checked> $z = 5 + 0i$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-z5" checked> $z = 4 + 3i$
+            </label>
+
+            <div class="contador-puntos" id="contadorPersonalizados">
+                Puntos personalizados: <strong id="numPersonalizados">0</strong> (máx. 5)
+            </div>
+            <button type="button" class="btn-peligro" id="btn-limpiar-puntos" style="display:none;">
+                🗑️ Limpiar puntos personalizados
+            </button>
+
+            <h3>Zoom del plano</h3>
+            <div class="seccion-slider">
+                <label>Escala: <span class="valor-slider" id="val-zoom">28</span> px / unidad</label>
+                <input type="range" id="slider-zoom" min="12" max="45" step="1" value="28" aria-label="Zoom del plano">
+            </div>
+
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar valores">↺ Reiniciar todo</button>
+
+            <h3>Ejemplos predefinidos</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 Circunferencia unitaria $|z| = 1$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 Corona $2 \leq |z| \leq 4$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 Exterior $|z| > 3$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 Disco cerrado $|z| \leq 2$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 Corona degenerada ($r_1 = r_2 = 3$)</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 Disco máximo $|z| \leq 8$</button>
+            </div>
+        </div>
+
+        <!-- PANEL CANVAS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560" aria-label="Plano complejo mostrando circunferencias y regiones definidas por módulos"></canvas>
+                <div class="canvas-instrucciones">🖱️ Clic para probar un punto</div>
+            </div>
+
+            <div class="leyenda-regiones">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:rgba(39,174,96,0.4);"></div>
+                    <span>Región</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>Dentro</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>Fuera</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>Sobre frontera</span>
+                </div>
+            </div>
+
+            <!-- TABLA DINÁMICA DE PUNTOS -->
+            <div class="panel-info">
+                <h3>📊 Análisis de puntos de prueba</h3>
+                <table class="tabla-puntos">
+                    <thead>
+                        <tr>
+                            <th>Punto $z$</th>
+                            <th>$|z|$</th>
+                            <th>Estado</th>
+                            <th>Condición</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaPuntos">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+                <div class="aviso-pedagogico" id="aviso-pedagogico">
+                    💡 <strong>Exploración:</strong> mueve los sliders $r_1$ y $r_2$ y observa cómo cambia la región sombreada.
+                    Los puntos cambian de color según su pertenencia: verde (dentro), rojo (fuera), azul (sobre la frontera).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Explorar interactivamente la <strong>circunferencia unitaria</strong> $|z| = 1$
+        y las <strong>coronas circulares</strong> $r_1 \leq |z| \leq r_2$, comprendiendo la relación entre
+        la ecuación algebraica con módulo y la región geométrica del plano complejo.
+    </div>
+</div>
+
+<script>
+// =========================================
+// CONFIGURACIÓN GLOBAL
+// =========================================
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var W = 820;
+var H = 560;
+
+// Colores
+var COLOR_EJE = '#2c4966';
+var COLOR_CUADRICULA = '#e8eef5';
+var COLOR_FRONTERA = '#a9c1d9';
+var COLOR_REGION = 'rgba(39, 174, 96, 0.28)';
+var COLOR_REGION_BORDE = '#27ae60';
+var COLOR_PUNTO_DENTRO = '#27ae60';
+var COLOR_PUNTO_FUERA = '#c0392b';
+var COLOR_PUNTO_FRONTERA = '#5b7fa3';
+
+var TOL = 1e-4;
+var MAX_PERSONALIZADOS = 5;
+
+// Estado global
+var estado = {
+    r1: 2,
+    r2: 4,
+    region: 'corona',
+    zoom: 28,
+    mostrar: {
+        notables: true,
+        z1: true,
+        z2: true,
+        z3: true,
+        z4: true,
+        z5: true
+    }
+};
+
+var puntosFijos = [
+    { id: 'z1', a: 3, b: 2, etiqueta: '$3+2i$' },
+    { id: 'z2', a: 1, b: 0, etiqueta: '$1+0i$' },
+    { id: 'z3', a: 0, b: 1, etiqueta: '$0+i$' },
+    { id: 'z4', a: 5, b: 0, etiqueta: '$5+0i$' },
+    { id: 'z5', a: 4, b: 3, etiqueta: '$4+3i$' }
+];
+
+var puntosNotables = [
+    { a: 1, b: 0, etiqueta: '$(1,0)$' },
+    { a: 0, b: 1, etiqueta: '$(0,1)$' },
+    { a: -1, b: 0, etiqueta: '$(-1,0)$' },
+    { a: 0, b: -1, etiqueta: '$(0,-1)$' }
+];
+
+var puntosPersonalizados = [];
+
+// =========================================
+// SOPORTE HIPDI
+// =========================================
+function configurarHiDPI() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(3)).toString();
+}
+
+function latexComplejo(a, b) {
+    a = parseFloat(a); b = parseFloat(b);
+    if (a === 0 && b === 0) return '0';
+    var partes = [];
+    if (a !== 0) partes.push(formatearNumero(a));
+    if (b !== 0) {
+        var signo = '';
+        if (b > 0 && a !== 0) signo = ' + ';
+        else if (b < 0 && a !== 0) signo = ' - ';
+        else if (b < 0) signo = '-';
+        var absB = Math.abs(b);
+        if (Math.abs(absB - 1) < 1e-9) partes.push(signo + 'i');
+        else partes.push(signo + formatearNumero(absB) + 'i');
+    }
+    return partes.join('');
+}
+
+function mundoAPantalla(x, y) {
+    return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+    };
+}
+
+function pantallaAMundo(px, py) {
+    return {
+        x: (px - W / 2) / estado.zoom,
+        y: (H / 2 - py) / estado.zoom
+    };
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function modulo(z) {
+    return Math.sqrt(z.a * z.a + z.b * z.b);
+}
+
+// Devuelve r1 y r2 ordenados (menor, mayor)
+function radiosOrdenados() {
+    return {
+        menor: Math.min(estado.r1, estado.r2),
+        mayor: Math.max(estado.r1, estado.r2)
+    };
+}
+
+function pertenece(z) {
+    var m = modulo(z);
+    var r = radiosOrdenados();
+    var r1 = r.menor;
+    var r2 = r.mayor;
+
+    switch (estado.region) {
+        case 'corona':
+            if (Math.abs(r1 - r2) < TOL) {
+                if (Math.abs(m - r1) < TOL) return 'frontera';
+                return 'fuera';
+            }
+            if (Math.abs(m - r1) < TOL || Math.abs(m - r2) < TOL) return 'frontera';
+            if (m > r1 && m < r2) return 'dentro';
+            return 'fuera';
+
+        case 'disco-cerrado':
+            if (Math.abs(m - r2) < TOL) return 'frontera';
+            if (m < r2) return 'dentro';
+            return 'fuera';
+
+        case 'disco-abierto':
+            if (Math.abs(m - r2) < TOL) return 'fuera';
+            if (m < r2) return 'dentro';
+            return 'fuera';
+
+        case 'exterior-cerrado':
+            if (Math.abs(m - r1) < TOL) return 'frontera';
+            if (m > r1) return 'dentro';
+            return 'fuera';
+
+        case 'exterior-abierto':
+            if (Math.abs(m - r1) < TOL) return 'fuera';
+            if (m > r1) return 'dentro';
+            return 'fuera';
+
+        case 'fronteras':
+            if (r1 < TOL) {
+                // Solo una frontera visible
+                if (Math.abs(m - r2) < TOL) return 'frontera';
+                return 'fuera';
+            }
+            if (Math.abs(m - r1) < TOL || Math.abs(m - r2) < TOL) return 'frontera';
+            return 'fuera';
+    }
+    return 'fuera';
+}
+
+function condicionPunto(z) {
+    var m = modulo(z);
+    var r = radiosOrdenados();
+    var r1 = r.menor;
+    var r2 = r.mayor;
+    var r1Str = formatearNumero(r1);
+    var r2Str = formatearNumero(r2);
+
+    switch (estado.region) {
+        case 'corona':
+            if (Math.abs(r1 - r2) < TOL) return '|z| = ' + r1Str;
+            return r1Str + ' ≤ |z| ≤ ' + r2Str;
+        case 'disco-cerrado': return '|z| ≤ ' + r2Str;
+        case 'disco-abierto': return '|z| < ' + r2Str;
+        case 'exterior-cerrado': return '|z| ≥ ' + r1Str;
+        case 'exterior-abierto': return '|z| > ' + r1Str;
+        case 'fronteras':
+            if (r1 < TOL) return '|z| = ' + r2Str;
+            return '|z| = ' + r1Str + ' o |z| = ' + r2Str;
+    }
+    return '';
+}
+
+// =========================================
+// DIBUJO DEL PLANO
+// =========================================
+function dibujarCuadricula() {
+    ctx.strokeStyle = COLOR_CUADRICULA;
+    ctx.lineWidth = 1;
+    var paso = estado.zoom;
+    for (var x = (W / 2) % paso; x < W; x += paso) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    for (var y = (H / 2) % paso; y < H; y += paso) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+}
+
+function dibujarEjes() {
+    ctx.strokeStyle = COLOR_EJE;
+    ctx.fillStyle = COLOR_EJE;
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W - 12, H / 2 - 6);
+    ctx.lineTo(W, H / 2);
+    ctx.lineTo(W - 12, H / 2 + 6);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H);
+    ctx.lineTo(W / 2, 0);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 6, 12);
+    ctx.lineTo(W / 2, 0);
+    ctx.lineTo(W / 2 + 6, 12);
+    ctx.fill();
+
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_EJE;
+    ctx.textAlign = 'right';
+    ctx.fillText('Re', W - 8, H / 2 + 20);
+    ctx.textAlign = 'left';
+    ctx.fillText('Im', W / 2 + 8, 16);
+
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    var maxX = Math.floor((W / 2) / estado.zoom);
+    for (var i = -maxX; i <= maxX; i++) {
+        if (i === 0) continue;
+        var p = mundoAPantalla(i, 0);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(i.toString(), p.px, p.py + 16);
+    }
+    var maxY = Math.floor((H / 2) / estado.zoom);
+    ctx.textAlign = 'right';
+    for (var j = -maxY; j <= maxY; j++) {
+        if (j === 0) continue;
+        var q = mundoAPantalla(0, j);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(j.toString(), q.px - 8, q.py + 4);
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('0', W / 2 + 6, H / 2 + 16);
+}
+
+// =========================================
+// DIBUJO DE LA REGIÓN
+// =========================================
+function dibujarRegion() {
+    var centro = mundoAPantalla(0, 0);
+    var r = radiosOrdenados();
+    var r1 = r.menor;
+    var r2 = r.mayor;
+    var r1Px = r1 * estado.zoom;
+    var r2Px = r2 * estado.zoom;
+
+    ctx.save();
+
+    switch (estado.region) {
+        case 'corona':
+            if (Math.abs(r1 - r2) < TOL) {
+                ctx.strokeStyle = COLOR_REGION_BORDE;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
+                ctx.stroke();
+            } else {
+                ctx.fillStyle = COLOR_REGION;
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+                ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI, true);
+                ctx.fill('evenodd');
+                ctx.strokeStyle = COLOR_REGION_BORDE;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+                ctx.stroke();
+                if (r1Px > 1) {
+                    ctx.beginPath();
+                    ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+            }
+            break;
+
+        case 'disco-cerrado':
+            if (r2Px > 0) {
+                ctx.fillStyle = COLOR_REGION;
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            ctx.strokeStyle = COLOR_REGION_BORDE;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+            ctx.stroke();
+            break;
+
+        case 'disco-abierto':
+            if (r2Px > 0) {
+                ctx.fillStyle = COLOR_REGION;
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            ctx.strokeStyle = COLOR_FRONTERA;
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([8, 5]);
+            ctx.beginPath();
+            ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+            ctx.stroke();
+            break;
+
+        case 'exterior-cerrado':
+            ctx.fillStyle = COLOR_REGION;
+            ctx.beginPath();
+            ctx.rect(0, 0, W, H);
+            ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI, true);
+            ctx.fill('evenodd');
+            ctx.strokeStyle = COLOR_REGION_BORDE;
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
+            ctx.stroke();
+            break;
+
+        case 'exterior-abierto':
+            ctx.fillStyle = COLOR_REGION;
+            ctx.beginPath();
+            ctx.rect(0, 0, W, H);
+            ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI, true);
+            ctx.fill('evenodd');
+            ctx.strokeStyle = COLOR_FRONTERA;
+            ctx.lineWidth = 2.5;
+            ctx.setLineDash([8, 5]);
+            ctx.beginPath();
+            ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
+            ctx.stroke();
+            break;
+
+        case 'fronteras':
+            ctx.strokeStyle = COLOR_REGION_BORDE;
+            ctx.lineWidth = 2.5;
+            if (r1Px > 1) {
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r1Px, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+            if (Math.abs(r1 - r2) > TOL && r2Px > 1) {
+                ctx.beginPath();
+                ctx.arc(centro.px, centro.py, r2Px, 0, 2 * Math.PI);
+                ctx.stroke();
+            }
+            break;
+    }
+
+    ctx.restore();
+
+    // Etiquetas r1 y r2
+    if (estado.region === 'corona' || estado.region === 'fronteras') {
+        ctx.save();
+        ctx.font = 'bold 12px Segoe UI, sans-serif';
+        ctx.fillStyle = COLOR_REGION_BORDE;
+        ctx.textAlign = 'left';
+        if (r1Px > 15) {
+            ctx.fillText('r₁=' + formatearNumero(r1), centro.px + r1Px + 6, centro.py - 8);
+        }
+        if (Math.abs(r1 - r2) > TOL && r2Px > 15) {
+            ctx.fillText('r₂=' + formatearNumero(r2), centro.px + r2Px + 6, centro.py - 8);
+        }
+        ctx.restore();
+    }
+}
+
+// =========================================
+// DIBUJO DE PUNTOS
+// =========================================
+function dibujarPunto(z, esFijo, etiqueta) {
+    var p = mundoAPantalla(z.a, z.b);
+    var estadoPunto = pertenece(z);
+    var color = estadoPunto === 'dentro' ? COLOR_PUNTO_DENTRO
+              : estadoPunto === 'frontera' ? COLOR_PUNTO_FRONTERA
+              : COLOR_PUNTO_FUERA;
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, 7, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, esFijo ? 6 : 5, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    if (etiqueta) {
+        ctx.save();
+        ctx.font = '11px "Segoe UI", sans-serif';
+        var ancho = ctx.measureText(etiqueta).width;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+        ctx.fillRect(p.px + 8, p.py - 18, ancho + 6, 16);
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(etiqueta, p.px + 11, p.py - 6);
+        ctx.restore();
+    }
+}
+
+// =========================================
+// RENDER PRINCIPAL
+// =========================================
+function render() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    dibujarCuadricula();
+    dibujarRegion();
+    dibujarEjes();
+
+    if (estado.mostrar.notables) {
+        puntosNotables.forEach(function(p) {
+            dibujarPunto(p, false, p.etiqueta);
+        });
+    }
+
+    puntosFijos.forEach(function(p) {
+        if (estado.mostrar[p.id]) {
+            dibujarPunto(p, true, p.etiqueta);
+        }
+    });
+
+    puntosPersonalizados.forEach(function(p) {
+        dibujarPunto(p, false, p.etiqueta);
+    });
+
+    actualizarTabla();
+    actualizarContador();
+    actualizarAvisoIntercambio();
+}
+
+// =========================================
+// ACTUALIZAR TABLA
+// =========================================
+function actualizarTabla() {
+    var tbody = document.getElementById('tablaPuntos');
+    tbody.innerHTML = '';
+
+    var puntosMostrados = [];
+
+    if (estado.mostrar.notables) {
+        puntosNotables.forEach(function(p) {
+            puntosMostrados.push({ a: p.a, b: p.b, etiqueta: p.etiqueta });
+        });
+    }
+
+    puntosFijos.forEach(function(p) {
+        if (estado.mostrar[p.id]) {
+            puntosMostrados.push({ a: p.a, b: p.b, etiqueta: p.etiqueta });
+        }
+    });
+
+    puntosPersonalizados.forEach(function(p) {
+        puntosMostrados.push({ a: p.a, b: p.b, etiqueta: p.etiqueta });
+    });
+
+    if (puntosMostrados.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#8a9bb0;font-style:italic;">Activa al menos un punto de prueba</td></tr>';
+        return;
+    }
+
+    puntosMostrados.forEach(function(p) {
+        var m = modulo(p);
+        var estadoPunto = pertenece(p);
+        var estadoTexto = '';
+        var claseEstado = '';
+
+        if (estadoPunto === 'dentro') { estadoTexto = 'Dentro'; claseEstado = 'dentro'; }
+        else if (estadoPunto === 'frontera') { estadoTexto = 'Frontera'; claseEstado = 'frontera'; }
+        else { estadoTexto = 'Fuera'; claseEstado = 'fuera'; }
+
+        var fila = document.createElement('tr');
+        fila.innerHTML = '<td>' + p.etiqueta + '</td>' +
+            '<td>' + formatearNumero(parseFloat(m.toFixed(3))) + '</td>' +
+            '<td><span class="estado-badge ' + claseEstado + '"><span class="punto-color"></span>' + estadoTexto + '</span></td>' +
+            '<td>' + condicionPunto(p) + '</td>';
+        tbody.appendChild(fila);
+    });
+
+    actualizarAvisoPedagogico();
+}
+
+function actualizarAvisoPedagogico() {
+    var aviso = document.getElementById('aviso-pedagogico');
+    var htmlAviso = '💡 <strong>Exploración:</strong> ';
+
+    if (estado.region === 'corona') {
+        var r = radiosOrdenados();
+        if (Math.abs(r.menor - r.mayor) < TOL) {
+            htmlAviso += 'la corona está <strong>degenerada</strong> (r₁ = r₂ = ' + formatearNumero(r.menor) + '). ' +
+                'Cuando los radios son iguales, la región anular se convierte en una sola circunferencia.';
+        } else {
+            htmlAviso += 'una <strong>corona circular</strong> es la intersección de dos discos: ' +
+                'todos los puntos que cumplen $' + formatearNumero(r.menor) + ' \\leq |z| \\leq ' + formatearNumero(r.mayor) + '$. ' +
+                'Mueve los sliders para ver cómo cambia la región anular.';
+        }
+    } else if (estado.region === 'disco-cerrado') {
+        htmlAviso += 'un <strong>disco cerrado</strong> incluye la frontera. El símbolo $\\leq$ significa que los puntos con $|z| = r_2$ también pertenecen.';
+    } else if (estado.region === 'disco-abierto') {
+        htmlAviso += 'un <strong>disco abierto</strong> excluye la frontera. El símbolo $<$ estricto hace que los puntos con $|z| = r_2$ queden fuera.';
+    } else if (estado.region === 'exterior-cerrado') {
+        htmlAviso += 'la <strong>región exterior cerrada</strong> incluye la frontera $|z| = r_1$.';
+    } else if (estado.region === 'exterior-abierto') {
+        htmlAviso += 'la <strong>región exterior abierta</strong> excluye la frontera $|z| = r_1$.';
+    } else if (estado.region === 'fronteras') {
+        htmlAviso += 'esta vista muestra <strong>solo las circunferencias frontera</strong> sin relleno. ' +
+            'Los puntos que caen exactamente sobre $|z| = r_1$ o $|z| = r_2$ se marcan como "frontera".';
+    }
+
+    if (puntosPersonalizados.length > 0) {
+        htmlAviso += '<br><br>🎯 Has añadido <strong>' + puntosPersonalizados.length + '</strong> punto(s) personalizado(s). ' +
+            'Usa el botón "Limpiar puntos" para borrarlos.';
+    }
+
+    aviso.innerHTML = htmlAviso;
+    renderMath(aviso);
+}
+
+function actualizarContador() {
+    var el = document.getElementById('numPersonalizados');
+    var btn = document.getElementById('btn-limpiar-puntos');
+    el.textContent = puntosPersonalizados.length;
+    btn.style.display = puntosPersonalizados.length > 0 ? 'block' : 'none';
+}
+
+function actualizarAvisoIntercambio() {
+    var aviso = document.getElementById('aviso-intercambio');
+    if (estado.r1 > estado.r2) {
+        aviso.classList.add('visible');
+    } else {
+        aviso.classList.remove('visible');
+    }
+}
+
+// =========================================
+// SINCRONIZACIÓN
+// =========================================
+function sincronizarDesdeEstado() {
+    document.getElementById('slider-r1').value = estado.r1;
+    document.getElementById('val-r1').textContent = formatearNumero(estado.r1);
+    document.getElementById('slider-r2').value = estado.r2;
+    document.getElementById('val-r2').textContent = formatearNumero(estado.r2);
+    document.getElementById('slider-zoom').value = estado.zoom;
+    document.getElementById('val-zoom').textContent = estado.zoom;
+
+    document.querySelectorAll('input[name="region"]').forEach(function(rb) {
+        rb.checked = (rb.value === estado.region);
+    });
+
+    ['notables', 'z1', 'z2', 'z3', 'z4', 'z5'].forEach(function(key) {
+        var el = document.getElementById('chk-' + key);
+        if (el) el.checked = estado.mostrar[key];
+    });
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('slider-r1').addEventListener('input', function() {
+    estado.r1 = parseFloat(this.value);
+    document.getElementById('val-r1').textContent = formatearNumero(estado.r1);
+    render();
+});
+
+document.getElementById('slider-r2').addEventListener('input', function() {
+    estado.r2 = parseFloat(this.value);
+    document.getElementById('val-r2').textContent = formatearNumero(estado.r2);
+    render();
+});
+
+document.getElementById('slider-zoom').addEventListener('input', function() {
+    estado.zoom = parseInt(this.value);
+    document.getElementById('val-zoom').textContent = this.value;
+    render();
+});
+
+document.querySelectorAll('input[name="region"]').forEach(function(rb) {
+    rb.addEventListener('change', function() {
+        estado.region = this.value;
+        render();
+    });
+});
+
+['notables', 'z1', 'z2', 'z3', 'z4', 'z5'].forEach(function(key) {
+    var el = document.getElementById('chk-' + key);
+    if (el) {
+        el.addEventListener('change', function() {
+            estado.mostrar[key] = this.checked;
+            render();
+        });
+    }
+});
+
+// Clic en canvas: añade un punto personalizado
+canvas.addEventListener('click', function(e) {
+    var rect = canvas.getBoundingClientRect();
+    var escalaX = W / rect.width;
+    var escalaY = H / rect.height;
+    var px = (e.clientX - rect.left) * escalaX;
+    var py = (e.clientY - rect.top) * escalaY;
+
+    var mundo = pantallaAMundo(px, py);
+    var nuevoA = Math.round(mundo.x * 2) / 2;
+    var nuevoB = Math.round(mundo.y * 2) / 2;
+
+    // Si ya hay MAX, eliminar el más antiguo
+    if (puntosPersonalizados.length >= MAX_PERSONALIZADOS) {
+        puntosPersonalizados.shift();
+    }
+
+    puntosPersonalizados.push({
+        a: nuevoA,
+        b: nuevoB,
+        etiqueta: '$(' + formatearNumero(nuevoA) + ',' + formatearNumero(nuevoB) + ')$'
+    });
+
+    render();
+});
+
+document.getElementById('btn-limpiar-puntos').addEventListener('click', function() {
+    puntosPersonalizados = [];
+    render();
+});
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    estado.r1 = 2;
+    estado.r2 = 4;
+    estado.region = 'corona';
+    estado.zoom = 28;
+    estado.mostrar = { notables: true, z1: true, z2: true, z3: true, z4: true, z5: true };
+    puntosPersonalizados = [];
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// EJEMPLOS PREDEFINIDOS
+// =========================================
+var ejemplos = {
+    // Circunferencia unitaria: solo la frontera r = 1
+    1: { r1: 1, r2: 1, region: 'fronteras' },
+    // Corona 2 ≤ |z| ≤ 4
+    2: { r1: 2, r2: 4, region: 'corona' },
+    // Exterior |z| > 3 (r2 se pone a 10 para no confundir)
+    3: { r1: 3, r2: 10, region: 'exterior-abierto' },
+    // Disco cerrado |z| ≤ 2
+    4: { r1: 0, r2: 2, region: 'disco-cerrado' },
+    // Corona degenerada r1 = r2 = 3
+    5: { r1: 3, r2: 3, region: 'corona' },
+    // Disco máximo |z| ≤ 8
+    6: { r1: 0, r2: 8, region: 'disco-cerrado' }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        estado.r1 = data.r1;
+        estado.r2 = data.r2;
+        estado.region = data.region;
+        puntosPersonalizados = [];
+        sincronizarDesdeEstado();
+        render();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+function init() {
+    configurarHiDPI();
+    estado.r1 = 2;
+    estado.r2 = 4;
+    estado.region = 'corona';
+    estado.zoom = 28;
+    sincronizarDesdeEstado();
+    render();
+    renderMath(document.body);
+}
+
+window.addEventListener('load', init);
+
+</script>
+
+</body>
+</html>

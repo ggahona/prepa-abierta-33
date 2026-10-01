@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo 8 — Raíces Cuadradas, Representación Geométrica y Valor Absoluto | Matemáticas III</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 480px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.15rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 5px;
+        }
+
+        input[type="number"] {
+            padding: 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1.05rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .alerta {
+            background-color: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--color-error);
+            padding: 15px 20px;
+            border-radius: 6px;
+            color: var(--color-error);
+            margin: 20px 0;
+        }
+
+        .alerta strong { color: var(--color-error); }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 18px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            color: var(--color-primario);
+            margin: 15px 0;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.3rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"] { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 8 — Raíces Cuadradas, Representación Geométrica y Valor Absoluto</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa" data-indice="0">
+            <h2>Bienvenida al Módulo 8</h2>
+            <p>En este módulo cerramos el estudio de los números complejos abordando tres aplicaciones fundamentales: las <strong>raíces cuadradas</strong> de números negativos, la <strong>representación geométrica</strong> en el plano complejo y el <strong>valor absoluto</strong> (o módulo) de un número complejo.</p>
+            <div class="math-block">$$|z| = |a + bi| = \sqrt{a^2 + b^2}$$</div>
+            <p>Estos tres temas nos permitirán resolver ecuaciones del tipo $x^2 + K = 0$, interpretar geométricamente los números complejos y medir distancias en el plano complejo.</p>
+        </div>
+
+        <!-- DIAPOSITIVA 2: RAÍCES CUADRADAS -->
+        <div class="diapositiva" data-indice="1">
+            <h2>1. Raíces Cuadradas de Números Negativos</h2>
+            <p>Recordemos que la razón para introducir $\mathbb{C}$ fue resolver ecuaciones del tipo $x^2 + K = 0$ con $K > 0$. Partimos del caso más simple $x^2 = -1$:</p>
+            <div class="math-block">$$x^2 = -1 \implies x = i \quad \text{ó} \quad x = -i$$</div>
+            <p>Las raíces cuadradas de $-1$ son $\pm i$, es decir:</p>
+            <div class="math-block">$$\sqrt{-1} = i \quad \text{y} \quad -\sqrt{-1} = -i$$</div>
+
+            <h3>Ejemplo: raíz cuadrada de $-16$</h3>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            x^2 &= -16 \\
+            x &= \pm\sqrt{-16} = \pm\sqrt{(-1)(16)} = \pm\sqrt{-1}\cdot\sqrt{16} = \pm 4i
+            \end{aligned}
+            $$
+            </div>
+            <p>Por lo tanto: $x = 4i$ ó $x = -4i$.</p>
+
+            <div class="caja-interactiva">
+                <h3>√ Calculadora de raíces cuadradas</h3>
+                <p>Ingresa un número entero (positivo o negativo) para obtener sus raíces cuadradas en $\mathbb{C}$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>Número K =</label><input type="number" id="rc-K" value="-16" step="any"></div>
+                    <button class="btn-primario" id="btn-raices">Calcular raíces</button>
+                </div>
+                <div class="resultado" id="res-raices">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: ECUACIONES CUADRÁTICAS -->
+        <div class="diapositiva" data-indice="2">
+            <h2>2. Conjuntos Solución de Ecuaciones</h2>
+            <p>Aplicando las raíces cuadradas de números negativos, podemos resolver ecuaciones cuadráticas que no tienen solución en $\mathbb{R}$.</p>
+
+            <h3>Ejemplo: $(x - 2)^2 + 4 = 0$</h3>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            (x - 2)^2 &= -4 \\
+            x - 2 &= \pm\sqrt{-4} = \pm 2i \\
+            x &= 2 + 2i \quad \text{ó} \quad x = 2 - 2i
+            \end{aligned}
+            $$
+            </div>
+
+            <h3>Ejemplo: $x^2 - 2 = 0$</h3>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            x^2 &= 2 \\
+            x &= \pm\sqrt{2} = \pm\sqrt{2} + 0i
+            \end{aligned}
+            $$
+            </div>
+            <p>Las soluciones son reales, pero se escriben como $\sqrt{2} + 0i$ y $-\sqrt{2} + 0i$ para dejarlas en la forma $a + bi$.</p>
+
+            <div class="caja-interactiva">
+                <h3>🧮 Solucionador de ecuaciones $x^2 + K = 0$</h3>
+                <p>Ingresa el valor de $K$ para obtener las dos soluciones en la forma $a + bi$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>K =</label><input type="number" id="ec-K" value="5" step="any"></div>
+                    <button class="btn-primario" id="btn-ecuacion">Resolver</button>
+                </div>
+                <div class="resultado" id="res-ecuacion">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: PRODUCTO DE RAÍCES NEGATIVAS -->
+        <div class="diapositiva" data-indice="3">
+            <h2>3. Cuidado con el Producto de Raíces Negativas</h2>
+            <p>La propiedad $\sqrt{a} \cdot \sqrt{b} = \sqrt{ab}$ <strong>sólo es válida cuando $a \geq 0$ y $b \geq 0$</strong>. Cuando ambos radicandos son negativos, primero convertimos cada raíz a su forma con $i$ y luego multiplicamos.</p>
+
+            <div class="alerta">
+                <strong>⚠️ Error común:</strong> afirmar que $\sqrt{-25} \cdot \sqrt{-16} = \sqrt{(-25)(-16)} = \sqrt{400} = 20$. <br>
+                <strong>✅ Correcto:</strong> $\sqrt{-25} \cdot \sqrt{-16} = (5i)(4i) = 20i^2 = -20$.
+            </div>
+
+            <h3>Ejemplo resuelto</h3>
+            <div class="math-block">
+            $$
+            \begin{aligned}
+            \sqrt{-25} \cdot \sqrt{-16} &= \sqrt{-1}\cdot\sqrt{25} \cdot \sqrt{-1}\cdot\sqrt{16} \\
+            &= i \cdot 5 \cdot i \cdot 4 \\
+            &= i^2 \cdot 20 \\
+            &= -20
+            \end{aligned}
+            $$
+            </div>
+
+            <h3>Ejemplo: suma de raíces negativas</h3>
+            <div class="math-block">
+            $$\sqrt{-25} + \sqrt{-16} = 5i + 4i = 9i$$
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>🧪 Verificador de producto de raíces</h3>
+                <p>Dados dos números positivos $a$ y $b$, verifica el producto $\sqrt{-a} \cdot \sqrt{-b}$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="pr-a" value="25" step="any" min="1"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="pr-b" value="16" step="any" min="1"></div>
+                    <button class="btn-primario" id="btn-producto">Verificar</button>
+                </div>
+                <div class="resultado" id="res-producto">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: REPRESENTACIÓN GEOMÉTRICA -->
+        <div class="diapositiva" data-indice="4">
+            <h2>4. Representación Geométrica en el Plano Complejo</h2>
+            <p>Cada número complejo $z = a + bi$ se representa como el punto $(a, b)$ en el <strong>plano complejo</strong>:</p>
+            <ul>
+                <li>El <strong>eje $X$</strong> se llama <strong>eje real</strong>.</li>
+                <li>El <strong>eje $Y$</strong> se llama <strong>eje imaginario</strong>.</li>
+                <li>El punto $(a, b)$ tiene a $a$ como abscisa y a $b$ como ordenada.</li>
+            </ul>
+
+            <h3>Ejemplos</h3>
+            <ul>
+                <li>$z = 2 + 3i$ → punto $(2, 3)$ en el primer cuadrante.</li>
+                <li>$z = -3 + 2i$ → punto $(-3, 2)$ en el segundo cuadrante.</li>
+                <li>$z = -1 - 4i$ → punto $(-1, -4)$ en el tercer cuadrante.</li>
+                <li>$z = 5 - 2i$ → punto $(5, -2)$ en el cuarto cuadrante.</li>
+                <li>$z = 4$ → punto $(4, 0)$ sobre el eje real.</li>
+                <li>$z = 3i$ → punto $(0, 3)$ sobre el eje imaginario.</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>📍 Ubicador en el plano complejo</h3>
+                <p>Ingresa $a$ y $b$ para obtener la descripción geométrica de $z = a + bi$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="rg-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="rg-b" value="3" step="any"></div>
+                    <button class="btn-primario" id="btn-representar">Ubicar</button>
+                </div>
+                <div class="resultado" id="res-representar">La descripción aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: VALOR ABSOLUTO -->
+        <div class="diapositiva" data-indice="5">
+            <h2>5. Valor Absoluto (Módulo) de un Número Complejo</h2>
+            <p>La distancia del punto $(a, b)$ al origen se calcula con el teorema de Pitágoras, ya que $a$ y $b$ son los catetos de un triángulo rectángulo:</p>
+            <div class="math-block">$$|z| = |a + bi| = \sqrt{a^2 + b^2}$$</div>
+            <p>Observa que el valor absoluto de un número complejo es siempre un <strong>número real no negativo</strong>.</p>
+
+            <h3>Ejemplos</h3>
+            <ul>
+                <li>$|3 + 4i| = \sqrt{9 + 16} = \sqrt{25} = 5$</li>
+                <li>$|\sqrt{3} + \sqrt{13}\,i| = \sqrt{3 + 13} = \sqrt{16} = 4$</li>
+                <li>$\left|\dfrac{\sqrt{3}}{2} - \dfrac{1}{2}i\right| = \sqrt{\dfrac{3}{4} + \dfrac{1}{4}} = \sqrt{1} = 1$</li>
+                <li>$|5| = |5 + 0i| = \sqrt{25} = 5$</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>📏 Calculadora de valor absoluto</h3>
+                <p>Ingresa $a$ y $b$ para calcular $|a + bi|$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="va-a" value="3" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="va-b" value="4" step="any"></div>
+                    <button class="btn-primario" id="btn-valor-abs">Calcular |z|</button>
+                </div>
+                <div class="resultado" id="res-valor-abs">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: CIRCUNFERENCIA UNITARIA -->
+        <div class="diapositiva" data-indice="6">
+            <h2>6. La Circunferencia Unitaria $|z| = 1$</h2>
+            <p>Consideremos el conjunto de números complejos $z$ que satisfacen $|z| = 1$. Geométricamente, $|z|$ representa la distancia de $z$ al origen, por lo que los números complejos que cumplen $|z| = 1$ son todos aquellos cuya gráfica está a una unidad del origen.</p>
+            <p>Este conjunto de puntos forma una <strong>circunferencia</strong> de radio 1 centrada en el origen:</p>
+            <div class="math-block">$$|z| = 1 \iff x^2 + y^2 = 1$$</div>
+
+            <h3>Puntos notables de la circunferencia unitaria</h3>
+            <ul>
+                <li>$(1, 0)$ → $z = 1$</li>
+                <li>$(0, 1)$ → $z = i$</li>
+                <li>$(-1, 0)$ → $z = -1$</li>
+                <li>$(0, -1)$ → $z = -i$</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>⭕ Verificador de puntos en la circunferencia unitaria</h3>
+                <p>Ingresa $a$ y $b$ para comprobar si $z = a + bi$ pertenece a la circunferencia $|z| = 1$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="cu-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="cu-b" value="0" step="any"></div>
+                    <button class="btn-primario" id="btn-unitaria">Verificar</button>
+                </div>
+                <div class="resultado" id="res-unitaria">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: REGIONES DEL PLANO -->
+        <div class="diapositiva" data-indice="7">
+            <h2>7. Regiones del Plano Definidas por Desigualdades</h2>
+            <p>Las desigualdades con el módulo describen <strong>regiones</strong> del plano complejo, no solo curvas:</p>
+
+            <h3>Tipos de regiones</h3>
+            <ul>
+                <li>$|z| \leq 1$ → <strong>disco cerrado</strong> de radio 1 (incluye la frontera).</li>
+                <li>$|z| < 1$ → <strong>disco abierto</strong> de radio 1 (excluye la frontera).</li>
+                <li>$|z| > 3$ → <strong>región exterior</strong> a la circunferencia de radio 3 (sin incluirla).</li>
+                <li>$|z| \geq 3$ → <strong>región exterior</strong> incluyendo la circunferencia de radio 3.</li>
+                <li>$\{z \mid |z| \leq 4\} \cap \{z \mid |z| \geq 2\}$ → <strong>corona circular</strong> entre los radios 2 y 4.</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>🗺️ Identificador de regiones</h3>
+                <p>Ingresa un número complejo $z = a + bi$ y un radio $r$ para determinar la posición de $z$ respecto a la circunferencia $|z| = r$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label>a =</label><input type="number" id="rg2-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label>b =</label><input type="number" id="rg2-b" value="1" step="any"></div>
+                    <div class="input-wrapper"><label>Radio r =</label><input type="number" id="rg2-r" value="3" step="any" min="0"></div>
+                    <button class="btn-primario" id="btn-region">Identificar región</button>
+                </div>
+                <div class="resultado" id="res-region">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: RESUMEN -->
+        <div class="diapositiva" data-indice="8">
+            <h2>8. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Las raíces cuadradas de $-1$ son $\pm i$, es decir, $\sqrt{-1} = i$.</li>
+                <li>Para resolver $x^2 + K = 0$ con $K > 0$: $x = \pm\sqrt{-K} = \pm\sqrt{K}\,i$.</li>
+                <li>La propiedad $\sqrt{a} \cdot \sqrt{b} = \sqrt{ab}$ <strong>no se cumple</strong> si ambos radicandos son negativos. Se debe convertir primero a la forma $i\sqrt{|a|}$ y luego multiplicar, recordando que $i^2 = -1$.</li>
+                <li>Un número complejo $z = a + bi$ se representa geométricamente como el punto $(a, b)$ en el <strong>plano complejo</strong>: eje real ($X$) y eje imaginario ($Y$).</li>
+                <li>El <strong>valor absoluto</strong> de $z = a + bi$ es $|z| = \sqrt{a^2 + b^2}$, la distancia del punto al origen.</li>
+                <li>La ecuación $|z| = 1$ representa la <strong>circunferencia unitaria</strong> centrada en el origen.</li>
+                <li>Las desigualdades con el módulo describen <strong>regiones</strong> del plano: discos, regiones exteriores y coronas circulares.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 8 y con ello el estudio completo de la Unidad X sobre Números Complejos.</p>
+                <p style="margin-top: 10px; font-size: 0.9rem;">Ahora dominas las operaciones básicas, la forma rectangular, las raíces cuadradas, la representación geométrica y el valor absoluto de los números complejos.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 9</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Number.isInteger(n)) return n.toString();
+        return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function latexComplejo(a, b) {
+        var latex = '';
+        if (a !== 0) latex += formatearNumero(a);
+        if (b !== 0) {
+            if (latex !== '') {
+                latex += (b > 0 ? ' + ' : ' - ');
+            } else if (b < 0) {
+                latex += '-';
+            }
+            var absB = Math.abs(b);
+            if (absB === 1) latex += 'i';
+            else latex += formatearNumero(absB) + 'i';
+        }
+        if (latex === '') latex = '0';
+        return latex;
+    }
+
+    // =========================================
+    // 1. CALCULADORA DE RAÍCES CUADRADAS
+    // =========================================
+    document.getElementById('btn-raices').addEventListener('click', function() {
+        var K = parseFloat(document.getElementById('rc-K').value);
+        var res = document.getElementById('res-raices');
+
+        if (isNaN(K)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar un número.';
+            return;
+        }
+
+        if (K >= 0) {
+            var r = Math.sqrt(K);
+            res.className = 'resultado exito';
+            res.innerHTML = 'Las raíces cuadradas de $' + formatearNumero(K) + '$ son reales:<br>' +
+                '$$x = \\pm\\sqrt{' + formatearNumero(K) + '} = \\pm ' + formatearNumero(r) + '$$';
+        } else {
+            var absK = Math.abs(K);
+            var rImag = Math.sqrt(absK);
+            res.className = 'resultado exito';
+            res.innerHTML = 'Las raíces cuadradas de $' + formatearNumero(K) + '$ son complejas:<br>' +
+                '$$x^2 = ' + formatearNumero(K) + ' \\implies x = \\pm\\sqrt{' + formatearNumero(K) + '} = \\pm ' + formatearNumero(rImag) + 'i$$' +
+                '<p>Soluciones: $x_1 = ' + formatearNumero(rImag) + 'i$ y $x_2 = -' + formatearNumero(rImag) + 'i$</p>';
+        }
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. SOLUCIONADOR DE ECUACIONES x² + K = 0
+    // =========================================
+    document.getElementById('btn-ecuacion').addEventListener('click', function() {
+        var K = parseFloat(document.getElementById('ec-K').value);
+        var res = document.getElementById('res-ecuacion');
+
+        if (isNaN(K)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar el valor de K.';
+            return;
+        }
+
+        var target = -K;
+
+        if (target >= 0) {
+            var r = Math.sqrt(target);
+            res.className = 'resultado exito';
+            res.innerHTML = 'La ecuación $x^2 + ' + formatearNumero(K) + ' = 0$ tiene soluciones reales:<br>' +
+                '$$x = \\pm\\sqrt{' + formatearNumero(target) + '} = \\pm ' + formatearNumero(r) + '$$';
+        } else {
+            var absTarget = Math.abs(target);
+            var rImag = Math.sqrt(absTarget);
+            res.className = 'resultado exito';
+            res.innerHTML = 'La ecuación $x^2 + ' + formatearNumero(K) + ' = 0$ no tiene soluciones reales. Sus soluciones complejas son:<br>' +
+                '$$x^2 = ' + formatearNumero(target) + ' \\implies x = \\pm\\sqrt{' + formatearNumero(target) + '} = \\pm ' + formatearNumero(rImag) + 'i$$' +
+                '<p>Soluciones: $x_1 = ' + formatearNumero(rImag) + 'i$ y $x_2 = -' + formatearNumero(rImag) + 'i$</p>';
+        }
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. VERIFICADOR DE PRODUCTO DE RAÍCES NEGATIVAS
+    // =========================================
+    document.getElementById('btn-producto').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('pr-a').value);
+        var b = parseFloat(document.getElementById('pr-b').value);
+        var res = document.getElementById('res-producto');
+
+        if (isNaN(a) || isNaN(b) || a <= 0 || b <= 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar dos números positivos $a > 0$ y $b > 0$ para construir $\\sqrt{-a}$ y $\\sqrt{-b}$.';
+            renderMath(res);
+            return;
+        }
+
+        var raizA = Math.sqrt(a);
+        var raizB = Math.sqrt(b);
+        var producto = -raizA * raizB;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p><strong>Expresión que estamos verificando:</strong> $\\sqrt{-' + formatearNumero(a) + '} \\cdot \\sqrt{-' + formatearNumero(b) + '}$</p>' +
+            '<p><strong>Forma correcta (convirtiendo primero a $i$):</strong></p>' +
+            '$$\\sqrt{-' + formatearNumero(a) + '} \\cdot \\sqrt{-' + formatearNumero(b) + '} = (' + formatearNumero(raizA) + 'i)(' + formatearNumero(raizB) + 'i) = ' + formatearNumero(raizA * raizB) + 'i^2 = ' + formatearNumero(producto) + '$$' +
+            '<p><strong>Forma incorrecta (error común):</strong></p>' +
+            '<p style="text-decoration: line-through; color: var(--color-error);">$\\sqrt{(-' + formatearNumero(a) + ')(-' + formatearNumero(b) + ')} = \\sqrt{' + formatearNumero(a * b) + '} = ' + formatearNumero(Math.sqrt(a * b)) + '$</p>' +
+            '<p>❌ La propiedad $\\sqrt{x} \\cdot \\sqrt{y} = \\sqrt{xy}$ <strong>no es válida</strong> cuando ambos radicandos son negativos.</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. UBICADOR EN EL PLANO COMPLEJO
+    // =========================================
+    document.getElementById('btn-representar').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('rg-a').value);
+        var b = parseFloat(document.getElementById('rg-b').value);
+        var res = document.getElementById('res-representar');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var descripcion = '';
+        if (a > 0 && b > 0) descripcion = 'primer cuadrante';
+        else if (a < 0 && b > 0) descripcion = 'segundo cuadrante';
+        else if (a < 0 && b < 0) descripcion = 'tercer cuadrante';
+        else if (a > 0 && b < 0) descripcion = 'cuarto cuadrante';
+        else if (a === 0 && b !== 0) descripcion = 'sobre el eje imaginario';
+        else if (b === 0 && a !== 0) descripcion = 'sobre el eje real';
+        else descripcion = 'en el origen';
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>El número complejo $z = ' + latexComplejo(a, b) + '$ se representa como el punto $(' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ')$ en el plano complejo.</p>' +
+            '<p>Ubicación: <strong>' + descripcion + '</strong>.</p>' +
+            '<p>Abscisa: $a = ' + formatearNumero(a) + '$ (eje real) &nbsp;|&nbsp; Ordenada: $b = ' + formatearNumero(b) + '$ (eje imaginario)</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. CALCULADORA DE VALOR ABSOLUTO
+    // =========================================
+    document.getElementById('btn-valor-abs').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('va-a').value);
+        var b = parseFloat(document.getElementById('va-b').value);
+        var res = document.getElementById('res-valor-abs');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var cuadrado = a * a + b * b;
+        var modulo = Math.sqrt(cuadrado);
+        var moduloRedondeado = parseFloat(modulo.toFixed(4));
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Para $z = ' + latexComplejo(a, b) + '$:</p>' +
+            '$$|z| = \\sqrt{(' + formatearNumero(a) + ')^2 + (' + formatearNumero(b) + ')^2} = \\sqrt{' + formatearNumero(a * a) + ' + ' + formatearNumero(b * b) + '} = \\sqrt{' + formatearNumero(cuadrado) + '}$$' +
+            '<p>Resultado: $|z| = ' + formatearNumero(moduloRedondeado) + '$</p>' +
+            '<p><em>El valor absoluto es un número real no negativo.</em></p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. VERIFICADOR DE CIRCUNFERENCIA UNITARIA
+    // =========================================
+    document.getElementById('btn-unitaria').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('cu-a').value);
+        var b = parseFloat(document.getElementById('cu-b').value);
+        var res = document.getElementById('res-unitaria');
+
+        if (isNaN(a) || isNaN(b)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar ambos componentes.';
+            return;
+        }
+
+        var moduloCuadrado = a * a + b * b;
+        var modulo = Math.sqrt(moduloCuadrado);
+        var tolerancia = 0.001;
+        var pertenece = Math.abs(modulo - 1) < tolerancia;
+
+        if (pertenece) {
+            res.className = 'resultado exito';
+            res.innerHTML = '<p>✅ El número complejo $z = ' + latexComplejo(a, b) + '$ <strong>pertenece</strong> a la circunferencia unitaria $|z| = 1$.</p>' +
+                '$$|z| = \\sqrt{' + formatearNumero(a * a) + ' + ' + formatearNumero(b * b) + '} = \\sqrt{' + formatearNumero(moduloCuadrado) + '} = 1$$';
+        } else {
+            res.className = 'resultado error';
+            res.innerHTML = '<p>❌ El número complejo $z = ' + latexComplejo(a, b) + '$ <strong>no pertenece</strong> a la circunferencia unitaria.</p>' +
+                '$$|z| = \\sqrt{' + formatearNumero(a * a) + ' + ' + formatearNumero(b * b) + '} = \\sqrt{' + formatearNumero(moduloCuadrado) + '} = ' + formatearNumero(parseFloat(modulo.toFixed(4))) + ' \\neq 1$$';
+        }
+        renderMath(res);
+    });
+
+    // =========================================
+    // 7. IDENTIFICADOR DE REGIONES
+    // =========================================
+    document.getElementById('btn-region').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('rg2-a').value);
+        var b = parseFloat(document.getElementById('rg2-b').value);
+        var r = parseFloat(document.getElementById('rg2-r').value);
+        var res = document.getElementById('res-region');
+
+        if (isNaN(a) || isNaN(b) || isNaN(r) || r < 0) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Debes ingresar $a$, $b$ y un radio $r \\geq 0$.';
+            return;
+        }
+
+        var modulo = Math.sqrt(a * a + b * b);
+        var descripcion = '';
+
+        if (r === 0) {
+            if (modulo === 0) descripcion = 'está en el origen $(0, 0)$';
+            else descripcion = 'está fuera del conjunto $\\{|z| \\leq 0\\} = \\{(0,0)\\}$';
+        } else {
+            if (Math.abs(modulo - r) < 0.001) {
+                descripcion = 'está <strong>sobre la circunferencia</strong> $|z| = ' + formatearNumero(r) + '$';
+            } else if (modulo < r) {
+                descripcion = 'está <strong>dentro del disco</strong> $|z| < ' + formatearNumero(r) + '$';
+            } else {
+                descripcion = 'está <strong>fuera del disco</strong> $|z| > ' + formatearNumero(r) + '$';
+            }
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>El número complejo $z = ' + latexComplejo(a, b) + '$ tiene módulo:</p>' +
+            '$$|z| = \\sqrt{' + formatearNumero(a * a) + ' + ' + formatearNumero(b * b) + '} = ' + formatearNumero(parseFloat(modulo.toFixed(4))) + '$$' +
+            '<p>Con respecto a la circunferencia de radio $r = ' + formatearNumero(r) + '$:</p>' +
+            '<p>$z$ ' + descripcion + '.</p>';
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiografía de la Parábola | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-slider label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .seccion-slider .valor-slider {
+            color: var(--color-acento);
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 8px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .seccion-ejemplos h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 820 / 560;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+            cursor: crosshair;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda-regiones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px rgba(44,73,102,0.2);
+        }
+
+        .panel-info {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .panel-info h3 {
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+        }
+        .tabla-info {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+        .tabla-info tr { border-bottom: 1px solid var(--color-base); }
+        .tabla-info tr:last-child { border-bottom: none; }
+        .tabla-info td {
+            padding: 8px 14px;
+            color: var(--color-texto-oscuro);
+            vertical-align: top;
+        }
+        .tabla-info td:first-child {
+            width: 42%;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .tabla-info td:last-child {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        .tabla-info tr.destacado td {
+            background-color: rgba(91,127,163,0.08);
+        }
+        .tabla-info tr.destacado td:first-child {
+            color: var(--color-acento);
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-canvas { padding: 18px 16px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+            .tabla-info { font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Radiografía de la Parábola</h1>
+        <p>Visualizador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Coeficientes</h2>
+
+            <div class="seccion-slider">
+                <label>$a$: <span class="valor-slider" id="val-a">1</span></label>
+                <input type="range" id="slider-a" min="-5" max="5" step="0.1" value="1" aria-label="Coeficiente a">
+            </div>
+
+            <div class="seccion-slider">
+                <label>$b$: <span class="valor-slider" id="val-b">-6</span></label>
+                <input type="range" id="slider-b" min="-10" max="10" step="0.5" value="-6" aria-label="Coeficiente b">
+            </div>
+
+            <div class="seccion-slider">
+                <label>$c$: <span class="valor-slider" id="val-c">5</span></label>
+                <input type="range" id="slider-c" min="-10" max="10" step="0.5" value="5" aria-label="Coeficiente c">
+            </div>
+
+            <h3>Elementos a mostrar</h3>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-vertice" checked> Vértice
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-eje" checked> Eje de simetría
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-raices" checked> Raíces
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-interseccion" checked> Intersección con $Y$
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-simetricos" checked> Puntos simétricos
+            </label>
+            <label class="checkbox-linea">
+                <input type="checkbox" id="chk-cuadricula" checked> Cuadrícula
+            </label>
+
+            <h3>Zoom del plano</h3>
+            <div class="seccion-slider">
+                <label>Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
+                <input type="range" id="slider-zoom" min="15" max="50" step="1" value="30" aria-label="Zoom del plano">
+            </div>
+
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar valores">↺ Reiniciar</button>
+
+            <h3>Ejemplos del Módulo 9</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $y = x^2 - 6x + 5$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $y = -2x^2 + 2x + 12$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $y = 3x^2 - 4x + 2$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $y = -x^2 + 5$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $y = 2x^2 + 4x$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $y = 0.5x^2 - 2x + 3$</button>
+            </div>
+        </div>
+
+        <!-- PANEL CANVAS -->
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560" aria-label="Gráfica de la función cuadrática con sus elementos"></canvas>
+                <div class="canvas-instrucciones">🖱️ Mueve los sliders para ver la parábola</div>
+            </div>
+
+            <div class="leyenda-regiones">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>Parábola</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>Vértice</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>Raíces</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#8e44ad;"></div>
+                    <span>Intersección $Y$</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#e67e22;"></div>
+                    <span>Simétricos</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#a9c1d9;"></div>
+                    <span>Eje de simetría</span>
+                </div>
+            </div>
+
+            <!-- PANEL INFO -->
+            <div class="panel-info">
+                <h3>📊 Radiografía de la parábola</h3>
+                <table class="tabla-info">
+                    <tr>
+                        <td>Función estándar</td>
+                        <td id="info-estandar">—</td>
+                    </tr>
+                    <tr>
+                        <td>Concavidad</td>
+                        <td id="info-concavidad">—</td>
+                    </tr>
+                    <tr class="destacado">
+                        <td>Forma canónica</td>
+                        <td id="info-canonica">—</td>
+                    </tr>
+                    <tr class="destacado">
+                        <td>Vértice $V(h, k)$</td>
+                        <td id="info-vertice">—</td>
+                    </tr>
+                    <tr>
+                        <td>Eje de simetría</td>
+                        <td id="info-eje">—</td>
+                    </tr>
+                    <tr>
+                        <td>Discriminante $\Delta = b^2 - 4ac$</td>
+                        <td id="info-discriminante">—</td>
+                    </tr>
+                    <tr>
+                        <td>Raíces (cortes con eje $X$)</td>
+                        <td id="info-raices">—</td>
+                    </tr>
+                    <tr>
+                        <td>Intersección con eje $Y$</td>
+                        <td id="info-interseccion">—</td>
+                    </tr>
+                </table>
+                <div class="aviso-pedagogico" id="aviso-pedagogico">
+                    💡 <strong>Exploración:</strong> mueve los sliders para ver cómo cambian la forma, la posición y los elementos de la parábola en tiempo real.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Visualizar interactivamente cómo los coeficientes $a$, $b$ y $c$ modifican la
+        <strong>concavidad</strong>, el <strong>vértice</strong>, el <strong>eje de simetría</strong>, las
+        <strong>raíces</strong> y la <strong>intersección con el eje $Y$</strong> de la parábola, integrando la
+        forma estándar con la forma canónica.
+    </div>
+</div>
+
+<script>
+// =========================================
+// CONFIGURACIÓN GLOBAL
+// =========================================
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
+var W = 820;
+var H = 560;
+
+// Colores
+var COLOR_PARABOLA = '#5b7fa3';
+var COLOR_VERTICE = '#c0392b';
+var COLOR_RAIZ = '#27ae60';
+var COLOR_INTERSECCION = '#8e44ad';
+var COLOR_SIMETRICO = '#e67e22';
+var COLOR_EJE = '#2c4966';
+var COLOR_CUADRICULA = '#e8eef5';
+var COLOR_EJE_SIMETRIA = '#a9c1d9';
+
+var TOL = 1e-6;
+
+// Estado global
+var estado = {
+    a: 1,
+    b: -6,
+    c: 5,
+    zoom: 30,
+    mostrar: {
+        vertice: true,
+        eje: true,
+        raices: true,
+        interseccion: true,
+        simetricos: true,
+        cuadricula: true
+    }
+};
+
+// =========================================
+// SOPORTE HIPDI
+// =========================================
+function configurarHiDPI() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(3)).toString();
+}
+
+function f(x) {
+    return estado.a * x * x + estado.b * x + estado.c;
+}
+
+function calcularVertice() {
+    var h = -estado.b / (2 * estado.a);
+    var k = f(h);
+    return { h: h, k: k };
+}
+
+function calcularDiscriminante() {
+    return estado.b * estado.b - 4 * estado.a * estado.c;
+}
+
+function calcularRaices() {
+    var d = calcularDiscriminante();
+    if (d < -TOL) return [];
+    if (Math.abs(d) < TOL) return [-estado.b / (2 * estado.a)];
+    var sq = Math.sqrt(d);
+    return [
+        (-estado.b + sq) / (2 * estado.a),
+        (-estado.b - sq) / (2 * estado.a)
+    ].sort(function(x, y) { return x - y; });
+}
+
+function construirFormaCanonica() {
+    var v = calcularVertice();
+    var a = estado.a;
+    var h = v.h;
+    var k = v.k;
+
+    var latex = 'y = ';
+    if (Math.abs(a - 1) < TOL) latex += '';
+    else if (Math.abs(a + 1) < TOL) latex += '-';
+    else latex += formatearNumero(a);
+
+    latex += '(x ';
+    if (Math.abs(h) < TOL) {
+        latex += ')^2 ';
+    } else if (h > 0) {
+        latex += '- ' + formatearNumero(h) + ')^2 ';
+    } else {
+        latex += '+ ' + formatearNumero(-h) + ')^2 ';
+    }
+
+    if (Math.abs(k) > TOL) {
+        if (k > 0) latex += '+ ' + formatearNumero(k);
+        else latex += '- ' + formatearNumero(-k);
+    }
+
+    return latex;
+}
+
+function construirEstandar() {
+    var a = estado.a, b = estado.b, c = estado.c;
+    var latex = 'y = ';
+    if (Math.abs(a - 1) < TOL) latex += 'x^2';
+    else if (Math.abs(a + 1) < TOL) latex += '-x^2';
+    else latex += formatearNumero(a) + 'x^2';
+
+    if (Math.abs(b) > TOL) {
+        if (b > 0) latex += ' + ' + formatearNumero(b) + 'x';
+        else latex += ' - ' + formatearNumero(-b) + 'x';
+    }
+
+    if (Math.abs(c) > TOL) {
+        if (c > 0) latex += ' + ' + formatearNumero(c);
+        else latex += ' - ' + formatearNumero(-c);
+    }
+
+    return latex;
+}
+
+// Auto-ajustar el zoom para que el vértice y las raíces queden visibles
+function autoAjustarZoom() {
+    var v = calcularVertice();
+    var raices = calcularRaices();
+
+    // Distancias máximas a cubrir
+    var maxX = Math.max(Math.abs(v.h), 1);
+    var maxY = Math.max(Math.abs(v.k), Math.abs(estado.c), 1);
+    raices.forEach(function(r) {
+        maxX = Math.max(maxX, Math.abs(r));
+    });
+
+    // Margen de seguridad del 20%
+    maxX *= 1.3;
+    maxY *= 1.3;
+
+    // El canvas tiene 820×560, con eje en el centro
+    var zoomX = (W / 2) / maxX;
+    var zoomY = (H / 2) / maxY;
+    var nuevoZoom = Math.min(zoomX, zoomY);
+
+    // Limitar al rango del slider
+    nuevoZoom = Math.max(15, Math.min(50, Math.round(nuevoZoom)));
+    estado.zoom = nuevoZoom;
+    document.getElementById('slider-zoom').value = nuevoZoom;
+    document.getElementById('val-zoom').textContent = nuevoZoom;
+}
+
+// Transformación mundo ↔ pantalla
+function mundoAPantalla(x, y) {
+    return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+    };
+}
+
+function pantallaAMundo(px, py) {
+    return {
+        x: (px - W / 2) / estado.zoom,
+        y: (H / 2 - py) / estado.zoom
+    };
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// =========================================
+// DIBUJO DEL PLANO
+// =========================================
+function dibujarCuadricula() {
+    ctx.strokeStyle = COLOR_CUADRICULA;
+    ctx.lineWidth = 1;
+    var paso = estado.zoom;
+    for (var x = (W / 2) % paso; x < W; x += paso) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, H);
+        ctx.stroke();
+    }
+    for (var y = (H / 2) % paso; y < H; y += paso) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(W, y);
+        ctx.stroke();
+    }
+}
+
+function dibujarEjes() {
+    ctx.strokeStyle = COLOR_EJE;
+    ctx.fillStyle = COLOR_EJE;
+    ctx.lineWidth = 2;
+
+    // Eje X
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W - 12, H / 2 - 6);
+    ctx.lineTo(W, H / 2);
+    ctx.lineTo(W - 12, H / 2 + 6);
+    ctx.fill();
+
+    // Eje Y
+    ctx.beginPath();
+    ctx.moveTo(W / 2, H);
+    ctx.lineTo(W / 2, 0);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(W / 2 - 6, 12);
+    ctx.lineTo(W / 2, 0);
+    ctx.lineTo(W / 2 + 6, 12);
+    ctx.fill();
+
+    // Etiquetas
+    ctx.font = '13px Segoe UI, sans-serif';
+    ctx.fillStyle = COLOR_EJE;
+    ctx.textAlign = 'right';
+    ctx.fillText('x', W - 8, H / 2 + 20);
+    ctx.textAlign = 'left';
+    ctx.fillText('y', W / 2 + 8, 16);
+
+    // Marcas numéricas con paso dinámico
+    ctx.font = '10px Segoe UI, sans-serif';
+    ctx.textAlign = 'center';
+    var maxX = Math.floor((W / 2) / estado.zoom);
+    var pasoX = Math.max(1, Math.ceil(maxX / 8));
+    for (var i = -maxX; i <= maxX; i++) {
+        if (i % pasoX !== 0) continue;
+        if (i === 0) continue;
+        var p = mundoAPantalla(i, 0);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(i.toString(), p.px, p.py + 14);
+    }
+    var maxY = Math.floor((H / 2) / estado.zoom);
+    var pasoY = Math.max(1, Math.ceil(maxY / 6));
+    ctx.textAlign = 'right';
+    for (var j = -maxY; j <= maxY; j++) {
+        if (j % pasoY !== 0) continue;
+        if (j === 0) continue;
+        var q = mundoAPantalla(0, j);
+        ctx.fillStyle = COLOR_EJE;
+        ctx.beginPath();
+        ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.fillText(j.toString(), q.px - 6, q.py + 4);
+    }
+    ctx.textAlign = 'left';
+    ctx.fillText('0', W / 2 + 6, H / 2 + 14);
+}
+
+// =========================================
+// DIBUJO DE LA PARÁBOLA
+// =========================================
+function dibujarParabola() {
+    var puntos = 500;
+    var xMin = -W / 2 / estado.zoom - 1;
+    var xMax = W / 2 / estado.zoom + 1;
+    var paso = (xMax - xMin) / puntos;
+
+    ctx.save();
+    ctx.strokeStyle = COLOR_PARABOLA;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+
+    var trazando = false;
+    for (var i = 0; i <= puntos; i++) {
+        var x = xMin + i * paso;
+        var y = f(x);
+        var p = mundoAPantalla(x, y);
+
+        // Verificar si el punto está fuera del canvas (con margen)
+        var fueraY = (p.py < -H * 2 || p.py > H * 3);
+        var fueraX = (p.px < -W * 2 || p.px > W * 3);
+
+        if (fueraY || fueraX) {
+            trazando = false;
+            continue;
+        }
+
+        if (!trazando) {
+            ctx.moveTo(p.px, p.py);
+            trazando = true;
+        } else {
+            ctx.lineTo(p.px, p.py);
+        }
+    }
+    ctx.stroke();
+    ctx.restore();
+}
+
+// =========================================
+// DIBUJO DE ELEMENTOS
+// =========================================
+function dibujarPuntoMundo(x, y, color, etiqueta, tamano) {
+    var p = mundoAPantalla(x, y);
+    tamano = tamano || 7;
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, tamano + 2, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(p.px, p.py, tamano, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    if (etiqueta) {
+        ctx.save();
+        ctx.font = 'bold 12px "Segoe UI", sans-serif';
+        var ancho = ctx.measureText(etiqueta).width;
+        var pad = 6;
+        var posX = p.px + 10;
+        var posY = p.py - 10;
+        // Ajustar si sale del canvas
+        if (posX + ancho + pad > W) posX = p.px - ancho - pad - 10;
+        if (posY < 15) posY = p.py + 22;
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(posX - 3, posY - 13, ancho + pad, 17);
+        ctx.fillStyle = color;
+        ctx.textAlign = 'left';
+        ctx.fillText(etiqueta, posX, posY);
+        ctx.restore();
+    }
+}
+
+function dibujarEjeSimetria() {
+    var v = calcularVertice();
+    var p = mundoAPantalla(v.h, 0);
+    ctx.save();
+    ctx.strokeStyle = COLOR_EJE_SIMETRIA;
+    ctx.lineWidth = 2;
+    ctx.setLineDash([8, 5]);
+    ctx.globalAlpha = 0.8;
+    ctx.beginPath();
+    ctx.moveTo(p.px, 0);
+    ctx.lineTo(p.px, H);
+    ctx.stroke();
+    ctx.restore();
+
+    // Etiqueta
+    ctx.save();
+    ctx.font = 'bold 12px "Segoe UI", sans-serif';
+    ctx.fillStyle = COLOR_EJE_SIMETRIA;
+    ctx.textAlign = 'center';
+    ctx.fillText('x = ' + formatearNumero(v.h), p.px, 20);
+    ctx.restore();
+}
+
+function dibujarVertice() {
+    var v = calcularVertice();
+    dibujarPuntoMundo(v.h, v.k, COLOR_VERTICE,
+        'V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')', 8);
+}
+
+function dibujarRaices() {
+    var raices = calcularRaices();
+    var esDoble = raices.length === 1;
+
+    raices.forEach(function(r, i) {
+        var etiqueta = esDoble
+            ? 'x₁=x₂=' + formatearNumero(r)
+            : 'x' + (i+1) + '=' + formatearNumero(r);
+        dibujarPuntoMundo(r, 0, COLOR_RAIZ, etiqueta, esDoble ? 7 : 6);
+
+        // Si es raíz doble, añadir anillo adicional
+        if (esDoble) {
+            var p = mundoAPantalla(r, 0);
+            ctx.save();
+            ctx.strokeStyle = COLOR_RAIZ;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, 12, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.restore();
+        }
+    });
+}
+
+function dibujarInterseccionY() {
+    dibujarPuntoMundo(0, estado.c, COLOR_INTERSECCION,
+        '(0, ' + formatearNumero(estado.c) + ')', 6);
+}
+
+function dibujarSimetricos() {
+    var v = calcularVertice();
+    var h = v.h;
+
+    // Calcular offset de manera segura
+    var maxOffsetX = (W / 2) / estado.zoom * 0.7;
+    var offset = Math.min(2, maxOffsetX / 2);
+    offset = Math.max(0.5, offset);
+
+    // Asegurar que el offset no sea 0
+    if (offset < 0.1) return;
+
+    var x1 = h - offset;
+    var x2 = h + offset;
+    var y1 = f(x1);
+    var y2 = f(x2);
+
+    // Verificar que ambos puntos estén dentro del canvas vertical
+    var p1 = mundoAPantalla(x1, y1);
+    var p2 = mundoAPantalla(x2, y2);
+    if (p1.py < 0 || p1.py > H || p2.py < 0 || p2.py > H) return;
+
+    // No dibujar si coinciden con el vértice
+    if (Math.abs(x1 - h) < TOL || Math.abs(x2 - h) < TOL) return;
+
+    dibujarPuntoMundo(x1, y1, COLOR_SIMETRICO,
+        '(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + ')', 5);
+    dibujarPuntoMundo(x2, y2, COLOR_SIMETRICO,
+        '(' + formatearNumero(x2) + ', ' + formatearNumero(y2) + ')', 5);
+
+    // Línea punteada horizontal conectando ambos puntos
+    ctx.save();
+    ctx.strokeStyle = COLOR_SIMETRICO;
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.globalAlpha = 0.6;
+    ctx.beginPath();
+    ctx.moveTo(p1.px, p1.py);
+    ctx.lineTo(p2.px, p2.py);
+    ctx.stroke();
+    ctx.restore();
+}
+
+// =========================================
+// RENDER PRINCIPAL
+// =========================================
+function render() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    if (estado.mostrar.cuadricula) {
+        dibujarCuadricula();
+    }
+
+    // Eje de simetría detrás de todo (con opacidad)
+    if (estado.mostrar.eje) {
+        dibujarEjeSimetria();
+    }
+
+    dibujarEjes();
+
+    dibujarParabola();
+
+    if (estado.mostrar.simetricos) {
+        dibujarSimetricos();
+    }
+
+    if (estado.mostrar.raices) {
+        dibujarRaices();
+    }
+
+    if (estado.mostrar.interseccion) {
+        dibujarInterseccionY();
+    }
+
+    if (estado.mostrar.vertice) {
+        dibujarVertice();
+    }
+
+    actualizarInfo();
+}
+
+// =========================================
+// ACTUALIZAR INFO
+// =========================================
+function actualizarInfo() {
+    var v = calcularVertice();
+    var d = calcularDiscriminante();
+    var raices = calcularRaices();
+
+    document.getElementById('info-estandar').innerHTML = '$' + construirEstandar() + '$';
+
+    var concavidad = (estado.a > 0)
+        ? 'Hacia <strong>arriba</strong> ($a > 0$) — mínimo'
+        : 'Hacia <strong>abajo</strong> ($a < 0$) — máximo';
+    document.getElementById('info-concavidad').innerHTML = concavidad;
+
+    document.getElementById('info-canonica').innerHTML = '$' + construirFormaCanonica() + '$';
+
+    document.getElementById('info-vertice').innerHTML =
+        '$V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')$';
+
+    document.getElementById('info-eje').innerHTML =
+        '$x = ' + formatearNumero(v.h) + '$';
+
+    // Normalizar -0 a 0
+    var dMostrar = Math.abs(d) < TOL ? 0 : d;
+    var discrTexto = '$' + formatearNumero(dMostrar) + '$';
+    if (d > TOL) discrTexto += ' &gt; 0 → dos raíces reales';
+    else if (Math.abs(d) < TOL) discrTexto += ' = 0 → una raíz doble';
+    else discrTexto += ' &lt; 0 → sin raíces reales';
+    document.getElementById('info-discriminante').innerHTML = discrTexto;
+
+    if (raices.length === 0) {
+        document.getElementById('info-raices').innerHTML = 'Sin raíces reales';
+    } else if (raices.length === 1) {
+        document.getElementById('info-raices').innerHTML =
+            '$x_1 = x_2 = ' + formatearNumero(raices[0]) + '$ (raíz doble)';
+    } else {
+        document.getElementById('info-raices').innerHTML =
+            '$x_1 = ' + formatearNumero(raices[0]) + '$, ' +
+            '$x_2 = ' + formatearNumero(raices[1]) + '$';
+    }
+
+    document.getElementById('info-interseccion').innerHTML =
+        '$(0, ' + formatearNumero(estado.c) + ')$';
+
+    // Aviso pedagógico contextual
+    var aviso = document.getElementById('aviso-pedagogico');
+    var html = '💡 <strong>Exploración:</strong> ';
+    if (Math.abs(estado.a) < 0.1) {
+        html += 'cuando $a \\to 0$, la parábola se aplana y tiende a una recta. ';
+    } else if (estado.a > 0) {
+        html += 'como $a = ' + formatearNumero(estado.a) + ' > 0$, la parábola abre hacia arriba y el vértice es un <strong>mínimo</strong>. ';
+    } else {
+        html += 'como $a = ' + formatearNumero(estado.a) + ' < 0$, la parábola abre hacia abajo y el vértice es un <strong>máximo</strong>. ';
+    }
+    if (Math.abs(estado.b) < TOL) {
+        html += 'Como $b = 0$, el eje de simetría es el eje $Y$ ($x = 0$).';
+    } else {
+        html += 'Observa cómo el valor de $b$ desplaza el vértice horizontalmente.';
+    }
+    aviso.innerHTML = html;
+
+    renderMath(document.querySelector('.panel-info'));
+}
+
+// =========================================
+// SINCRONIZACIÓN
+// =========================================
+function sincronizarDesdeEstado() {
+    document.getElementById('slider-a').value = estado.a;
+    document.getElementById('val-a').textContent = formatearNumero(estado.a);
+    document.getElementById('slider-b').value = estado.b;
+    document.getElementById('val-b').textContent = formatearNumero(estado.b);
+    document.getElementById('slider-c').value = estado.c;
+    document.getElementById('val-c').textContent = formatearNumero(estado.c);
+    document.getElementById('slider-zoom').value = estado.zoom;
+    document.getElementById('val-zoom').textContent = estado.zoom;
+
+    document.getElementById('chk-vertice').checked = estado.mostrar.vertice;
+    document.getElementById('chk-eje').checked = estado.mostrar.eje;
+    document.getElementById('chk-raices').checked = estado.mostrar.raices;
+    document.getElementById('chk-interseccion').checked = estado.mostrar.interseccion;
+    document.getElementById('chk-simetricos').checked = estado.mostrar.simetricos;
+    document.getElementById('chk-cuadricula').checked = estado.mostrar.cuadricula;
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('slider-a').addEventListener('input', function() {
+    estado.a = parseFloat(this.value);
+    document.getElementById('val-a').textContent = formatearNumero(estado.a);
+    render();
+});
+
+document.getElementById('slider-b').addEventListener('input', function() {
+    estado.b = parseFloat(this.value);
+    document.getElementById('val-b').textContent = formatearNumero(estado.b);
+    render();
+});
+
+document.getElementById('slider-c').addEventListener('input', function() {
+    estado.c = parseFloat(this.value);
+    document.getElementById('val-c').textContent = formatearNumero(estado.c);
+    render();
+});
+
+document.getElementById('slider-zoom').addEventListener('input', function() {
+    estado.zoom = parseInt(this.value);
+    document.getElementById('val-zoom').textContent = this.value;
+    render();
+});
+
+['vertice', 'eje', 'raices', 'interseccion', 'simetricos', 'cuadricula'].forEach(function(key) {
+    document.getElementById('chk-' + key).addEventListener('change', function() {
+        estado.mostrar[key] = this.checked;
+        render();
+    });
+});
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    estado.a = 1;
+    estado.b = -6;
+    estado.c = 5;
+    estado.zoom = 30;
+    estado.mostrar = { vertice: true, eje: true, raices: true, interseccion: true, simetricos: true, cuadricula: true };
+    sincronizarDesdeEstado();
+    render();
+});
+
+// =========================================
+// EJEMPLOS
+// =========================================
+var ejemplos = {
+    1: { a: 1, b: -6, c: 5 },
+    2: { a: -2, b: 2, c: 12 },
+    3: { a: 3, b: -4, c: 2 },
+    4: { a: -1, b: 0, c: 5 },
+    5: { a: 2, b: 4, c: 0 },
+    6: { a: 0.5, b: -2, c: 3 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        estado.a = data.a;
+        estado.b = data.b;
+        estado.c = data.c;
+        autoAjustarZoom();
+        sincronizarDesdeEstado();
+        render();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+function init() {
+    configurarHiDPI();
+    estado.a = 1;
+    estado.b = -6;
+    estado.c = 5;
+    autoAjustarZoom();
+    sincronizarDesdeEstado();
+    render();
+    renderMath(document.body);
+}
+
+window.addEventListener('load', init);
+
+</script>
+
+</body>
+</html>

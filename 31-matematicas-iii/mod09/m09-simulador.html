@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Autoevaluación - Módulo 9: La Función Cuadrática y su Gráfica</title>
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view {
+            display: block;
+        }
+
+        .quiz-view.hidden {
+            display: none;
+        }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item.disabled {
+            cursor: default;
+        }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible {
+            display: block;
+        }
+
+        .feedback-box strong {
+            color: var(--accent-main);
+        }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+        }
+
+        .btn-next.visible {
+            display: block;
+        }
+
+        .btn-next:hover {
+            background-color: var(--text-primary);
+        }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible {
+            display: block;
+        }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-restart:hover {
+            background-color: var(--text-primary);
+        }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.1rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+    <!-- MathJax 3 Configuration — SOLO delimitadores $ ... $ y $$ ... $$ -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$']],
+                displayMath: [['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 9</h1>
+            <p>La Función Cuadrática y su Gráfica (Parábola)</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Vista del Quiz -->
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList"></ul>
+            <div class="feedback-box" id="feedbackBox"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()">Siguiente Reactivo →</button>
+        </div>
+
+        <!-- Vista de Resultados -->
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 9
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cuál es la forma estándar de una función cuadrática y qué condición debe cumplir el coeficiente principal?",
+                options: [
+                    { text: "$f(x) = ax + b$, con $a \\neq 0$.", correct: false },
+                    { text: "$f(x) = ax^2 + bx + c$, con $a \\neq 0$.", correct: true },
+                    { text: "$f(x) = ax^3 + bx^2 + cx + d$, con $a \\neq 0$.", correct: false },
+                    { text: "$f(x) = ax^2 + bx + c$, con $a = 0$.", correct: false }
+                ],
+                feedback: "La función cuadrática tiene la forma estándar $f(x) = ax^2 + bx + c$ con $a, b, c \\in \\mathbb{R}$ y $a \\neq 0$. Si $a = 0$, la función se reduce a una función lineal."
+            },
+            {
+                id: 2,
+                text: "¿Qué tipo de curva es la gráfica de una función cuadrática y qué representa el signo de $a$?",
+                options: [
+                    { text: "Una línea recta; el signo de $a$ indica la pendiente.", correct: false },
+                    { text: "Una parábola; el signo de $a$ determina su concavidad (abre hacia arriba si $a > 0$, hacia abajo si $a < 0$).", correct: true },
+                    { text: "Una circunferencia; el signo de $a$ indica el radio.", correct: false },
+                    { text: "Una hipérbola; el signo de $a$ indica la orientación de las asíntotas.", correct: false }
+                ],
+                feedback: "La gráfica de una función cuadrática es una parábola. El signo del coeficiente principal $a$ determina la concavidad: si $a > 0$ abre hacia arriba (punto mínimo), si $a < 0$ abre hacia abajo (punto máximo)."
+            },
+            {
+                id: 3,
+                text: "¿Cuál es la fórmula para encontrar la coordenada $x$ del vértice de una parábola $y = ax^2 + bx + c$?",
+                options: [
+                    { text: "$x = \\dfrac{b}{2a}$", correct: false },
+                    { text: "$x = -\\dfrac{b}{2a}$", correct: true },
+                    { text: "$x = \\dfrac{2a}{b}$", correct: false },
+                    { text: "$x = -\\dfrac{2a}{b}$", correct: false }
+                ],
+                feedback: "La coordenada $x$ del vértice se calcula con la fórmula $x = -\\dfrac{b}{2a}$. Un error común es olvidar el signo negativo o invertir el cociente."
+            },
+            {
+                id: 4,
+                text: "Encuentra el vértice de la parábola $y = x^2 - 6x + 5$.",
+                options: [
+                    { text: "$V(3, -4)$", correct: true },
+                    { text: "$V(-3, -4)$", correct: false },
+                    { text: "$V(3, 4)$", correct: false },
+                    { text: "$V(6, 5)$", correct: false }
+                ],
+                feedback: "Aplicando la fórmula: $x = -\\dfrac{-6}{2(1)} = 3$. Sustituyendo: $y = (3)^2 - 6(3) + 5 = 9 - 18 + 5 = -4$. El vértice es $V(3, -4)$. Como $a = 1 > 0$, la parábola abre hacia arriba y el vértice es un mínimo."
+            },
+            {
+                id: 5,
+                text: "¿Cuál es la ecuación del eje de simetría de la parábola $y = 4x^2 - 8x + 1$?",
+                options: [
+                    { text: "$y = 1$", correct: false },
+                    { text: "$x = 1$", correct: true },
+                    { text: "$x = -1$", correct: false },
+                    { text: "$x = 2$", correct: false }
+                ],
+                feedback: "El eje de simetría es la recta vertical que pasa por el vértice: $x = -\\dfrac{b}{2a} = -\\dfrac{-8}{2(4)} = \\dfrac{8}{8} = 1$. Por lo tanto, el eje de simetría es $x = 1$."
+            },
+            {
+                id: 6,
+                text: "Si $y = (x - 3)^2 + 4$ está en forma canónica, ¿cuáles son las coordenadas del vértice?",
+                options: [
+                    { text: "$V(-3, 4)$", correct: false },
+                    { text: "$V(3, 4)$", correct: true },
+                    { text: "$V(3, -4)$", correct: false },
+                    { text: "$V(4, 3)$", correct: false }
+                ],
+                feedback: "En la forma canónica $y = a(x - h)^2 + k$, el vértice es $V(h, k)$. Comparando con $y = (x - 3)^2 + 4$, tenemos $h = 3$ y $k = 4$. El vértice es $V(3, 4)$. Un error común es confundir el signo de $h$."
+            },
+            {
+                id: 7,
+                text: "¿Cuál es la coordenada $y$ del vértice de la parábola $y = -3x^2 + 12x - 7$?",
+                options: [
+                    { text: "$y = 5$", correct: true },
+                    { text: "$y = -7$", correct: false },
+                    { text: "$y = 17$", correct: false },
+                    { text: "$y = -5$", correct: false }
+                ],
+                feedback: "Primero calculamos $x = -\\dfrac{12}{2(-3)} = \\dfrac{12}{6} = 2$. Luego sustituimos: $y = -3(2)^2 + 12(2) - 7 = -3(4) + 24 - 7 = -12 + 24 - 7 = 5$. El vértice es $V(2, 5)$, y como $a < 0$, es un punto máximo."
+            },
+            {
+                id: 8,
+                text: "Una parábola tiene vértice en $x = 3$ y pasa por el punto $(1, 4)$. ¿Cuál es el punto simétrico correspondiente?",
+                options: [
+                    { text: "$(-1, 4)$", correct: false },
+                    { text: "$(5, 4)$", correct: true },
+                    { text: "$(3, 4)$", correct: false },
+                    { text: "$(4, 4)$", correct: false }
+                ],
+                feedback: "Como el vértice está en $x = 3$, el eje de simetría es $x = 3$. La distancia horizontal del punto $(1, 4)$ al eje es $3 - 1 = 2$. El punto simétrico debe estar a la misma distancia hacia la derecha: $3 + 2 = 5$. El punto simétrico es $(5, 4)$."
+            },
+            {
+                id: 9,
+                text: "Considera la parábola $y = -x^2 + 5$. ¿Cuál es su vértice y qué tipo de punto extremo representa?",
+                options: [
+                    { text: "$V(0, 5)$, punto máximo.", correct: true },
+                    { text: "$V(0, 5)$, punto mínimo.", correct: false },
+                    { text: "$V(5, 0)$, punto máximo.", correct: false },
+                    { text: "$V(-1, 5)$, punto máximo.", correct: false }
+                ],
+                feedback: "En $y = -x^2 + 5$, tenemos $a = -1$ y $b = 0$. La coordenada $x$ del vértice es $x = -\\dfrac{0}{2(-1)} = 0$. Sustituyendo: $y = -(0)^2 + 5 = 5$. El vértice es $V(0, 5)$. Como $a = -1 < 0$, la parábola abre hacia abajo, por lo que el vértice es un punto máximo."
+            },
+            {
+                id: 10,
+                text: "El producto de dos números cuya suma es 10 debe ser el máximo posible. Si modelamos el producto como $P = x(10 - x)$, ¿qué valores de $x$ maximizan el producto y cuál es ese valor máximo?",
+                options: [
+                    { text: "$x = 5$, producto máximo $= 25$.", correct: true },
+                    { text: "$x = 0$, producto máximo $= 0$.", correct: false },
+                    { text: "$x = 10$, producto máximo $= 0$.", correct: false },
+                    { text: "$x = 2$, producto máximo $= 16$.", correct: false }
+                ],
+                feedback: "El producto es $P = x(10 - x) = -x^2 + 10x$. La coordenada $x$ del vértice es $x = -\\dfrac{10}{2(-1)} = 5$. Sustituyendo: $P = 5(10 - 5) = 5 \\cdot 5 = 25$. Los dos números son 5 y 5, y el producto máximo es 25."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+                li.onclick = () => selectOption(opt.correct, li);
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('quizView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+            }
+            btnNext.classList.add('visible');
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('quizView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            document.getElementById('progressBar').style.width = '100%';
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 9 sobre la función cuadrática, su forma canónica, el cálculo del vértice, la concavidad y la interpretación de la parábola.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de la función cuadrática y su gráfica. Repasa los detalles sobre el signo de $h$ en la forma canónica, la relación entre el vértice y las raíces, y los problemas de optimización para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 9 (forma estándar $f(x) = ax^2 + bx + c$, concavidad según el signo de $a$, fórmula del vértice $x = -b/(2a)$, forma canónica $y = a(x-h)^2 + k$ y simetría de la parábola) antes de intentar nuevamente.";
+            }
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('resultsView')]).catch(function(err){ console.log(err); });
+            }
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN AL CARGAR
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

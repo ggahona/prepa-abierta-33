@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cazador de Vértices | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .barra-progreso-general {
+            background-color: var(--color-base);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .barra-progreso-general .texto-progreso {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .progreso-track {
+            flex: 1;
+            height: 8px;
+            background-color: var(--color-acento-suave);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progreso-fill {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main { padding: 30px; }
+
+        .tarjeta-caso {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            border: 1px solid var(--color-acento-suave);
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-caso {
+            background-color: var(--color-base);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .numero-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nivel-caso {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nivel-caso.basico { background-color: rgba(39,174,96,0.15); color: var(--color-exito); }
+        .nivel-caso.medio  { background-color: rgba(91,127,163,0.15); color: var(--color-acento); }
+        .nivel-caso.alto   { background-color: rgba(192,57,43,0.15); color: var(--color-error); }
+
+        .enunciado {
+            padding: 20px;
+            font-size: 1.02rem;
+            color: var(--color-texto-oscuro);
+            background-color: var(--color-blanco);
+            border-bottom: 1px solid var(--color-base);
+        }
+        .enunciado .etiqueta-caso {
+            display: inline-block;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .enunciado .expresion-caso {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+            padding: 12px 0;
+            background-color: var(--color-base);
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .fase {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-base);
+        }
+        .fase:last-of-type { border-bottom: none; }
+
+        .fase-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+        .numero-fase {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fase-instruccion {
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+            padding-left: 36px;
+        }
+
+        .contador-intentos {
+            display: none;
+            background-color: var(--color-acento-suave);
+            color: var(--color-primario);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-left: 36px;
+            margin-bottom: 10px;
+        }
+        .contador-intentos.visible { display: inline-block; }
+
+        .opciones-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+        }
+        .opcion-item {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: var(--color-primario);
+            text-align: left;
+        }
+        .opcion-item:hover:not(.disabled) {
+            background-color: rgba(91,127,163,0.08);
+            border-color: var(--color-acento);
+        }
+        .opcion-item.disabled { cursor: default; }
+        .opcion-item.correcta {
+            background-color: rgba(39,174,96,0.15);
+            border-color: var(--color-exito);
+            color: #145a32;
+            font-weight: 700;
+        }
+        .opcion-item.incorrecta {
+            background-color: rgba(192,57,43,0.15);
+            border-color: var(--color-error);
+            color: #78281f;
+            font-weight: 700;
+        }
+
+        .fila-ejecucion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        input[type="text"] {
+            padding: 8px 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+            min-width: 140px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        input[type="text"]::placeholder {
+            color: #a9c1d9;
+            font-size: 0.8rem;
+            font-style: italic;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .botones-fase {
+            display: flex;
+            gap: 10px;
+            margin-left: 36px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-pista {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-pista:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .feedback {
+            margin: 12px 0 0 36px;
+            padding: 12px 16px;
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            color: #145a32;
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            color: #78281f;
+        }
+        .feedback.pista {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+        .feedback code {
+            background-color: rgba(44,73,102,0.08);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            color: var(--color-primario);
+        }
+
+        .fase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+            background-color: var(--color-base);
+        }
+        .fase.bloqueada .fase-titulo { color: #8a9bb0; }
+        .fase.bloqueada .numero-fase { background-color: #8a9bb0; }
+
+        .navegacion-casos {
+            background-color: var(--color-base);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--color-acento-suave);
+        }
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+        .indicador-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .pantalla-final {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        .pantalla-final.visible { display: block; }
+        .pantalla-final h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        .pantalla-final .puntaje-final {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin: 20px 0;
+        }
+        .pantalla-final p {
+            font-size: 1rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+        }
+        .pantalla-final .medalla {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            main { padding: 18px; }
+            .fila-ejecucion, .botones-fase, .feedback, .opciones-lista {
+                margin-left: 0;
+            }
+            .contador-intentos { margin-left: 0; }
+            .fase-instruccion { padding-left: 0; }
+            input[type="text"] { width: 100%; }
+            .input-wrapper { flex: 1 1 45%; }
+            .barra-progreso-general { padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Cazador de Vértices</h1>
+        <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+        <span class="texto-progreso" id="progresoTexto">Caso 1 de 8</span>
+        <div class="progreso-track">
+            <div class="progreso-fill" id="progresoFill"></div>
+        </div>
+        <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
+    </div>
+
+    <main>
+        <div class="tarjeta-caso" id="tarjetaCaso">
+
+            <div class="meta-caso">
+                <div class="numero-caso" id="numeroCaso">Caso 1 de 8</div>
+                <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+            </div>
+
+            <div class="enunciado" id="enunciadoCaso">
+                <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+                <div id="textoEnunciado">Cargando caso...</div>
+                <div class="expresion-caso" id="expresionCaso"></div>
+            </div>
+
+            <!-- FASE 1 -->
+            <div class="fase" id="fase1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span> Diagnóstico: concavidad
+                </div>
+                <div class="fase-instruccion">
+                    Identifica la concavidad de la parábola.
+                </div>
+                <div class="opciones-lista" id="opcionesFase1"></div>
+                <div class="feedback" id="feedback1"></div>
+            </div>
+
+            <!-- FASE 2 -->
+            <div class="fase bloqueada" id="fase2">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span> Vértice por fórmula
+                </div>
+                <div class="fase-instruccion">
+                    Calcula el vértice usando $x = -\dfrac{b}{2a}$ y $y = f(x)$.
+                </div>
+                <div class="contador-intentos" id="contadorFase2">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase2"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase2">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase2">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback2"></div>
+            </div>
+
+            <!-- FASE 3 -->
+            <div class="fase bloqueada" id="fase3">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span> Análisis completo
+                </div>
+                <div class="fase-instruccion">
+                    Encuentra el eje de simetría, las raíces (si existen) y la intersección con $Y$.
+                </div>
+                <div class="contador-intentos" id="contadorFase3">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase3"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase3">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase3">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback3"></div>
+            </div>
+
+            <!-- FASE 4 -->
+            <div class="fase bloqueada" id="fase4">
+                <div class="fase-titulo">
+                    <span class="numero-fase">4</span> 🎯 Trampa CENEVAL
+                </div>
+                <div class="fase-instruccion">
+                    ¿Cuál es el error más frecuente en este tipo de caso?
+                </div>
+                <div class="opciones-lista" id="opcionesFase4"></div>
+                <div class="feedback" id="feedback4"></div>
+            </div>
+
+            <div class="navegacion-casos">
+                <button type="button" class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+                <span class="indicador-caso" id="indicadorCaso">Caso 1 de 8</span>
+                <button type="button" class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+            </div>
+        </div>
+
+        <div class="pantalla-final" id="pantallaFinal">
+            <div class="medalla" id="medallaFinal">🏅</div>
+            <h2>¡Investigación completada!</h2>
+            <div class="puntaje-final" id="puntajeFinal">0 / 8</div>
+            <p id="mensajeFinal"></p>
+            <button type="button" class="btn-primario" id="btnReiniciar" style="max-width:240px; margin: 0 auto;">🔄 Reiniciar investigación</button>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Practicar el cálculo del <strong>vértice</strong> de una parábola usando la
+        <strong>fórmula</strong> $x = -\dfrac{b}{2a}$, identificando la <strong>concavidad</strong>,
+        el <strong>eje de simetría</strong>, las <strong>raíces</strong> (si existen) y la
+        <strong>intersección con el eje $Y$</strong>, evitando los errores CENEVAL más comunes.
+    </div>
+</div>
+
+<script>
+// =========================================
+// BANCO DE CASOS
+// =========================================
+var casos = [
+    // --- CASO 1 ---
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 1 — Vértice con b negativo',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, raíces e intersección con el eje Y.',
+        expresion: '$$y = x^2 - 6x + 5$$',
+        a: 1, b: -6, c: 5,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia arriba ($a > 0$)',
+            explicacion: 'Como $a = 1 > 0$, la parábola abre hacia arriba y el vértice es un punto <strong>mínimo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 3 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: -4 }
+            ],
+            pista: 'Recuerda que $b = -6$, entonces $x = -(-6)/(2 \\cdot 1) = 6/2 = 3$. Sustituye $x = 3$ en la función.',
+            explicacion: '$x = -(-6)/(2 \\cdot 1) = 3$. $y = (3)^2 - 6(3) + 5 = 9 - 18 + 5 = -4$. Vértice: $V(3, -4)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 3 },
+                { id: 'r1', etiqueta: 'Raíz menor $x_1 = $', correcta: 1 },
+                { id: 'r2', etiqueta: 'Raíz mayor $x_2 = $', correcta: 5 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 5 }
+            ],
+            pista: 'Factoriza: $x^2 - 6x + 5 = (x - 1)(x - 5)$. La intersección con $Y$ es $(0, c)$, con $c = 5$.',
+            explicacion: 'Eje: $x = 3$. Factorización: $(x-1)(x-5) = 0 \\Rightarrow x = 1, x = 5$. Intersección con $Y$: $(0, 5)$.'
+        },
+        fase4: {
+            opciones: [
+                'Olvidar el signo negativo en la fórmula $x = -\\dfrac{b}{2a}$',
+                'Confundir el vértice con las raíces',
+                'Error al elevar al cuadrado',
+                'No factorizar'
+            ],
+            correcta: 'Olvidar el signo negativo en la fórmula $x = -\\dfrac{b}{2a}$',
+            explicacion: 'Con $b = -6$, un alumno descuidado podría escribir $x = -6/2 = -3$ en lugar de $x = -(-6)/2 = 3$.'
+        }
+    },
+
+    // --- CASO 2 ---
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 2 — Vértice con a negativo',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, raíces e intersección con el eje Y.',
+        expresion: '$$y = -3x^2 + 12x - 7$$',
+        a: -3, b: 12, c: -7,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia abajo ($a < 0$)',
+            explicacion: 'Como $a = -3 < 0$, la parábola abre hacia abajo y el vértice es un punto <strong>máximo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 2 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: 5 }
+            ],
+            pista: '$x = -12/(2 \\cdot (-3)) = -12/(-6) = 2$. Luego sustituye $x = 2$ en la función.',
+            explicacion: '$x = -12/(2 \\cdot (-3)) = 2$. $y = -3(2)^2 + 12(2) - 7 = -12 + 24 - 7 = 5$. Vértice: $V(2, 5)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 2 },
+                { id: 'discr', etiqueta: 'Discriminante $\\Delta = b^2 - 4ac = $', correcta: 60 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: -7 }
+            ],
+            pista: 'Discriminante: $\\Delta = 12^2 - 4(-3)(-7) = 144 - 84 = 60$. Como $\\Delta > 0$, hay dos raíces reales.',
+            explicacion: 'Eje: $x = 2$. Discriminante: $144 - 84 = 60 > 0$ (dos raíces reales). Intersección con $Y$: $(0, -7)$.'
+        },
+        fase4: {
+            opciones: [
+                'Error aritmético al calcular $y$ (olvidar el signo negativo de $a$)',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'No factorizar',
+                'Confundir vértice con raíces'
+            ],
+            correcta: 'Error aritmético al calcular $y$ (olvidar el signo negativo de $a$)',
+            explicacion: 'Al sustituir, $-3(2)^2 = -12$, no $+12$. El error común es calcular $y = 12 + 24 - 7 = 29$ en lugar de $-12 + 24 - 7 = 5$.'
+        }
+    },
+
+    // --- CASO 3 ---
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 3 — Vértice sin término c',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, raíces e intersección con el eje Y.',
+        expresion: '$$y = 2x^2 + 4x$$',
+        a: 2, b: 4, c: 0,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia arriba ($a > 0$)',
+            explicacion: 'Como $a = 2 > 0$, la parábola abre hacia arriba y el vértice es un punto <strong>mínimo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: -1 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: -2 }
+            ],
+            pista: '$x = -4/(2 \\cdot 2) = -4/4 = -1$. Luego sustituye $x = -1$ en la función.',
+            explicacion: '$x = -4/4 = -1$. $y = 2(-1)^2 + 4(-1) = 2 - 4 = -2$. Vértice: $V(-1, -2)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: -1 },
+                { id: 'r1', etiqueta: 'Raíz menor $x_1 = $', correcta: -2 },
+                { id: 'r2', etiqueta: 'Raíz mayor $x_2 = $', correcta: 0 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 0 }
+            ],
+            pista: 'Factoriza: $2x^2 + 4x = 2x(x + 2) = 0$. La intersección con $Y$ es $(0, c)$, con $c = 0$.',
+            explicacion: 'Eje: $x = -1$. Factorización: $2x(x+2) = 0 \\Rightarrow x = 0, x = -2$. Intersección con $Y$: $(0, 0)$.'
+        },
+        fase4: {
+            opciones: [
+                'Asumir que $c = 0$ significa que el vértice está en el origen',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'No factorizar',
+                'Confundir vértice con raíces'
+            ],
+            correcta: 'Asumir que $c = 0$ significa que el vértice está en el origen',
+            explicacion: 'Aunque $c = 0$, el vértice <strong>no</strong> está en el origen. Está en $(-1, -2)$, porque la parábola ha sido desplazada horizontalmente por $b = 4$.'
+        }
+    },
+
+    // --- CASO 4 ---
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 4 — Parábola simétrica respecto al eje Y',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, raíces e intersección con el eje Y.',
+        expresion: '$$y = -x^2 + 5$$',
+        a: -1, b: 0, c: 5,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia abajo ($a < 0$)',
+            explicacion: 'Como $a = -1 < 0$, la parábola abre hacia abajo y el vértice es un punto <strong>máximo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 0 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: 5 }
+            ],
+            pista: 'Como $b = 0$, entonces $x = 0/(2a) = 0$. Sustituye $x = 0$ en la función.',
+            explicacion: '$x = -0/(2 \\cdot (-1)) = 0$. $y = -(0)^2 + 5 = 5$. Vértice: $V(0, 5)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 0 },
+                { id: 'discr', etiqueta: 'Discriminante $\\Delta = b^2 - 4ac = $', correcta: 20 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 5 }
+            ],
+            pista: 'Discriminante: $\\Delta = 0 - 4(-1)(5) = 20$. Como $\\Delta > 0$, hay dos raíces reales: $x = \\pm\\sqrt{5}$.',
+            explicacion: 'Eje: $x = 0$. Discriminante: $20 > 0$ (dos raíces reales). Intersección con $Y$: $(0, 5)$.'
+        },
+        fase4: {
+            opciones: [
+                'Confundir el vértice $(0, 5)$ con las raíces $(\\pm\\sqrt{5}, 0)$',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'No factorizar',
+                'Error al elevar al cuadrado'
+            ],
+            correcta: 'Confundir el vértice $(0, 5)$ con las raíces $(\\pm\\sqrt{5}, 0)$',
+            explicacion: 'El vértice es el punto extremo $(0, 5)$, donde la parábola alcanza su máximo. Las raíces son $x = \\pm\\sqrt{5} \\approx \\pm 2.24$, sobre el eje $X$.'
+        }
+    },
+
+    // --- CASO 5 ---
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 5 — Coeficiente a fraccionario',
+        enunciado: 'Analiza la función cuadrática con coeficiente fraccionario y encuentra su vértice, eje de simetría, discriminante e intersección con el eje Y.',
+        expresion: '$$y = \\frac{1}{2}x^2 - 2x + 3$$',
+        a: 0.5, b: -2, c: 3,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia arriba ($a > 0$)',
+            explicacion: 'Como $a = 1/2 > 0$, la parábola abre hacia arriba y el vértice es un punto <strong>mínimo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 2 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: 1 }
+            ],
+            pista: '$x = -(-2)/(2 \\cdot 1/2) = 2/1 = 2$. Sustituye $x = 2$ en la función.',
+            explicacion: '$x = -(-2)/(2 \\cdot 1/2) = 2$. $y = 1/2(2)^2 - 2(2) + 3 = 2 - 4 + 3 = 1$. Vértice: $V(2, 1)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 2 },
+                { id: 'discr', etiqueta: 'Discriminante $\\Delta = b^2 - 4ac = $', correcta: -2 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 3 }
+            ],
+            pista: 'Discriminante: $\\Delta = (-2)^2 - 4(1/2)(3) = 4 - 6 = -2$. Como $\\Delta < 0$, no hay raíces reales.',
+            explicacion: 'Eje: $x = 2$. Discriminante: $4 - 6 = -2 < 0$ (sin raíces reales). Intersección con $Y$: $(0, 3)$.'
+        },
+        fase4: {
+            opciones: [
+                'Error al operar con fracciones en $x = -\\dfrac{b}{2a}$',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'No factorizar',
+                'Confundir vértice con raíces'
+            ],
+            correcta: 'Error al operar con fracciones en $x = -\\dfrac{b}{2a}$',
+            explicacion: 'Con $a = 1/2$, calcular $2a = 2 \\cdot 1/2 = 1$ es clave. Si se calcula mal como $2 \\cdot 1/2 = 2$, el vértice queda incorrecto.'
+        }
+    },
+
+    // --- CASO 6 ---
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 6 — Coeficientes grandes',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, discriminante e intersección con el eje Y.',
+        expresion: '$$y = 4x^2 - 8x + 1$$',
+        a: 4, b: -8, c: 1,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia arriba ($a > 0$)',
+            explicacion: 'Como $a = 4 > 0$, la parábola abre hacia arriba y el vértice es un punto <strong>mínimo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 1 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: -3 }
+            ],
+            pista: '$x = -(-8)/(2 \\cdot 4) = 8/8 = 1$. Sustituye $x = 1$ en la función.',
+            explicacion: '$x = -(-8)/(2 \\cdot 4) = 1$. $y = 4(1)^2 - 8(1) + 1 = 4 - 8 + 1 = -3$. Vértice: $V(1, -3)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 1 },
+                { id: 'discr', etiqueta: 'Discriminante $\\Delta = b^2 - 4ac = $', correcta: 48 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 1 }
+            ],
+            pista: 'Discriminante: $\\Delta = (-8)^2 - 4(4)(1) = 64 - 16 = 48$. Como $\\Delta > 0$, hay dos raíces reales.',
+            explicacion: 'Eje: $x = 1$. Discriminante: $64 - 16 = 48 > 0$ (dos raíces reales). Intersección con $Y$: $(0, 1)$.'
+        },
+        fase4: {
+            opciones: [
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'Confundir el eje de simetría con la coordenada $y$ del vértice',
+                'No factorizar',
+                'Error al elevar al cuadrado'
+            ],
+            correcta: 'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+            explicacion: 'Con $b = -8$, un alumno descuidado podría escribir $x = -8/8 = -1$ en lugar de $x = -(-8)/8 = 1$.'
+        }
+    },
+
+    // --- CASO 7 ---
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 7 — Forma canónica por completar el cuadrado',
+        enunciado: 'Analiza la función cuadrática. Encuentra el vértice, eje de simetría, raíces e intersección con Y. Escribe también la forma canónica.',
+        expresion: '$$y = -2x^2 + 2x + 12$$',
+        a: -2, b: 2, c: 12,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia abajo ($a < 0$)',
+            explicacion: 'Como $a = -2 < 0$, la parábola abre hacia abajo y el vértice es un punto <strong>máximo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $', correcta: 0.5 },
+                { id: 'y', etiqueta: '$y = f(x) = $', correcta: 12.5 }
+            ],
+            pista: '$x = -2/(2 \\cdot (-2)) = -2/(-4) = 0.5$. Sustituye $x = 0.5$ en la función.',
+            explicacion: '$x = -2/(-4) = 1/2$. $y = -2(1/2)^2 + 2(1/2) + 12 = -0.5 + 1 + 12 = 12.5$. Vértice: $V(0.5, 12.5)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $', correcta: 0.5 },
+                { id: 'r1', etiqueta: 'Raíz menor $x_1 = $', correcta: -2 },
+                { id: 'r2', etiqueta: 'Raíz mayor $x_2 = $', correcta: 3 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 12 }
+            ],
+            pista: 'Factoriza: $-2(x - 3)(x + 2) = 0 \\Rightarrow x = 3, x = -2$. La intersección con $Y$ es $(0, 12)$. Forma canónica: $y = -2(x - 0.5)^2 + 12.5$.',
+            explicacion: 'Eje: $x = 0.5$. Raíces: $x = 3$ y $x = -2$. Intersección con $Y$: $(0, 12)$. Forma canónica: $y = -2(x - 0.5)^2 + 12.5$.'
+        },
+        fase4: {
+            opciones: [
+                'Completar el cuadrado sin factorizar correctamente el coeficiente $a$',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'Confundir vértice con raíces',
+                'Error al factorizar'
+            ],
+            correcta: 'Completar el cuadrado sin factorizar correctamente el coeficiente $a$',
+            explicacion: 'Al completar el cuadrado, hay que factorizar $a = -2$ primero y luego restarlo del paréntesis. Si no se hace, el término constante $k$ queda incorrecto.'
+        }
+    },
+
+    // --- CASO 8 ---
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 8 — Vértice con fracciones',
+        enunciado: 'Analiza la función cuadrática y encuentra su vértice, eje de simetría, discriminante e intersección con el eje Y.',
+        expresion: '$$y = 3x^2 - 4x + 2$$',
+        a: 3, b: -4, c: 2,
+        fase1: {
+            opciones: [
+                'Abre hacia arriba ($a > 0$)',
+                'Abre hacia abajo ($a < 0$)',
+                'Es una recta (no cuadrática)',
+                'No se puede determinar'
+            ],
+            correcta: 'Abre hacia arriba ($a > 0$)',
+            explicacion: 'Como $a = 3 > 0$, la parábola abre hacia arriba y el vértice es un punto <strong>mínimo</strong>.'
+        },
+        fase2: {
+            campos: [
+                { id: 'x', etiqueta: '$x = -\\dfrac{b}{2a} = $ (decimal)', correcta: 0.6667 },
+                { id: 'y', etiqueta: '$y = f(x) = $ (decimal)', correcta: 0.6667 }
+            ],
+            pista: '$x = -(-4)/(2 \\cdot 3) = 4/6 = 2/3 \\approx 0.667$. Sustituye ese valor en la función.',
+            explicacion: '$x = 2/3 \\approx 0.667$. $y = 3(2/3)^2 - 4(2/3) + 2 = 4/3 - 8/3 + 6/3 = 2/3 \\approx 0.667$. Vértice: $V(2/3, 2/3)$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'eje', etiqueta: 'Eje de simetría: $x = $ (decimal)', correcta: 0.6667 },
+                { id: 'discr', etiqueta: 'Discriminante $\\Delta = b^2 - 4ac = $', correcta: -8 },
+                { id: 'intY', etiqueta: 'Intersección con $Y$: $y = $', correcta: 2 }
+            ],
+            pista: 'Discriminante: $\\Delta = (-4)^2 - 4(3)(2) = 16 - 24 = -8 < 0$. No hay raíces reales.',
+            explicacion: 'Eje: $x = 2/3 \\approx 0.667$. Discriminante: $-8 < 0$ (sin raíces reales). Intersección con $Y$: $(0, 2)$.'
+        },
+        fase4: {
+            opciones: [
+                'Elevar mal $(2/3)^2 = 4/9$, no $4/3$',
+                'Olvidar el signo negativo en $x = -\\dfrac{b}{2a}$',
+                'No factorizar',
+                'Confundir vértice con raíces'
+            ],
+            correcta: 'Elevar mal $(2/3)^2 = 4/9$, no $4/3$',
+            explicacion: 'Al sustituir $x = 2/3$ en $y = 3x^2$, el cálculo es $3 \\cdot (4/9) = 4/3$. Un error típico es hacer $3 \\cdot (2/3)^2 = 3 \\cdot 4/3 = 4$ (elevando solo el numerador).'
+        }
+    }
+];
+
+// =========================================
+// ESTADO GLOBAL
+// =========================================
+var estado = {
+    casoActual: 0,
+    completados: [],
+    puntaje: 0,
+    intentosFase2: 0,
+    intentosFase3: 0
+};
+
+var MAX_INTENTOS = 3;
+var TOL = 0.02;
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function parsearNumero(texto) {
+    if (texto === null || texto === undefined) return NaN;
+    texto = String(texto).trim().replace(',', '.');
+    if (texto === '') return NaN;
+    if (texto.indexOf('/') !== -1) {
+        var partes = texto.split('/');
+        if (partes.length !== 2) return NaN;
+        var num = parseFloat(partes[0]);
+        var den = parseFloat(partes[1]);
+        if (isNaN(num) || isNaN(den) || den === 0) return NaN;
+        return num / den;
+    }
+    var n = parseFloat(texto);
+    return isNaN(n) ? NaN : n;
+}
+
+function verificarAproximado(valor, correcto, tolerancia) {
+    tolerancia = tolerancia || TOL;
+    return Math.abs(valor - correcto) < tolerancia;
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// =========================================
+// CARGA DE CASO
+// =========================================
+function cargarCaso(indice) {
+    estado.casoActual = indice;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    var caso = casos[indice];
+
+    document.getElementById('numeroCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('indicadorCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('progresoTexto').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+
+    var nivelEl = document.getElementById('nivelCaso');
+    nivelEl.className = 'nivel-caso ' + caso.nivel;
+    nivelEl.textContent = caso.nivel.charAt(0).toUpperCase() + caso.nivel.slice(1);
+
+    document.getElementById('etiquetaCaso').textContent = caso.etiqueta;
+    document.getElementById('textoEnunciado').textContent = caso.enunciado;
+    document.getElementById('expresionCaso').innerHTML = caso.expresion;
+
+    document.getElementById('fase1').className = 'fase';
+    document.getElementById('fase2').className = 'fase bloqueada';
+    document.getElementById('fase3').className = 'fase bloqueada';
+    document.getElementById('fase4').className = 'fase bloqueada';
+
+    ['feedback1','feedback2','feedback3','feedback4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'feedback';
+        el.innerHTML = '';
+    });
+
+    document.getElementById('contadorFase2').classList.remove('visible');
+    document.getElementById('contadorFase3').classList.remove('visible');
+
+    document.getElementById('inputsFase2').innerHTML = '';
+    document.getElementById('inputsFase3').innerHTML = '';
+
+    renderizarOpciones('opcionesFase1', caso.fase1.opciones, function(op, btn) {
+        verificarFase1(op, btn);
+    });
+
+    document.getElementById('opcionesFase4').innerHTML = '';
+
+    document.getElementById('btnAnterior').disabled = (indice === 0);
+    document.getElementById('btnSiguiente').disabled = true;
+    document.getElementById('btnSiguiente').textContent = (indice === casos.length - 1) ? 'Ver resultado final' : 'Siguiente caso →';
+
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+
+    renderMath(document.getElementById('tarjetaCaso'));
+}
+
+function renderizarOpciones(contenedorId, opciones, onSelect) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    opciones.forEach(function(op, idx) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'opcion-item';
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + op.replace(/\$/g, ''));
+        btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            onSelect(op, this);
+        });
+        contenedor.appendChild(btn);
+    });
+    renderMath(contenedor);
+}
+
+function renderizarInputs(contenedorId, campos) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    campos.forEach(function(campo, idx) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'input-wrapper';
+        var idInput = contenedorId + '-' + campo.id;
+        wrapper.innerHTML = '<label for="' + idInput + '">' + campo.etiqueta + '</label>' +
+            '<input type="text" id="' + idInput + '" placeholder="Tu respuesta" autocomplete="off" ' +
+            'aria-label="Campo ' + (idx + 1) + ': ' + campo.etiqueta.replace(/\$/g, '').replace(/\\[a-z]+/g, '').replace(/[{}]/g, '') + '">';
+        contenedor.appendChild(wrapper);
+    });
+    renderMath(contenedor);
+}
+
+// =========================================
+// FASE 1
+// =========================================
+function verificarFase1(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback1');
+    var esCorrecta = (opcion === caso.fase1.correcta);
+
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.textContent.indexOf(caso.fase1.correcta) !== -1) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase1.explicacion;
+        document.getElementById('fase2').classList.remove('bloqueada');
+        renderizarInputs('inputsFase2', caso.fase2.campos);
+        document.getElementById('contadorFase2').classList.add('visible');
+        actualizarContador('contadorFase2', 'Fase2', 0);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ La respuesta correcta es <strong>' + caso.fase1.correcta + '</strong>. ' + caso.fase1.explicacion;
+    }
+    renderMath(fb);
+}
+
+// =========================================
+// FASE 2
+// =========================================
+function actualizarContador(idContador, clave, intentos) {
+    var el = document.getElementById(idContador);
+    el.textContent = 'Intento ' + (intentos + 1) + ' de ' + MAX_INTENTOS;
+}
+
+document.getElementById('pistaFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    var todosCorrectos = true;
+    var camposVacios = [];
+    var camposNoNumericos = [];
+
+    caso.fase2.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase2-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        var num = parsearNumero(valor);
+        if (isNaN(num)) {
+            camposNoNumericos.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(num, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (camposNoNumericos.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Algunos campos no contienen un número válido. Puedes escribir enteros, decimales (ej. <code>0.5</code>) o fracciones (ej. <code>1/2</code>).';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Vértice correcto!</strong> ' + caso.fase2.explicacion;
+        renderMath(fb);
+        document.getElementById('fase3').classList.remove('bloqueada');
+        renderizarInputs('inputsFase3', caso.fase3.campos);
+        document.getElementById('contadorFase3').classList.add('visible');
+        actualizarContador('contadorFase3', 'Fase3', 0);
+        return;
+    }
+
+    estado.intentosFase2++;
+    actualizarContador('contadorFase2', 'Fase2', estado.intentosFase2);
+
+    if (estado.intentosFase2 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase2) + ' intento(s).';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 3
+// =========================================
+document.getElementById('pistaFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    var todosCorrectos = true;
+    var camposVacios = [];
+    var camposNoNumericos = [];
+
+    caso.fase3.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase3-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        var num = parsearNumero(valor);
+        if (isNaN(num)) {
+            camposNoNumericos.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(num, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (camposNoNumericos.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Algunos campos no contienen un número válido.';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Análisis completo correcto!</strong> ' + caso.fase3.explicacion;
+        renderMath(fb);
+        document.getElementById('fase4').classList.remove('bloqueada');
+        renderizarOpciones('opcionesFase4', caso.fase4.opciones, function(op, b) {
+            verificarFase4(op, b);
+        });
+        return;
+    }
+
+    estado.intentosFase3++;
+    actualizarContador('contadorFase3', 'Fase3', estado.intentosFase3);
+
+    if (estado.intentosFase3 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase3) + ' intento(s).';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 4
+// =========================================
+function verificarFase4(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback4');
+    var esCorrecta = (opcion === caso.fase4.correcta);
+
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.textContent.indexOf(caso.fase4.correcta) !== -1) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    var btnSig = document.getElementById('btnSiguiente');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Excelente!</strong> ' + caso.fase4.explicacion;
+        if (!estado.completados[estado.casoActual]) {
+            estado.completados[estado.casoActual] = true;
+            actualizarProgreso();
+        }
+        btnSig.disabled = false;
+        btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final →' : 'Siguiente caso →';
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ El error más común es: <strong>' + caso.fase4.correcta + '</strong>. ' + caso.fase4.explicacion +
+            '<br><br><em>Puedes continuar, pero este caso no se marcará como completado.</em>';
+        btnSig.disabled = false;
+        btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final (sin completar) →' : 'Siguiente caso (sin completar) →';
+    }
+    renderMath(fb);
+}
+
+// =========================================
+// PROGRESO
+// =========================================
+function actualizarProgreso() {
+    var total = casos.length;
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    estado.puntaje = completados;
+    document.getElementById('progresoFill').style.width = (completados / total * 100) + '%';
+    document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
+}
+
+// =========================================
+// NAVEGACIÓN
+// =========================================
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (estado.casoActual > 0) {
+        cargarCaso(estado.casoActual - 1);
+    }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', function() {
+    if (estado.casoActual < casos.length - 1) {
+        cargarCaso(estado.casoActual + 1);
+    } else {
+        mostrarPantallaFinal();
+    }
+});
+
+// =========================================
+// PANTALLA FINAL
+// =========================================
+function mostrarPantallaFinal() {
+    document.getElementById('tarjetaCaso').style.display = 'none';
+    var pantalla = document.getElementById('pantallaFinal');
+    pantalla.classList.add('visible');
+
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    var total = casos.length;
+    document.getElementById('puntajeFinal').textContent = completados + ' / ' + total;
+
+    var medalla = document.getElementById('medallaFinal');
+    var mensaje = document.getElementById('mensajeFinal');
+
+    if (completados === total) {
+        medalla.textContent = '🏆';
+        mensaje.textContent = '¡Cazador experto! Resolviste los 8 casos correctamente, identificaste el vértice por fórmula y analizaste todos los elementos de la parábola. Dominas la función cuadrática del Módulo 9.';
+    } else if (completados >= total * 0.7) {
+        medalla.textContent = '🥈';
+        mensaje.textContent = '¡Buen trabajo, cazador! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del cálculo del vértice y el análisis de la parábola.';
+    } else {
+        medalla.textContent = '🥉';
+        mensaje.textContent = 'Continúa entrenando, cazador. Te recomendamos repasar la fórmula del vértice $x = -b/(2a)$, la interpretación del discriminante, la concavidad y la simetría de la parábola antes de reintentar.';
+    }
+    renderMath(pantalla);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =========================================
+// REINICIAR
+// =========================================
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+    estado.casoActual = 0;
+    estado.completados = new Array(casos.length).fill(false);
+    estado.puntaje = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    actualizarProgreso();
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+    cargarCaso(0);
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+estado.completados = new Array(casos.length).fill(false);
+cargarCaso(0);
+actualizarProgreso();
+
+</script>
+
+</body>
+</html>

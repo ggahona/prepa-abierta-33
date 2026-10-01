@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Laboratorio del Discriminante | Matemáticas III</title>
+    <title>Visualizador: El Discriminante y las Raíces | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -354,8 +354,8 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>El Laboratorio del Discriminante</h1>
-        <p>Simulador interactivo | Matemáticas III</p>
+        <h1>Visualizador: El Discriminante y las Raíces</h1>
+        <p>Visualizador interactivo | Matemáticas III</p>
     </header>
 
     <div class="layout-principal">
@@ -364,53 +364,58 @@
             <h2>Coeficientes</h2>
 
             <div class="seccion-slider">
-                <label>$a$: <span class="valor-slider" id="val-a">1</span></label>
+                <label for="slider-a">$a$: <span class="valor-slider" id="val-a">1</span></label>
                 <input type="range" id="slider-a" min="-5" max="5" step="0.5" value="1" aria-label="Coeficiente a">
-                <div class="aviso-slider" id="aviso-a">⚠️ $a$ no puede ser 0. Se ha ajustado a 0.5.</div>
+                <div class="aviso-slider" id="aviso-a" role="alert">⚠️ $a$ no puede ser 0. Se ha ajustado a 0.5.</div>
             </div>
 
             <div class="seccion-slider">
-                <label>$b$: <span class="valor-slider" id="val-b">-5</span></label>
+                <label for="slider-b">$b$: <span class="valor-slider" id="val-b">-5</span></label>
                 <input type="range" id="slider-b" min="-10" max="10" step="0.5" value="-5" aria-label="Coeficiente b">
             </div>
 
             <div class="seccion-slider">
-                <label>$c$: <span class="valor-slider" id="val-c">6</span></label>
+                <label for="slider-c">$c$: <span class="valor-slider" id="val-c">6</span></label>
                 <input type="range" id="slider-c" min="-10" max="10" step="0.5" value="6" aria-label="Coeficiente c">
             </div>
 
             <h3>Visualización</h3>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-parabola" checked> Parábola
+            <label class="checkbox-linea" for="chk-parabola">
+                <input type="checkbox" id="chk-parabola" checked aria-label="Mostrar parábola">
+                Parábola
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-raices" checked> Raíces (si existen)
+            <label class="checkbox-linea" for="chk-raices">
+                <input type="checkbox" id="chk-raices" checked aria-label="Mostrar raíces">
+                Raíces (si existen)
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-vertice" checked> Vértice
+            <label class="checkbox-linea" for="chk-vertice">
+                <input type="checkbox" id="chk-vertice" checked aria-label="Mostrar vértice">
+                Vértice
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-eje-x" checked> Eje $X$ resaltado
+            <label class="checkbox-linea" for="chk-eje-x">
+                <input type="checkbox" id="chk-eje-x" checked aria-label="Resaltar eje X">
+                Eje $X$ resaltado
             </label>
-            <label class="checkbox-linea">
-                <input type="checkbox" id="chk-cuadricula"> Cuadrícula
+            <label class="checkbox-linea" for="chk-cuadricula">
+                <input type="checkbox" id="chk-cuadricula" aria-label="Mostrar cuadrícula">
+                Cuadrícula
             </label>
 
             <h3>Zoom del plano</h3>
             <div class="seccion-slider">
-                <label>Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
+                <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
                 <input type="range" id="slider-zoom" min="15" max="50" step="1" value="30" aria-label="Zoom del plano">
             </div>
 
-            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar">↺ Reiniciar</button>
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar valores">↺ Reiniciar</button>
 
             <h3>Ejemplos del Módulo 10</h3>
             <div class="seccion-ejemplos">
-                <button type="button" class="btn-ejemplo" data-ej="1">📐 Δ > 0: $x^2 - 5x + 6 = 0$</button>
-                <button type="button" class="btn-ejemplo" data-ej="2">📐 Δ > 0: $2x^2 - 3x - 4 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 Δ &gt; 0: $x^2 - 5x + 6 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 Δ &gt; 0: $2x^2 - 3x - 4 = 0$</button>
                 <button type="button" class="btn-ejemplo" data-ej="3">📐 Δ = 0: $x^2 - 4x + 4 = 0$</button>
-                <button type="button" class="btn-ejemplo" data-ej="4">📐 Δ < 0: $5x^2 - 4x + 1 = 0$</button>
-                <button type="button" class="btn-ejemplo" data-ej="5">📐 Δ < 0: $x^2 + 4 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 Δ &lt; 0: $5x^2 - 4x + 1 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 Δ &lt; 0: $x^2 + 4 = 0$</button>
                 <button type="button" class="btn-ejemplo" data-ej="6">📐 Δ = 0: $4x^2 - 12x + 9 = 0$</button>
             </div>
         </div>
@@ -440,12 +445,12 @@
                 </div>
             </div>
 
-            <div class="banner-estado" id="bannerEstado">
-                <div class="icono-estado" id="iconoEstado">✅</div>
+            <div class="banner-estado" id="bannerEstado" role="status" aria-live="polite">
+                <div class="icono-estado" id="iconoEstado" aria-hidden="true">✅</div>
                 <div class="texto-estado" id="textoEstado">Cargando...</div>
             </div>
 
-            <div class="panel-info">
+            <div class="panel-info" role="status" aria-live="polite">
                 <h3>📊 Análisis del discriminante</h3>
                 <table class="tabla-info">
                     <tr>
@@ -541,6 +546,11 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(3)).toString();
 }
 
+function casiIgual(x, y, tol) {
+    tol = tol || TOL;
+    return Math.abs(x - y) < tol;
+}
+
 function f(x) {
     return estado.a * x * x + estado.b * x + estado.c;
 }
@@ -550,7 +560,7 @@ function calcularDiscriminante() {
 }
 
 function calcularVertice() {
-    if (Math.abs(estado.a) < TOL) return { h: 0, k: 0 };
+    if (casiIgual(estado.a, 0)) return { h: 0, k: 0 };
     var h = -estado.b / (2 * estado.a);
     var k = f(h);
     return { h: h, k: k };
@@ -602,15 +612,15 @@ function renderMath(el) {
 
 function construirExpresion(a, b, c) {
     var s = '';
-    if (a === 1) s += 'x^2';
-    else if (a === -1) s += '-x^2';
+    if (casiIgual(a, 1)) s += 'x^2';
+    else if (casiIgual(a, -1)) s += '-x^2';
     else s += formatearNumero(a) + 'x^2';
 
-    if (b !== 0) {
-        if (b > 0) s += ' + ' + (b === 1 ? '' : formatearNumero(b)) + 'x';
-        else s += ' - ' + (b === -1 ? '' : formatearNumero(-b)) + 'x';
+    if (!casiIgual(b, 0)) {
+        if (b > 0) s += ' + ' + (casiIgual(b, 1) ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (casiIgual(b, -1) ? '' : formatearNumero(-b)) + 'x';
     }
-    if (c !== 0) {
+    if (!casiIgual(c, 0)) {
         if (c > 0) s += ' + ' + formatearNumero(c);
         else s += ' - ' + formatearNumero(-c);
     }
@@ -644,7 +654,6 @@ function dibujarEjes() {
     ctx.fillStyle = COLOR_EJE;
     ctx.lineWidth = 2;
 
-    // Eje X resaltado
     if (estado.mostrar.ejeX) {
         ctx.save();
         ctx.strokeStyle = COLOR_EJE;
@@ -661,14 +670,12 @@ function dibujarEjes() {
         ctx.stroke();
     }
 
-    // Flecha eje X
     ctx.beginPath();
     ctx.moveTo(W - 12, H / 2 - 6);
     ctx.lineTo(W, H / 2);
     ctx.lineTo(W - 12, H / 2 + 6);
     ctx.fill();
 
-    // Eje Y
     ctx.beginPath();
     ctx.moveTo(W / 2, H);
     ctx.lineTo(W / 2, 0);
@@ -679,7 +686,6 @@ function dibujarEjes() {
     ctx.lineTo(W / 2 + 6, 12);
     ctx.fill();
 
-    // Etiquetas
     ctx.font = '13px Segoe UI, sans-serif';
     ctx.fillStyle = COLOR_EJE;
     ctx.textAlign = 'right';
@@ -687,7 +693,6 @@ function dibujarEjes() {
     ctx.textAlign = 'left';
     ctx.fillText('y', W / 2 + 8, 16);
 
-    // Marcas numéricas
     ctx.font = '10px Segoe UI, sans-serif';
     ctx.textAlign = 'center';
     var maxX = Math.floor((W / 2) / estado.zoom);
@@ -718,7 +723,6 @@ function dibujarEjes() {
     ctx.textAlign = 'left';
     ctx.fillText('0', W / 2 + 6, H / 2 + 14);
 
-    // Origen resaltado
     ctx.fillStyle = COLOR_EJE;
     ctx.beginPath();
     ctx.arc(W / 2, H / 2, 3, 0, 2 * Math.PI);
@@ -726,7 +730,7 @@ function dibujarEjes() {
 }
 
 function dibujarParabola() {
-    if (Math.abs(estado.a) < TOL) return; // Sin parábola si a = 0
+    if (casiIgual(estado.a, 0)) return;
 
     var puntos = 400;
     var xMin = -W / 2 / estado.zoom - 1;
@@ -893,7 +897,6 @@ function actualizarInfo() {
     } else if (raices.length === 1) {
         raicesHTML = '$x_1 = x_2 = ' + formatearNumero(raices[0]) + '$';
     } else {
-        // Verificar si son irracionales (no enteras ni fracciones simples)
         var esIrracional = false;
         var disc2 = calcularDiscriminante();
         if (disc2 > 0) {
@@ -997,7 +1000,7 @@ function sincronizarDesdeEstado() {
 document.getElementById('slider-a').addEventListener('input', function() {
     var nuevoA = parseFloat(this.value);
     var avisoA = document.getElementById('aviso-a');
-    if (nuevoA === 0) {
+    if (casiIgual(nuevoA, 0)) {
         nuevoA = 0.5;
         this.value = 0.5;
         avisoA.classList.add('visible');
@@ -1073,15 +1076,11 @@ document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
         var data = ejemplos[ej];
         if (!data) return;
 
-        // 1. Actualizar estado
         estado.a = data.a;
         estado.b = data.b;
         estado.c = data.c;
-        // 2. Auto-ajustar zoom (usa el nuevo estado)
         autoAjustarZoom();
-        // 3. Sincronizar UI
         sincronizarDesdeEstado();
-        // 4. Renderizar
         render();
     });
 });

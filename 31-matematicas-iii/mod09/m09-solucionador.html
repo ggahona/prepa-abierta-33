@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Los Dos Caminos del Vértice | Matemáticas III</title>
+    <title>Solucionador: Vértice por Dos Métodos | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -378,7 +378,7 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Los Dos Caminos del Vértice</h1>
+        <h1>Solucionador: Vértice por Dos Métodos</h1>
         <p>Solucionador comparativo | Matemáticas III</p>
     </header>
 
@@ -391,15 +391,15 @@
             <div class="grupo-inputs">
                 <div class="titulo-grupo">$y = ax^2 + bx + c$</div>
                 <div class="fila-input">
-                    <label>$a$</label>
+                    <label for="in-a">$a$</label>
                     <input type="number" id="in-a" value="-2" step="any" aria-label="Coeficiente a">
                 </div>
                 <div class="fila-input">
-                    <label>$b$</label>
+                    <label for="in-b">$b$</label>
                     <input type="number" id="in-b" value="2" step="any" aria-label="Coeficiente b">
                 </div>
                 <div class="fila-input">
-                    <label>$c$</label>
+                    <label for="in-c">$c$</label>
                     <input type="number" id="in-c" value="12" step="any" aria-label="Coeficiente c">
                 </div>
                 <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver por los 2 métodos</button>
@@ -418,14 +418,14 @@
         </div>
 
         <!-- PANEL DE RESULTADOS -->
-        <div class="panel-resultados" id="panelResultados">
+        <div class="panel-resultados" role="region" aria-label="Desarrollo paso a paso">
             <div class="mensaje-inicial" id="mensajeInicial">
                 ⚙️ Ingresa los coeficientes y presiona <strong>"Resolver por los 2 métodos"</strong><br>
                 para ver cómo <strong>completar el cuadrado</strong> y la <strong>fórmula general</strong><br>
                 llegan al mismo vértice.
             </div>
 
-            <div id="contenidoResultados" style="display:none;">
+            <div id="contenidoResultados" style="display:none;" role="status" aria-live="polite">
                 <div class="resumen-ecuacion">
                     <div class="titulo-resumen">Función a analizar</div>
                     <div class="expresion-resumen" id="expresionEcuacion"></div>
@@ -478,6 +478,11 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(4)).toString();
 }
 
+function casiIgual(x, y, tol) {
+    tol = tol || 1e-9;
+    return Math.abs(x - y) < tol;
+}
+
 function renderMath(el) {
     if (window.MathJax && window.MathJax.typesetPromise) {
         MathJax.typesetPromise([el]).catch(console.log);
@@ -487,16 +492,16 @@ function renderMath(el) {
 // Construye la expresión y = ax² + bx + c
 function construirExpresion(a, b, c) {
     var s = 'y = ';
-    if (Math.abs(a - 1) < 1e-9) s += 'x^2';
-    else if (Math.abs(a + 1) < 1e-9) s += '-x^2';
+    if (casiIgual(a, 1)) s += 'x^2';
+    else if (casiIgual(a, -1)) s += '-x^2';
     else s += formatearNumero(a) + 'x^2';
 
-    if (Math.abs(b) > 1e-9) {
-        if (b > 0) s += ' + ' + (Math.abs(b - 1) < 1e-9 ? '' : formatearNumero(b)) + 'x';
-        else s += ' - ' + (Math.abs(b + 1) < 1e-9 ? '' : formatearNumero(-b)) + 'x';
+    if (!casiIgual(b, 0)) {
+        if (b > 0) s += ' + ' + (casiIgual(b, 1) ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (casiIgual(b, -1) ? '' : formatearNumero(-b)) + 'x';
     }
 
-    if (Math.abs(c) > 1e-9) {
+    if (!casiIgual(c, 0)) {
         if (c > 0) s += ' + ' + formatearNumero(c);
         else s += ' - ' + formatearNumero(-c);
     }
@@ -507,12 +512,12 @@ function construirExpresion(a, b, c) {
 // Construye la forma canónica y = a(x-h)² + k
 function construirCanonica(a, h, k) {
     var s = 'y = ';
-    if (Math.abs(a - 1) < 1e-9) s += '';
-    else if (Math.abs(a + 1) < 1e-9) s += '-';
+    if (casiIgual(a, 1)) s += '';
+    else if (casiIgual(a, -1)) s += '-';
     else s += formatearNumero(a);
 
     s += '(x ';
-    if (Math.abs(h) < 1e-9) {
+    if (casiIgual(h, 0)) {
         s += ')^2 ';
     } else if (h > 0) {
         s += '- ' + formatearNumero(h) + ')^2 ';
@@ -520,7 +525,7 @@ function construirCanonica(a, h, k) {
         s += '+ ' + formatearNumero(-h) + ')^2 ';
     }
 
-    if (Math.abs(k) > 1e-9) {
+    if (!casiIgual(k, 0)) {
         if (k > 0) s += '+ ' + formatearNumero(k);
         else s += '- ' + formatearNumero(-k);
     } else {
@@ -537,24 +542,28 @@ function construirColumnaCompletar(a, b, c, h, k) {
     var html = '';
 
     // Paso 1: Factorizar a
+    var bSobreA = b / a;
     html += '<div class="paso"><span class="num-paso">1</span>Factorizamos $a$ de los términos con $x$:<br>' +
-        '$$y = ' + formatearNumero(a) + '\\left(x^2 + ' + formatearNumero(b / a) + 'x\\right) + ' + formatearNumero(c) + '$$</div>';
+        '$$y = ' + formatearNumero(a) + '\\left(x^2 ' +
+        (bSobreA >= 0 ? '+ ' + formatearNumero(bSobreA) : '- ' + formatearNumero(-bSobreA)) +
+        'x\\right) + ' + formatearNumero(c) + '$$</div>';
 
     // Paso 2: Completar el cuadrado
-    var coefX = b / a;                       // coeficiente de x dentro del paréntesis
-    var mitadCoef = coefX / 2;               // mitad del coeficiente
+    var coefX = bSobreA;
+    var mitadCoef = coefX / 2;
     var mitadCuadrado = mitadCoef * mitadCoef;
+
+    var signoB = coefX >= 0 ? '+ ' + formatearNumero(coefX) : '- ' + formatearNumero(-coefX);
 
     html += '<div class="paso"><span class="num-paso">2</span>Completamos el cuadrado. Mitad de $' +
         formatearNumero(coefX) + '$ es $' + formatearNumero(mitadCoef) + '$, al cuadrado: $' +
         formatearNumero(mitadCuadrado) + '$:<br>' +
-        '$$y = ' + formatearNumero(a) + '\\left(x^2 + ' + formatearNumero(coefX) + 'x + ' +
+        '$$y = ' + formatearNumero(a) + '\\left(x^2 ' + signoB + 'x + ' +
         formatearNumero(mitadCuadrado) + ' - ' + formatearNumero(mitadCuadrado) + '\\right) + ' + formatearNumero(c) + '$$</div>';
 
     // Paso 3: Agrupar el trinomio y sacar el término sobrante (multiplicado por a)
-    // El binomio es (x + mitadCoef)
     var signoMitad = mitadCoef >= 0 ? '+ ' + formatearNumero(mitadCoef) : '- ' + formatearNumero(-mitadCoef);
-    var terminoSobrante = -a * mitadCuadrado;  // a * (-mitadCuadrado)
+    var terminoSobrante = -a * mitadCuadrado;
 
     html += '<div class="paso"><span class="num-paso">3</span>Agrupamos el trinomio cuadrado perfecto y sacamos el término sobrante multiplicado por $a$:<br>' +
         '$$y = ' + formatearNumero(a) + '\\left(x ' + signoMitad + '\\right)^2 ' +
@@ -563,14 +572,15 @@ function construirColumnaCompletar(a, b, c, h, k) {
 
     // Paso 4: Simplificar el término constante
     html += '<div class="paso"><span class="num-paso">4</span>Simplificamos el término constante:<br>' +
-        '$$y = ' + formatearNumero(a) + '\\left(x ' + (h >= 0 ? '- ' + formatearNumero(h) : '+ ' + formatearNumero(-h)) + '\\right)^2 ' +
+        '$$y = ' + formatearNumero(a) + '\\left(x ' +
+        (h >= 0 ? '- ' + formatearNumero(h) : '+ ' + formatearNumero(-h)) + '\\right)^2 ' +
         (k >= 0 ? '+ ' + formatearNumero(k) : '- ' + formatearNumero(-k)) + '$$' +
         '<div style="margin-top:6px;font-size:0.85rem;color:var(--color-primario);">' +
         '<em>Nota: el binomio se escribe como $(x - h)$, con $h = ' + formatearNumero(h) + '$.</em>' +
         '</div></div>';
 
     // Mini-gráfica
-    html += '<div class="mini-canvas-wrapper"><canvas id="miniCanvas" width="320" height="200"></canvas></div>';
+    html += '<div class="mini-canvas-wrapper"><canvas id="miniCanvas" width="320" height="200" aria-label="Mini gráfica de la parábola"></canvas></div>';
 
     html += '<div class="paso"><span class="num-paso">5</span>Identificamos el vértice directamente de la forma canónica:<br>' +
         '$$V(' + formatearNumero(h) + ', ' + formatearNumero(k) + ')$$</div>';
@@ -610,6 +620,10 @@ function construirColumnaFormula(a, b, c, h, k) {
 function dibujarMiniGrafica(canvasId, a, b, c, h, k) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
+
+    // Blindaje: si a ≈ 0, no dibujar
+    if (casiIgual(a, 0)) return;
+
     var ctx = canvas.getContext('2d');
     var W = canvas.width;
     var H = canvas.height;
@@ -701,8 +715,8 @@ function resolver() {
     }
 
     // Blindaje contra a ≈ 0
-    if (Math.abs(a) < 1e-9) {
-        alert('⚠️ Si a ≈ 0, la función no es cuadrática.');
+    if (casiIgual(a, 0)) {
+        alert('⚠️ Si a ≈ 0, la función no es cuadrática. Ingresa a ≠ 0.');
         return;
     }
 

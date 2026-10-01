@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Los Dos Caminos del Vértice | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1280px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grupo-inputs {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .grupo-inputs .titulo-grupo {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-input {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .fila-input label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            min-width: 20px;
+            text-align: center;
+        }
+        .fila-input input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+        }
+        .fila-input input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-resultados {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+
+        .mensaje-inicial {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 30px 20px;
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+        }
+
+        .resumen-ecuacion {
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+        }
+        .resumen-ecuacion .titulo-resumen {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .resumen-ecuacion .expresion-resumen {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .banner-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 14px 20px;
+            border-radius: var(--radio-borde);
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+        }
+        .banner-info .dato {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .banner-info .dato strong {
+            color: var(--color-primario);
+        }
+        .banner-info .dato span {
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: var(--color-acento);
+            font-weight: 700;
+        }
+        .banner-info .dato span.pos { color: var(--color-exito); }
+        .banner-info .dato span.cero { color: var(--color-acento); }
+        .banner-info .dato span.neg { color: var(--color-error); }
+
+        .columnas-metodos {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .columna-metodo {
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .columna-metodo .cabecera-metodo {
+            background-color: var(--color-base);
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-primario);
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .columna-metodo .cuerpo-metodo {
+            padding: 12px 14px;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            flex: 1;
+        }
+        .columna-metodo .paso {
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .columna-metodo .paso:last-child { border-bottom: none; }
+        .columna-metodo .num-paso {
+            display: inline-block;
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.7rem;
+            font-weight: 700;
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 18px;
+            margin-right: 6px;
+        }
+
+        .mini-canvas-wrapper {
+            margin: 8px 0;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 4px;
+            padding: 4px;
+        }
+        .mini-canvas-wrapper canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+
+        .conclusion-final {
+            background-color: rgba(39,174,96,0.1);
+            border: 2px solid var(--color-exito);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .conclusion-final .icono-check {
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+        }
+        .conclusion-final .titulo-conclusion {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-exito);
+            margin-bottom: 8px;
+        }
+        .conclusion-final .vertice-conclusion {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 1024px) {
+            .columnas-metodos { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-resultados { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Los Dos Caminos del Vértice</h1>
+        <p>Solucionador comparativo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <!-- PANEL DE CONTROL -->
+        <div class="panel-control">
+            <h2>Función cuadrática</h2>
+
+            <div class="grupo-inputs">
+                <div class="titulo-grupo">$y = ax^2 + bx + c$</div>
+                <div class="fila-input">
+                    <label>$a$</label>
+                    <input type="number" id="in-a" value="-2" step="any" aria-label="Coeficiente a">
+                </div>
+                <div class="fila-input">
+                    <label>$b$</label>
+                    <input type="number" id="in-b" value="2" step="any" aria-label="Coeficiente b">
+                </div>
+                <div class="fila-input">
+                    <label>$c$</label>
+                    <input type="number" id="in-c" value="12" step="any" aria-label="Coeficiente c">
+                </div>
+                <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver por los 2 métodos</button>
+                <button type="button" class="btn-secundario" id="btn-reiniciar">↺ Reiniciar</button>
+            </div>
+
+            <h3>Ejemplos del Módulo 9</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $y = -2x^2 + 2x + 12$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $y = x^2 - 6x + 5$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $y = 3x^2 - 4x + 2$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $y = -3x^2 + 12x - 7$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $y = 2x^2 + 4x$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $y = 0.5x^2 - 2x + 3$</button>
+            </div>
+        </div>
+
+        <!-- PANEL DE RESULTADOS -->
+        <div class="panel-resultados" id="panelResultados">
+            <div class="mensaje-inicial" id="mensajeInicial">
+                ⚙️ Ingresa los coeficientes y presiona <strong>"Resolver por los 2 métodos"</strong><br>
+                para ver cómo <strong>completar el cuadrado</strong> y la <strong>fórmula general</strong><br>
+                llegan al mismo vértice.
+            </div>
+
+            <div id="contenidoResultados" style="display:none;">
+                <div class="resumen-ecuacion">
+                    <div class="titulo-resumen">Función a analizar</div>
+                    <div class="expresion-resumen" id="expresionEcuacion"></div>
+                </div>
+
+                <div class="banner-info" id="bannerInfo">
+                    <div class="dato"><strong>Concavidad:</strong> <span id="datoConcavidad"></span></div>
+                    <div class="dato"><strong>Discriminante:</strong> <span id="datoDiscriminante"></span></div>
+                    <div class="dato"><strong>Raíces:</strong> <span id="datoRaices"></span></div>
+                </div>
+
+                <div class="columnas-metodos">
+                    <!-- Columna 1: Completar el cuadrado -->
+                    <div class="columna-metodo">
+                        <div class="cabecera-metodo">🧩 Método 1: Completar el cuadrado</div>
+                        <div class="cuerpo-metodo" id="columnaCompletar"></div>
+                    </div>
+
+                    <!-- Columna 2: Fórmula general -->
+                    <div class="columna-metodo">
+                        <div class="cabecera-metodo">🧮 Método 2: Fórmula del vértice</div>
+                        <div class="cuerpo-metodo" id="columnaFormula"></div>
+                    </div>
+                </div>
+
+                <div class="conclusion-final" id="conclusionFinal">
+                    <div class="icono-check">✓</div>
+                    <div class="titulo-conclusion">Ambos métodos coinciden</div>
+                    <div class="vertice-conclusion" id="verticeConclusion"></div>
+                </div>
+
+                <div class="aviso-pedagogico" id="avisoPedagogico"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Comparar los <strong>dos métodos</strong> para encontrar el vértice de una
+        parábola (completar el cuadrado y fórmula $x = -\dfrac{b}{2a}$) aplicados a la <strong>misma función</strong>,
+        mostrando paso a paso cómo ambos llegan al mismo resultado y cuándo conviene usar cada uno.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+// Construye la expresión y = ax² + bx + c
+function construirExpresion(a, b, c) {
+    var s = 'y = ';
+    if (Math.abs(a - 1) < 1e-9) s += 'x^2';
+    else if (Math.abs(a + 1) < 1e-9) s += '-x^2';
+    else s += formatearNumero(a) + 'x^2';
+
+    if (Math.abs(b) > 1e-9) {
+        if (b > 0) s += ' + ' + (Math.abs(b - 1) < 1e-9 ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (Math.abs(b + 1) < 1e-9 ? '' : formatearNumero(-b)) + 'x';
+    }
+
+    if (Math.abs(c) > 1e-9) {
+        if (c > 0) s += ' + ' + formatearNumero(c);
+        else s += ' - ' + formatearNumero(-c);
+    }
+
+    return s;
+}
+
+// Construye la forma canónica y = a(x-h)² + k
+function construirCanonica(a, h, k) {
+    var s = 'y = ';
+    if (Math.abs(a - 1) < 1e-9) s += '';
+    else if (Math.abs(a + 1) < 1e-9) s += '-';
+    else s += formatearNumero(a);
+
+    s += '(x ';
+    if (Math.abs(h) < 1e-9) {
+        s += ')^2 ';
+    } else if (h > 0) {
+        s += '- ' + formatearNumero(h) + ')^2 ';
+    } else {
+        s += '+ ' + formatearNumero(-h) + ')^2 ';
+    }
+
+    if (Math.abs(k) > 1e-9) {
+        if (k > 0) s += '+ ' + formatearNumero(k);
+        else s += '- ' + formatearNumero(-k);
+    } else {
+        s += '(sin término constante)';
+    }
+
+    return s;
+}
+
+// =========================================
+// MÉTODO 1: COMPLETAR EL CUADRADO
+// =========================================
+function construirColumnaCompletar(a, b, c, h, k) {
+    var html = '';
+
+    // Paso 1: Factorizar a
+    html += '<div class="paso"><span class="num-paso">1</span>Factorizamos $a$ de los términos con $x$:<br>' +
+        '$$y = ' + formatearNumero(a) + '\\left(x^2 + ' + formatearNumero(b / a) + 'x\\right) + ' + formatearNumero(c) + '$$</div>';
+
+    // Paso 2: Completar el cuadrado
+    var coefX = b / a;                       // coeficiente de x dentro del paréntesis
+    var mitadCoef = coefX / 2;               // mitad del coeficiente
+    var mitadCuadrado = mitadCoef * mitadCoef;
+
+    html += '<div class="paso"><span class="num-paso">2</span>Completamos el cuadrado. Mitad de $' +
+        formatearNumero(coefX) + '$ es $' + formatearNumero(mitadCoef) + '$, al cuadrado: $' +
+        formatearNumero(mitadCuadrado) + '$:<br>' +
+        '$$y = ' + formatearNumero(a) + '\\left(x^2 + ' + formatearNumero(coefX) + 'x + ' +
+        formatearNumero(mitadCuadrado) + ' - ' + formatearNumero(mitadCuadrado) + '\\right) + ' + formatearNumero(c) + '$$</div>';
+
+    // Paso 3: Agrupar el trinomio y sacar el término sobrante (multiplicado por a)
+    // El binomio es (x + mitadCoef)
+    var signoMitad = mitadCoef >= 0 ? '+ ' + formatearNumero(mitadCoef) : '- ' + formatearNumero(-mitadCoef);
+    var terminoSobrante = -a * mitadCuadrado;  // a * (-mitadCuadrado)
+
+    html += '<div class="paso"><span class="num-paso">3</span>Agrupamos el trinomio cuadrado perfecto y sacamos el término sobrante multiplicado por $a$:<br>' +
+        '$$y = ' + formatearNumero(a) + '\\left(x ' + signoMitad + '\\right)^2 ' +
+        (terminoSobrante >= 0 ? '+ ' + formatearNumero(terminoSobrante) : '- ' + formatearNumero(-terminoSobrante)) +
+        ' + ' + formatearNumero(c) + '$$</div>';
+
+    // Paso 4: Simplificar el término constante
+    html += '<div class="paso"><span class="num-paso">4</span>Simplificamos el término constante:<br>' +
+        '$$y = ' + formatearNumero(a) + '\\left(x ' + (h >= 0 ? '- ' + formatearNumero(h) : '+ ' + formatearNumero(-h)) + '\\right)^2 ' +
+        (k >= 0 ? '+ ' + formatearNumero(k) : '- ' + formatearNumero(-k)) + '$$' +
+        '<div style="margin-top:6px;font-size:0.85rem;color:var(--color-primario);">' +
+        '<em>Nota: el binomio se escribe como $(x - h)$, con $h = ' + formatearNumero(h) + '$.</em>' +
+        '</div></div>';
+
+    // Mini-gráfica
+    html += '<div class="mini-canvas-wrapper"><canvas id="miniCanvas" width="320" height="200"></canvas></div>';
+
+    html += '<div class="paso"><span class="num-paso">5</span>Identificamos el vértice directamente de la forma canónica:<br>' +
+        '$$V(' + formatearNumero(h) + ', ' + formatearNumero(k) + ')$$</div>';
+
+    return html;
+}
+
+// =========================================
+// MÉTODO 2: FÓRMULA DEL VÉRTICE
+// =========================================
+function construirColumnaFormula(a, b, c, h, k) {
+    var html = '';
+
+    html += '<div class="paso"><span class="num-paso">1</span>Identificamos coeficientes: $a = ' +
+        formatearNumero(a) + '$, $b = ' + formatearNumero(b) + '$, $c = ' + formatearNumero(c) + '$.</div>';
+
+    html += '<div class="paso"><span class="num-paso">2</span>Aplicamos la fórmula $x = -\\dfrac{b}{2a}$:<br>' +
+        '$$x = -\\dfrac{' + formatearNumero(b) + '}{2(' + formatearNumero(a) + ')} = -\\dfrac{' +
+        formatearNumero(b) + '}{' + formatearNumero(2 * a) + '} = ' + formatearNumero(h) + '$$</div>';
+
+    html += '<div class="paso"><span class="num-paso">3</span>Sustituimos $x = ' + formatearNumero(h) +
+        '$ en la función original para obtener $y$:<br>' +
+        '$$y = ' + formatearNumero(a) + '(' + formatearNumero(h) + ')^2 + (' +
+        formatearNumero(b) + ')(' + formatearNumero(h) + ') + (' + formatearNumero(c) + ')$$' +
+        '$$y = ' + formatearNumero(a * h * h) + ' + ' + formatearNumero(b * h) + ' + ' + formatearNumero(c) +
+        ' = ' + formatearNumero(k) + '$$</div>';
+
+    html += '<div class="paso"><span class="num-paso">4</span>Identificamos el vértice:<br>' +
+        '$$V(' + formatearNumero(h) + ', ' + formatearNumero(k) + ')$$</div>';
+
+    return html;
+}
+
+// =========================================
+// MINI-CANVAS: GRÁFICA DE LA PARÁBOLA
+// =========================================
+function dibujarMiniGrafica(canvasId, a, b, c, h, k) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width;
+    var H = canvas.height;
+
+    // HiDPI
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    canvas.style.width = '100%';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Fondo
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Rango visible
+    var xMin = h - 4;
+    var xMax = h + 4;
+    var yMin = Math.min(k, 0) - 3;
+    var yMax = Math.max(k, 0) + 3;
+
+    function mapear(x, y) {
+        return {
+            px: (x - xMin) / (xMax - xMin) * W,
+            py: H - (y - yMin) / (yMax - yMin) * H
+        };
+    }
+
+    // Ejes
+    ctx.strokeStyle = '#2c4966';
+    ctx.lineWidth = 1;
+    var origen = mapear(0, 0);
+    if (origen.py >= 0 && origen.py <= H) {
+        ctx.beginPath();
+        ctx.moveTo(0, origen.py);
+        ctx.lineTo(W, origen.py);
+        ctx.stroke();
+    }
+    if (origen.px >= 0 && origen.px <= W) {
+        ctx.beginPath();
+        ctx.moveTo(origen.px, 0);
+        ctx.lineTo(origen.px, H);
+        ctx.stroke();
+    }
+
+    // Parábola
+    ctx.strokeStyle = '#5b7fa3';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    var primero = true;
+    for (var i = 0; i <= 120; i++) {
+        var x = xMin + (xMax - xMin) * i / 120;
+        var y = a * x * x + b * x + c;
+        var p = mapear(x, y);
+        if (p.py < -H || p.py > H * 2) { primero = true; continue; }
+        if (primero) { ctx.moveTo(p.px, p.py); primero = false; }
+        else ctx.lineTo(p.px, p.py);
+    }
+    ctx.stroke();
+
+    // Vértice
+    var pv = mapear(h, k);
+    ctx.fillStyle = '#c0392b';
+    ctx.beginPath();
+    ctx.arc(pv.px, pv.py, 5, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Etiqueta del vértice
+    ctx.font = 'bold 11px Segoe UI, sans-serif';
+    ctx.fillStyle = '#c0392b';
+    ctx.textAlign = 'left';
+    ctx.fillText('V(' + formatearNumero(h) + ', ' + formatearNumero(k) + ')', pv.px + 8, pv.py - 8);
+
+    // Restaurar transform
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+// =========================================
+// RESOLUCIÓN PRINCIPAL
+// =========================================
+function resolver() {
+    var a = parseFloat(document.getElementById('in-a').value);
+    var b = parseFloat(document.getElementById('in-b').value);
+    var c = parseFloat(document.getElementById('in-c').value);
+
+    if (isNaN(a) || isNaN(b) || isNaN(c)) {
+        alert('⚠️ Debes ingresar los tres coeficientes.');
+        return;
+    }
+
+    // Blindaje contra a ≈ 0
+    if (Math.abs(a) < 1e-9) {
+        alert('⚠️ Si a ≈ 0, la función no es cuadrática.');
+        return;
+    }
+
+    // Cálculo del vértice
+    var h = -b / (2 * a);
+    var k = a * h * h + b * h + c;
+
+    // Discriminante
+    var disc = b * b - 4 * a * c;
+
+    document.getElementById('mensajeInicial').style.display = 'none';
+    document.getElementById('contenidoResultados').style.display = 'block';
+
+    // Expresión
+    document.getElementById('expresionEcuacion').innerHTML = '$$' + construirExpresion(a, b, c) + '$$';
+
+    // Banner info
+    document.getElementById('datoConcavidad').textContent =
+        (a > 0 ? 'Hacia arriba (mínimo)' : 'Hacia abajo (máximo)');
+
+    var discEl = document.getElementById('datoDiscriminante');
+    discEl.textContent = formatearNumero(Math.abs(disc) < 1e-9 ? 0 : disc);
+    discEl.className = '';
+    if (disc > 1e-9) discEl.classList.add('pos');
+    else if (Math.abs(disc) < 1e-9) discEl.classList.add('cero');
+    else discEl.classList.add('neg');
+
+    var raicesEl = document.getElementById('datoRaices');
+    if (disc > 1e-9) { raicesEl.textContent = 'Dos raíces reales distintas'; raicesEl.className = 'pos'; }
+    else if (Math.abs(disc) < 1e-9) { raicesEl.textContent = 'Una raíz doble'; raicesEl.className = 'cero'; }
+    else { raicesEl.textContent = 'Dos raíces complejas conjugadas'; raicesEl.className = 'neg'; }
+
+    // Columnas
+    document.getElementById('columnaCompletar').innerHTML = construirColumnaCompletar(a, b, c, h, k);
+    document.getElementById('columnaFormula').innerHTML = construirColumnaFormula(a, b, c, h, k);
+
+    // Conclusión
+    document.getElementById('verticeConclusion').innerHTML =
+        '$$V\\left(' + formatearNumero(h) + ', \\ ' + formatearNumero(k) + '\\right)$$' +
+        '<p style="margin-top:8px;font-size:0.9rem;color:var(--color-texto-oscuro);">' +
+        'Forma canónica: $' + construirCanonica(a, h, k) + '$</p>';
+
+    // Aviso pedagógico
+    var aviso = document.getElementById('avisoPedagogico');
+    var htmlAviso = '💡 <strong>Observación pedagógica:</strong> ';
+    if (a > 0) {
+        htmlAviso += 'como $a > 0$, el vértice es el <strong>valor mínimo</strong> de la función. ';
+    } else {
+        htmlAviso += 'como $a < 0$, el vértice es el <strong>valor máximo</strong> de la función. ';
+    }
+    htmlAviso += 'La <strong>fórmula $x = -\\dfrac{b}{2a}$</strong> es más rápida para calcular el vértice, ' +
+        'mientras que <strong>completar el cuadrado</strong> da directamente la forma canónica, útil para ' +
+        'identificar transformaciones y graficar.';
+    aviso.innerHTML = htmlAviso;
+
+    renderMath(document.getElementById('panelResultados'));
+
+    // Dibujar mini-gráfica después de que el DOM esté actualizado
+    setTimeout(function() {
+        dibujarMiniGrafica('miniCanvas', a, b, c, h, k);
+    }, 100);
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('btn-resolver').addEventListener('click', resolver);
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.getElementById('in-a').value = -2;
+    document.getElementById('in-b').value = 2;
+    document.getElementById('in-c').value = 12;
+    document.getElementById('mensajeInicial').style.display = 'block';
+    document.getElementById('contenidoResultados').style.display = 'none';
+});
+
+// Ejemplos
+var ejemplos = {
+    1: { a: -2, b: 2, c: 12 },
+    2: { a: 1, b: -6, c: 5 },
+    3: { a: 3, b: -4, c: 2 },
+    4: { a: -3, b: 12, c: -7 },
+    5: { a: 2, b: 4, c: 0 },
+    6: { a: 0.5, b: -2, c: 3 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+        document.getElementById('in-a').value = data.a;
+        document.getElementById('in-b').value = data.b;
+        document.getElementById('in-c').value = data.c;
+        resolver();
+    });
+});
+
+document.querySelectorAll('#in-a, #in-b, #in-c').forEach(function(input) {
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') resolver();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+renderMath(document.body);
+
+</script>
+
+</body>
+</html>

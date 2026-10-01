@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cazador de Vértices | Matemáticas III</title>
+    <title>Laboratorio: Vértice y Análisis de la Parábola | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -236,6 +236,10 @@
         .opcion-item:hover:not(.disabled) {
             background-color: rgba(91,127,163,0.08);
             border-color: var(--color-acento);
+        }
+        .opcion-item:focus {
+            outline: 3px solid var(--color-acento);
+            outline-offset: 2px;
         }
         .opcion-item.disabled { cursor: default; }
         .opcion-item.correcta {
@@ -479,14 +483,14 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>Cazador de Vértices</h1>
+        <h1>Laboratorio: Vértice y Análisis de la Parábola</h1>
         <p>Laboratorio de práctica | Matemáticas III</p>
     </header>
 
     <div class="barra-progreso-general">
         <span class="texto-progreso" id="progresoTexto">Caso 1 de 8</span>
         <div class="progreso-track">
-            <div class="progreso-fill" id="progresoFill"></div>
+            <div class="progreso-fill" id="progresoFill" role="progressbar" aria-label="Progreso del laboratorio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
         </div>
         <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
     </div>
@@ -513,10 +517,10 @@
                 <div class="fase-instruccion">
                     Identifica la concavidad de la parábola.
                 </div>
-                <div class="contador-intentos" id="contadorFase1">Intento 1 de 3</div>
-                <div class="opciones-lista" id="opcionesFase1"></div>
+                <div class="contador-intentos" id="contadorFase1" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase1" role="group" aria-label="Opciones de concavidad"></div>
                 <button type="button" class="btn-reintentar" id="btnReintentar1">🔄 Reintentar</button>
-                <div class="feedback" id="feedback1"></div>
+                <div class="feedback" id="feedback1" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 2 -->
@@ -527,13 +531,13 @@
                 <div class="fase-instruccion">
                     Calcula el vértice usando $x = -\dfrac{b}{2a}$ y $y = f(x)$.
                 </div>
-                <div class="contador-intentos" id="contadorFase2">Intento 1 de 3</div>
+                <div class="contador-intentos" id="contadorFase2" aria-live="polite">Intento 1 de 3</div>
                 <div class="fila-ejecucion" id="inputsFase2"></div>
                 <div class="botones-fase">
                     <button type="button" class="btn-pista" id="pistaFase2">💡 Pista</button>
                     <button type="button" class="btn-primario" id="verificarFase2">Verificar</button>
                 </div>
-                <div class="feedback" id="feedback2"></div>
+                <div class="feedback" id="feedback2" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 3 -->
@@ -544,13 +548,13 @@
                 <div class="fase-instruccion">
                     Encuentra el eje de simetría, las raíces (si existen) y la intersección con $Y$.
                 </div>
-                <div class="contador-intentos" id="contadorFase3">Intento 1 de 3</div>
+                <div class="contador-intentos" id="contadorFase3" aria-live="polite">Intento 1 de 3</div>
                 <div class="fila-ejecucion" id="inputsFase3"></div>
                 <div class="botones-fase">
                     <button type="button" class="btn-pista" id="pistaFase3">💡 Pista</button>
                     <button type="button" class="btn-primario" id="verificarFase3">Verificar</button>
                 </div>
-                <div class="feedback" id="feedback3"></div>
+                <div class="feedback" id="feedback3" role="status" aria-live="polite"></div>
             </div>
 
             <!-- FASE 4 -->
@@ -561,10 +565,10 @@
                 <div class="fase-instruccion">
                     ¿Cuál es el error más frecuente en este tipo de caso?
                 </div>
-                <div class="contador-intentos" id="contadorFase4">Intento 1 de 3</div>
-                <div class="opciones-lista" id="opcionesFase4"></div>
+                <div class="contador-intentos" id="contadorFase4" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase4" role="group" aria-label="Opciones de trampa CENEVAL"></div>
                 <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
-                <div class="feedback" id="feedback4"></div>
+                <div class="feedback" id="feedback4" role="status" aria-live="polite"></div>
             </div>
 
             <div class="navegacion-casos">
@@ -593,7 +597,7 @@
 
 <script>
 // =========================================
-// BANCO DE CASOS (IDÉNTICO AL ANTERIOR)
+// BANCO DE CASOS — Módulo 9
 // =========================================
 var casos = [
     {
@@ -1013,6 +1017,11 @@ function actualizarContador(idContador, intentos) {
     }
 }
 
+// Limpia LaTeX para usar como aria-label
+function limpiarLatex(texto) {
+    return String(texto).replace(/\$[^$]*\$/g, '').replace(/\\[a-zA-Z]+/g, '').replace(/[{}]/g, '').trim();
+}
+
 // =========================================
 // CARGA DE CASO
 // =========================================
@@ -1047,24 +1056,20 @@ function cargarCaso(indice) {
         el.innerHTML = '';
     });
 
-    // Ocultar botones reintentar
     document.getElementById('btnReintentar1').classList.remove('visible');
     document.getElementById('btnReintentar4').classList.remove('visible');
 
-    // Ocultar contadores
-    document.getElementById('contadorFase1').classList.remove('visible');
-    document.getElementById('contadorFase2').classList.remove('visible');
-    document.getElementById('contadorFase3').classList.remove('visible');
-    document.getElementById('contadorFase4').classList.remove('visible');
+    ['contadorFase1','contadorFase2','contadorFase3','contadorFase4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
 
     document.getElementById('inputsFase2').innerHTML = '';
     document.getElementById('inputsFase3').innerHTML = '';
+    document.getElementById('opcionesFase4').innerHTML = '';
 
     renderizarOpciones('opcionesFase1', caso.fase1.opciones, function(op, btn) {
         verificarFase1(op, btn);
     });
-
-    document.getElementById('opcionesFase4').innerHTML = '';
 
     document.getElementById('btnAnterior').disabled = (indice === 0);
     document.getElementById('btnSiguiente').disabled = true;
@@ -1083,7 +1088,7 @@ function renderizarOpciones(contenedorId, opciones, onSelect) {
         var btn = document.createElement('button');
         btn.type = 'button';
         btn.className = 'opcion-item';
-        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + op.replace(/\$/g, ''));
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + limpiarLatex(op));
         btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
         btn.dataset.opcion = op;
         btn.addEventListener('click', function() {
@@ -1098,19 +1103,12 @@ function renderizarOpciones(contenedorId, opciones, onSelect) {
 function renderizarInputs(contenedorId, campos) {
     var contenedor = document.getElementById(contenedorId);
     contenedor.innerHTML = '';
-    campos.forEach(function(campo, idx) {
+    campos.forEach(function(campo) {
         var wrapper = document.createElement('div');
         wrapper.className = 'input-wrapper';
         var idInput = contenedorId + '-' + campo.id;
-        var ariaLabel = campo.etiqueta
-            .replace(/\$/g, '')
-            .replace(/\\[a-z]+/g, '')
-            .replace(/[{}]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
         wrapper.innerHTML = '<label for="' + idInput + '">' + campo.etiqueta + '</label>' +
-            '<input type="text" id="' + idInput + '" placeholder="Tu respuesta" autocomplete="off" ' +
-            'aria-label="Campo ' + (idx + 1) + ': ' + ariaLabel + '">';
+            '<input type="text" id="' + idInput + '" placeholder="Tu respuesta" autocomplete="off" aria-label="' + limpiarLatex(campo.etiqueta) + '">';
         contenedor.appendChild(wrapper);
     });
     renderMath(contenedor);
@@ -1134,7 +1132,6 @@ function verificarFase1(opcion, btn) {
         fb.className = 'feedback correcto visible';
         fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase1.explicacion;
         document.getElementById('btnReintentar1').classList.remove('visible');
-        // Avanzar a Fase 2
         document.getElementById('fase2').classList.remove('bloqueada');
         renderizarInputs('inputsFase2', caso.fase2.campos);
         document.getElementById('contadorFase2').classList.add('visible');
@@ -1145,11 +1142,9 @@ function verificarFase1(opcion, btn) {
         document.getElementById('contadorFase1').classList.add('visible');
 
         if (estado.intentosFase1 >= MAX_INTENTOS) {
-            // Revelar la respuesta correcta
             fb.className = 'feedback incorrecto visible';
             fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. La respuesta correcta es <strong>' + caso.fase1.correcta + '</strong>. ' + caso.fase1.explicacion;
             document.getElementById('btnReintentar1').classList.remove('visible');
-            // Avanzar automáticamente para no bloquear
             document.getElementById('fase2').classList.remove('bloqueada');
             renderizarInputs('inputsFase2', caso.fase2.campos);
             document.getElementById('contadorFase2').classList.add('visible');
@@ -1164,7 +1159,6 @@ function verificarFase1(opcion, btn) {
 }
 
 document.getElementById('btnReintentar1').addEventListener('click', function() {
-    // Limpiar marcas de las opciones
     document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
         b.classList.remove('disabled', 'correcta', 'incorrecta');
     });
@@ -1390,7 +1384,9 @@ function actualizarProgreso() {
     var total = casos.length;
     var completados = estado.completados.filter(function(x) { return x; }).length;
     estado.puntaje = completados;
-    document.getElementById('progresoFill').style.width = (completados / total * 100) + '%';
+    var porcentaje = completados / total * 100;
+    document.getElementById('progresoFill').style.width = porcentaje + '%';
+    document.getElementById('progresoFill').setAttribute('aria-valuenow', Math.round(porcentaje));
     document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
 }
 
@@ -1426,15 +1422,16 @@ function mostrarPantallaFinal() {
     var medalla = document.getElementById('medallaFinal');
     var mensaje = document.getElementById('mensajeFinal');
 
+    // CORRECCIÓN: usar innerHTML para que MathJax procese las fórmulas
     if (completados === total) {
         medalla.textContent = '🏆';
-        mensaje.textContent = '¡Cazador experto! Resolviste los 8 casos correctamente, identificaste el vértice por fórmula y analizaste todos los elementos de la parábola. Dominas la función cuadrática del Módulo 9.';
+        mensaje.innerHTML = '¡Cazador experto! Resolviste los 8 casos correctamente, identificaste el vértice por fórmula y analizaste todos los elementos de la parábola. Dominas la función cuadrática del Módulo 9.';
     } else if (completados >= total * 0.7) {
         medalla.textContent = '🥈';
-        mensaje.textContent = '¡Buen trabajo, cazador! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del cálculo del vértice y el análisis de la parábola.';
+        mensaje.innerHTML = '¡Buen trabajo, cazador! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio del cálculo del vértice y el análisis de la parábola.';
     } else {
         medalla.textContent = '🥉';
-        mensaje.textContent = 'Continúa entrenando, cazador. Te recomendamos repasar la fórmula del vértice $x = -b/(2a)$, la interpretación del discriminante, la concavidad y la simetría de la parábola antes de reintentar.';
+        mensaje.innerHTML = 'Continúa entrenando, cazador. Te recomendamos repasar la fórmula del vértice $x = -\\dfrac{b}{2a}$, la interpretación del discriminante, la concavidad y la simetría de la parábola antes de reintentar.';
     }
     renderMath(pantalla);
     window.scrollTo({ top: 0, behavior: 'smooth' });

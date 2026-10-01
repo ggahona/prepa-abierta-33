@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Fábrica de Raíces | Matemáticas III</title>
+    <title>Solucionador: Los 3 Métodos Comparados | Matemáticas III</title>
 
     <!-- MathJax -->
     <script>
@@ -405,7 +405,7 @@
 
     <header>
         <div class="institucion">Preparatoria Abierta</div>
-        <h1>La Fábrica de Raíces</h1>
+        <h1>Solucionador: Los 3 Métodos Comparados</h1>
         <p>Solucionador comparativo | Matemáticas III</p>
     </header>
 
@@ -418,15 +418,15 @@
             <div class="grupo-inputs">
                 <div class="titulo-grupo">$ax^2 + bx + c = 0$</div>
                 <div class="fila-inputs">
-                    <label>$a$</label>
+                    <label for="in-a">$a$</label>
                     <input type="number" id="in-a" value="1" step="any" aria-label="Coeficiente a">
                 </div>
                 <div class="fila-inputs">
-                    <label>$b$</label>
+                    <label for="in-b">$b$</label>
                     <input type="number" id="in-b" value="-5" step="any" aria-label="Coeficiente b">
                 </div>
                 <div class="fila-inputs">
-                    <label>$c$</label>
+                    <label for="in-c">$c$</label>
                     <input type="number" id="in-c" value="6" step="any" aria-label="Coeficiente c">
                 </div>
                 <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver con los 3 métodos</button>
@@ -445,14 +445,14 @@
         </div>
 
         <!-- PANEL DE RESULTADOS -->
-        <div class="panel-resultados" id="panelResultados">
+        <div class="panel-resultados" role="region" aria-label="Desarrollo comparativo de los 3 métodos">
             <div class="mensaje-inicial" id="mensajeInicial">
                 ⚙️ Ingresa los coeficientes y presiona <strong>"Resolver con los 3 métodos"</strong><br>
                 para ver cómo el método gráfico, la factorización y la fórmula general<br>
                 llegan a las mismas raíces.
             </div>
 
-            <div id="contenidoResultados" style="display:none;">
+            <div id="contenidoResultados" style="display:none;" role="status" aria-live="polite">
                 <div class="resumen-ecuacion">
                     <div class="titulo-resumen">Ecuación a resolver</div>
                     <div class="expresion-resumen" id="expresionEcuacion"></div>
@@ -512,6 +512,11 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(4)).toString();
 }
 
+function casiIgual(x, y, tol) {
+    tol = tol || 1e-9;
+    return Math.abs(x - y) < tol;
+}
+
 function renderMath(el) {
     if (window.MathJax && window.MathJax.typesetPromise) {
         MathJax.typesetPromise([el]).catch(console.log);
@@ -553,15 +558,15 @@ function latexRaizSimplificada(n) {
 // Construye la expresión ax² + bx + c = 0
 function construirExpresion(a, b, c, sinIgual) {
     var s = '';
-    if (a === 1) s += 'x^2';
-    else if (a === -1) s += '-x^2';
+    if (casiIgual(a, 1)) s += 'x^2';
+    else if (casiIgual(a, -1)) s += '-x^2';
     else s += formatearNumero(a) + 'x^2';
 
-    if (b !== 0) {
-        if (b > 0) s += ' + ' + (b === 1 ? '' : formatearNumero(b)) + 'x';
-        else s += ' - ' + (b === -1 ? '' : formatearNumero(-b)) + 'x';
+    if (!casiIgual(b, 0)) {
+        if (b > 0) s += ' + ' + (casiIgual(b, 1) ? '' : formatearNumero(b)) + 'x';
+        else s += ' - ' + (casiIgual(b, -1) ? '' : formatearNumero(-b)) + 'x';
     }
-    if (c !== 0) {
+    if (!casiIgual(c, 0)) {
         if (c > 0) s += ' + ' + formatearNumero(c);
         else s += ' - ' + formatearNumero(-c);
     }
@@ -574,10 +579,10 @@ function construirExpresion(a, b, c, sinIgual) {
 // =========================================
 function calcularRaices(a, b, c) {
     var disc = b * b - 4 * a * c;
-    if (disc > 0) {
+    if (disc > 1e-9) {
         var sq = Math.sqrt(disc);
         return { tipo: 'reales', r1: (-b + sq) / (2 * a), r2: (-b - sq) / (2 * a), disc: disc };
-    } else if (Math.abs(disc) < 1e-9) {
+    } else if (casiIgual(disc, 0)) {
         return { tipo: 'reales', r1: -b / (2 * a), r2: -b / (2 * a), disc: 0 };
     } else {
         return { tipo: 'complejas', disc: disc };
@@ -590,6 +595,10 @@ function calcularRaices(a, b, c) {
 function dibujarMiniGrafica(canvasId, a, b, c) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
+
+    // Blindaje: si a ≈ 0, no dibujar
+    if (casiIgual(a, 0)) return;
+
     var ctx = canvas.getContext('2d');
     var W = canvas.width;
     var H = canvas.height;
@@ -612,7 +621,7 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
 
     var xMin, xMax, yMin, yMax;
 
-    if (disc >= 0 && a !== 0) {
+    if (disc >= 0 && !casiIgual(a, 0)) {
         var sq = Math.sqrt(disc);
         var r1 = (-b + sq) / (2 * a);
         var r2 = (-b - sq) / (2 * a);
@@ -646,14 +655,12 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
     ctx.strokeStyle = '#2c4966';
     ctx.lineWidth = 1;
     var origen = mapear(0, 0);
-    // Eje X
     if (origen.py >= 0 && origen.py <= H) {
         ctx.beginPath();
         ctx.moveTo(0, origen.py);
         ctx.lineTo(W, origen.py);
         ctx.stroke();
     }
-    // Eje Y
     if (origen.px >= 0 && origen.px <= W) {
         ctx.beginPath();
         ctx.moveTo(origen.px, 0);
@@ -679,8 +686,8 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
 
     // Raíces (si Δ ≥ 0)
     if (disc >= 0) {
-        var sq = Math.sqrt(disc);
-        var raices = disc === 0 ? [-b / (2 * a)] : [(-b + sq) / (2 * a), (-b - sq) / (2 * a)];
+        var sq2 = Math.sqrt(disc);
+        var raices = casiIgual(disc, 0) ? [-b / (2 * a)] : [(-b + sq2) / (2 * a), (-b - sq2) / (2 * a)];
         raices.forEach(function(r) {
             var p = mapear(r, 0);
             if (p.px >= 0 && p.px <= W && p.py >= 0 && p.py <= H) {
@@ -708,7 +715,7 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
 function construirColumnaGrafico(a, b, c, idCanvas) {
     var html = '';
     html += '<div class="paso"><span class="num-paso">1</span>Graficar $y = ' + construirExpresion(a, b, c, true) + '$.</div>';
-    html += '<div class="mini-canvas-wrapper"><canvas id="' + idCanvas + '" width="320" height="200"></canvas></div>';
+    html += '<div class="mini-canvas-wrapper"><canvas id="' + idCanvas + '" width="320" height="200" aria-label="Mini gráfica de la parábola"></canvas></div>';
 
     var disc = b * b - 4 * a * c;
     var verticeX = -b / (2 * a);
@@ -717,8 +724,8 @@ function construirColumnaGrafico(a, b, c, idCanvas) {
     html += '<div class="paso"><span class="num-paso">2</span>Vértice: $V(' + formatearNumero(verticeX) + ', ' + formatearNumero(verticeY) + ')$.</div>';
 
     var textoTipo = '';
-    if (disc > 0) textoTipo = 'La parábola <strong>corta</strong> el eje $X$ en <strong>dos puntos</strong>.';
-    else if (Math.abs(disc) < 1e-9) textoTipo = 'La parábola es <strong>tangente</strong> al eje $X$ (raíz doble).';
+    if (disc > 1e-9) textoTipo = 'La parábola <strong>corta</strong> el eje $X$ en <strong>dos puntos</strong>.';
+    else if (casiIgual(disc, 0)) textoTipo = 'La parábola es <strong>tangente</strong> al eje $X$ (raíz doble).';
     else textoTipo = 'La parábola <strong>no corta</strong> el eje $X$: raíces complejas.';
 
     html += '<div class="paso"><span class="num-paso">3</span>' + textoTipo + '</div>';
@@ -726,7 +733,7 @@ function construirColumnaGrafico(a, b, c, idCanvas) {
     var raices = calcularRaices(a, b, c);
     var raicesHTML = '';
     if (raices.tipo === 'reales') {
-        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+        if (casiIgual(raices.r1, raices.r2)) {
             raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
         } else {
             raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
@@ -751,15 +758,26 @@ function construirColumnaFactorizacion(a, b, c) {
     var disc = b * b - 4 * a * c;
 
     // Caso especial: c = 0 → factorización directa por x
-    if (c === 0) {
+    if (casiIgual(c, 0)) {
         html += '<div class="paso"><span class="num-paso">1</span>Como $c = 0$, factorizamos directamente por $x$:</div>';
-        html += '<div style="text-align:center;padding:6px 0;">$$x(' + formatearNumero(a) + 'x ' + (b >= 0 ? '+ ' + formatearNumero(b) : '- ' + formatearNumero(-b)) + ') = 0$$</div>';
-        html += '<div class="paso"><span class="num-paso">2</span>Igualamos cada factor a cero: $x = 0$ ó $' + formatearNumero(a) + 'x ' + (b >= 0 ? '+ ' + formatearNumero(b) : '- ' + formatearNumero(-b)) + ' = 0$.</div>';
-        var r2 = -b / a;
-        html += '<div class="resultado-metodo">' +
-            '<div class="etiqueta-resultado">Raíces por factorización</div>' +
-            '$$x_1 = 0 \\quad ; \\quad x_2 = ' + formatearNumero(r2) + '$$' +
-            '</div>';
+        if (casiIgual(b, 0)) {
+            // Caso ax² = 0 → x = 0 (doble)
+            html += '<div style="text-align:center;padding:6px 0;">$$' + formatearNumero(a) + 'x^2 = 0$$</div>';
+            html += '<div class="paso"><span class="num-paso">2</span>Dividiendo entre $' + formatearNumero(a) + '$: $x^2 = 0$.</div>';
+            html += '<div class="resultado-metodo">' +
+                '<div class="etiqueta-resultado">Raíces por factorización</div>' +
+                '$$x_1 = x_2 = 0 \\text{ (raíz doble)}$$' +
+                '</div>';
+        } else {
+            var signoB = b >= 0 ? '+ ' + (casiIgual(b, 1) ? '' : formatearNumero(b)) : '- ' + (casiIgual(b, -1) ? '' : formatearNumero(-b));
+            html += '<div style="text-align:center;padding:6px 0;">$$x(' + formatearNumero(a) + 'x ' + signoB + ') = 0$$</div>';
+            html += '<div class="paso"><span class="num-paso">2</span>Igualamos cada factor a cero: $x = 0$ ó $' + formatearNumero(a) + 'x ' + signoB + ' = 0$.</div>';
+            var r2 = -b / a;
+            html += '<div class="resultado-metodo">' +
+                '<div class="etiqueta-resultado">Raíces por factorización</div>' +
+                '$$x_1 = 0 \\quad ; \\quad x_2 = ' + formatearNumero(r2) + '$$' +
+                '</div>';
+        }
         return html;
     }
 
@@ -771,7 +789,7 @@ function construirColumnaFactorizacion(a, b, c) {
         if (i === 0) continue;
         if (ac % i === 0) {
             var j = ac / i;
-            if (i + j === b) {
+            if (casiIgual(i + j, b)) {
                 p = i; q = j;
                 break;
             }
@@ -799,56 +817,39 @@ function construirColumnaFactorizacion(a, b, c) {
     var signoQ = q >= 0 ? '+ ' + formatearNumero(q) : '- ' + formatearNumero(-q);
     html += '<div style="text-align:center;padding:6px 0;">$$' + formatearNumero(a) + 'x^2 ' + signoP + 'x ' + signoQ + 'x ' + (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' = 0$$</div>';
 
-    // Agrupación correcta:
+    // Agrupación:
     // (a x² + p x) + (q x + c)
-    // Factor común del primer par: mcd(a, p)
-    // Factor común del segundo par: mcd(q, c)
     var g1 = mcd(a, p);
     var g2 = mcd(q, c);
-
-    // Primer par: g1 * (a/g1 * x + p/g1) = g1 * (A1 x + B1)
     var A1 = a / g1;
     var B1 = p / g1;
-
-    // Segundo par: g2 * (q/g2 * x + c/g2) = g2 * (A2 x + B2)
     var A2 = q / g2;
     var B2 = c / g2;
 
-    // Los binomios (A1 x + B1) y (A2 x + B2) deben ser iguales salvo factor
-    // En el caso estándar A1 = A2 y B1 = B2
-
-    // Factor común del primer par
     var signoB1 = B1 >= 0 ? '+ ' + formatearNumero(B1) : '- ' + formatearNumero(-B1);
+    var signoB2 = B2 >= 0 ? '+ ' + formatearNumero(B2) : '- ' + formatearNumero(-B2);
+
     var coefG1 = (g1 === 1) ? '' : formatearNumero(g1);
     var coefA1 = (A1 === 1) ? '' : formatearNumero(A1);
-
-    // Factor común del segundo par
-    var signoB2 = B2 >= 0 ? '+ ' + formatearNumero(B2) : '- ' + formatearNumero(-B2);
     var coefG2 = (Math.abs(g2) === 1) ? '' : formatearNumero(Math.abs(g2));
     var coefA2 = (Math.abs(A2) === 1) ? '' : formatearNumero(Math.abs(A2));
-    var signoG2 = g2 >= 0 ? '+ ' : '- ';
+    var signoG2 = g2 >= 0 ? '+' : '-';
 
     html += '<div class="paso"><span class="num-paso">4</span>Agrupamos y factorizamos cada par:</div>';
     html += '<div style="text-align:center;padding:6px 0;">$$' + coefG1 + 'x(' + coefA1 + 'x ' + signoB1 + ') ' + signoG2 + ' ' + coefG2 + '(' + coefA2 + 'x ' + signoB2 + ') = 0$$</div>';
 
-    // Verificamos si los binomios coinciden para factorizar
-    // En el caso general: g1(A1 x + B1) + g2(A2 x + B2) donde A1x+B1 = A2x+B2 = (cx + d)
-    // Si coinciden:
-    var binomioComun = '';
-    if (Math.abs(A1 - A2) < 1e-9 && Math.abs(B1 - B2) < 1e-9) {
-        // Los binomios son iguales
+    var raices = calcularRaices(a, b, c);
+    var raicesHTML = '';
+
+    // Verificamos si los binomios coinciden (deben coincidir para factorizar)
+    if (casiIgual(A1, A2) && casiIgual(B1, B2)) {
         var coefX = (A1 === 1) ? '' : (A1 === -1 ? '-' : formatearNumero(A1));
-        binomioComun = '(' + coefX + 'x ' + signoB1 + ')';
-        html += '<div class="paso"><span class="num-paso">5</span>Sacamos factor común ' + binomioComun + ':</div>';
-        var sumaFactores = (g1 + g2);
-        var sumaFactoresStr = formatearNumero(g1) + ' ' + (g2 >= 0 ? '+ ' + formatearNumero(g2) : '- ' + formatearNumero(-g2));
+        html += '<div class="paso"><span class="num-paso">5</span>Sacamos factor común $(' + coefX + 'x ' + signoB1 + ')$:</div>';
         html += '<div style="text-align:center;padding:6px 0;">$$(' + coefX + 'x ' + signoB1 + ')(' + formatearNumero(g1) + ' ' + (g2 >= 0 ? '+ ' + formatearNumero(g2) : '- ' + formatearNumero(-g2)) + ') = 0$$</div>';
     }
 
-    var raices = calcularRaices(a, b, c);
-    var raicesHTML = '';
     if (raices.tipo === 'reales') {
-        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+        if (casiIgual(raices.r1, raices.r2)) {
             raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
         } else {
             raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
@@ -879,11 +880,11 @@ function construirColumnaFormula(a, b, c) {
     html += '<div class="paso"><span class="num-paso">3</span>Discriminante:</div>';
     html += '<div style="text-align:center;padding:6px 0;">$$\\Delta = ' + formatearNumero(disc) + '$$</div>';
 
-    if (disc > 0) {
+    if (disc > 1e-9) {
         var raizStr = latexRaizSimplificada(disc);
         html += '<div class="paso"><span class="num-paso">4</span>Como $\\Delta > 0$, hay <strong>dos raíces reales distintas</strong>:</div>';
         html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{' + formatearNumero(-b) + ' \\pm ' + raizStr + '}{' + formatearNumero(2 * a) + '}$$</div>';
-    } else if (Math.abs(disc) < 1e-9) {
+    } else if (casiIgual(disc, 0)) {
         html += '<div class="paso"><span class="num-paso">4</span>Como $\\Delta = 0$, hay <strong>una raíz doble</strong>:</div>';
         html += '<div style="text-align:center;padding:6px 0;">$$x = \\frac{' + formatearNumero(-b) + '}{' + formatearNumero(2 * a) + '} = ' + formatearNumero(-b / (2 * a)) + '$$</div>';
     } else {
@@ -895,7 +896,7 @@ function construirColumnaFormula(a, b, c) {
     var raices = calcularRaices(a, b, c);
     var raicesHTML = '';
     if (raices.tipo === 'reales') {
-        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+        if (casiIgual(raices.r1, raices.r2)) {
             raicesHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + '$$';
         } else {
             raicesHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
@@ -925,7 +926,7 @@ function resolver() {
     var b = parseFloat(document.getElementById('in-b').value);
     var c = parseFloat(document.getElementById('in-c').value);
 
-    if (isNaN(a) || isNaN(b) || isNaN(c) || a === 0) {
+    if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
         alert('⚠️ Debes ingresar coeficientes válidos con a ≠ 0.');
         return;
     }
@@ -942,10 +943,10 @@ function resolver() {
     banner.className = 'discriminante-banner';
     document.getElementById('valorDiscriminante').textContent = 'Δ = ' + formatearNumero(disc);
 
-    if (disc > 0) {
+    if (disc > 1e-9) {
         banner.classList.add('pos');
         document.getElementById('tipoDiscriminante').textContent = '> 0 → Dos raíces reales distintas';
-    } else if (Math.abs(disc) < 1e-9) {
+    } else if (casiIgual(disc, 0)) {
         banner.classList.add('cero');
         document.getElementById('tipoDiscriminante').textContent = '= 0 → Una raíz real doble';
     } else {
@@ -962,7 +963,7 @@ function resolver() {
     var raices = calcularRaices(a, b, c);
     var conclusionHTML = '';
     if (raices.tipo === 'reales') {
-        if (Math.abs(raices.r1 - raices.r2) < 1e-9) {
+        if (casiIgual(raices.r1, raices.r2)) {
             conclusionHTML = '$$x_1 = x_2 = ' + formatearNumero(raices.r1) + ' \\quad \\text{(raíz doble)}$$';
         } else {
             conclusionHTML = '$$x_1 = ' + formatearNumero(raices.r1) + ' \\quad ; \\quad x_2 = ' + formatearNumero(raices.r2) + '$$';
@@ -979,9 +980,9 @@ function resolver() {
     // Aviso pedagógico
     var aviso = document.getElementById('avisoPedagogico');
     var htmlAviso = '💡 <strong>Observación pedagógica:</strong> ';
-    if (disc > 0) {
+    if (disc > 1e-9) {
         htmlAviso += 'con Δ > 0, los <strong>tres métodos</strong> son viables. La factorización es la más rápida si los factores son sencillos. La fórmula general es universal.';
-    } else if (Math.abs(disc) < 1e-9) {
+    } else if (casiIgual(disc, 0)) {
         htmlAviso += 'con Δ = 0, la ecuación es un <strong>trinomio cuadrado perfecto</strong>. La factorización es directa: $(x - r)^2 = 0$. Los tres métodos coinciden en una raíz doble.';
     } else {
         htmlAviso += 'con Δ < 0, la ecuación <strong>no factoriza sobre los reales</strong> y la parábola no corta al eje $X$. Solo la <strong>fórmula general</strong> permite obtener las raíces complejas conjugadas.';

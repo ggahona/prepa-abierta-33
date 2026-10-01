@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 7 — Forma Rectangular, Resta, División y Conjugados | Matemáticas III</title>
-    
+
     <script>
         window.MathJax = {
             tex: {
@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7fa;
@@ -163,7 +163,7 @@
             margin-bottom: 5px;
         }
 
-        input[type="number"] {
+        input[type="number"], select {
             padding: 10px;
             border: 2px solid var(--color-acento-suave);
             border-radius: 6px;
@@ -172,9 +172,12 @@
             background-color: var(--color-blanco);
             width: 110px;
             transition: border-color 0.3s;
+            font-family: inherit;
         }
 
-        input[type="number"]:focus {
+        select { width: 160px; }
+
+        input[type="number"]:focus, select:focus {
             outline: none;
             border-color: var(--color-acento);
         }
@@ -270,6 +273,7 @@
             main { padding: 25px 20px; min-height: 400px; }
             .grupo-inputs { flex-direction: column; align-items: stretch; }
             input[type="number"] { width: 100%; }
+            select { width: 100%; }
             .navegacion { padding: 15px 20px; }
             .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
         }
@@ -290,7 +294,7 @@
 
     <main>
         <!-- DIAPOSITIVA 1: BIENVENIDA -->
-        <div class="diapositiva activa" data-indice="0">
+        <div class="diapositiva activa">
             <h2>Bienvenida al Módulo 7</h2>
             <p>En este módulo introducimos la <strong>forma rectangular</strong> de los números complejos, $z = a + bi$, que simplifica enormemente su manejo algebraico. Con esta notación podremos operar con los números complejos como si fueran expresiones algebraicas ordinarias.</p>
             <div class="math-block">$$z = a + bi, \quad \text{donde } i^2 = -1$$</div>
@@ -304,7 +308,7 @@
         </div>
 
         <!-- DIAPOSITIVA 2: FORMA RECTANGULAR -->
-        <div class="diapositiva" data-indice="1">
+        <div class="diapositiva">
             <h2>1. Forma Rectangular de los Números Complejos</h2>
             <p>Como $\mathbb{R} \subset \mathbb{C}$, cada número complejo $(a, b)$ puede expresarse como:</p>
             <div class="math-block">$$(a, b) = (a, 0) + (b, 0) \cdot (0, 1)$$</div>
@@ -328,8 +332,8 @@
                 <h3>🔄 Conversor a forma rectangular</h3>
                 <p>Ingresa las componentes $(a, b)$ para obtener la forma rectangular $a + bi$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="fr-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="fr-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="fr-a">a =</label><input type="number" id="fr-a" value="2" step="any" aria-label="Componente real a"></div>
+                    <div class="input-wrapper"><label for="fr-b">b =</label><input type="number" id="fr-b" value="3" step="any" aria-label="Componente imaginaria b"></div>
                     <button class="btn-primario" id="btn-rectangular">Convertir</button>
                 </div>
                 <div class="resultado" id="res-rectangular">El resultado aparecerá aquí...</div>
@@ -337,7 +341,7 @@
         </div>
 
         <!-- DIAPOSITIVA 3: OPERACIONES EN FORMA RECTANGULAR -->
-        <div class="diapositiva" data-indice="2">
+        <div class="diapositiva">
             <h2>2. Operaciones en Forma Rectangular</h2>
             <p>La gran ventaja de la forma rectangular es que podemos operar con los números complejos como si fueran expresiones algebraicas, usando siempre $i^2 = -1$.</p>
 
@@ -361,10 +365,10 @@
                 <h3>✖️ Multiplicador en forma rectangular</h3>
                 <p>Ingresa dos números complejos y multiplica mostrando el uso de $i^2 = -1$:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="mr-a1" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="mr-b1" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="mr-a2" value="-2" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="mr-b2" value="7" step="any"></div>
+                    <div class="input-wrapper"><label for="mr-a1">a₁ =</label><input type="number" id="mr-a1" value="3" step="any" aria-label="Componente real a1"></div>
+                    <div class="input-wrapper"><label for="mr-b1">b₁ =</label><input type="number" id="mr-b1" value="1" step="any" aria-label="Componente imaginaria b1"></div>
+                    <div class="input-wrapper"><label for="mr-a2">a₂ =</label><input type="number" id="mr-a2" value="-2" step="any" aria-label="Componente real a2"></div>
+                    <div class="input-wrapper"><label for="mr-b2">b₂ =</label><input type="number" id="mr-b2" value="7" step="any" aria-label="Componente imaginaria b2"></div>
                     <button class="btn-primario" id="btn-mult-rect">Multiplicar</button>
                 </div>
                 <div class="resultado" id="res-mult-rect">El resultado aparecerá aquí...</div>
@@ -372,7 +376,7 @@
         </div>
 
         <!-- DIAPOSITIVA 4: RESTA -->
-        <div class="diapositiva" data-indice="3">
+        <div class="diapositiva">
             <h2>3. Resta de Números Complejos</h2>
             <p>La resta se define como la suma con el inverso aditivo:</p>
             <div class="math-block">$$z_1 - z_2 = z_1 + (-z_2)$$</div>
@@ -395,10 +399,10 @@
                 <h3>➖ Calculadora de resta</h3>
                 <p>Ingresa dos números complejos para restarlos:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="re-a1" value="-3" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="re-b1" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="re-a2" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="re-b2" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="re-a1">a₁ =</label><input type="number" id="re-a1" value="-3" step="any" aria-label="Componente real a1"></div>
+                    <div class="input-wrapper"><label for="re-b1">b₁ =</label><input type="number" id="re-b1" value="2" step="any" aria-label="Componente imaginaria b1"></div>
+                    <div class="input-wrapper"><label for="re-a2">a₂ =</label><input type="number" id="re-a2" value="1" step="any" aria-label="Componente real a2"></div>
+                    <div class="input-wrapper"><label for="re-b2">b₂ =</label><input type="number" id="re-b2" value="4" step="any" aria-label="Componente imaginaria b2"></div>
                     <button class="btn-primario" id="btn-resta">Restar</button>
                 </div>
                 <div class="resultado" id="res-resta">El resultado aparecerá aquí...</div>
@@ -406,7 +410,7 @@
         </div>
 
         <!-- DIAPOSITIVA 5: CONJUGADO -->
-        <div class="diapositiva" data-indice="4">
+        <div class="diapositiva">
             <h2>4. El Conjugado de un Número Complejo</h2>
             <p>El <strong>conjugado</strong> de un número complejo $z = a + bi$ es otro número complejo que sólo difiere en el signo de su parte imaginaria:</p>
             <div class="math-block">$$\bar{z} = a - bi$$</div>
@@ -436,8 +440,8 @@
                 <h3>🔁 Calculadora de conjugado</h3>
                 <p>Ingresa un número complejo $z = a + bi$ para obtener su conjugado y verificar la propiedad fundamental:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="cj-a" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="cj-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="cj-a">a =</label><input type="number" id="cj-a" value="2" step="any" aria-label="Componente real a"></div>
+                    <div class="input-wrapper"><label for="cj-b">b =</label><input type="number" id="cj-b" value="3" step="any" aria-label="Componente imaginaria b"></div>
                     <button class="btn-primario" id="btn-conjugado">Calcular</button>
                 </div>
                 <div class="resultado" id="res-conjugado">El resultado aparecerá aquí...</div>
@@ -445,7 +449,7 @@
         </div>
 
         <!-- DIAPOSITIVA 6: DIVISIÓN -->
-        <div class="diapositiva" data-indice="5">
+        <div class="diapositiva">
             <h2>5. División de Números Complejos</h2>
             <p>Para dividir dos números complejos, se multiplica el numerador y el denominador por el <strong>conjugado del denominador</strong>. Este proceso elimina la parte imaginaria del denominador y permite expresar el cociente en forma rectangular.</p>
 
@@ -474,10 +478,10 @@
                 <h3>➗ Calculadora de división</h3>
                 <p>Ingresa dos números complejos para calcular su cociente:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="dv-a1" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="dv-b1" value="-3" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="dv-a2" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="dv-b2" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="dv-a1">a₁ =</label><input type="number" id="dv-a1" value="1" step="any" aria-label="Componente real a1"></div>
+                    <div class="input-wrapper"><label for="dv-b1">b₁ =</label><input type="number" id="dv-b1" value="-3" step="any" aria-label="Componente imaginaria b1"></div>
+                    <div class="input-wrapper"><label for="dv-a2">a₂ =</label><input type="number" id="dv-a2" value="1" step="any" aria-label="Componente real a2"></div>
+                    <div class="input-wrapper"><label for="dv-b2">b₂ =</label><input type="number" id="dv-b2" value="2" step="any" aria-label="Componente imaginaria b2"></div>
                     <button class="btn-primario" id="btn-division">Dividir</button>
                 </div>
                 <div class="resultado" id="res-division">El resultado aparecerá aquí...</div>
@@ -485,7 +489,7 @@
         </div>
 
         <!-- DIAPOSITIVA 7: OPERACIONES COMBINADAS -->
-        <div class="diapositiva" data-indice="6">
+        <div class="diapositiva">
             <h2>6. Operaciones Combinadas</h2>
             <p>La forma rectangular permite combinar todas las operaciones vistas. Veamos ejemplos con $z = -2 + 7i$:</p>
 
@@ -508,18 +512,18 @@
                 <p>Elige la operación y ingresa los dos complejos:</p>
                 <div class="grupo-inputs">
                     <div class="input-wrapper">
-                        <label>Operación:</label>
-                        <select id="op-tipo" style="padding: 10px; border: 2px solid var(--color-acento-suave); border-radius: 6px; font-size: 1rem; color: var(--color-primario); background-color: var(--color-blanco); width: 160px;">
+                        <label for="op-tipo">Operación:</label>
+                        <select id="op-tipo" aria-label="Tipo de operación a realizar">
                             <option value="suma">Suma (+)</option>
                             <option value="resta">Resta (−)</option>
                             <option value="mult">Multiplicación (×)</option>
                             <option value="div">División (÷)</option>
                         </select>
                     </div>
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="oc-a1" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="oc-b1" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="oc-a2" value="-2" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="oc-b2" value="7" step="any"></div>
+                    <div class="input-wrapper"><label for="oc-a1">a₁ =</label><input type="number" id="oc-a1" value="3" step="any" aria-label="Componente real a1"></div>
+                    <div class="input-wrapper"><label for="oc-b1">b₁ =</label><input type="number" id="oc-b1" value="1" step="any" aria-label="Componente imaginaria b1"></div>
+                    <div class="input-wrapper"><label for="oc-a2">a₂ =</label><input type="number" id="oc-a2" value="-2" step="any" aria-label="Componente real a2"></div>
+                    <div class="input-wrapper"><label for="oc-b2">b₂ =</label><input type="number" id="oc-b2" value="7" step="any" aria-label="Componente imaginaria b2"></div>
                     <button class="btn-primario" id="btn-combinada">Calcular</button>
                 </div>
                 <div class="resultado" id="res-combinada">El resultado aparecerá aquí...</div>
@@ -527,7 +531,7 @@
         </div>
 
         <!-- DIAPOSITIVA 8: RESUMEN -->
-        <div class="diapositiva" data-indice="7">
+        <div class="diapositiva">
             <h2>7. Resumen del Módulo</h2>
             <h3>Ideas clave</h3>
             <ul>
@@ -612,7 +616,7 @@
     // UTILIDADES
     // =========================================
     function formatearNumero(n) {
-        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
         return parseFloat(n.toFixed(4)).toString();
     }
 

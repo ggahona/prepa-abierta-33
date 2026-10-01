@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Módulo 6 — Multiplicación de Números Complejos y el Campo ℂ | Matemáticas III</title>
-    
+
     <script>
         window.MathJax = {
             tex: {
@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        
+
         body {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f4f7fa;
@@ -290,7 +290,7 @@
 
     <main>
         <!-- DIAPOSITIVA 1: BIENVENIDA -->
-        <div class="diapositiva activa" data-indice="0">
+        <div class="diapositiva activa">
             <h2>Bienvenida al Módulo 6</h2>
             <p>En este módulo continuamos el estudio del <strong>Conjunto de los Números Complejos</strong> $\mathbb{C}$. Ahora nos enfocamos en la <strong>multiplicación</strong>, sus propiedades, el elemento identidad, el inverso multiplicativo y la razón por la cual $\mathbb{C}$ es un <strong>campo</strong>.</p>
             <div class="math-block">$$(a_1, b_1) \cdot (a_2, b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$$</div>
@@ -301,7 +301,7 @@
         </div>
 
         <!-- DIAPOSITIVA 2: MULTIPLICACIÓN -->
-        <div class="diapositiva" data-indice="1">
+        <div class="diapositiva">
             <h2>1. Multiplicación de Números Complejos</h2>
             <p>Recordemos que un número complejo es un par ordenado con componentes reales: $z = (a, b)$. La multiplicación se define así:</p>
             <div class="math-block">$$(a_1, b_1) \cdot (a_2, b_2) = (a_1a_2 - b_1b_2, \ a_1b_2 + b_1a_2)$$</div>
@@ -323,10 +323,10 @@
                 <h3>✖️ Calculadora de multiplicación</h3>
                 <p>Ingresa las componentes de dos números complejos $(a_1, b_1)$ y $(a_2, b_2)$ para multiplicarlos:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="mu-a1" placeholder="0" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="mu-b1" placeholder="0" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="mu-a2" placeholder="0" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="mu-b2" placeholder="0" step="any"></div>
+                    <div class="input-wrapper"><label for="mu-a1">a₁ =</label><input type="number" id="mu-a1" placeholder="0" step="any" aria-label="Componente a1"></div>
+                    <div class="input-wrapper"><label for="mu-b1">b₁ =</label><input type="number" id="mu-b1" placeholder="0" step="any" aria-label="Componente b1"></div>
+                    <div class="input-wrapper"><label for="mu-a2">a₂ =</label><input type="number" id="mu-a2" placeholder="0" step="any" aria-label="Componente a2"></div>
+                    <div class="input-wrapper"><label for="mu-b2">b₂ =</label><input type="number" id="mu-b2" placeholder="0" step="any" aria-label="Componente b2"></div>
                     <button class="btn-primario" id="btn-multiplicar">Multiplicar</button>
                 </div>
                 <div class="resultado" id="res-multiplicar">El resultado aparecerá aquí...</div>
@@ -334,7 +334,7 @@
         </div>
 
         <!-- DIAPOSITIVA 3: CONMUTATIVA -->
-        <div class="diapositiva" data-indice="2">
+        <div class="diapositiva">
             <h2>2. Propiedad Conmutativa de la Multiplicación</h2>
             <p>Para toda $Z_1, Z_2 \in \mathbb{C}$, se cumple que:</p>
             <div class="math-block">$$Z_1 \cdot Z_2 = Z_2 \cdot Z_1$$</div>
@@ -358,10 +358,10 @@
                 <h3>🔄 Verificador de conmutatividad</h3>
                 <p>Ingresa dos números complejos y comprueba que el orden no altera el producto:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="co-a1" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="co-b1" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="co-a2" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="co-b2" value="-2" step="any"></div>
+                    <div class="input-wrapper"><label for="co-a1">a₁ =</label><input type="number" id="co-a1" value="2" step="any" aria-label="Componente a1"></div>
+                    <div class="input-wrapper"><label for="co-b1">b₁ =</label><input type="number" id="co-b1" value="3" step="any" aria-label="Componente b1"></div>
+                    <div class="input-wrapper"><label for="co-a2">a₂ =</label><input type="number" id="co-a2" value="1" step="any" aria-label="Componente a2"></div>
+                    <div class="input-wrapper"><label for="co-b2">b₂ =</label><input type="number" id="co-b2" value="-2" step="any" aria-label="Componente b2"></div>
                     <button class="btn-primario" id="btn-conmutativa">Verificar</button>
                 </div>
                 <div class="resultado" id="res-conmutativa">El resultado aparecerá aquí...</div>
@@ -369,7 +369,7 @@
         </div>
 
         <!-- DIAPOSITIVA 4: IDENTIDAD -->
-        <div class="diapositiva" data-indice="3">
+        <div class="diapositiva">
             <h2>3. Identidad Multiplicativa en $\mathbb{C}$</h2>
             <p>El elemento identidad para la multiplicación debe satisfacer, para todo $(a, b) \in \mathbb{C}$:</p>
             <div class="math-block">$$(a, b) \cdot (x, y) = (a, b)$$</div>
@@ -386,8 +386,8 @@
                 <h3>1️⃣ Verificador de identidad multiplicativa</h3>
                 <p>Ingresa un número complejo $(a, b)$ y comprueba que multiplicarlo por $(1, 0)$ lo deja igual:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="idn-a" value="5" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="idn-b" value="-3" step="any"></div>
+                    <div class="input-wrapper"><label for="idn-a">a =</label><input type="number" id="idn-a" value="5" step="any" aria-label="Componente a"></div>
+                    <div class="input-wrapper"><label for="idn-b">b =</label><input type="number" id="idn-b" value="-3" step="any" aria-label="Componente b"></div>
                     <button class="btn-primario" id="btn-identidad-mult">Comprobar</button>
                 </div>
                 <div class="resultado" id="res-identidad-mult">El resultado aparecerá aquí...</div>
@@ -395,7 +395,7 @@
         </div>
 
         <!-- DIAPOSITIVA 5: INVERSO MULTIPLICATIVO -->
-        <div class="diapositiva" data-indice="4">
+        <div class="diapositiva">
             <h2>4. Inverso Multiplicativo en $\mathbb{C}$</h2>
             <p>Buscamos $(x, y)$ tal que $(a, b) \cdot (x, y) = (1, 0)$. Resolviendo el sistema:</p>
             <div class="math-block">$$ax - by = 1 \quad ; \quad ay + bx = 0$$</div>
@@ -411,8 +411,8 @@
                 <h3>🔁 Calculadora de inverso multiplicativo</h3>
                 <p>Ingresa un número complejo $(a, b)$ para obtener su inverso multiplicativo:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="inv-a" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="inv-b" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="inv-a">a =</label><input type="number" id="inv-a" value="1" step="any" aria-label="Componente a"></div>
+                    <div class="input-wrapper"><label for="inv-b">b =</label><input type="number" id="inv-b" value="2" step="any" aria-label="Componente b"></div>
                     <button class="btn-primario" id="btn-inverso">Calcular inverso</button>
                 </div>
                 <div class="resultado" id="res-inverso">El resultado aparecerá aquí...</div>
@@ -420,7 +420,7 @@
         </div>
 
         <!-- DIAPOSITIVA 6: CAMPO -->
-        <div class="diapositiva" data-indice="5">
+        <div class="diapositiva">
             <h2>5. El Conjunto $\mathbb{C}$ es un Campo</h2>
             <p>Un campo es un conjunto con dos operaciones (suma y multiplicación) que satisface seis postulados. En $\mathbb{C}$ se cumplen todos:</p>
 
@@ -438,10 +438,10 @@
                 <h3>✅ Verificador de postulados</h3>
                 <p>Ingresa dos números complejos y comprueba varios postulados a la vez:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a₁ =</label><input type="number" id="ca-a1" value="1" step="any"></div>
-                    <div class="input-wrapper"><label>b₁ =</label><input type="number" id="ca-b1" value="2" step="any"></div>
-                    <div class="input-wrapper"><label>a₂ =</label><input type="number" id="ca-a2" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b₂ =</label><input type="number" id="ca-b2" value="-1" step="any"></div>
+                    <div class="input-wrapper"><label for="ca-a1">a₁ =</label><input type="number" id="ca-a1" value="1" step="any" aria-label="Componente a1"></div>
+                    <div class="input-wrapper"><label for="ca-b1">b₁ =</label><input type="number" id="ca-b1" value="2" step="any" aria-label="Componente b1"></div>
+                    <div class="input-wrapper"><label for="ca-a2">a₂ =</label><input type="number" id="ca-a2" value="3" step="any" aria-label="Componente a2"></div>
+                    <div class="input-wrapper"><label for="ca-b2">b₂ =</label><input type="number" id="ca-b2" value="-1" step="any" aria-label="Componente b2"></div>
                     <button class="btn-primario" id="btn-campo">Verificar postulados</button>
                 </div>
                 <div class="resultado" id="res-campo">El resultado aparecerá aquí...</div>
@@ -449,7 +449,7 @@
         </div>
 
         <!-- DIAPOSITIVA 7: CORRESPONDENCIA -->
-        <div class="diapositiva" data-indice="6">
+        <div class="diapositiva">
             <h2>6. Correspondencia Biunívoca con el Plano</h2>
             <p>Existe una <strong>correspondencia biunívoca</strong> entre los elementos de $\mathbb{C}$ (pares ordenados con componentes reales) y los puntos del plano:</p>
             <div class="math-block">$$z = (a, b) \quad \longleftrightarrow \quad \text{punto } (a, b)$$</div>
@@ -462,8 +462,8 @@
                 <h3>📍 Ubicador en el plano complejo</h3>
                 <p>Ingresa $(a, b)$ para obtener su descripción como punto del plano:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="ub-a" value="3" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="ub-b" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="ub-a">a =</label><input type="number" id="ub-a" value="3" step="any" aria-label="Componente a"></div>
+                    <div class="input-wrapper"><label for="ub-b">b =</label><input type="number" id="ub-b" value="2" step="any" aria-label="Componente b"></div>
                     <button class="btn-primario" id="btn-ubicar">Ubicar</button>
                 </div>
                 <div class="resultado" id="res-ubicar">La descripción aparecerá aquí...</div>
@@ -471,7 +471,7 @@
         </div>
 
         <!-- DIAPOSITIVA 8: R SUBCONJUNTO DE C -->
-        <div class="diapositiva" data-indice="7">
+        <div class="diapositiva">
             <h2>7. $\mathbb{R}$ como Subconjunto de $\mathbb{C}$</h2>
             <p>A cada número real $a$ le corresponde el complejo $(a, 0)$. Esta correspondencia <strong>se preserva a través de la suma y la multiplicación</strong>:</p>
             <div class="math-block">
@@ -491,8 +491,8 @@
                 <h3>🔗 Verificador de correspondencia</h3>
                 <p>Ingresa dos números reales y comprueba que sus operaciones coinciden con las de sus complejos asociados:</p>
                 <div class="grupo-inputs">
-                    <div class="input-wrapper"><label>a =</label><input type="number" id="rc-a" value="4" step="any"></div>
-                    <div class="input-wrapper"><label>b =</label><input type="number" id="rc-b" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="rc-a">a =</label><input type="number" id="rc-a" value="4" step="any" aria-label="Número real a"></div>
+                    <div class="input-wrapper"><label for="rc-b">b =</label><input type="number" id="rc-b" value="3" step="any" aria-label="Número real b"></div>
                     <button class="btn-primario" id="btn-correspondencia">Verificar</button>
                 </div>
                 <div class="resultado" id="res-correspondencia">El resultado aparecerá aquí...</div>
@@ -500,7 +500,7 @@
         </div>
 
         <!-- DIAPOSITIVA 9: RESUMEN -->
-        <div class="diapositiva" data-indice="8">
+        <div class="diapositiva">
             <h2>8. Resumen del Módulo</h2>
             <h3>Ideas clave</h3>
             <ul>
@@ -586,12 +586,17 @@
     // UTILIDADES
     // =========================================
     function formatearNumero(n) {
-        if (Number.isInteger(n)) return n.toString();
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
         return parseFloat(n.toFixed(4)).toString();
     }
 
     function latexPar(a, b) {
         return '(' + formatearNumero(a) + ', \\ ' + formatearNumero(b) + ')';
+    }
+
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
     }
 
     // =========================================
@@ -640,7 +645,7 @@
         var prod2A = a2 * a1 - b2 * b1;
         var prod2B = a2 * b1 + b2 * a1;
 
-        if (prod1A === prod2A && prod1B === prod2B) {
+        if (casiIgual(prod1A, prod2A) && casiIgual(prod1B, prod2B)) {
             res.className = 'resultado exito';
             res.innerHTML = '✅ Propiedad conmutativa verificada:<br>' +
                 '$$Z_1 \\cdot Z_2 = ' + latexPar(prod1A, prod1B) + '$$' +
@@ -735,9 +740,11 @@
         var mul2A = a2 * a1 - b2 * b1, mul2B = a2 * b1 + b2 * a1;
         var idA = a1 * 1 - b1 * 0, idB = a1 * 0 + b1 * 1;
 
+        var conmutativaOK = casiIgual(mulA, mul2A) && casiIgual(mulB, mul2B);
+
         var html = '<p><strong>Cerradura de la suma:</strong> $' + latexPar(a1, b1) + ' + ' + latexPar(a2, b2) + ' = ' + latexPar(sumaA, sumaB) + '$ ✅</p>';
         html += '<p><strong>Cerradura de la multiplicación:</strong> $' + latexPar(a1, b1) + ' \\cdot ' + latexPar(a2, b2) + ' = ' + latexPar(mulA, mulB) + '$ ✅</p>';
-        html += '<p><strong>Conmutativa de la multiplicación:</strong> $Z_1 \\cdot Z_2 = ' + latexPar(mulA, mulB) + '$ y $Z_2 \\cdot Z_1 = ' + latexPar(mul2A, mul2B) + '$ ' + ((mulA === mul2A && mulB === mul2B) ? '✅' : '❌') + '</p>';
+        html += '<p><strong>Conmutativa de la multiplicación:</strong> $Z_1 \\cdot Z_2 = ' + latexPar(mulA, mulB) + '$ y $Z_2 \\cdot Z_1 = ' + latexPar(mul2A, mul2B) + '$ ' + (conmutativaOK ? '✅' : '❌') + '</p>';
         html += '<p><strong>Identidad multiplicativa:</strong> $' + latexPar(a1, b1) + ' \\cdot (1, 0) = ' + latexPar(idA, idB) + '$ ✅</p>';
 
         res.className = 'resultado exito';
@@ -800,10 +807,13 @@
         var prodComplejaA = a * b - 0 * 0;
         var prodComplejaB = a * 0 + 0 * b;
 
+        var sumaOK = casiIgual(sumaComplejaA, sumaReal) && casiIgual(sumaComplejaB, 0);
+        var prodOK = casiIgual(prodComplejaA, prodReal) && casiIgual(prodComplejaB, 0);
+
         var html = '<p><strong>Suma:</strong> $' + formatearNumero(a) + ' + ' + formatearNumero(b) + ' = ' + formatearNumero(sumaReal) + '$</p>';
-        html += '<p>$' + latexPar(a, 0) + ' + ' + latexPar(b, 0) + ' = ' + latexPar(sumaComplejaA, sumaComplejaB) + '$ ' + (sumaComplejaA === sumaReal ? '✅' : '❌') + '</p>';
+        html += '<p>$' + latexPar(a, 0) + ' + ' + latexPar(b, 0) + ' = ' + latexPar(sumaComplejaA, sumaComplejaB) + '$ ' + (sumaOK ? '✅' : '❌') + '</p>';
         html += '<p><strong>Multiplicación:</strong> $' + formatearNumero(a) + ' \\cdot ' + formatearNumero(b) + ' = ' + formatearNumero(prodReal) + '$</p>';
-        html += '<p>$' + latexPar(a, 0) + ' \\cdot ' + latexPar(b, 0) + ' = ' + latexPar(prodComplejaA, prodComplejaB) + '$ ' + (prodComplejaA === prodReal ? '✅' : '❌') + '</p>';
+        html += '<p>$' + latexPar(a, 0) + ' \\cdot ' + latexPar(b, 0) + ' = ' + latexPar(prodComplejaA, prodComplejaB) + '$ ' + (prodOK ? '✅' : '❌') + '</p>';
         html += '<p>✅ La correspondencia $a \\leftrightarrow (a, 0)$ se preserva en suma y multiplicación.</p>';
 
         res.className = 'resultado exito';

@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radiografía de Raíces | Matemáticas III</title>
+
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 0;
+        }
+
+        .panel-entrada {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-entrada h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .grupo-entrada {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .grupo-entrada .titulo-grupo {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+
+        .opciones-operacion {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .opcion-operacion {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            cursor: pointer;
+            padding: 6px 10px;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .opcion-operacion:hover {
+            border-color: var(--color-acento);
+            background-color: rgba(91,127,163,0.05);
+        }
+        .opcion-operacion input[type="radio"] {
+            accent-color: var(--color-acento);
+            flex-shrink: 0;
+        }
+
+        .input-dinamico {
+            margin-bottom: 10px;
+        }
+        .input-dinamico label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        .input-dinamico input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            transition: border-color 0.3s;
+        }
+        .input-dinamico input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 12px; }
+        .seccion-ejemplos h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-desarrollo {
+            padding: 24px 28px;
+            background-color: var(--color-blanco);
+            min-height: 600px;
+        }
+        .panel-desarrollo h2 {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+            margin-bottom: 16px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .placeholder-inicial {
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 60px 20px;
+        }
+
+        .bloque-operacion {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            border-left: 5px solid var(--color-acento);
+        }
+        .bloque-operacion .titulo-bloque {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .bloque-operacion .expresion {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .paso {
+            display: flex;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .paso:last-child { border-bottom: none; }
+        .paso .num-paso {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .paso .cuerpo-paso {
+            flex: 1;
+            min-width: 0;
+        }
+        .paso .titulo-paso {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+        }
+        .paso .detalle-paso {
+            font-size: 0.98rem;
+            color: var(--color-texto-oscuro);
+            line-height: 1.9;
+            overflow-x: auto;
+        }
+
+        .resultado-final {
+            margin-top: 18px;
+            padding: 16px 20px;
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .resultado-final .titulo-final {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-exito);
+            margin-bottom: 6px;
+        }
+        .resultado-final .expresion-final {
+            font-size: 1.15rem;
+            color: var(--color-texto-oscuro);
+            text-align: center;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 14px;
+        }
+
+        .mensaje-error {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #78281f;
+            margin-top: 12px;
+            display: none;
+        }
+        .mensaje-error.visible { display: block; }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-entrada { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-entrada, .panel-desarrollo { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Radiografía de Raíces</h1>
+        <p>Solucionador paso a paso | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <div class="panel-entrada">
+            <h2>Operación a resolver</h2>
+
+            <div class="grupo-entrada">
+                <div class="titulo-grupo">Tipo de operación</div>
+                <div class="opciones-operacion">
+                    <label class="opcion-operacion">
+                        <input type="radio" name="tipo-operacion" value="raiz-simple" checked>
+                        <span>Raíz cuadrada: $\sqrt{-n}$</span>
+                    </label>
+                    <label class="opcion-operacion">
+                        <input type="radio" name="tipo-operacion" value="producto">
+                        <span>Producto: $\sqrt{-a} \cdot \sqrt{-b}$</span>
+                    </label>
+                    <label class="opcion-operacion">
+                        <input type="radio" name="tipo-operacion" value="suma-coeficiente">
+                        <span>Suma con coeficiente: $\sqrt{-a} + c\sqrt{-b}$</span>
+                    </label>
+                    <label class="opcion-operacion">
+                        <input type="radio" name="tipo-operacion" value="diferencia-cuadrados">
+                        <span>Diferencia de cuadrados: $(A-B)(A+B)$</span>
+                    </label>
+                    <label class="opcion-operacion">
+                        <input type="radio" name="tipo-operacion" value="signo-externo">
+                        <span>Signo externo: $-\sqrt{-n}$</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="grupo-entrada">
+                <div class="titulo-grupo" id="titulo-valores">Valores de entrada</div>
+                <div id="inputs-dinamicos"></div>
+            </div>
+
+            <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver paso a paso</button>
+            <button type="button" class="btn-secundario" id="btn-reiniciar">↺ Reiniciar</button>
+
+            <h3 style="font-size: 0.9rem; color: var(--color-acento); margin: 16px 0 8px 0; text-transform: uppercase; letter-spacing: 0.5px;">Ejemplos del Módulo 8</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $\sqrt{-50}$ (raíz simple)</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $\sqrt{-25} \cdot \sqrt{-16}$ (producto)</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $\sqrt{-2} \cdot \sqrt{-8}$ (producto con simplificación)</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $\sqrt{-32} + 2\sqrt{-18}$ (suma)</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $(\sqrt{-3} - \sqrt{-11})(\sqrt{-3} + \sqrt{-11})$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $-\sqrt{-50}$ (signo externo)</button>
+            </div>
+        </div>
+
+        <div class="panel-desarrollo">
+            <h2>🧮 Desarrollo paso a paso</h2>
+            <div id="desarrollo">
+                <div class="placeholder-inicial">
+                    ⚙️ Selecciona el tipo de operación, ingresa los valores<br>
+                    y presiona <strong>"Resolver paso a paso"</strong> para ver el desarrollo completo.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Resolver operaciones con raíces cuadradas de números negativos,
+        mostrando el desarrollo paso a paso de la conversión a la forma $i\sqrt{|a|}$, la simplificación
+        de radicales como $\sqrt{n} = a\sqrt{b}$, y el uso correcto de $i^2 = -1$ en productos y
+        diferencias de cuadrados, evitando el error CENEVAL de aplicar $\sqrt{a} \cdot \sqrt{b} = \sqrt{ab}$
+        con radicandos negativos.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES MATEMÁTICAS
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function simplificarRaiz(n) {
+    if (n < 0) n = -n;
+    var exterior = 1;
+    var interior = n;
+    for (var i = 2; i * i <= interior; i++) {
+        while (interior % (i * i) === 0) {
+            exterior *= i;
+            interior /= (i * i);
+        }
+    }
+    return { exterior: exterior, interior: interior };
+}
+
+function latexRaizSimplificada(n) {
+    var s = simplificarRaiz(n);
+    if (s.interior === 1) return formatearNumero(s.exterior);
+    if (s.exterior === 1) return '\\sqrt{' + s.interior + '}';
+    return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function construirPaso(num, titulo, detalle) {
+    return '<div class="paso">' +
+        '<div class="num-paso">' + num + '</div>' +
+        '<div class="cuerpo-paso">' +
+        '<div class="titulo-paso">' + titulo + '</div>' +
+        '<div class="detalle-paso">' + detalle + '</div>' +
+        '</div>' +
+        '</div>';
+}
+
+function mostrarDesarrollo(html) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = html;
+    renderMath(el);
+}
+
+function mostrarError(mensaje) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = '<div class="mensaje-error visible">⚠️ ' + mensaje + '</div>';
+    renderMath(el);
+}
+
+function mostrarPlaceholder() {
+    document.getElementById('desarrollo').innerHTML =
+        '<div class="placeholder-inicial">⚙️ Ingresa los valores y presiona <strong>"Resolver paso a paso"</strong>.</div>';
+}
+
+// =========================================
+// CONFIGURACIÓN DE TIPOS DE OPERACIÓN
+// =========================================
+var opcionesTipo = {
+    'raiz-simple': {
+        titulo: 'Raíz cuadrada $\\sqrt{-n}$',
+        campos: [
+            { id: 'n', etiqueta: 'Valor de $n$ (positivo)', valorPorDefecto: 50, min: 1 }
+        ]
+    },
+    'producto': {
+        titulo: 'Producto $\\sqrt{-a} \\cdot \\sqrt{-b}$',
+        campos: [
+            { id: 'a', etiqueta: 'Valor de $a$ (positivo)', valorPorDefecto: 25, min: 1 },
+            { id: 'b', etiqueta: 'Valor de $b$ (positivo)', valorPorDefecto: 16, min: 1 }
+        ]
+    },
+    'suma-coeficiente': {
+        titulo: 'Suma $\\sqrt{-a} + c\\sqrt{-b}$',
+        campos: [
+            { id: 'a', etiqueta: 'Valor de $a$ (positivo)', valorPorDefecto: 32, min: 1 },
+            { id: 'coefB', etiqueta: 'Coeficiente $c$ de la segunda raíz', valorPorDefecto: 2, min: 1 },
+            { id: 'b', etiqueta: 'Valor de $b$ (positivo)', valorPorDefecto: 18, min: 1 }
+        ]
+    },
+    'diferencia-cuadrados': {
+        titulo: 'Diferencia de cuadrados $A^2 - B^2$',
+        campos: [
+            { id: 'a', etiqueta: 'Valor de $a$ (positivo)', valorPorDefecto: 3, min: 1 },
+            { id: 'b', etiqueta: 'Valor de $b$ (positivo)', valorPorDefecto: 11, min: 1 }
+        ]
+    },
+    'signo-externo': {
+        titulo: 'Signo externo $-\\sqrt{-n}$',
+        campos: [
+            { id: 'n', etiqueta: 'Valor de $n$ (positivo)', valorPorDefecto: 50, min: 1 }
+        ]
+    }
+};
+
+function renderizarInputs() {
+    var tipo = document.querySelector('input[name="tipo-operacion"]:checked').value;
+    var config = opcionesTipo[tipo];
+    var contenedor = document.getElementById('inputs-dinamicos');
+    var tituloEl = document.getElementById('titulo-valores');
+
+    tituloEl.innerHTML = config.titulo;
+    contenedor.innerHTML = '';
+
+    config.campos.forEach(function(campo) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'input-dinamico';
+        wrapper.innerHTML =
+            '<label for="input-' + campo.id + '">' + campo.etiqueta + '</label>' +
+            '<input type="number" id="input-' + campo.id + '" value="' + campo.valorPorDefecto +
+            '" min="' + campo.min + '" step="1">';
+        contenedor.appendChild(wrapper);
+    });
+
+    mostrarPlaceholder();
+    renderMath(contenedor);
+}
+
+function leerInput(id) {
+    var el = document.getElementById('input-' + id);
+    if (!el) return null;
+    var valorTexto = el.value.trim();
+    if (valorTexto === '') return null;
+    var num = parseFloat(valorTexto);
+    if (isNaN(num)) return null;
+    return num;
+}
+
+// =========================================
+// RESOLUCIÓN: RAÍZ SIMPLE
+// =========================================
+function resolverRaizSimple(n) {
+    if (n === null || n <= 0) return { error: 'El valor de $n$ debe ser un número positivo.' };
+
+    var simp = simplificarRaiz(n);
+    var raizStr = latexRaizSimplificada(n);
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar la raíz negativa',
+        '$$\\sqrt{-' + formatearNumero(n) + '}$$'));
+
+    pasos.push(construirPaso(2, 'Separar el signo negativo usando $\\sqrt{-1} = i$',
+        '$$\\sqrt{-' + formatearNumero(n) + '} = \\sqrt{(-1) \\cdot ' + formatearNumero(n) + '} = \\sqrt{-1} \\cdot \\sqrt{' + formatearNumero(n) + '} = i\\sqrt{' + formatearNumero(n) + '}$$' +
+        '<div class="aviso-pedagogico">💡 <strong>Regla clave:</strong> se extrae primero el $-1$ como $i$ antes de simplificar.</div>'));
+
+    if (simp.interior !== n) {
+        pasos.push(construirPaso(3, 'Simplificar la raíz $\\sqrt{' + formatearNumero(n) + '}$',
+            '$$\\sqrt{' + formatearNumero(n) + '} = \\sqrt{' + formatearNumero(simp.exterior * simp.exterior) + ' \\cdot ' + simp.interior + '} = ' + formatearNumero(simp.exterior) + '\\sqrt{' + simp.interior + '}$$'));
+    } else {
+        pasos.push(construirPaso(3, 'Verificar si $\\sqrt{' + formatearNumero(n) + '}$ se puede simplificar',
+            '$$\\sqrt{' + formatearNumero(n) + '} \\text{ ya está simplificada.}$$'));
+    }
+
+    pasos.push(construirPaso(4, 'Resultado final',
+        '$$\\sqrt{-' + formatearNumero(n) + '} = ' + raizStr + 'i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: raizStr + 'i',
+        aviso: 'Toda raíz de un número negativo se puede escribir como un <strong>imaginario puro</strong> $bi$.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: PRODUCTO
+// =========================================
+function resolverProducto(a, b) {
+    if (a === null || b === null || a <= 0 || b <= 0) {
+        return { error: 'Los valores de $a$ y $b$ deben ser números positivos.' };
+    }
+
+    var raizAStr = latexRaizSimplificada(a);
+    var raizBStr = latexRaizSimplificada(b);
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar cada raíz',
+        '$$\\sqrt{-' + formatearNumero(a) + '} \\quad \\text{y} \\quad \\sqrt{-' + formatearNumero(b) + '}$$'));
+
+    pasos.push(construirPaso(2, 'Convertir cada raíz a la forma $i\\sqrt{|n|}$',
+        '$$\\sqrt{-' + formatearNumero(a) + '} = ' + raizAStr + 'i \\quad ; \\quad \\sqrt{-' + formatearNumero(b) + '} = ' + raizBStr + 'i$$'));
+
+    pasos.push(construirPaso(3, 'Multiplicar los dos imaginarios puros',
+        '$$(' + raizAStr + 'i) \\cdot (' + raizBStr + 'i) = ' + raizAStr + ' \\cdot ' + raizBStr + ' \\cdot i^2$$'));
+
+    pasos.push(construirPaso(4, 'Sustituir $i^2 = -1$',
+        '$$= ' + raizAStr + ' \\cdot ' + raizBStr + ' \\cdot (-1) = -' + raizAStr + ' \\cdot ' + raizBStr + '$$' +
+        '<div class="aviso-pedagogico">⚠️ <strong>Paso crítico:</strong> el signo negativo aparece <u>siempre</u> al multiplicar dos imaginarios puros.</div>'));
+
+    pasos.push(construirPaso(5, 'Simplificar la raíz resultante',
+        '$$= -\\sqrt{' + formatearNumero(a * b) + '} = -' + latexRaizSimplificada(a * b) + '$$'));
+
+    return {
+        pasos: pasos,
+        resultado: '-' + latexRaizSimplificada(a * b),
+        aviso: '⚠️ <strong>Error CENEVAL clásico:</strong> NO se puede aplicar $\\sqrt{-a} \\cdot \\sqrt{-b} = \\sqrt{ab}$. El resultado correcto es $-\\sqrt{ab}$.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: SUMA CON COEFICIENTE
+// =========================================
+function resolverSuma(a, coefB, b) {
+    if (a === null || b === null || coefB === null || a <= 0 || b <= 0 || coefB <= 0) {
+        return { error: 'Los valores deben ser números positivos.' };
+    }
+
+    var simpA = simplificarRaiz(a);
+    var simpB = simplificarRaiz(b);
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar cada término',
+        '$$\\sqrt{-' + formatearNumero(a) + '} + ' + formatearNumero(coefB) + '\\sqrt{-' + formatearNumero(b) + '}$$'));
+
+    pasos.push(construirPaso(2, 'Convertir cada raíz a la forma $i\\sqrt{|n|}$',
+        '$$\\sqrt{-' + formatearNumero(a) + '} = ' + latexRaizSimplificada(a) + 'i \\quad ; \\quad ' + formatearNumero(coefB) + '\\sqrt{-' + formatearNumero(b) + '} = ' + formatearNumero(coefB) + ' \\cdot ' + latexRaizSimplificada(b) + 'i$$'));
+
+    if (simpA.interior === simpB.interior) {
+        var coefFinal = simpA.exterior + coefB * simpB.exterior;
+        pasos.push(construirPaso(3, 'Sumar los coeficientes (radicales iguales)',
+            '$$= (' + formatearNumero(simpA.exterior) + ' + ' + formatearNumero(coefB) + ' \\cdot ' + formatearNumero(simpB.exterior) + ') \\sqrt{' + simpA.interior + '}i = ' + formatearNumero(coefFinal) + '\\sqrt{' + simpA.interior + '}i$$'));
+
+        pasos.push(construirPaso(4, 'Resultado final',
+            '$$\\sqrt{-' + formatearNumero(a) + '} + ' + formatearNumero(coefB) + '\\sqrt{-' + formatearNumero(b) + '} = ' + formatearNumero(coefFinal) + '\\sqrt{' + simpA.interior + '}i$$'));
+
+        return {
+            pasos: pasos,
+            resultado: formatearNumero(coefFinal) + '\\sqrt{' + simpA.interior + '}i',
+            aviso: 'En la <strong>suma</strong> de imaginarios puros con el mismo radical, los coeficientes se suman.'
+        };
+    } else {
+        pasos.push(construirPaso(3, 'Radicales distintos',
+            '$$\\sqrt{' + simpA.interior + '} \\neq \\sqrt{' + simpB.interior + '}$$' +
+            'No se pueden combinar; se deja la suma indicada.'));
+
+        pasos.push(construirPaso(4, 'Resultado final',
+            '$$' + latexRaizSimplificada(a) + 'i + ' + formatearNumero(coefB) + latexRaizSimplificada(b) + 'i$$'));
+
+        return {
+            pasos: pasos,
+            resultado: latexRaizSimplificada(a) + 'i + ' + formatearNumero(coefB) + latexRaizSimplificada(b) + 'i',
+            aviso: 'Cuando los radicales no coinciden, la suma se deja indicada.'
+        };
+    }
+}
+
+// =========================================
+// RESOLUCIÓN: DIFERENCIA DE CUADRADOS
+// =========================================
+function resolverDiferenciaCuadrados(a, b) {
+    if (a === null || b === null || a <= 0 || b <= 0) {
+        return { error: 'Los valores de $a$ y $b$ deben ser números positivos.' };
+    }
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Reconocer la estructura notable',
+        '$$(\\sqrt{-' + formatearNumero(a) + '} - \\sqrt{-' + formatearNumero(b) + '})(\\sqrt{-' + formatearNumero(a) + '} + \\sqrt{-' + formatearNumero(b) + '})$$' +
+        '<div class="aviso-pedagogico">💡 Es de la forma $(A - B)(A + B) = A^2 - B^2$.</div>'));
+
+    pasos.push(construirPaso(2, 'Identificar $A$ y $B$',
+        '$$A = \\sqrt{-' + formatearNumero(a) + '} \\quad ; \\quad B = \\sqrt{-' + formatearNumero(b) + '}$$'));
+
+    pasos.push(construirPaso(3, 'Aplicar la diferencia de cuadrados',
+        '$$A^2 - B^2 = (\\sqrt{-' + formatearNumero(a) + '})^2 - (\\sqrt{-' + formatearNumero(b) + '})^2$$'));
+
+    pasos.push(construirPaso(4, 'Recordar que $(\\sqrt{-n})^2 = -n$',
+        '$$= (-' + formatearNumero(a) + ') - (-' + formatearNumero(b) + ')$$' +
+        '<div class="aviso-pedagogico">⚠️ <strong>Paso crítico:</strong> $(\\sqrt{-n})^2 = -n$, no $+n$. Es un error CENEVAL frecuente.</div>'));
+
+    var resultado = -a + b;
+
+    pasos.push(construirPaso(5, 'Simplificar',
+        '$$= -' + formatearNumero(a) + ' + ' + formatearNumero(b) + ' = ' + formatearNumero(resultado) + '$$'));
+
+    return {
+        pasos: pasos,
+        resultado: formatearNumero(resultado),
+        aviso: 'El resultado es un <strong>número real</strong>, porque la estructura $(A-B)(A+B)$ elimina los imaginarios.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: SIGNO EXTERNO
+// =========================================
+function resolverSignoExterno(n) {
+    if (n === null || n <= 0) return { error: 'El valor de $n$ debe ser un número positivo.' };
+
+    var raizStr = latexRaizSimplificada(n);
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar la expresión',
+        '$$-\\sqrt{-' + formatearNumero(n) + '}$$' +
+        '<div class="aviso-pedagogico">💡 Hay un <strong>signo negativo externo</strong> y un <strong>radicando negativo</strong>.</div>'));
+
+    pasos.push(construirPaso(2, 'Convertir primero la raíz $\\sqrt{-' + formatearNumero(n) + '}$',
+        '$$\\sqrt{-' + formatearNumero(n) + '} = i\\sqrt{' + formatearNumero(n) + '} = ' + raizStr + 'i$$'));
+
+    pasos.push(construirPaso(3, 'Aplicar el signo externo al resultado',
+        '$$-(' + raizStr + 'i) = -' + raizStr + 'i$$'));
+
+    pasos.push(construirPaso(4, 'Resultado final',
+        '$$-\\sqrt{-' + formatearNumero(n) + '} = -' + raizStr + 'i$$'));
+
+    return {
+        pasos: pasos,
+        resultado: '-' + raizStr + 'i',
+        aviso: '⚠️ <strong>Error común:</strong> olvidar el signo externo y dar $+' + raizStr + 'i$.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN PRINCIPAL
+// =========================================
+function resolver() {
+    var tipo = document.querySelector('input[name="tipo-operacion"]:checked').value;
+    var res = null;
+    var expresionCompleta = '';
+
+    switch (tipo) {
+        case 'raiz-simple': {
+            var nSimple = leerInput('n');
+            if (nSimple === null) return mostrarError('Debes ingresar un valor numérico para $n$.');
+            res = resolverRaizSimple(nSimple);
+            if (res.error) return mostrarError(res.error);
+            expresionCompleta = '$$\\sqrt{-' + formatearNumero(nSimple) + '} = ' + res.resultado + '$$';
+            break;
+        }
+        case 'producto': {
+            var aProd = leerInput('a');
+            var bProd = leerInput('b');
+            if (aProd === null || bProd === null) return mostrarError('Debes ingresar valores numéricos para $a$ y $b$.');
+            res = resolverProducto(aProd, bProd);
+            if (res.error) return mostrarError(res.error);
+            expresionCompleta = '$$\\sqrt{-' + formatearNumero(aProd) + '} \\cdot \\sqrt{-' + formatearNumero(bProd) + '} = ' + res.resultado + '$$';
+            break;
+        }
+        case 'suma-coeficiente': {
+            var aSuma = leerInput('a');
+            var coefBSuma = leerInput('coefB');
+            var bSuma = leerInput('b');
+            if (aSuma === null || coefBSuma === null || bSuma === null) {
+                return mostrarError('Debes ingresar los tres valores numéricos.');
+            }
+            res = resolverSuma(aSuma, coefBSuma, bSuma);
+            if (res.error) return mostrarError(res.error);
+            expresionCompleta = '$$\\sqrt{-' + formatearNumero(aSuma) + '} + ' + formatearNumero(coefBSuma) + '\\sqrt{-' + formatearNumero(bSuma) + '} = ' + res.resultado + '$$';
+            break;
+        }
+        case 'diferencia-cuadrados': {
+            var aDif = leerInput('a');
+            var bDif = leerInput('b');
+            if (aDif === null || bDif === null) return mostrarError('Debes ingresar valores numéricos para $a$ y $b$.');
+            res = resolverDiferenciaCuadrados(aDif, bDif);
+            if (res.error) return mostrarError(res.error);
+            expresionCompleta = '$$(\\sqrt{-' + formatearNumero(aDif) + '} - \\sqrt{-' + formatearNumero(bDif) + '})(\\sqrt{-' + formatearNumero(aDif) + '} + \\sqrt{-' + formatearNumero(bDif) + '}) = ' + res.resultado + '$$';
+            break;
+        }
+        case 'signo-externo': {
+            var nExt = leerInput('n');
+            if (nExt === null) return mostrarError('Debes ingresar un valor numérico para $n$.');
+            res = resolverSignoExterno(nExt);
+            if (res.error) return mostrarError(res.error);
+            expresionCompleta = '$$-\\sqrt{-' + formatearNumero(nExt) + '} = ' + res.resultado + '$$';
+            break;
+        }
+    }
+
+    if (res) {
+        mostrarResultado(tipo, expresionCompleta, res);
+    }
+}
+
+function mostrarResultado(tipo, expresionCompleta, res) {
+    var titulos = {
+        'raiz-simple': 'Raíz cuadrada simple',
+        'producto': 'Producto de raíces negativas',
+        'suma-coeficiente': 'Suma con coeficiente',
+        'diferencia-cuadrados': 'Diferencia de cuadrados',
+        'signo-externo': 'Raíz con signo externo'
+    };
+
+    var html = '';
+    html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — ' + titulos[tipo] + '</div>' +
+        '<div class="expresion">' + expresionCompleta + '</div>' +
+        '</div>';
+
+    res.pasos.forEach(function(p) { html += p; });
+
+    html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final</div>' +
+        '<div class="expresion-final">' + expresionCompleta + '</div>' +
+        '</div>';
+
+    if (res.aviso) {
+        html += '<div class="aviso-pedagogico">' + res.aviso + '</div>';
+    }
+
+    mostrarDesarrollo(html);
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.querySelectorAll('input[name="tipo-operacion"]').forEach(function(radio) {
+    radio.addEventListener('change', function() {
+        renderizarInputs();
+    });
+});
+
+document.getElementById('btn-resolver').addEventListener('click', resolver);
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.querySelector('input[name="tipo-operacion"][value="raiz-simple"]').checked = true;
+    renderizarInputs();
+});
+
+// Ejemplos predefinidos
+var ejemplos = {
+    1: { tipo: 'raiz-simple', valores: { n: 50 } },
+    2: { tipo: 'producto', valores: { a: 25, b: 16 } },
+    3: { tipo: 'producto', valores: { a: 2, b: 8 } },
+    4: { tipo: 'suma-coeficiente', valores: { a: 32, coefB: 2, b: 18 } },
+    5: { tipo: 'diferencia-cuadrados', valores: { a: 3, b: 11 } },
+    6: { tipo: 'signo-externo', valores: { n: 50 } }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        document.querySelector('input[name="tipo-operacion"][value="' + data.tipo + '"]').checked = true;
+        renderizarInputs();
+
+        Object.keys(data.valores).forEach(function(key) {
+            var el = document.getElementById('input-' + key);
+            if (el) el.value = data.valores[key];
+        });
+
+        resolver();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+renderizarInputs();
+renderMath(document.body);
+
+</script>
+
+</body>
+</html>

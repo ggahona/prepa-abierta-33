@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Presentación didáctica">
+    <title>Módulo 12 — Solución de Sistemas de Ecuaciones Cuadráticas | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.55rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 540px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.55rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.15rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.12rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 22px;
+            margin: 22px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 12px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+
+        input[type="number"], select {
+            padding: 9px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        select { width: 150px; }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 12px;
+            padding: 14px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            margin: 14px 0;
+        }
+
+        .alerta {
+            background-color: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--color-error);
+            padding: 14px 18px;
+            border-radius: 6px;
+            color: var(--color-error);
+            margin: 18px 0;
+            font-size: 0.93rem;
+        }
+
+        .alerta strong { color: var(--color-error); }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 30px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"], select { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 12 — Solución de Sistemas de Ecuaciones Cuadráticas</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa">
+            <h2>Bienvenida al Módulo 12</h2>
+            <p>En este módulo estudiamos la <strong>solución de sistemas de ecuaciones cuadráticas</strong>. Abordaremos tres tipos fundamentales:</p>
+            <ul>
+                <li><strong>Una ecuación cuadrática + una ecuación lineal</strong>: $ax^2 + bxy + cy^2 + dx + ey = f$ con $gx + hy = k$.</li>
+                <li><strong>Sistemas del tipo</strong> $ax^2 + by^2 = c$: dos ecuaciones cuadráticas sin términos lineales.</li>
+                <li><strong>Sistemas del tipo</strong> $ax^2 + bxy + cy^2 = d$: con término $xy$ y sin términos lineales.</li>
+            </ul>
+            <div class="math-block">$$\begin{cases} ax^2 + bxy + cy^2 + dx + ey = f \\ gx + hy = k \end{cases}$$</div>
+            <p>Usaremos los métodos <strong>gráfico</strong> y <strong>algebraico</strong> (sustitución, suma/resta, eliminación de constante y factorización).</p>
+        </div>
+
+        <!-- DIAPOSITIVA 2: MÉTODO GRÁFICO -->
+        <div class="diapositiva">
+            <h2>1. Método Gráfico (Cuadrática + Lineal)</h2>
+            <p>Consiste en graficar ambas ecuaciones sobre el mismo sistema de ejes. La solución son los pares ordenados $(x, y)$ donde se intersecan las gráficas.</p>
+
+            <h3>Ejemplo: $\begin{cases} x^2 - 6x - y = -5 \\ 2x - y = 7 \end{cases}$</h3>
+            <p><strong>Paso 1:</strong> Despejamos $y$ en ambas ecuaciones:</p>
+            <div class="math-block">$$\begin{cases} y = x^2 - 6x + 5 \\ y = 2x - 7 \end{cases}$$</div>
+            <p><strong>Paso 2:</strong> La parábola tiene vértice en $(3, -4)$ y abre hacia arriba. La recta tiene pendiente $2$ y ordenada al origen $-7$.</p>
+            <p><strong>Paso 3:</strong> Los puntos de intersección son $(2, -3)$ y $(6, 5)$.</p>
+            <div class="nota">
+                <strong>💡 Regla:</strong> una parábola y una recta pueden intersecarse en <strong>dos puntos</strong>, <strong>un punto</strong> (tangente) o <strong>ningún punto</strong>.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>📊 Explorador de intersecciones</h3>
+                <p>Ingresa los coeficientes de la parábola y de la recta para ver cuántas soluciones tiene el sistema:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="g-pa">a (parábola) =</label><input type="number" id="g-pa" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="g-pb">b (parábola) =</label><input type="number" id="g-pb" value="-6" step="any"></div>
+                    <div class="input-wrapper"><label for="g-pc">c (parábola) =</label><input type="number" id="g-pc" value="5" step="any"></div>
+                    <button class="btn-primario" id="btn-grafico">Explorar</button>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="g-m">m (recta) =</label><input type="number" id="g-m" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="g-rb">b (recta) =</label><input type="number" id="g-rb" value="-7" step="any"></div>
+                </div>
+                <div class="resultado" id="res-grafico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: MÉTODO ALGEBRAICO -->
+        <div class="diapositiva">
+            <h2>2. Método Algebraico: Sustitución</h2>
+            <p>El procedimiento consiste en <strong>despejar una variable de la ecuación lineal</strong> y sustituirla en la cuadrática.</p>
+
+            <h3>Ejemplo: $\begin{cases} x^2 - x - y - 6 = 0 \\ 2x - y - 2 = 0 \end{cases}$</h3>
+            <p><strong>Paso 1:</strong> Despejamos $y$ de la lineal: $y = 2x - 2$.</p>
+            <p><strong>Paso 2:</strong> Sustituimos en la cuadrática:</p>
+            <div class="math-block">$$x^2 - x - (2x - 2) - 6 = 0 \Rightarrow x^2 - 3x - 4 = 0$$</div>
+            <p><strong>Paso 3:</strong> Factorizamos: $(x - 4)(x + 1) = 0 \Rightarrow x = 4$ ó $x = -1$.</p>
+            <p><strong>Paso 4:</strong> Calculamos $y$:</p>
+            <ul>
+                <li>$x = 4 \Rightarrow y = 2(4) - 2 = 6$</li>
+                <li>$x = -1 \Rightarrow y = 2(-1) - 2 = -4$</li>
+            </ul>
+            <p><strong>Solución:</strong> $\{(4, 6), (-1, -4)\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>🧩 Solucionador algebraico</h3>
+                <p>Ingresa los coeficientes para resolver el sistema cuadrática-lineal:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="alg-a">a =</label><input type="number" id="alg-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="alg-b">b =</label><input type="number" id="alg-b" value="-1" step="any"></div>
+                    <div class="input-wrapper"><label for="alg-c">c =</label><input type="number" id="alg-c" value="-6" step="any"></div>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="alg-m">m (recta) =</label><input type="number" id="alg-m" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="alg-n">n (recta) =</label><input type="number" id="alg-n" value="-2" step="any"></div>
+                    <button class="btn-primario" id="btn-algebraico">Resolver</button>
+                </div>
+                <div class="resultado" id="res-algebraico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: SISTEMAS ax² + by² = c -->
+        <div class="diapositiva">
+            <h2>3. Sistemas $ax^2 + by^2 = c$</h2>
+            <p>Sistemas formados por dos ecuaciones del tipo $ax^2 + by^2 = c$. Se resuelven por <strong>suma/resta</strong> o <strong>sustitución</strong>.</p>
+
+            <h3>Ejemplo: $\begin{cases} x^2 + y^2 = 25 \\ 4x^2 - 4y^2 = 36 \end{cases}$</h3>
+            <p><strong>Paso 1:</strong> Multiplicamos la primera por 4 y sumamos:</p>
+            <div class="math-block">$$4x^2 + 4y^2 = 100 \quad ; \quad 4x^2 - 4y^2 = 36 \Rightarrow 8x^2 = 136 \Rightarrow x^2 = 17$$</div>
+            <p><strong>Paso 2:</strong> Sustituimos en la primera: $17 + y^2 = 25 \Rightarrow y^2 = 8 \Rightarrow y = \pm 2\sqrt{2}$.</p>
+            <p><strong>Solución:</strong> $\{(\sqrt{17}, 2\sqrt{2}), (\sqrt{17}, -2\sqrt{2}), (-\sqrt{17}, 2\sqrt{2}), (-\sqrt{17}, -2\sqrt{2})\}$</p>
+
+            <div class="nota">
+                <strong>💡 Tip:</strong> si $x$ aparece elevada al cuadrado, basta sustituir $x^2$ una sola vez para obtener todos los valores de $y$.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>🔢 Resolvedor $ax^2 + by^2 = c$</h3>
+                <p>Ingresa los coeficientes de dos ecuaciones del tipo $a_1x^2 + b_1y^2 = c_1$ y $a_2x^2 + b_2y^2 = c_2$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="ax-a1">a₁ =</label><input type="number" id="ax-a1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="ax-b1">b₁ =</label><input type="number" id="ax-b1" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="ax-c1">c₁ =</label><input type="number" id="ax-c1" value="25" step="any"></div>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="ax-a2">a₂ =</label><input type="number" id="ax-a2" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="ax-b2">b₂ =</label><input type="number" id="ax-b2" value="-4" step="any"></div>
+                    <div class="input-wrapper"><label for="ax-c2">c₂ =</label><input type="number" id="ax-c2" value="36" step="any"></div>
+                    <button class="btn-primario" id="btn-sistema2x2">Resolver</button>
+                </div>
+                <div class="resultado" id="res-sistema2x2" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: SISTEMA HOMOGÉNEO -->
+        <div class="diapositiva">
+            <h2>4. Sistemas $ax^2 + bxy + cy^2 = d$</h2>
+            <p>El algoritmo consiste en <strong>eliminar el término constante</strong> y luego <strong>factorizar</strong> la ecuación resultante.</p>
+
+            <h3>Ejemplo: $\begin{cases} x^2 + 2xy - 4y^2 = 18 \\ 2x^2 + 7xy + 4y^2 = 104 \end{cases}$</h3>
+            <p><strong>Paso 1:</strong> Multiplicamos la primera por 104 y la segunda por $-18$ y sumamos. Obtenemos una ecuación sin término constante:</p>
+            <div class="math-block">$$3x^2 + 4xy - 20y^2 = 0$$</div>
+            <p><strong>Paso 2:</strong> Factorizamos: $(3x + 10y)(x - 2y) = 0 \Rightarrow x = -\frac{10y}{3}$ ó $x = 2y$.</p>
+            <p><strong>Paso 3:</strong> Sustituimos en la ecuación (1):</p>
+            <ul>
+                <li>Con $x = -\frac{10y}{3}$: $y = \pm 6 \Rightarrow x = \mp 20$</li>
+                <li>Con $x = 2y$: $y = \pm 2 \Rightarrow x = \pm 4$</li>
+            </ul>
+            <p><strong>Solución:</strong> $\{(-20, 6), (20, -6), (4, 2), (-4, -2)\}$</p>
+
+            <div class="nota">
+                <strong>💡 Algoritmo:</strong> (1) eliminar término constante → (2) factorizar → (3) sustituir cada factor → (4) resolver → (5) obtener los 4 pares ordenados.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>⚙️ Verificador de factorización</h3>
+                <p>Dada una ecuación del tipo $Ax^2 + Bxy + Cy^2 = 0$, verifica si se factoriza como producto de dos binomios:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="fac-A">A =</label><input type="number" id="fac-A" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="fac-B">B =</label><input type="number" id="fac-B" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="fac-C">C =</label><input type="number" id="fac-C" value="-20" step="any"></div>
+                    <button class="btn-primario" id="btn-factorizar">Factorizar</button>
+                </div>
+                <div class="resultado" id="res-factorizar" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: NÚMERO DE SOLUCIONES -->
+        <div class="diapositiva">
+            <h2>5. Número de Soluciones</h2>
+            <p>El número de soluciones de un sistema de ecuaciones cuadráticas depende del tipo de sistema:</p>
+
+            <h3>Cuadrática + Lineal</h3>
+            <ul>
+                <li><strong>Dos soluciones</strong>: la recta corta a la curva en dos puntos.</li>
+                <li><strong>Una solución</strong>: la recta es tangente a la curva.</li>
+                <li><strong>Ninguna solución real</strong>: la recta no toca a la curva.</li>
+            </ul>
+
+            <h3>Sistema $ax^2 + by^2 = c$</h3>
+            <ul>
+                <li><strong>Cuatro soluciones</strong>: hay cuatro combinaciones de signos para $(x, y)$.</li>
+                <li><strong>Dos soluciones</strong>: alguna de las variables es cero en la solución.</li>
+                <li><strong>Ninguna solución real</strong>: los valores de $x^2$ o $y^2$ resultan negativos (soluciones complejas).</li>
+            </ul>
+
+            <h3>Sistema $ax^2 + bxy + cy^2 = d$</h3>
+            <ul>
+                <li><strong>Cuatro soluciones</strong>: generalmente.</li>
+                <li><strong>Menos de cuatro</strong>: en casos especiales (factores repetidos o raíces coincidentes).</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>🔍 Analizador de soluciones</h3>
+                <p>Ingresa un sistema del tipo $ax^2 + by^2 = c$ para ver cuántas soluciones reales tiene:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="ns-a1">a₁ =</label><input type="number" id="ns-a1" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="ns-b1">b₁ =</label><input type="number" id="ns-b1" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="ns-c1">c₁ =</label><input type="number" id="ns-c1" value="20" step="any"></div>
+                </div>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="ns-a2">a₂ =</label><input type="number" id="ns-a2" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="ns-b2">b₂ =</label><input type="number" id="ns-b2" value="-2" step="any"></div>
+                    <div class="input-wrapper"><label for="ns-c2">c₂ =</label><input type="number" id="ns-c2" value="50" step="any"></div>
+                    <button class="btn-primario" id="btn-contar">Analizar</button>
+                </div>
+                <div class="resultado" id="res-contar" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: RESUMEN -->
+        <div class="diapositiva">
+            <h2>6. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Un <strong>sistema cuadrática-lineal</strong> se resuelve por <strong>sustitución</strong>: despejar de la lineal y sustituir en la cuadrática.</li>
+                <li>Un sistema del tipo <strong>$ax^2 + by^2 = c$</strong> se resuelve por <strong>suma/resta</strong> o <strong>sustitución</strong>.</li>
+                <li>Un sistema del tipo <strong>$ax^2 + bxy + cy^2 = d$</strong> requiere <strong>eliminar el término constante</strong> y luego <strong>factorizar</strong>.</li>
+                <li>El <strong>número de soluciones</strong> varía: 0, 1, 2 o 4 pares ordenados según el caso.</li>
+                <li>Si aparecen <strong>números complejos</strong> en la solución, las gráficas no se intersecan en el plano real.</li>
+                <li>El <strong>método gráfico</strong> es útil para visualizar cuántas intersecciones existen.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 12. Ahora dominas la resolución de sistemas de ecuaciones cuadráticas por los métodos gráfico y algebraico.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 7</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Aplicar los métodos gráfico y algebraico para resolver sistemas formados
+        por una ecuación cuadrática y una lineal, sistemas del tipo $ax^2 + by^2 = c$, y sistemas del tipo
+        $ax^2 + bxy + cy^2 = d$, identificando el número de soluciones posibles.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) { indiceActual--; actualizarDiapositiva(); }
+    });
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) { indiceActual++; actualizarDiapositiva(); }
+    });
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(3)).toString();
+    }
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
+    }
+
+    // =========================================
+    // 1. MÉTODO GRÁFICO
+    // =========================================
+    document.getElementById('btn-grafico').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('g-pa').value);
+        var b = parseFloat(document.getElementById('g-pb').value);
+        var c = parseFloat(document.getElementById('g-pc').value);
+        var m = parseFloat(document.getElementById('g-m').value);
+        var rb = parseFloat(document.getElementById('g-rb').value);
+        var res = document.getElementById('res-grafico');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(m) || isNaN(rb) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa valores válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        // Sistema: y = ax² + bx + c ; y = mx + rb
+        // ax² + bx + c = mx + rb → ax² + (b-m)x + (c-rb) = 0
+        var A = a;
+        var B = b - m;
+        var C = c - rb;
+        var disc = B * B - 4 * A * C;
+
+        var html = '<p>El sistema es equivalente a la ecuación $' + formatearNumero(A) + 'x^2 + (' +
+            formatearNumero(B) + ')x + (' + formatearNumero(C) + ') = 0$.</p>' +
+            '<p>Discriminante: $\\Delta = ' + formatearNumero(disc) + '$</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Como $\\Delta < 0$, <strong>no hay soluciones reales</strong>. La recta y la parábola no se intersecan.</p>';
+        } else if (casiIgual(disc, 0)) {
+            var x = -B / (2 * A);
+            var y = m * x + rb;
+            html += '<p>Como $\\Delta = 0$, hay <strong>una solución</strong> (la recta es tangente a la parábola).</p>' +
+                '<p>Solución: $(' + formatearNumero(x) + ', ' + formatearNumero(y) + ')$</p>';
+        } else {
+            var sq = Math.sqrt(disc);
+            var x1 = (-B + sq) / (2 * A);
+            var x2 = (-B - sq) / (2 * A);
+            var y1 = m * x1 + rb;
+            var y2 = m * x2 + rb;
+            html += '<p>Como $\\Delta > 0$, hay <strong>dos soluciones</strong>:</p>' +
+                '<p>$(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + ')$ y $(' +
+                formatearNumero(x2) + ', ' + formatearNumero(y2) + ')$</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. MÉTODO ALGEBRAICO
+    // =========================================
+    document.getElementById('btn-algebraico').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('alg-a').value);
+        var b = parseFloat(document.getElementById('alg-b').value);
+        var c = parseFloat(document.getElementById('alg-c').value);
+        var m = parseFloat(document.getElementById('alg-m').value);
+        var n = parseFloat(document.getElementById('alg-n').value);
+        var res = document.getElementById('res-algebraico');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(m) || isNaN(n) || casiIgual(a, 0) || casiIgual(m, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa valores válidos (con $a \\neq 0$ y $m \\neq 0$).';
+            renderMath(res);
+            return;
+        }
+
+        // Sistema: ax² + bx + c = 0 (con y = mx + n)
+        // ax² + bx + c = mx + n → ax² + (b-m)x + (c-n) = 0
+        var A = a;
+        var B = b - m;
+        var C = c - n;
+        var disc = B * B - 4 * A * C;
+
+        var html = '<p><strong>Paso 1:</strong> Despejamos $y$ de la lineal: $y = ' + formatearNumero(m) + 'x ' +
+            (n >= 0 ? '+ ' + formatearNumero(n) : '- ' + formatearNumero(-n)) + '$.</p>' +
+            '<p><strong>Paso 2:</strong> Sustituyendo en la cuadrática obtenemos:</p>' +
+            '$$' + formatearNumero(A) + 'x^2 + (' + formatearNumero(B) + ')x + (' + formatearNumero(C) + ') = 0$$' +
+            '<p><strong>Paso 3:</strong> Discriminante: $\\Delta = ' + formatearNumero(disc) + '$.</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Como $\\Delta < 0$, <strong>no hay soluciones reales</strong>.</p>';
+        } else if (casiIgual(disc, 0)) {
+            var x = -B / (2 * A);
+            var y = m * x + n;
+            html += '<p>Como $\\Delta = 0$, hay <strong>una solución</strong>: $(' + formatearNumero(x) + ', ' + formatearNumero(y) + ')$.</p>';
+        } else {
+            var sq = Math.sqrt(disc);
+            var x1 = (-B + sq) / (2 * A);
+            var x2 = (-B - sq) / (2 * A);
+            var y1 = m * x1 + n;
+            var y2 = m * x2 + n;
+            html += '<p><strong>Paso 4:</strong> $x_1 = ' + formatearNumero(x1) + '$, $x_2 = ' + formatearNumero(x2) + '$.</p>' +
+                '<p><strong>Paso 5:</strong> Sustituyendo: $y_1 = ' + formatearNumero(y1) + '$, $y_2 = ' + formatearNumero(y2) + '$.</p>' +
+                '<p><strong>Solución:</strong> $\\{(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + '), (' +
+                formatearNumero(x2) + ', ' + formatearNumero(y2) + ')\\}$</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. RESOLVEDOR ax² + by² = c
+    // =========================================
+    document.getElementById('btn-sistema2x2').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('ax-a1').value);
+        var b1 = parseFloat(document.getElementById('ax-b1').value);
+        var c1 = parseFloat(document.getElementById('ax-c1').value);
+        var a2 = parseFloat(document.getElementById('ax-a2').value);
+        var b2 = parseFloat(document.getElementById('ax-b2').value);
+        var c2 = parseFloat(document.getElementById('ax-c2').value);
+        var res = document.getElementById('res-sistema2x2');
+
+        if ([a1, b1, c1, a2, b2, c2].some(isNaN)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa todos los coeficientes.';
+            renderMath(res);
+            return;
+        }
+
+        // Sistema:
+        // a1 x² + b1 y² = c1
+        // a2 x² + b2 y² = c2
+        // Multiplicamos la primera por a2, la segunda por a1 y restamos para eliminar x²
+        var detY = a1 * b2 - a2 * b1;
+
+        if (casiIgual(detY, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ El sistema es degenerado (coeficientes proporcionales). No se puede resolver con este método.';
+            renderMath(res);
+            return;
+        }
+
+        var y2 = (a1 * c2 - a2 * c1) / detY;
+        var x2 = (c1 * b2 - c2 * b1) / detY;
+
+        var html = '<p><strong>Paso 1:</strong> Resolvemos por suma/resta. El determinante es $D = ' + formatearNumero(detY) + '$.</p>' +
+            '<p><strong>Paso 2:</strong> $y^2 = \\frac{a_1 c_2 - a_2 c_1}{D} = ' + formatearNumero(y2) + '$</p>' +
+            '<p><strong>Paso 3:</strong> $x^2 = \\frac{c_1 b_2 - c_2 b_1}{D} = ' + formatearNumero(x2) + '$</p>';
+
+        if (y2 < -1e-9 || x2 < -1e-9) {
+            html += '<p>Como alguna de las variables elevadas al cuadrado da negativo, las soluciones son <strong>complejas</strong>.</p>';
+            if (x2 < -1e-9) {
+                html += '<p>$x = \\pm i\\sqrt{' + formatearNumero(-x2) + '}$</p>';
+            } else {
+                var rx = Math.sqrt(x2);
+                html += '<p>$x = \\pm ' + formatearNumero(rx) + '$</p>';
+            }
+            if (y2 < -1e-9) {
+                html += '<p>$y = \\pm i\\sqrt{' + formatearNumero(-y2) + '}$</p>';
+            } else {
+                var ry = Math.sqrt(y2);
+                html += '<p>$y = \\pm ' + formatearNumero(ry) + '$</p>';
+            }
+        } else {
+            var rx = Math.sqrt(x2);
+            var ry = Math.sqrt(y2);
+            html += '<p><strong>Paso 4:</strong> $x = \\pm ' + formatearNumero(rx) + '$, $y = \\pm ' + formatearNumero(ry) + '$</p>' +
+                '<p><strong>Solución:</strong> 4 pares ordenados combinando los signos.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. FACTORIZADOR Ax² + Bxy + Cy²
+    // =========================================
+    document.getElementById('btn-factorizar').addEventListener('click', function() {
+        var A = parseFloat(document.getElementById('fac-A').value);
+        var B = parseFloat(document.getElementById('fac-B').value);
+        var C = parseFloat(document.getElementById('fac-C').value);
+        var res = document.getElementById('res-factorizar');
+
+        if (isNaN(A) || isNaN(B) || isNaN(C) || casiIgual(A, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa valores válidos con $A \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        // Buscar factorización (p x + q y)(r x + s y) = pr x² + (ps + qr) xy + qs y²
+        // Necesitamos pr = A, qs = C, ps + qr = B
+        var encontrado = false;
+        var px, qy, rx, sy;
+
+        for (var p = -Math.abs(A) - 5; p <= Math.abs(A) + 5; p++) {
+            if (p === 0 || A % p !== 0) continue;
+            var r = A / p;
+            for (var q = -Math.abs(C) - 5; q <= Math.abs(C) + 5; q++) {
+                if (q === 0 || C % q !== 0) continue;
+                var s = C / q;
+                if (casiIgual(p * s + q * r, B)) {
+                    px = p; qy = q; rx = r; sy = s;
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (encontrado) break;
+        }
+
+        if (!encontrado) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ No se pudo factorizar con coeficientes enteros.';
+            renderMath(res);
+            return;
+        }
+
+        var term1 = (px === 1 ? '' : (px === -1 ? '-' : formatearNumero(px))) + 'x' +
+            (qy === 0 ? '' : (qy > 0 ? ' + ' : ' - ') + (Math.abs(qy) === 1 ? '' : Math.abs(qy)) + 'y');
+        var term2 = (rx === 1 ? '' : (rx === -1 ? '-' : formatearNumero(rx))) + 'x' +
+            (sy === 0 ? '' : (sy > 0 ? ' + ' : ' - ') + (Math.abs(sy) === 1 ? '' : Math.abs(sy)) + 'y');
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Factorización:</p>' +
+            '$$(' + term1 + ')(' + term2 + ') = 0$$' +
+            '<p>Soluciones: $x = ' + (qy === 0 ? '0' : formatearNumero(-qy) + 'y/' + formatearNumero(px)) + '$ ó ' +
+            '$x = ' + (sy === 0 ? '0' : formatearNumero(-sy) + 'y/' + formatearNumero(rx)) + '$</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. ANALIZADOR DE NÚMERO DE SOLUCIONES
+    // =========================================
+    document.getElementById('btn-contar').addEventListener('click', function() {
+        var a1 = parseFloat(document.getElementById('ns-a1').value);
+        var b1 = parseFloat(document.getElementById('ns-b1').value);
+        var c1 = parseFloat(document.getElementById('ns-c1').value);
+        var a2 = parseFloat(document.getElementById('ns-a2').value);
+        var b2 = parseFloat(document.getElementById('ns-b2').value);
+        var c2 = parseFloat(document.getElementById('ns-c2').value);
+        var res = document.getElementById('res-contar');
+
+        if ([a1, b1, c1, a2, b2, c2].some(isNaN)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa todos los coeficientes.';
+            renderMath(res);
+            return;
+        }
+
+        var detY = a1 * b2 - a2 * b1;
+        if (casiIgual(detY, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Sistema degenerado. No se puede analizar con esta técnica.';
+            renderMath(res);
+            return;
+        }
+
+        var y2 = (a1 * c2 - a2 * c1) / detY;
+        var x2 = (c1 * b2 - c2 * b1) / detY;
+
+        var html = '<p>$x^2 = ' + formatearNumero(x2) + '$, $y^2 = ' + formatearNumero(y2) + '$</p>';
+
+        var numX = (x2 > 1e-9) ? 2 : (casiIgual(x2, 0) ? 1 : 0);
+        var numY = (y2 > 1e-9) ? 2 : (casiIgual(y2, 0) ? 1 : 0);
+        var total = numX * numY;
+
+        if (x2 < -1e-9 || y2 < -1e-9) {
+            html += '<p>Como alguna variable al cuadrado da <strong>negativo</strong>, hay soluciones <strong>complejas</strong> (no reales).</p>';
+        } else {
+            html += '<p><strong>Número de soluciones reales:</strong> ' + total + '</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

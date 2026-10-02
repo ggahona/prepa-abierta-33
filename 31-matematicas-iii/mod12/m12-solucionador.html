@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Solucionador paso a paso">
+    <title>Solucionador: Sistemas de Ecuaciones Cuadráticas | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1200px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-operacion {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-operacion label.etiqueta {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        select#tipo-sistema {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        select#tipo-sistema:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .grupo-input {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento-suave);
+        }
+        .grupo-input .titulo-input {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-coef {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .fila-coef label {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            min-width: 32px;
+            text-align: right;
+        }
+        .fila-coef input {
+            flex: 1;
+            padding: 6px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+        }
+        .fila-coef input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-desarrollo {
+            padding: 24px 28px;
+            background-color: var(--color-blanco);
+            min-height: 640px;
+        }
+        .panel-desarrollo h2 {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+            margin-bottom: 16px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .placeholder-inicial {
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 60px 20px;
+        }
+
+        .bloque-operacion {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            border-left: 5px solid var(--color-acento);
+        }
+        .bloque-operacion .titulo-bloque {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .bloque-operacion .expresion {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .paso {
+            display: flex;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .paso:last-child { border-bottom: none; }
+        .paso .num-paso {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .paso .cuerpo-paso { flex: 1; min-width: 0; }
+        .paso .titulo-paso {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+        }
+        .paso .detalle-paso {
+            font-size: 0.96rem;
+            color: var(--color-texto-oscuro);
+            line-height: 1.9;
+            overflow-x: auto;
+        }
+
+        .resultado-final {
+            margin-top: 18px;
+            padding: 16px 20px;
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .resultado-final .titulo-final {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-exito);
+            margin-bottom: 6px;
+        }
+        .resultado-final .expresion-final {
+            font-size: 1.1rem;
+            color: var(--color-texto-oscuro);
+            text-align: center;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 14px;
+        }
+
+        .mensaje-error {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #78281f;
+            margin-top: 12px;
+            display: none;
+        }
+        .mensaje-error.visible { display: block; }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-desarrollo { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Solucionador: Sistemas de Ecuaciones Cuadráticas</h1>
+        <p>Solucionador paso a paso | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <div class="panel-control">
+            <h2>Operación a resolver</h2>
+
+            <div class="seccion-operacion">
+                <label class="etiqueta" for="tipo-sistema">Selecciona el tipo de sistema</label>
+                <select id="tipo-sistema" aria-label="Tipo de sistema a resolver">
+                    <option value="cuad-lineal">Cuadrática + Lineal</option>
+                    <option value="ax2-by2">Del tipo ax² + by² = c</option>
+                    <option value="homogeneo">Del tipo ax² + bxy + cy² = d</option>
+                </select>
+            </div>
+
+            <h3>Coeficientes</h3>
+
+            <div class="grupo-input" id="grupo-lineal">
+                <div class="titulo-input">Ecuación cuadrática: $ax^2 + bx + cy + d = 0$</div>
+                <div class="fila-coef">
+                    <label for="cl-a">a =</label>
+                    <input type="number" id="cl-a" value="1" step="any" aria-label="Coeficiente a">
+                </div>
+                <div class="fila-coef">
+                    <label for="cl-b">b =</label>
+                    <input type="number" id="cl-b" value="-1" step="any" aria-label="Coeficiente b">
+                </div>
+                <div class="fila-coef">
+                    <label for="cl-c">c =</label>
+                    <input type="number" id="cl-c" value="-1" step="any" aria-label="Coeficiente c (de y)">
+                </div>
+                <div class="fila-coef">
+                    <label for="cl-d">d =</label>
+                    <input type="number" id="cl-d" value="-6" step="any" aria-label="Término independiente d">
+                </div>
+            </div>
+
+            <div class="grupo-input" id="grupo-lineal2">
+                <div class="titulo-input">Ecuación lineal: $mx + ny + p = 0$</div>
+                <div class="fila-coef">
+                    <label for="cl-m">m =</label>
+                    <input type="number" id="cl-m" value="2" step="any" aria-label="Coeficiente m de x">
+                </div>
+                <div class="fila-coef">
+                    <label for="cl-n">n =</label>
+                    <input type="number" id="cl-n" value="-1" step="any" aria-label="Coeficiente n de y">
+                </div>
+                <div class="fila-coef">
+                    <label for="cl-p">p =</label>
+                    <input type="number" id="cl-p" value="-2" step="any" aria-label="Término independiente p">
+                </div>
+            </div>
+
+            <div class="grupo-input" id="grupo-ax2by2" style="display:none;">
+                <div class="titulo-input">Sistema $a_1x^2 + b_1y^2 = c_1$ ; $a_2x^2 + b_2y^2 = c_2$</div>
+                <div class="fila-coef">
+                    <label for="sq-a1">a₁ =</label>
+                    <input type="number" id="sq-a1" value="1" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="sq-b1">b₁ =</label>
+                    <input type="number" id="sq-b1" value="1" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="sq-c1">c₁ =</label>
+                    <input type="number" id="sq-c1" value="25" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="sq-a2">a₂ =</label>
+                    <input type="number" id="sq-a2" value="4" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="sq-b2">b₂ =</label>
+                    <input type="number" id="sq-b2" value="-4" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="sq-c2">c₂ =</label>
+                    <input type="number" id="sq-c2" value="36" step="any">
+                </div>
+            </div>
+
+            <div class="grupo-input" id="grupo-homogeneo" style="display:none;">
+                <div class="titulo-input">Sistema $a_1x^2 + b_1xy + c_1y^2 = d_1$ ; $a_2x^2 + b_2xy + c_2y^2 = d_2$</div>
+                <div class="fila-coef">
+                    <label for="hg-a1">a₁ =</label>
+                    <input type="number" id="hg-a1" value="1" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-b1">b₁ =</label>
+                    <input type="number" id="hg-b1" value="2" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-c1">c₁ =</label>
+                    <input type="number" id="hg-c1" value="-4" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-d1">d₁ =</label>
+                    <input type="number" id="hg-d1" value="18" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-a2">a₂ =</label>
+                    <input type="number" id="hg-a2" value="2" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-b2">b₂ =</label>
+                    <input type="number" id="hg-b2" value="7" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-c2">c₂ =</label>
+                    <input type="number" id="hg-c2" value="4" step="any">
+                </div>
+                <div class="fila-coef">
+                    <label for="hg-d2">d₂ =</label>
+                    <input type="number" id="hg-d2" value="104" step="any">
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver paso a paso</button>
+                <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar">↺</button>
+            </div>
+
+            <div class="seccion-ejemplos">
+                <h3>📚 Ejemplos del Módulo 12</h3>
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $y = x^2 - 6x + 5$ ; $y = 2x - 7$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $x^2 - x - y - 6 = 0$ ; $2x - y - 2 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $x^2 + y^2 = 25$ ; $x + y = 1$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $x^2 + y^2 = 25$ ; $4x^2 - 4y^2 = 36$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $2x^2 + 4y^2 = 20$ ; $x^2 - 2y^2 = 50$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 Sistema homogéneo del Ejemplo 8</button>
+            </div>
+        </div>
+
+        <div class="panel-desarrollo" id="panelDesarrollo" role="region" aria-label="Desarrollo paso a paso">
+            <h2>🧮 Desarrollo paso a paso</h2>
+            <div id="desarrollo">
+                <div class="placeholder-inicial">
+                    ⚙️ Selecciona el tipo de sistema, ingresa los coeficientes<br>
+                    y presiona <strong>"Resolver paso a paso"</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Resolver paso a paso sistemas formados por una ecuación cuadrática y una lineal,
+        sistemas del tipo $ax^2 + by^2 = c$, y sistemas del tipo $ax^2 + bxy + cy^2 = d$, mostrando cada paso
+        algebraico con su interpretación y clasificando el tipo de soluciones.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function casiIgual(x, y, tol) {
+    tol = tol || 1e-9;
+    return Math.abs(x - y) < tol;
+}
+
+function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(console.log);
+    }
+}
+
+function simplificarRaiz(n) {
+    if (n < 0) n = -n;
+    var exterior = 1, interior = n;
+    for (var i = 2; i * i <= interior; i++) {
+        while (interior % (i * i) === 0) { exterior *= i; interior /= (i * i); }
+    }
+    return { exterior: exterior, interior: interior };
+}
+
+function latexRaizSimplificada(n) {
+    var s = simplificarRaiz(n);
+    if (s.interior === 1) return formatearNumero(s.exterior);
+    if (s.exterior === 1) return '\\sqrt{' + s.interior + '}';
+    return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
+}
+
+function construirPaso(num, titulo, detalle) {
+    return '<div class="paso">' +
+        '<div class="num-paso">' + num + '</div>' +
+        '<div class="cuerpo-paso">' +
+            '<div class="titulo-paso">' + titulo + '</div>' +
+            '<div class="detalle-paso">' + detalle + '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function mostrarDesarrollo(html) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = html;
+    renderMath(el);
+}
+
+function mostrarError(mensaje) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = '<div class="mensaje-error visible">⚠️ ' + mensaje + '</div>';
+    renderMath(el);
+}
+
+function mostrarPlaceholder() {
+    document.getElementById('desarrollo').innerHTML =
+        '<div class="placeholder-inicial">⚙️ Ingresa los valores y presiona <strong>"Resolver paso a paso"</strong>.</div>';
+}
+
+function leerInput(id) {
+    var el = document.getElementById(id);
+    if (!el) return NaN;
+    var v = parseFloat(el.value);
+    return isNaN(v) ? NaN : v;
+}
+
+// =========================================
+// RESOLUCIÓN: CUADRÁTICA + LINEAL
+// =========================================
+function resolverCuadraticaLineal() {
+    var a = leerInput('cl-a');
+    var b = leerInput('cl-b');
+    var c = leerInput('cl-c');
+    var d = leerInput('cl-d');
+    var m = leerInput('cl-m');
+    var n = leerInput('cl-n');
+    var p = leerInput('cl-p');
+
+    if ([a, b, c, d, m, n, p].some(isNaN)) {
+        return { error: 'Debes completar todos los coeficientes.' };
+    }
+    if (casiIgual(a, 0)) {
+        return { error: 'El coeficiente $a$ no puede ser cero (no sería cuadrática).' };
+    }
+    if (casiIgual(n, 0)) {
+        return { error: 'El coeficiente $n$ (de $y$) no puede ser cero en esta versión simplificada. Usa $n \\neq 0$.' };
+    }
+
+    // Ecuación cuadrática: ax² + bx + cy + d = 0
+    // Despejamos: y = -(ax² + bx + d)/c
+    // Ecuación lineal: mx + ny + p = 0
+    // Despejamos: y = -(mx + p)/n
+    // Igualamos: -(ax² + bx + d)/c = -(mx + p)/n
+    // → n(ax² + bx + d) = c(mx + p)
+    // → nax² + nbx + nd = cmx + cp
+    // → nax² + (nb - cm)x + (nd - cp) = 0
+
+    var A = n * a;
+    var B = n * b - c * m;
+    var C = n * d - c * p;
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Despejar $y$ de la ecuación lineal',
+        'De $' + formatearNumero(m) + 'x + (' + formatearNumero(n) + ')y + (' + formatearNumero(p) + ') = 0$:<br>' +
+        '$$y = \\frac{-' + formatearNumero(m) + 'x - (' + formatearNumero(p) + ')}{' + formatearNumero(n) + '}$$'));
+
+    pasos.push(construirPaso(2, 'Sustituir en la ecuación cuadrática',
+        'La cuadrática es $' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ')y + (' + formatearNumero(d) + ') = 0$.<br>' +
+        'Al sustituir $y$ y multiplicar por $' + formatearNumero(n) + '$, se elimina el denominador:'));
+
+    pasos.push(construirPaso(3, 'Ecuación cuadrática en $x$',
+        '$$' + formatearNumero(A) + 'x^2 + (' + formatearNumero(B) + ')x + (' + formatearNumero(C) + ') = 0$$'));
+
+    var disc = B * B - 4 * A * C;
+    pasos.push(construirPaso(4, 'Discriminante',
+        '$$\\Delta = (' + formatearNumero(B) + ')^2 - 4(' + formatearNumero(A) + ')(' + formatearNumero(C) + ') = ' + formatearNumero(disc) + '$$'));
+
+    var resultadoHTML = '';
+
+    if (disc < -1e-9) {
+        pasos.push(construirPaso(5, 'Sin soluciones reales',
+            'Como $\\Delta < 0$, la ecuación no tiene soluciones reales. La recta y la parábola <strong>no se intersecan</strong> en el plano real.'));
+        resultadoHTML = '$$\\text{Conjunto solución: } \\varnothing$$';
+    } else if (casiIgual(disc, 0)) {
+        var x = -B / (2 * A);
+        var y = -(m * x + p) / n;
+        pasos.push(construirPaso(5, 'Raíz doble',
+            '$\\Delta = 0$: la recta es <strong>tangente</strong> a la parábola.<br>' +
+            '$$x = ' + formatearNumero(x) + '$$'));
+        pasos.push(construirPaso(6, 'Calcular $y$',
+            'Sustituyendo en la lineal: $y = ' + formatearNumero(y) + '$.'));
+        resultadoHTML = '$$\\text{Solución: } \\{(' + formatearNumero(x) + ', ' + formatearNumero(y) + ')\\}$$';
+    } else {
+        var sq = Math.sqrt(disc);
+        var x1 = (-B + sq) / (2 * A);
+        var x2 = (-B - sq) / (2 * A);
+        var y1 = -(m * x1 + p) / n;
+        var y2 = -(m * x2 + p) / n;
+
+        pasos.push(construirPaso(5, 'Dos raíces reales',
+            '$$x_1 = \\frac{-(' + formatearNumero(B) + ') + ' + latexRaizSimplificada(disc) + '}{' + formatearNumero(2 * A) + '} = ' + formatearNumero(x1) + '$$' +
+            '$$x_2 = \\frac{-(' + formatearNumero(B) + ') - ' + latexRaizSimplificada(disc) + '}{' + formatearNumero(2 * A) + '} = ' + formatearNumero(x2) + '$$'));
+
+        pasos.push(construirPaso(6, 'Calcular $y_1, y_2$',
+            '$$y_1 = ' + formatearNumero(y1) + ' \\quad ; \\quad y_2 = ' + formatearNumero(y2) + '$$'));
+
+        resultadoHTML = '$$\\text{Solución: } \\{(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + '), (' + formatearNumero(x2) + ', ' + formatearNumero(y2) + ')\\}$$';
+    }
+
+    return {
+        pasos: pasos,
+        resultado: resultadoHTML,
+        aviso: 'Recuerda: la intersección geométrica entre una parábola y una recta puede ser de 0, 1 o 2 puntos.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: ax² + by² = c
+// =========================================
+function resolverAx2By2() {
+    var a1 = leerInput('sq-a1');
+    var b1 = leerInput('sq-b1');
+    var c1 = leerInput('sq-c1');
+    var a2 = leerInput('sq-a2');
+    var b2 = leerInput('sq-b2');
+    var c2 = leerInput('sq-c2');
+
+    if ([a1, b1, c1, a2, b2, c2].some(isNaN)) {
+        return { error: 'Debes completar todos los coeficientes.' };
+    }
+
+    var det = a1 * b2 - a2 * b1;
+    if (casiIgual(det, 0)) {
+        return { error: 'El sistema es degenerado (determinante cero). Los coeficientes son proporcionales.' };
+    }
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Plantear el sistema',
+        '$$\\begin{cases} ' + formatearNumero(a1) + 'x^2 + (' + formatearNumero(b1) + ')y^2 = ' + formatearNumero(c1) + ' \\\\ ' +
+        formatearNumero(a2) + 'x^2 + (' + formatearNumero(b2) + ')y^2 = ' + formatearNumero(c2) + ' \\end{cases}$$'));
+
+    var y2 = (a1 * c2 - a2 * c1) / det;
+    var x2 = (c1 * b2 - c2 * b1) / det;
+
+    pasos.push(construirPaso(2, 'Multiplicar y restar para eliminar $x^2$',
+        'Multiplicando la primera ecuación por $' + formatearNumero(a2) + '$ y la segunda por $' + formatearNumero(a1) + '$, y restando, se obtiene:<br>' +
+        '$$y^2 = \\frac{' + formatearNumero(a1) + ' \\cdot ' + formatearNumero(c2) + ' - ' + formatearNumero(a2) + ' \\cdot ' + formatearNumero(c1) + '}{' + formatearNumero(det) + '} = ' + formatearNumero(y2) + '$$'));
+
+    pasos.push(construirPaso(3, 'Calcular $x^2$ de forma análoga',
+        '$$x^2 = \\frac{' + formatearNumero(c1) + ' \\cdot ' + formatearNumero(b2) + ' - ' + formatearNumero(c2) + ' \\cdot ' + formatearNumero(b1) + '}{' + formatearNumero(det) + '} = ' + formatearNumero(x2) + '$$'));
+
+    var resultadoHTML = '';
+
+    if (x2 < -1e-9 || y2 < -1e-9) {
+        pasos.push(construirPaso(4, 'Soluciones complejas',
+            'Al menos una de las variables al cuadrado da negativo, lo que implica soluciones <strong>complejas</strong> (no reales).'));
+        var resX = '';
+        if (x2 < -1e-9) {
+            resX = '$$x = \\pm i' + latexRaizSimplificada(-x2) + '$$';
+        } else {
+            resX = '$$x = \\pm ' + latexRaizSimplificada(x2) + '$$';
+        }
+        var resY = '';
+        if (y2 < -1e-9) {
+            resY = '$$y = \\pm i' + latexRaizSimplificada(-y2) + '$$';
+        } else {
+            resY = '$$y = \\pm ' + latexRaizSimplificada(y2) + '$$';
+        }
+        resultadoHTML = resX + resY;
+    } else {
+        var rx = Math.sqrt(x2);
+        var ry = Math.sqrt(y2);
+        pasos.push(construirPaso(4, 'Extraer raíces',
+            '$x^2 = ' + formatearNumero(x2) + ' \\Rightarrow x = \\pm ' + latexRaizSimplificada(x2) + '$<br>' +
+            '$y^2 = ' + formatearNumero(y2) + ' \\Rightarrow y = \\pm ' + latexRaizSimplificada(y2) + '$'));
+        pasos.push(construirPaso(5, 'Combinar signos',
+            'Combinando los signos $\\pm$ de $x$ y $\\pm$ de $y$, se obtienen <strong>4 soluciones</strong>.'));
+        resultadoHTML = '$$\\text{Solución: } \\{(\\pm ' + latexRaizSimplificada(x2) + ', \\pm ' + latexRaizSimplificada(y2) + ')\\}$$';
+    }
+
+    return {
+        pasos: pasos,
+        resultado: resultadoHTML,
+        aviso: 'Los sistemas del tipo $ax^2 + by^2 = c$ pueden tener 4, 2 o 0 soluciones reales según los valores de $x^2$ e $y^2$.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: SISTEMA HOMOGÉNEO
+// =========================================
+function resolverHomogeneo() {
+    var a1 = leerInput('hg-a1');
+    var b1 = leerInput('hg-b1');
+    var c1 = leerInput('hg-c1');
+    var d1 = leerInput('hg-d1');
+    var a2 = leerInput('hg-a2');
+    var b2 = leerInput('hg-b2');
+    var c2 = leerInput('hg-c2');
+    var d2 = leerInput('hg-d2');
+
+    if ([a1, b1, c1, d1, a2, b2, c2, d2].some(isNaN)) {
+        return { error: 'Debes completar todos los coeficientes.' };
+    }
+
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Plantear el sistema',
+        '$$\\begin{cases} ' + formatearNumero(a1) + 'x^2 + (' + formatearNumero(b1) + ')xy + (' + formatearNumero(c1) + ')y^2 = ' + formatearNumero(d1) + ' \\\\ ' +
+        formatearNumero(a2) + 'x^2 + (' + formatearNumero(b2) + ')xy + (' + formatearNumero(c2) + ')y^2 = ' + formatearNumero(d2) + ' \\end{cases}$$'));
+
+    var A = a1 * d2 - a2 * d1;
+    var B = b1 * d2 - b2 * d1;
+    var C = c1 * d2 - c2 * d1;
+
+    pasos.push(construirPaso(2, 'Eliminar el término constante',
+        'Multiplicando la primera por $' + formatearNumero(d2) + '$ y la segunda por $-' + formatearNumero(d1) + '$, y sumando:<br>' +
+        '$$(' + formatearNumero(A) + ')x^2 + (' + formatearNumero(B) + ')xy + (' + formatearNumero(C) + ')y^2 = 0$$'));
+
+    // Intentar factorizar
+    var p = null, q = null, r = null, s = null;
+    var encontrado = false;
+
+    if (!casiIgual(A, 0)) {
+        for (var px = -Math.abs(A) - 5; px <= Math.abs(A) + 5; px++) {
+            if (px === 0 || A % px !== 0) continue;
+            var rrx = A / px;
+            for (var qy = -Math.abs(C) - 5; qy <= Math.abs(C) + 5; qy++) {
+                if (qy === 0 || C % qy !== 0) continue;
+                var ss = C / qy;
+                if (casiIgual(px * ss + qy * rrx, B)) {
+                    p = px; q = qy; r = rrx; s = ss;
+                    encontrado = true;
+                    break;
+                }
+            }
+            if (encontrado) break;
+        }
+    }
+
+    var resultadoHTML = '';
+
+    if (encontrado) {
+        var t1 = (p === 1 ? '' : (p === -1 ? '-' : formatearNumero(p))) + 'x' +
+            (q === 0 ? '' : (q > 0 ? ' + ' : ' - ') + (Math.abs(q) === 1 ? '' : Math.abs(q)) + 'y');
+        var t2 = (r === 1 ? '' : (r === -1 ? '-' : formatearNumero(r))) + 'x' +
+            (s === 0 ? '' : (s > 0 ? ' + ' : ' - ') + (Math.abs(s) === 1 ? '' : Math.abs(s)) + 'y');
+
+        pasos.push(construirPaso(3, 'Factorizar la ecuación homogénea',
+            '$$(' + t1 + ')(' + t2 + ') = 0$$'));
+
+        pasos.push(construirPaso(4, 'Obtener relaciones $x$ vs $y$',
+            'De cada factor:<br>' +
+            '$$x = \\frac{-' + formatearNumero(q) + '}{' + formatearNumero(p) + '}y \\quad \\text{ó} \\quad x = \\frac{-' + formatearNumero(s) + '}{' + formatearNumero(r) + '}y$$'));
+
+        pasos.push(construirPaso(5, 'Sustituir en la ecuación original',
+            'Sustituyendo cada relación en la primera ecuación original se obtiene una ecuación en $y^2$, cuyas soluciones dan hasta <strong>4 pares ordenados</strong>.'));
+
+        resultadoHTML = '<p><strong>Estructura de la solución:</strong></p>' +
+            '<p>Sustituir cada relación en la ecuación original para hallar los valores de $y$, y luego calcular los correspondientes $x$.</p>' +
+            '<p>$$\\text{Hasta 4 pares ordenados en total}$$</p>';
+    } else {
+        pasos.push(construirPaso(3, 'No se pudo factorizar con coeficientes enteros',
+            'La ecuación $(' + formatearNumero(A) + ')x^2 + (' + formatearNumero(B) + ')xy + (' + formatearNumero(C) + ')y^2 = 0$ no factoriza con coeficientes enteros. Se requiere otro método.'));
+
+        resultadoHTML = '<p>El sistema puede resolverse numéricamente, pero no por el método de factorización con coeficientes enteros.</p>';
+    }
+
+    return {
+        pasos: pasos,
+        resultado: resultadoHTML,
+        aviso: 'El algoritmo de eliminación de constante + factorización solo aplica cuando el sistema es homogéneo del tipo $ax^2 + bxy + cy^2 = d$.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN PRINCIPAL
+// =========================================
+function resolver() {
+    var tipo = document.getElementById('tipo-sistema').value;
+    var resultado;
+
+    switch (tipo) {
+        case 'cuad-lineal':
+            resultado = resolverCuadraticaLineal();
+            break;
+        case 'ax2-by2':
+            resultado = resolverAx2By2();
+            break;
+        case 'homogeneo':
+            resultado = resolverHomogeneo();
+            break;
+        default:
+            resultado = { error: 'Tipo de sistema no reconocido.' };
+    }
+
+    if (resultado.error) {
+        mostrarError(resultado.error);
+        return;
+    }
+
+    var html = '';
+    resultado.pasos.forEach(function(p) { html += p; });
+    html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado</div>' +
+        '<div class="expresion-final">' + resultado.resultado + '</div>' +
+        '</div>';
+    if (resultado.aviso) {
+        html += '<div class="aviso-pedagogico">💡 ' + resultado.aviso + '</div>';
+    }
+
+    mostrarDesarrollo(html);
+}
+
+// =========================================
+// VISIBILIDAD DE GRUPOS DE INPUTS
+// =========================================
+function actualizarVisibilidad() {
+    var tipo = document.getElementById('tipo-sistema').value;
+
+    document.getElementById('grupo-lineal').style.display = (tipo === 'cuad-lineal') ? 'block' : 'none';
+    document.getElementById('grupo-lineal2').style.display = (tipo === 'cuad-lineal') ? 'block' : 'none';
+    document.getElementById('grupo-ax2by2').style.display = (tipo === 'ax2-by2') ? 'block' : 'none';
+    document.getElementById('grupo-homogeneo').style.display = (tipo === 'homogeneo') ? 'block' : 'none';
+
+    mostrarPlaceholder();
+}
+
+document.getElementById('tipo-sistema').addEventListener('change', actualizarVisibilidad);
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('btn-resolver').addEventListener('click', resolver);
+
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.getElementById('tipo-sistema').value = 'cuad-lineal';
+    document.getElementById('cl-a').value = 1;
+    document.getElementById('cl-b').value = -1;
+    document.getElementById('cl-c').value = -1;
+    document.getElementById('cl-d').value = -6;
+    document.getElementById('cl-m').value = 2;
+    document.getElementById('cl-n').value = -1;
+    document.getElementById('cl-p').value = -2;
+    document.getElementById('sq-a1').value = 1;
+    document.getElementById('sq-b1').value = 1;
+    document.getElementById('sq-c1').value = 25;
+    document.getElementById('sq-a2').value = 4;
+    document.getElementById('sq-b2').value = -4;
+    document.getElementById('sq-c2').value = 36;
+    document.getElementById('hg-a1').value = 1;
+    document.getElementById('hg-b1').value = 2;
+    document.getElementById('hg-c1').value = -4;
+    document.getElementById('hg-d1').value = 18;
+    document.getElementById('hg-a2').value = 2;
+    document.getElementById('hg-b2').value = 7;
+    document.getElementById('hg-c2').value = 4;
+    document.getElementById('hg-d2').value = 104;
+    actualizarVisibilidad();
+});
+
+// =========================================
+// EJEMPLOS PREDEFINIDOS
+// =========================================
+var ejemplos = {
+    1: { tipo: 'cuad-lineal',
+         a: 1, b: -6, c: -1, d: 5,
+         m: 2, n: -1, p: -7 },
+    2: { tipo: 'cuad-lineal',
+         a: 1, b: -1, c: -1, d: -6,
+         m: 2, n: -1, p: -2 },
+    3: { tipo: 'cuad-lineal',
+         a: 1, b: 1, c: 0, d: -25,
+         m: 1, n: 1, p: -1 },
+    4: { tipo: 'ax2-by2',
+         a1: 1, b1: 1, c1: 25,
+         a2: 4, b2: -4, c2: 36 },
+    5: { tipo: 'ax2-by2',
+         a1: 2, b1: 4, c1: 20,
+         a2: 1, b2: -2, c2: 50 },
+    6: { tipo: 'homogeneo',
+         a1: 1, b1: 2, c1: -4, d1: 18,
+         a2: 2, b2: 7, c2: 4, d2: 104 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        document.getElementById('tipo-sistema').value = data.tipo;
+
+        if (data.tipo === 'cuad-lineal') {
+            document.getElementById('cl-a').value = data.a;
+            document.getElementById('cl-b').value = data.b;
+            document.getElementById('cl-c').value = data.c;
+            document.getElementById('cl-d').value = data.d;
+            document.getElementById('cl-m').value = data.m;
+            document.getElementById('cl-n').value = data.n;
+            document.getElementById('cl-p').value = data.p;
+        } else if (data.tipo === 'ax2-by2') {
+            document.getElementById('sq-a1').value = data.a1;
+            document.getElementById('sq-b1').value = data.b1;
+            document.getElementById('sq-c1').value = data.c1;
+            document.getElementById('sq-a2').value = data.a2;
+            document.getElementById('sq-b2').value = data.b2;
+            document.getElementById('sq-c2').value = data.c2;
+        } else if (data.tipo === 'homogeneo') {
+            document.getElementById('hg-a1').value = data.a1;
+            document.getElementById('hg-b1').value = data.b1;
+            document.getElementById('hg-c1').value = data.c1;
+            document.getElementById('hg-d1').value = data.d1;
+            document.getElementById('hg-a2').value = data.a2;
+            document.getElementById('hg-b2').value = data.b2;
+            document.getElementById('hg-c2').value = data.c2;
+            document.getElementById('hg-d2').value = data.d2;
+        }
+
+        actualizarVisibilidad();
+        resolver();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+actualizarVisibilidad();
+renderMath(document.body);
+
+</script>
+
+</body>
+</html>

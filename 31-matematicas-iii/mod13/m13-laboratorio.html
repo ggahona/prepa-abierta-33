@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Laboratorio de práctica">
+    <title>Laboratorio: Funciones Polinomiales y División Sintética | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1000px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .barra-progreso-general {
+            background-color: var(--color-base);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .barra-progreso-general .texto-progreso {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            white-space: nowrap;
+        }
+        .progreso-track {
+            flex: 1;
+            height: 8px;
+            background-color: var(--color-acento-suave);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progreso-fill {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main { padding: 30px; }
+
+        .tarjeta-caso {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            border: 1px solid var(--color-acento-suave);
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .meta-caso {
+            background-color: var(--color-base);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--color-acento-suave);
+        }
+        .numero-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nivel-caso {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nivel-caso.basico { background-color: rgba(39,174,96,0.15); color: var(--color-exito); }
+        .nivel-caso.medio  { background-color: rgba(91,127,163,0.15); color: var(--color-acento); }
+        .nivel-caso.alto   { background-color: rgba(192,57,43,0.15); color: var(--color-error); }
+
+        .enunciado {
+            padding: 20px;
+            font-size: 1.02rem;
+            color: var(--color-texto-oscuro);
+            background-color: var(--color-blanco);
+            border-bottom: 1px solid var(--color-base);
+        }
+        .enunciado .etiqueta-caso {
+            display: inline-block;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .enunciado .expresion-caso {
+            font-size: 1.12rem;
+            color: var(--color-primario);
+            text-align: center;
+            padding: 12px 0;
+            background-color: var(--color-base);
+            border-radius: 6px;
+            margin-top: 10px;
+            overflow-x: auto;
+        }
+
+        .fase {
+            padding: 20px;
+            border-bottom: 1px solid var(--color-base);
+        }
+        .fase:last-of-type { border-bottom: none; }
+
+        .fase-titulo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+        }
+        .numero-fase {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .fase-instruccion {
+            font-size: 0.92rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 12px;
+            padding-left: 36px;
+        }
+
+        .contador-intentos {
+            display: none;
+            background-color: var(--color-acento-suave);
+            color: var(--color-primario);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 2px 10px;
+            border-radius: 10px;
+            margin-left: 36px;
+            margin-bottom: 10px;
+        }
+        .contador-intentos.visible { display: inline-block; }
+
+        .opciones-lista {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+        }
+        .opcion-item {
+            background-color: var(--color-blanco);
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            color: var(--color-primario);
+            text-align: left;
+        }
+        .opcion-item:hover:not(.disabled) {
+            background-color: rgba(91,127,163,0.08);
+            border-color: var(--color-acento);
+        }
+        .opcion-item:focus {
+            outline: 3px solid var(--color-acento);
+            outline-offset: 2px;
+        }
+        .opcion-item.disabled { cursor: default; }
+        .opcion-item.correcta {
+            background-color: rgba(39,174,96,0.15);
+            border-color: var(--color-exito);
+            color: #145a32;
+            font-weight: 700;
+        }
+        .opcion-item.incorrecta {
+            background-color: rgba(192,57,43,0.15);
+            border-color: var(--color-error);
+            color: #78281f;
+            font-weight: 700;
+        }
+
+        .fila-ejecucion {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-left: 36px;
+            margin-bottom: 12px;
+            align-items: flex-end;
+        }
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-wrapper label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+        input[type="text"] {
+            padding: 8px 10px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+            min-width: 200px;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+        input[type="text"]::placeholder {
+            color: #a9c1d9;
+            font-size: 0.78rem;
+            font-style: italic;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .botones-fase {
+            display: flex;
+            gap: 10px;
+            margin-left: 36px;
+            flex-wrap: wrap;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 9px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-pista {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 7px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-pista:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+        .btn-reintentar {
+            background-color: var(--color-blanco);
+            color: var(--color-primario);
+            border: 2px solid var(--color-primario);
+            padding: 8px 18px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            margin-left: 36px;
+            margin-top: 10px;
+            display: none;
+        }
+        .btn-reintentar.visible { display: inline-block; }
+        .btn-reintentar:hover { background-color: var(--color-primario); color: var(--color-blanco); }
+
+        .feedback {
+            margin: 12px 0 0 36px;
+            padding: 12px 16px;
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            font-size: 0.92rem;
+            display: none;
+            line-height: 1.7;
+        }
+        .feedback.visible { display: block; }
+        .feedback.correcto {
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            color: #145a32;
+        }
+        .feedback.incorrecto {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            color: #78281f;
+        }
+        .feedback.pista {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 5px solid var(--color-acento);
+            color: var(--color-primario);
+        }
+
+        .fase.bloqueada {
+            opacity: 0.45;
+            pointer-events: none;
+            background-color: var(--color-base);
+        }
+        .fase.bloqueada .fase-titulo { color: #8a9bb0; }
+        .fase.bloqueada .numero-fase { background-color: #8a9bb0; }
+
+        .navegacion-casos {
+            background-color: var(--color-base);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 2px solid var(--color-acento-suave);
+        }
+        .btn-navegacion {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-navegacion:hover:not(:disabled) { background-color: var(--color-primario); }
+        .btn-navegacion:disabled { opacity: 0.4; cursor: not-allowed; }
+        .btn-navegacion.secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+        }
+        .btn-navegacion.secundario:hover:not(:disabled) {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+        }
+        .indicador-caso {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+        }
+
+        .pantalla-final {
+            display: none;
+            text-align: center;
+            padding: 40px 30px;
+        }
+        .pantalla-final.visible { display: block; }
+        .pantalla-final h2 {
+            color: var(--color-primario);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        .pantalla-final .puntaje-final {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            margin: 20px 0;
+        }
+        .pantalla-final p {
+            font-size: 1rem;
+            color: var(--color-texto-oscuro);
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+        }
+        .pantalla-final .medalla {
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            main { padding: 18px; }
+            .fila-ejecucion, .botones-fase, .feedback, .opciones-lista, .btn-reintentar {
+                margin-left: 0;
+            }
+            .contador-intentos { margin-left: 0; }
+            .fase-instruccion { padding-left: 0; }
+            input[type="text"] { width: 100%; min-width: 0; }
+            .input-wrapper { flex: 1 1 45%; }
+            .barra-progreso-general { padding: 10px 18px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Laboratorio: Funciones Polinomiales y División Sintética</h1>
+        <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+        <span class="texto-progreso" id="progresoTexto">Caso 1 de 8</span>
+        <div class="progreso-track">
+            <div class="progreso-fill" id="progresoFill" role="progressbar" aria-label="Progreso del laboratorio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
+        <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 8</span>
+    </div>
+
+    <main>
+        <div class="tarjeta-caso" id="tarjetaCaso">
+
+            <div class="meta-caso">
+                <div class="numero-caso" id="numeroCaso">Caso 1 de 8</div>
+                <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+            </div>
+
+            <div class="enunciado" id="enunciadoCaso">
+                <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+                <div id="textoEnunciado">Cargando caso...</div>
+                <div class="expresion-caso" id="expresionCaso"></div>
+            </div>
+
+            <div class="fase" id="fase1">
+                <div class="fase-titulo">
+                    <span class="numero-fase">1</span> Diagnóstico
+                </div>
+                <div class="fase-instruccion" id="instruccionFase1">
+                    Identifica el método o propiedad aplicable.
+                </div>
+                <div class="contador-intentos" id="contadorFase1" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase1" role="group" aria-label="Opciones de diagnóstico"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar1">🔄 Reintentar</button>
+                <div class="feedback" id="feedback1" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="fase bloqueada" id="fase2">
+                <div class="fase-titulo">
+                    <span class="numero-fase">2</span> Cálculo intermedio
+                </div>
+                <div class="fase-instruccion" id="instruccionFase2">
+                    Calcula los valores intermedios.
+                </div>
+                <div class="contador-intentos" id="contadorFase2" aria-live="polite">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase2"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase2">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase2">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback2" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="fase bloqueada" id="fase3">
+                <div class="fase-titulo">
+                    <span class="numero-fase">3</span> Resultado final
+                </div>
+                <div class="fase-instruccion" id="instruccionFase3">
+                    Escribe el resultado final.
+                </div>
+                <div class="contador-intentos" id="contadorFase3" aria-live="polite">Intento 1 de 3</div>
+                <div class="fila-ejecucion" id="inputsFase3"></div>
+                <div class="botones-fase">
+                    <button type="button" class="btn-pista" id="pistaFase3">💡 Pista</button>
+                    <button type="button" class="btn-primario" id="verificarFase3">Verificar</button>
+                </div>
+                <div class="feedback" id="feedback3" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="fase bloqueada" id="fase4">
+                <div class="fase-titulo">
+                    <span class="numero-fase">4</span> 🎯 Error frecuente
+                </div>
+                <div class="fase-instruccion" id="instruccionFase4">
+                    ¿Cuál es el error más frecuente en este tipo de caso?
+                </div>
+                <div class="contador-intentos" id="contadorFase4" aria-live="polite">Intento 1 de 3</div>
+                <div class="opciones-lista" id="opcionesFase4" role="group" aria-label="Opciones de error frecuente"></div>
+                <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
+                <div class="feedback" id="feedback4" role="status" aria-live="polite"></div>
+            </div>
+
+            <div class="navegacion-casos">
+                <button type="button" class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+                <span class="indicador-caso" id="indicadorCaso">Caso 1 de 8</span>
+                <button type="button" class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+            </div>
+        </div>
+
+        <div class="pantalla-final" id="pantallaFinal">
+            <div class="medalla" id="medallaFinal">🏅</div>
+            <h2>¡Investigación completada!</h2>
+            <div class="puntaje-final" id="puntajeFinal">0 / 8</div>
+            <p id="mensajeFinal"></p>
+            <button type="button" class="btn-primario" id="btnReiniciar" style="max-width:240px; margin: 0 auto;">🔄 Reiniciar investigación</button>
+        </div>
+    </main>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Practicar operaciones con polinomios (igualdad, suma, multiplicación), el algoritmo
+        de la división larga y la división sintética para divisores de la forma $x - c$, identificando los errores
+        más comunes en cada tipo de caso.
+    </div>
+</div>
+
+<script>
+// =========================================
+// BANCO DE CASOS — Módulo 13
+// =========================================
+var casos = [
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 1 — Grado de un polinomio',
+        enunciado: 'Determina el grado del siguiente polinomio.',
+        expresion: '$$f(x) = 4x^4 - 3x^2 + 1$$',
+        fase1: {
+            opciones: [
+                'El grado es el mayor exponente con coeficiente no nulo',
+                'El grado es la cantidad de términos',
+                'El grado es el coeficiente principal',
+                'El grado es la suma de exponentes'
+            ],
+            correcta: 'El grado es el mayor exponente con coeficiente no nulo',
+            explicacion: 'El grado de un polinomio es el mayor exponente que aparece con coeficiente distinto de cero.'
+        },
+        fase2: {
+            campos: [
+                { id: 'coefs', etiqueta: 'Escribe los coeficientes de mayor a menor grado (ej. 4,0,-3,0,1)', correcta: '4,0,-3,0,1' }
+            ],
+            pista: 'Completa con ceros los términos faltantes: $4x^4 + 0x^3 - 3x^2 + 0x + 1$.',
+            explicacion: 'Al completar: $4x^4 + 0x^3 - 3x^2 + 0x + 1$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'grado', etiqueta: 'Grado del polinomio', correcta: 4 }
+            ],
+            pista: 'El mayor exponente con coeficiente no nulo es $4$.',
+            explicacion: 'El grado es $4$.'
+        },
+        fase4: {
+            opciones: [
+                'Contar solo los términos escritos y no los que faltan con coeficiente cero',
+                'Confundir el grado con el coeficiente principal',
+                'Sumar todos los exponentes',
+                'Contar el número de monomios'
+            ],
+            correcta: 'Contar solo los términos escritos y no los que faltan con coeficiente cero',
+            explicacion: 'El error típico es no considerar los términos faltantes. El grado se determina por el mayor exponente con coeficiente no nulo.'
+        }
+    },
+
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 2 — Suma de polinomios',
+        enunciado: 'Suma los siguientes polinomios.',
+        expresion: '$$f(x) = 2x^3 - 3x^2 + 2x + 1 \\quad ; \\quad g(x) = 3x^3 + 4x^2 + 2x + 1$$',
+        fase1: {
+            opciones: [
+                'Sumar coeficiente a coeficiente de potencias iguales',
+                'Multiplicar cada término de $f$ por cada término de $g$',
+                'Cambiar el signo de $g$ y luego sumar',
+                'Dividir los coeficientes'
+            ],
+            correcta: 'Sumar coeficiente a coeficiente de potencias iguales',
+            explicacion: 'La suma de polinomios se define sumando los coeficientes de potencias iguales.'
+        },
+        fase2: {
+            campos: [
+                { id: 'c3', etiqueta: 'Coeficiente de $x^3$ en la suma', correcta: 5 },
+                { id: 'c2', etiqueta: 'Coeficiente de $x^2$ en la suma', correcta: 1 }
+            ],
+            pista: 'Suma los coeficientes correspondientes: $2 + 3 = 5$ para $x^3$; $-3 + 4 = 1$ para $x^2$.',
+            explicacion: 'Coeficientes: $2+3=5$ (para $x^3$) y $-3+4=1$ (para $x^2$).'
+        },
+        fase3: {
+            campos: [
+                { id: 'c1', etiqueta: 'Coeficiente de $x$ en la suma', correcta: 4 },
+                { id: 'c0', etiqueta: 'Término constante en la suma', correcta: 2 }
+            ],
+            pista: 'Continúa sumando: $2+2=4$ para $x$, y $1+1=2$ para el término constante.',
+            explicacion: 'Suma final: $5x^3 + x^2 + 4x + 2$.'
+        },
+        fase4: {
+            opciones: [
+                'Sumar coeficientes de potencias diferentes (desalinear)',
+                'No distribuir correctamente el signo',
+                'Multiplicar los coeficientes en lugar de sumarlos',
+                'Confundir suma con multiplicación'
+            ],
+            correcta: 'Sumar coeficientes de potencias diferentes (desalinear)',
+            explicacion: 'El error típico es sumar coeficientes de grados distintos. Se debe completar con ceros para alinear correctamente.'
+        }
+    },
+
+    {
+        nivel: 'basico',
+        etiqueta: 'Caso 3 — Inverso aditivo',
+        enunciado: 'Encuentra el inverso aditivo del siguiente polinomio.',
+        expresion: '$$f(x) = 2x^3 - 3x^2 + 2x + 1$$',
+        fase1: {
+            opciones: [
+                'Cambiar el signo de cada coeficiente del polinomio',
+                'Cambiar el signo solo del primer término',
+                'Invertir el polinomio (1/f)',
+                'Elevar al cuadrado el polinomio'
+            ],
+            correcta: 'Cambiar el signo de cada coeficiente del polinomio',
+            explicacion: 'El inverso aditivo $-f(x)$ tiene los coeficientes opuestos a los de $f(x)$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'c3', etiqueta: 'Coeficiente de $x^3$ en $-f$', correcta: -2 },
+                { id: 'c2', etiqueta: 'Coeficiente de $x^2$ en $-f$', correcta: 3 }
+            ],
+            pista: 'Cambia el signo a cada coeficiente: $-2x^3 + 3x^2 - 2x - 1$.',
+            explicacion: 'Coeficientes: $-2$ y $3$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'c1', etiqueta: 'Coeficiente de $x$ en $-f$', correcta: -2 },
+                { id: 'c0', etiqueta: 'Término constante en $-f$', correcta: -1 }
+            ],
+            pista: 'El resto del inverso aditivo es $-2x - 1$.',
+            explicacion: 'Inverso aditivo: $-2x^3 + 3x^2 - 2x - 1$.'
+        },
+        fase4: {
+            opciones: [
+                'Cambiar el signo solo del primer término',
+                'Confundir el inverso aditivo con el multiplicativo',
+                'Elevar cada término al cuadrado',
+                'Sumar el polinomio consigo mismo'
+            ],
+            correcta: 'Cambiar el signo solo del primer término',
+            explicacion: 'El error típico es cambiar solo el signo del término principal. El inverso aditivo cambia el signo a TODOS los coeficientes.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 4 — Multiplicación de polinomios',
+        enunciado: 'Multiplica los siguientes polinomios e identifica el grado del producto.',
+        expresion: '$$f(x) = 2x^2 + 3x - 1 \\quad ; \\quad g(x) = x^3 - 4x + 2$$',
+        fase1: {
+            opciones: [
+                'Aplicar la distributiva: cada término de $f$ por cada término de $g$',
+                'Sumar coeficiente a coeficiente',
+                'Dividir los polinomios',
+                'Factorizar el producto'
+            ],
+            correcta: 'Aplicar la distributiva: cada término de $f$ por cada término de $g$',
+            explicacion: 'En la multiplicación de polinomios se aplica la propiedad distributiva.'
+        },
+        fase2: {
+            campos: [
+                { id: 'grado', etiqueta: 'Grado del producto', correcta: 5 }
+            ],
+            pista: 'El grado de $f$ es 2 y el grado de $g$ es 3. El grado del producto es la suma: $2 + 3 = 5$.',
+            explicacion: 'Grado del producto: $2 + 3 = 5$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'c5', etiqueta: 'Coeficiente de $x^5$ en el producto', correcta: 2 }
+            ],
+            pista: 'El término de mayor grado surge de multiplicar $2x^2 \\cdot x^3 = 2x^5$.',
+            explicacion: 'El coeficiente principal del producto es $2 \\cdot 1 = 2$.'
+        },
+        fase4: {
+            opciones: [
+                'Olvidar multiplicar algunos términos cruzados',
+                'Sumar los coeficientes de grados iguales al final',
+                'No sumar los exponentes',
+                'Confundir multiplicación con suma'
+            ],
+            correcta: 'Olvidar multiplicar algunos términos cruzados',
+            explicacion: 'El error típico es olvidar multiplicar algunos pares de términos. Deben multiplicarse TODOS los términos de $f$ por TODOS los de $g$.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 5 — División larga',
+        enunciado: 'Encuentra el cociente y el residuo de la siguiente división.',
+        expresion: '$$(x^4 + 3x^2 - 16) \\div (x^2 + 2x + 1)$$',
+        fase1: {
+            opciones: [
+                'Usar el algoritmo de la división larga completando los términos faltantes',
+                'Usar división sintética con $c = 2$',
+                'Factorizar el dividendo',
+                'Elevar al cuadrado el divisor'
+            ],
+            correcta: 'Usar el algoritmo de la división larga completando los términos faltantes',
+            explicacion: 'El divisor no es de la forma $x - c$, así que se usa la división larga. Completamos el dividendo con $0x^3$ y $0x$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'dividendo', etiqueta: 'Dividendo completado (formato: 1,0,3,0,-16)', correcta: '1,0,3,0,-16' }
+            ],
+            pista: 'Completa con ceros los términos faltantes: $x^4 + 0x^3 + 3x^2 + 0x - 16$.',
+            explicacion: 'Dividendo completado: $1, 0, 3, 0, -16$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'q', etiqueta: 'Coeficientes del cociente (formato: 1,-2,6)', correcta: '1,-2,6' },
+                { id: 'r', etiqueta: 'Coeficientes del residuo (formato: -10,-22)', correcta: '-10,-22' }
+            ],
+            pista: 'Al dividir: cociente $x^2 - 2x + 6$, residuo $-10x - 22$.',
+            explicacion: 'Cociente: $x^2 - 2x + 6$. Residuo: $-10x - 22$.'
+        },
+        fase4: {
+            opciones: [
+                'No completar con ceros los términos faltantes del dividendo',
+                'Dividir solo el primer término',
+                'No restar correctamente al multiplicar',
+                'Sumar en lugar de restar'
+            ],
+            correcta: 'No completar con ceros los términos faltantes del dividendo',
+            explicacion: 'El error más común es no completar el dividendo con ceros, desalineando toda la división.'
+        }
+    },
+
+    {
+        nivel: 'medio',
+        etiqueta: 'Caso 6 — División sintética',
+        enunciado: 'Usa división sintética para encontrar el cociente y el residuo.',
+        expresion: '$$(4x^3 - 3x^2 + 2x - 1) \\div (x + 2)$$',
+        fase1: {
+            opciones: [
+                'Usar división sintética con $c = -2$',
+                'Usar división sintética con $c = 2$',
+                'Aplicar división larga',
+                'Factorizar el dividendo'
+            ],
+            correcta: 'Usar división sintética con $c = -2$',
+            explicacion: 'El divisor es $x + 2 = x - (-2)$, así que $c = -2$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'coefs', etiqueta: 'Coeficientes del dividendo (formato: 4,-3,2,-1)', correcta: '4,-3,2,-1' }
+            ],
+            pista: 'Los coeficientes son $4, -3, 2, -1$ (el polinomio ya está completo).',
+            explicacion: 'Coeficientes: $4, -3, 2, -1$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'q', etiqueta: 'Coeficientes del cociente (formato: 4,-11,24)', correcta: '4,-11,24' },
+                { id: 'r', etiqueta: 'Residuo (número)', correcta: -49 }
+            ],
+            pista: 'Aplicando el esquema: bajamos $4$; $4 \\cdot (-2) = -8$; $-3 + (-8) = -11$; $-11 \\cdot (-2) = 22$; $2 + 22 = 24$; $24 \\cdot (-2) = -48$; $-1 + (-48) = -49$.',
+            explicacion: 'Cociente: $4x^2 - 11x + 24$. Residuo: $-49$.'
+        },
+        fase4: {
+            opciones: [
+                'Usar $c = 2$ en lugar de $c = -2$',
+                'No bajar el primer coeficiente',
+                'No sumar los productos',
+                'Confundir el residuo con el último coeficiente del cociente'
+            ],
+            correcta: 'Usar $c = 2$ en lugar de $c = -2$',
+            explicacion: 'El error típico es confundir el signo. Para $x + 2$, $c = -2$.'
+        }
+    },
+
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 7 — División sintética con ceros faltantes',
+        enunciado: 'Usa división sintética para encontrar el cociente y el residuo.',
+        expresion: '$$(3x^4 + 2x^2 - 1) \\div (x - 1)$$',
+        fase1: {
+            opciones: [
+                'Usar división sintética con $c = 1$, completando con ceros',
+                'Usar división sintética con $c = -1$',
+                'Usar división larga',
+                'Aplicar el teorema del residuo'
+            ],
+            correcta: 'Usar división sintética con $c = 1$, completando con ceros',
+            explicacion: 'El divisor es $x - 1$, así que $c = 1$. Completamos: $3x^4 + 0x^3 + 2x^2 + 0x - 1$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'coefs', etiqueta: 'Coeficientes completados (formato: 3,0,2,0,-1)', correcta: '3,0,2,0,-1' }
+            ],
+            pista: 'Completa con ceros para $x^3$ y $x$: $3, 0, 2, 0, -1$.',
+            explicacion: 'Coeficientes: $3, 0, 2, 0, -1$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'q', etiqueta: 'Coeficientes del cociente (formato: 3,3,5,5)', correcta: '3,3,5,5' },
+                { id: 'r', etiqueta: 'Residuo', correcta: 4 }
+            ],
+            pista: 'Aplicando el esquema con $c = 1$: $3$, $3$, $5$, $5$, residuo $4$.',
+            explicacion: 'Cociente: $3x^3 + 3x^2 + 5x + 5$. Residuo: $4$.'
+        },
+        fase4: {
+            opciones: [
+                'No incluir los ceros para los términos faltantes ($0x^3$ y $0x$)',
+                'Usar $c = -1$ en lugar de $c = 1$',
+                'Errores aritméticos en las sumas',
+                'No completar el dividendo en orden descendente'
+            ],
+            correcta: 'No incluir los ceros para los términos faltantes ($0x^3$ y $0x$)',
+            explicacion: 'El error más común es omitir los ceros de los términos faltantes, desalineando el esquema.'
+        }
+    },
+
+    {
+        nivel: 'alto',
+        etiqueta: 'Caso 8 — Teorema del residuo',
+        enunciado: 'Encuentra el valor de $k$ para que el residuo sea $12$.',
+        expresion: '$$(2x^3 - 3x^2 + 4k) \\div (x - 2) = R = 12$$',
+        fase1: {
+            opciones: [
+                'Evaluar $f(2)$ e igualar a $12$ (Teorema del Residuo)',
+                'Aplicar división sintética con $c = -2$',
+                'Aplicar la fórmula general',
+                'Factorizar $2x^3 - 3x^2 + 4k$'
+            ],
+            correcta: 'Evaluar $f(2)$ e igualar a $12$ (Teorema del Residuo)',
+            explicacion: 'Por el Teorema del Residuo, el residuo de dividir $f(x)$ entre $x - c$ es $f(c)$. Aquí $c = 2$.'
+        },
+        fase2: {
+            campos: [
+                { id: 'f2', etiqueta: '$f(2) = 2(8) - 3(4) + 4k = $ (en términos de k)', correcta: '4+4k' }
+            ],
+            pista: '$f(2) = 2(2)^3 - 3(2)^2 + 4k = 16 - 12 + 4k = 4 + 4k$.',
+            explicacion: '$f(2) = 4 + 4k$.'
+        },
+        fase3: {
+            campos: [
+                { id: 'k', etiqueta: 'Valor de $k$', correcta: 2 }
+            ],
+            pista: 'Igualamos $4 + 4k = 12 \\Rightarrow 4k = 8 \\Rightarrow k = 2$.',
+            explicacion: '$k = 2$.'
+        },
+        fase4: {
+            opciones: [
+                'Evaluar en $x = -2$ en lugar de $x = 2$',
+                'Errores aritméticos al elevar $2$ al cubo',
+                'No igualar al residuo dado',
+                'Confundir el residuo con el cociente'
+            ],
+            correcta: 'Evaluar en $x = -2$ en lugar de $x = 2$',
+            explicacion: 'El error típico es confundir el signo: para $x - 2$, evaluamos en $x = 2$.'
+        }
+    }
+];
+
+// =========================================
+// ESTADO GLOBAL
+// =========================================
+var estado = {
+    casoActual: 0,
+    completados: [],
+    puntaje: 0,
+    intentosFase1: 0,
+    intentosFase2: 0,
+    intentosFase3: 0,
+    intentosFase4: 0
+};
+
+var MAX_INTENTOS = 3;
+var TOL = 0.02;
+var STORAGE_KEY = 'lab_mod13_resueltos';
+
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function parsearNumero(texto) {
+    if (texto == null) return NaN;
+    texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+    if (texto === '') return NaN;
+    if (texto.indexOf('/') !== -1) {
+        var p = texto.split('/');
+        if (p.length !== 2) return NaN;
+        var n = parseFloat(p[0]), d = parseFloat(p[1]);
+        if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+        return n / d;
+    }
+    var x = parseFloat(texto);
+    return isNaN(x) ? NaN : x;
+}
+
+function normalizarRespuesta(texto) {
+    return String(texto)
+        .replace(/−/g, '-')
+        .replace(/[×·*]/g, ',')
+        .replace(/[;\s]/g, '')
+        .replace(/\\\{|\\\}/g, '{')
+        .replace(/\\/g, '')
+        .replace(/[，]/g, ',')
+        .toLowerCase()
+        .trim();
+}
+
+function compararListaNumeros(texto, listaCorrecta) {
+    var usuario = String(texto).split(',').map(function(t) { return parseFloat(t.trim()); });
+    if (usuario.length !== listaCorrecta.length) return false;
+    for (var i = 0; i < usuario.length; i++) {
+        if (isNaN(usuario[i])) return false;
+        if (Math.abs(usuario[i] - listaCorrecta[i]) > TOL) return false;
+    }
+    return true;
+}
+
+function compararTerminoConK(texto, terminoCorrecto) {
+    // Acepta variantes como "4+4k", "4k+4", "4 + 4*k"
+    var u = String(texto).toLowerCase().replace(/\s+/g, '').replace(/\*/g, '');
+    var c = String(terminoCorrecto).toLowerCase().replace(/\s+/g, '').replace(/\*/g, '');
+    return u === c;
+}
+
+function verificarAproximado(valor, correcto, tolerancia) {
+    tolerancia = tolerancia || TOL;
+
+    if (typeof correcto === 'number') {
+        var num = parsearNumero(valor);
+        if (isNaN(num)) return false;
+        return Math.abs(num - correcto) < tolerancia;
+    }
+
+    // Si es un string con "k" o similar, comparación textual
+    if (String(correcto).toLowerCase().indexOf('k') !== -1) {
+        return compararTerminoConK(valor, correcto);
+    }
+
+    // Si es una lista de coeficientes separados por comas
+    if (String(correcto).indexOf(',') !== -1) {
+        var partes = String(correcto).split(',').map(function(t){ return parseFloat(t.trim()); });
+        return compararListaNumeros(valor, partes);
+    }
+
+    // Comparación directa de strings normalizados
+    var u = normalizarRespuesta(valor);
+    var c = normalizarRespuesta(correcto);
+    return u === c;
+}
+
+function renderMath(el) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([el]).catch(console.log);
+    }
+}
+
+function actualizarContador(idContador, intentos) {
+    var el = document.getElementById(idContador);
+    if (intentos >= MAX_INTENTOS) {
+        el.textContent = 'Sin intentos restantes';
+    } else {
+        el.textContent = 'Intento ' + (intentos + 1) + ' de ' + MAX_INTENTOS;
+    }
+}
+
+function limpiarLatex(texto) {
+    return String(texto)
+        .replace(/\$[^$]*\$/g, '')
+        .replace(/\\[a-zA-Z]+/g, '')
+        .replace(/[{}]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+// =========================================
+// CARGA DE CASO
+// =========================================
+function cargarCaso(indice) {
+    estado.casoActual = indice;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    var caso = casos[indice];
+
+    document.getElementById('numeroCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('indicadorCaso').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+    document.getElementById('progresoTexto').textContent = 'Caso ' + (indice + 1) + ' de ' + casos.length;
+
+    var nivelEl = document.getElementById('nivelCaso');
+    nivelEl.className = 'nivel-caso ' + caso.nivel;
+    nivelEl.textContent = caso.nivel.charAt(0).toUpperCase() + caso.nivel.slice(1);
+
+    document.getElementById('etiquetaCaso').textContent = caso.etiqueta;
+    document.getElementById('textoEnunciado').textContent = caso.enunciado;
+    document.getElementById('expresionCaso').innerHTML = caso.expresion;
+
+    document.getElementById('fase1').className = 'fase';
+    document.getElementById('fase2').className = 'fase bloqueada';
+    document.getElementById('fase3').className = 'fase bloqueada';
+    document.getElementById('fase4').className = 'fase bloqueada';
+
+    ['feedback1','feedback2','feedback3','feedback4'].forEach(function(id) {
+        var el = document.getElementById(id);
+        el.className = 'feedback';
+        el.innerHTML = '';
+    });
+
+    document.getElementById('btnReintentar1').classList.remove('visible');
+    document.getElementById('btnReintentar4').classList.remove('visible');
+
+    ['contadorFase1','contadorFase2','contadorFase3','contadorFase4'].forEach(function(id) {
+        document.getElementById(id).classList.remove('visible');
+    });
+
+    document.getElementById('inputsFase2').innerHTML = '';
+    document.getElementById('inputsFase3').innerHTML = '';
+    document.getElementById('opcionesFase4').innerHTML = '';
+
+    renderizarOpciones('opcionesFase1', caso.fase1.opciones, function(op, btn) {
+        verificarFase1(op, btn);
+    });
+
+    document.getElementById('btnAnterior').disabled = (indice === 0);
+    document.getElementById('btnSiguiente').disabled = true;
+    document.getElementById('btnSiguiente').textContent = (indice === casos.length - 1) ? 'Ver resultado final' : 'Siguiente caso →';
+
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+
+    renderMath(document.getElementById('tarjetaCaso'));
+}
+
+function renderizarOpciones(contenedorId, opciones, onSelect) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    opciones.forEach(function(op, idx) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'opcion-item';
+        btn.setAttribute('aria-label', 'Opción ' + String.fromCharCode(65 + idx) + ': ' + limpiarLatex(op));
+        btn.innerHTML = '<strong>' + String.fromCharCode(65 + idx) + ')</strong> ' + op;
+        btn.dataset.opcion = op;
+        btn.addEventListener('click', function() {
+            if (this.classList.contains('disabled')) return;
+            onSelect(op, this);
+        });
+        contenedor.appendChild(btn);
+    });
+    renderMath(contenedor);
+}
+
+function renderizarInputs(contenedorId, campos) {
+    var contenedor = document.getElementById(contenedorId);
+    contenedor.innerHTML = '';
+    campos.forEach(function(campo) {
+        var wrapper = document.createElement('div');
+        wrapper.className = 'input-wrapper';
+        var idInput = contenedorId + '-' + campo.id;
+        var placeholder = campo.placeholder || 'Tu respuesta';
+        wrapper.innerHTML = '<label for="' + idInput + '">' + campo.etiqueta + '</label>' +
+            '<input type="text" id="' + idInput + '" placeholder="' + placeholder + '" autocomplete="off" ' +
+            'inputmode="text" aria-label="' + limpiarLatex(campo.etiqueta) + '">';
+        contenedor.appendChild(wrapper);
+    });
+    renderMath(contenedor);
+}
+
+// =========================================
+// FASE 1
+// =========================================
+function verificarFase1(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback1');
+    var esCorrecta = (opcion === caso.fase1.correcta);
+
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase1.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase1.explicacion;
+        document.getElementById('btnReintentar1').classList.remove('visible');
+        document.getElementById('fase2').classList.remove('bloqueada');
+        renderizarInputs('inputsFase2', caso.fase2.campos);
+        document.getElementById('contadorFase2').classList.add('visible');
+        actualizarContador('contadorFase2', 0);
+    } else {
+        estado.intentosFase1++;
+        actualizarContador('contadorFase1', estado.intentosFase1);
+        document.getElementById('contadorFase1').classList.add('visible');
+
+        if (estado.intentosFase1 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. La respuesta correcta es <strong>' + caso.fase1.correcta + '</strong>. ' + caso.fase1.explicacion;
+            document.getElementById('btnReintentar1').classList.remove('visible');
+            document.getElementById('fase2').classList.remove('bloqueada');
+            renderizarInputs('inputsFase2', caso.fase2.campos);
+            document.getElementById('contadorFase2').classList.add('visible');
+            actualizarContador('contadorFase2', 0);
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase1) + ' intento(s).';
+            document.getElementById('btnReintentar1').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar1').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase1 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback1');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// FASE 2
+// =========================================
+document.getElementById('pistaFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase2').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback2');
+    var todosCorrectos = true;
+    var camposVacios = [];
+
+    caso.fase2.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase2-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(valor, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Correcto!</strong> ' + caso.fase2.explicacion;
+        renderMath(fb);
+        document.getElementById('fase3').classList.remove('bloqueada');
+        renderizarInputs('inputsFase3', caso.fase3.campos);
+        document.getElementById('contadorFase3').classList.add('visible');
+        actualizarContador('contadorFase3', 0);
+        return;
+    }
+
+    estado.intentosFase2++;
+    actualizarContador('contadorFase2', estado.intentosFase2);
+
+    if (estado.intentosFase2 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase2.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase2) + ' intento(s). Usa 💡 para una pista.';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 3
+// =========================================
+document.getElementById('pistaFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    fb.className = 'feedback pista visible';
+    fb.innerHTML = '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+    renderMath(fb);
+});
+
+document.getElementById('verificarFase3').addEventListener('click', function() {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback3');
+    var todosCorrectos = true;
+    var camposVacios = [];
+
+    caso.fase3.campos.forEach(function(campo) {
+        var input = document.getElementById('inputsFase3-' + campo.id);
+        var valor = input.value.trim();
+        if (valor === '') {
+            camposVacios.push(campo.id);
+            todosCorrectos = false;
+            return;
+        }
+        if (!verificarAproximado(valor, campo.correcta)) {
+            todosCorrectos = false;
+        }
+    });
+
+    if (camposVacios.length > 0) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '⚠️ Debes completar todos los campos. Faltan ' + camposVacios.length + ' campo(s).';
+        return;
+    }
+
+    if (todosCorrectos) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Resultado correcto!</strong> ' + caso.fase3.explicacion;
+        renderMath(fb);
+        document.getElementById('fase4').classList.remove('bloqueada');
+        renderizarOpciones('opcionesFase4', caso.fase4.opciones, function(op, b) {
+            verificarFase4(op, b);
+        });
+        return;
+    }
+
+    estado.intentosFase3++;
+    actualizarContador('contadorFase3', estado.intentosFase3);
+
+    if (estado.intentosFase3 >= MAX_INTENTOS) {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. Aquí está la pista completa:<br><br>' +
+            '💡 <strong>Pista:</strong> ' + caso.fase3.pista;
+        renderMath(fb);
+    } else {
+        fb.className = 'feedback incorrecto visible';
+        fb.innerHTML = '❌ Algunos valores son incorrectos. Te quedan ' +
+            (MAX_INTENTOS - estado.intentosFase3) + ' intento(s).';
+        renderMath(fb);
+    }
+});
+
+// =========================================
+// FASE 4
+// =========================================
+function verificarFase4(opcion, btn) {
+    var caso = casos[estado.casoActual];
+    var fb = document.getElementById('feedback4');
+    var esCorrecta = (opcion === caso.fase4.correcta);
+
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.add('disabled');
+        if (b.dataset.opcion === caso.fase4.correcta) b.classList.add('correcta');
+    });
+    if (!esCorrecta) btn.classList.add('incorrecta');
+
+    var btnSig = document.getElementById('btnSiguiente');
+
+    if (esCorrecta) {
+        fb.className = 'feedback correcto visible';
+        fb.innerHTML = '✅ <strong>¡Excelente!</strong> ' + caso.fase4.explicacion;
+        document.getElementById('btnReintentar4').classList.remove('visible');
+        if (!estado.completados[estado.casoActual]) {
+            estado.completados[estado.casoActual] = true;
+            actualizarProgreso();
+        }
+        btnSig.disabled = false;
+        btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final →' : 'Siguiente caso →';
+    } else {
+        estado.intentosFase4++;
+        actualizarContador('contadorFase4', estado.intentosFase4);
+        document.getElementById('contadorFase4').classList.add('visible');
+
+        if (estado.intentosFase4 >= MAX_INTENTOS) {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ Has agotado los ' + MAX_INTENTOS + ' intentos. El error más común es: <strong>' + caso.fase4.correcta + '</strong>. ' + caso.fase4.explicacion +
+                '<br><br><em>Puedes continuar, pero este caso no se marcará como completado.</em>';
+            document.getElementById('btnReintentar4').classList.remove('visible');
+            btnSig.disabled = false;
+            btnSig.textContent = (estado.casoActual === casos.length - 1) ? 'Ver resultado final (sin completar) →' : 'Siguiente caso (sin completar) →';
+        } else {
+            fb.className = 'feedback incorrecto visible';
+            fb.innerHTML = '❌ La opción no es correcta. Te quedan ' + (MAX_INTENTOS - estado.intentosFase4) + ' intento(s).';
+            document.getElementById('btnReintentar4').classList.add('visible');
+        }
+    }
+    renderMath(fb);
+}
+
+document.getElementById('btnReintentar4').addEventListener('click', function() {
+    document.querySelectorAll('#opcionesFase4 .opcion-item').forEach(function(b) {
+        b.classList.remove('disabled', 'correcta', 'incorrecta');
+    });
+    var fb = document.getElementById('feedback4');
+    fb.className = 'feedback';
+    fb.innerHTML = '';
+    this.classList.remove('visible');
+});
+
+// =========================================
+// PROGRESO
+// =========================================
+function actualizarProgreso() {
+    var total = casos.length;
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    estado.puntaje = completados;
+    var porcentaje = completados / total * 100;
+    document.getElementById('progresoFill').style.width = porcentaje + '%';
+    document.getElementById('progresoFill').setAttribute('aria-valuenow', Math.round(porcentaje));
+    document.getElementById('progresoPuntaje').textContent = '✓ ' + completados + ' / ' + total;
+
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(estado.completados));
+    } catch (e) { /* ignorar */ }
+}
+
+// =========================================
+// NAVEGACIÓN
+// =========================================
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (estado.casoActual > 0) {
+        cargarCaso(estado.casoActual - 1);
+    }
+});
+
+document.getElementById('btnSiguiente').addEventListener('click', function() {
+    if (estado.casoActual < casos.length - 1) {
+        cargarCaso(estado.casoActual + 1);
+    } else {
+        mostrarPantallaFinal();
+    }
+});
+
+// =========================================
+// PANTALLA FINAL
+// =========================================
+function mostrarPantallaFinal() {
+    document.getElementById('tarjetaCaso').style.display = 'none';
+    var pantalla = document.getElementById('pantallaFinal');
+    pantalla.classList.add('visible');
+
+    var completados = estado.completados.filter(function(x) { return x; }).length;
+    var total = casos.length;
+    document.getElementById('puntajeFinal').textContent = completados + ' / ' + total;
+
+    var medalla = document.getElementById('medallaFinal');
+    var mensaje = document.getElementById('mensajeFinal');
+
+    if (completados === total) {
+        medalla.textContent = '🏆';
+        mensaje.innerHTML = '¡Investigador experto! Resolviste los 8 casos correctamente, dominaste las operaciones con polinomios (igualdad, suma, multiplicación), la división larga y la división sintética del Módulo 13.';
+    } else if (completados >= total * 0.7) {
+        medalla.textContent = '🥈';
+        mensaje.innerHTML = '¡Buen trabajo, investigador! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio de la división sintética y el Teorema del Residuo.';
+    } else {
+        medalla.textContent = '🥉';
+        mensaje.innerHTML = 'Continúa entrenando, investigador. Te recomendamos repasar las operaciones con polinomios, el algoritmo de la división y la división sintética, especialmente el manejo de ceros para términos faltantes.';
+    }
+    renderMath(pantalla);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// =========================================
+// REINICIAR
+// =========================================
+document.getElementById('btnReiniciar').addEventListener('click', function() {
+    estado.casoActual = 0;
+    estado.completados = new Array(casos.length).fill(false);
+    estado.puntaje = 0;
+    estado.intentosFase1 = 0;
+    estado.intentosFase2 = 0;
+    estado.intentosFase3 = 0;
+    estado.intentosFase4 = 0;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) { /* ignorar */ }
+    actualizarProgreso();
+    document.getElementById('pantallaFinal').classList.remove('visible');
+    document.getElementById('tarjetaCaso').style.display = 'block';
+    cargarCaso(0);
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+try {
+    var guardados = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    estado.completados = new Array(casos.length).fill(false);
+    guardados.forEach(function(idx) {
+        if (idx >= 0 && idx < casos.length) estado.completados[idx] = true;
+    });
+} catch (e) {
+    estado.completados = new Array(casos.length).fill(false);
+}
+
+cargarCaso(0);
+actualizarProgreso();
+
+</script>
+
+</body>
+</html>

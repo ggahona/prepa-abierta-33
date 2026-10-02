@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Simulador de autoevaluación">
+    <title>Simulador de Autoevaluación - Módulo 13: Funciones Polinomiales y División Sintética</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.35rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view { display: block; }
+        .quiz-view.hidden { display: none; }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item:focus {
+            outline: 3px solid var(--accent-main);
+            outline-offset: 2px;
+        }
+
+        .option-item.disabled { cursor: default; }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible { display: block; }
+        .feedback-box strong { color: var(--accent-main); }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+            font-family: inherit;
+        }
+
+        .btn-next.visible { display: block; }
+        .btn-next:hover { background-color: var(--text-primary); }
+        .btn-next:focus { outline: 3px solid var(--accent-main); outline-offset: 2px; }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible { display: block; }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-restart:hover { background-color: var(--text-primary); }
+        .btn-restart:focus { outline: 3px solid var(--accent-main); outline-offset: 2px; }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.05rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 13</h1>
+            <p>Funciones Polinomiales y División Sintética</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Progreso del simulador" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
+
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList" role="list"></ul>
+            <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()" aria-label="Avanzar al siguiente reactivo">Siguiente Reactivo →</button>
+        </div>
+
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()" aria-label="Reiniciar la evaluación">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 13
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cuál es el grado de la función polinomial $f(x) = 4x^4 - 3x^2 + 1$?",
+                options: [
+                    { text: "Grado 4", correct: true },
+                    { text: "Grado 2", correct: false },
+                    { text: "Grado 3", correct: false },
+                    { text: "Grado 1", correct: false }
+                ],
+                feedback: "El grado es el mayor exponente con coeficiente no nulo. En $4x^4 - 3x^2 + 1$, el mayor exponente es $4$. Se puede completar como $4x^4 + 0x^3 - 3x^2 + 0x + 1$."
+            },
+            {
+                id: 2,
+                text: "¿Cuándo dos funciones polinomiales $f(x)$ y $g(x)$ son iguales?",
+                options: [
+                    { text: "Cuando los coeficientes de potencias iguales de $x$ son iguales.", correct: true },
+                    { text: "Cuando tienen el mismo número de términos.", correct: false },
+                    { text: "Cuando sus grados son distintos.", correct: false },
+                    { text: "Cuando sus constantes son cero.", correct: false }
+                ],
+                feedback: "Dos polinomios son iguales si y solo si los coeficientes de potencias iguales son iguales: $a_i = b_i$ para todo $i$."
+            },
+            {
+                id: 3,
+                text: "Dadas $f(x) = 2x^3 - 3x^2 + 2x + 1$ y $g(x) = 3x^3 + 4x^2 + 2x + 1$, ¿cuál es el coeficiente de $x^2$ en $f(x) + g(x)$?",
+                options: [
+                    { text: "$1$", correct: true },
+                    { text: "$-3$", correct: false },
+                    { text: "$4$", correct: false },
+                    { text: "$7$", correct: false }
+                ],
+                feedback: "El coeficiente de $x^2$ en $f + g$ es la suma de los coeficientes de $x^2$ en $f$ y $g$: $-3 + 4 = 1$."
+            },
+            {
+                id: 4,
+                text: "¿Cuál es el inverso aditivo del polinomio $f(x) = 2x^3 - 3x^2 + 2x + 1$?",
+                options: [
+                    { text: "$-2x^3 + 3x^2 - 2x - 1$", correct: true },
+                    { text: "$-2x^3 - 3x^2 - 2x - 1$", correct: false },
+                    { text: "$2x^3 + 3x^2 + 2x + 1$", correct: false },
+                    { text: "$-2x^3 + 3x^2 + 2x + 1$", correct: false }
+                ],
+                feedback: "El inverso aditivo cambia el signo de TODOS los coeficientes: $-f(x) = -2x^3 + 3x^2 - 2x - 1$."
+            },
+            {
+                id: 5,
+                text: "Si $f(x)$ tiene grado $3$ y $g(x)$ tiene grado $4$, ¿cuál es el grado del producto $f(x) \\cdot g(x)$?",
+                options: [
+                    { text: "Grado $7$", correct: true },
+                    { text: "Grado $12$", correct: false },
+                    { text: "Grado $4$", correct: false },
+                    { text: "Grado $3$", correct: false }
+                ],
+                feedback: "El grado del producto es la suma de los grados: $3 + 4 = 7$. El término de mayor grado es $(a_3 b_4)x^7$."
+            },
+            {
+                id: 6,
+                text: "¿Qué propiedad de campo NO se cumple en general para los polinomios?",
+                options: [
+                    { text: "La existencia de inversos multiplicativos para todos los polinomios.", correct: true },
+                    { text: "La conmutatividad de la suma.", correct: false },
+                    { text: "La asociatividad de la multiplicación.", correct: false },
+                    { text: "La distributividad.", correct: false }
+                ],
+                feedback: "Solo las funciones polinomiales de grado $0$ (constantes no nulas) tienen inverso multiplicativo. Los polinomios de grado mayor no lo tienen en general."
+            },
+            {
+                id: 7,
+                text: "Según el algoritmo de la división de polinomios, si $f(x) = g(x) \\cdot q(x) + r(x)$ con $g(x) \\neq 0$, ¿qué condición cumple el residuo $r(x)$?",
+                options: [
+                    { text: "$r(x) = 0$ o el grado de $r(x)$ es menor que el grado de $g(x)$.", correct: true },
+                    { text: "El grado de $r(x)$ es siempre igual al de $g(x)$.", correct: false },
+                    { text: "El grado de $r(x)$ es mayor que el de $f(x)$.", correct: false },
+                    { text: "$r(x)$ siempre es una constante no nula.", correct: false }
+                ],
+                feedback: "El residuo $r(x)$ debe ser cero o tener grado estrictamente menor que el grado de $g(x)$."
+            },
+            {
+                id: 8,
+                text: "Al dividir $x^4 + 3x^2 - 16$ entre $x^2 + 2x + 1$, ¿cuál es el residuo?",
+                options: [
+                    { text: "$-10x - 22$", correct: true },
+                    { text: "$x^2 - 2x + 6$", correct: false },
+                    { text: "$-10x + 22$", correct: false },
+                    { text: "$0$", correct: false }
+                ],
+                feedback: "Al aplicar la división larga, el cociente es $x^2 - 2x + 6$ y el residuo es $-10x - 22$. Verificación: $(x^2 + 2x + 1)(x^2 - 2x + 6) + (-10x - 22) = x^4 + 3x^2 - 16$."
+            },
+            {
+                id: 9,
+                text: "¿Cuál es el cociente de la división sintética de $2x^4 - 5x^3 + 3x^2 + 2x - 1$ entre $x - 2$?",
+                options: [
+                    { text: "$2x^3 - x^2 + x + 4$", correct: true },
+                    { text: "$2x^3 + x^2 - x + 4$", correct: false },
+                    { text: "$2x^3 - x^2 - x + 4$", correct: false },
+                    { text: "$2x^4 - x^3 + x^2 + 4x$", correct: false }
+                ],
+                feedback: "Aplicando el esquema de división sintética con $c = 2$: coeficientes del cociente $2, -1, 1, 4$, residuo $7$. Cociente: $2x^3 - x^2 + x + 4$."
+            },
+            {
+                id: 10,
+                text: "Para dividir el polinomio $4x^3 - 3x^2 + 2x - 1$ entre $x + 2$ usando división sintética, ¿qué valor de $c$ se debe usar?",
+                options: [
+                    { text: "$c = -2$", correct: true },
+                    { text: "$c = 2$", correct: false },
+                    { text: "$c = 4$", correct: false },
+                    { text: "$c = -3$", correct: false }
+                ],
+                feedback: "El divisor es $x + 2 = x - (-2)$, por lo que $c = -2$. El error más común es usar $c = 2$."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // RENDERIZAR MATHJAX
+        // =========================================
+        function renderMath(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise(element ? [element] : undefined).catch(function(err){ console.log(err); });
+            } else if (window.MathJax && window.MathJax.typeset) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // LIMPIAR LATEX PARA ARIA-LABEL
+        // =========================================
+        function limpiarLatex(texto) {
+            return String(texto)
+                .replace(/\$[^$]*\$/g, '')
+                .replace(/\\[a-zA-Z]+/g, '')
+                .replace(/[{}]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.setAttribute('role', 'button');
+                li.setAttribute('tabindex', '0');
+                li.setAttribute('aria-label', `Opción ${String.fromCharCode(97 + idx)}: ${limpiarLatex(opt.text)}`);
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+
+                li.onclick = () => selectOption(opt.correct, li);
+
+                li.onkeydown = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectOption(opt.correct, li);
+                    }
+                };
+
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            renderMath(document.getElementById('quizView'));
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+                item.setAttribute('tabindex', '-1');
+                item.setAttribute('aria-disabled', 'true');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                selectedElement.setAttribute('aria-label', 'Opción correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                selectedElement.setAttribute('aria-label', 'Opción incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+                btnNext.setAttribute('aria-label', 'Ver resultados finales');
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+                btnNext.setAttribute('aria-label', 'Avanzar al siguiente reactivo');
+            }
+            btnNext.classList.add('visible');
+            btnNext.focus();
+
+            renderMath(document.getElementById('quizView'));
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${progress}%`;
+            bar.setAttribute('aria-valuenow', Math.round(progress));
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            const bar = document.getElementById('progressBar');
+            bar.style.width = '100%';
+            bar.setAttribute('aria-valuenow', '100');
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 13 sobre funciones polinomiales, operaciones con polinomios, división larga y división sintética.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de las operaciones con polinomios y la división sintética. Repasa los detalles sobre el manejo de ceros en términos faltantes y el signo de $c$ en la división sintética para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 13: grado de un polinomio, igualdad, suma, multiplicación, algoritmo de la división y división sintética. Presta especial atención al manejo de ceros para términos faltantes. Vuelve a intentarlo.";
+            }
+
+            renderMath(document.getElementById('resultsView'));
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

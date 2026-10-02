@@ -1,0 +1,1160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Visualizador interactivo">
+  <title>Visualizador: Funciones Polinomiales y División Sintética | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .contenedor {
+      max-width: 1250px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 24px 28px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+
+    header h1 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 0;
+    }
+
+    .panel-control {
+      background: var(--color-base);
+      padding: 22px;
+      border-right: 1px solid var(--color-acento-suave);
+      overflow-y: auto;
+      max-height: 85vh;
+    }
+
+    .panel-control h2 {
+      color: var(--color-primario);
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .panel-control h3 {
+      color: var(--color-primario);
+      font-size: 0.9rem;
+      margin: 18px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--color-acento-suave);
+    }
+
+    .seccion-slider {
+      margin-bottom: 14px;
+    }
+
+    .seccion-slider label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 6px;
+    }
+
+    .seccion-slider input[type="range"] {
+      width: 100%;
+      accent-color: var(--color-acento);
+    }
+
+    .valor-slider {
+      display: inline-block;
+      min-width: 42px;
+      padding: 1px 8px;
+      background: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-align: center;
+      margin-left: 6px;
+    }
+
+    .grupo-input {
+      margin-bottom: 12px;
+    }
+
+    .grupo-input label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 4px;
+    }
+
+    .grupo-input input[type="number"],
+    .grupo-input input[type="text"] {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .grupo-input input:focus {
+      outline: none;
+      border-color: var(--color-acento);
+      box-shadow: 0 0 0 3px rgba(91, 127, 163, 0.2);
+    }
+
+    .checkbox-grupo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.88rem;
+      color: var(--color-texto-oscuro);
+      cursor: pointer;
+    }
+
+    .checkbox-grupo input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--color-acento);
+      cursor: pointer;
+    }
+
+    .btn-secundario {
+      width: 100%;
+      padding: 10px;
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-secundario:hover {
+      background: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .btn-ejemplo {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.8rem;
+      font-family: inherit;
+      color: var(--color-texto-oscuro);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-ejemplo:hover {
+      background: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .btn-ejemplo .etiqueta {
+      font-weight: 700;
+      color: var(--color-acento);
+      margin-right: 6px;
+    }
+
+    .panel-canvas {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      border: 1px solid var(--color-acento-suave);
+      overflow: hidden;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: var(--color-blanco);
+      cursor: crosshair;
+    }
+
+    .canvas-instrucciones {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background: rgba(232, 238, 245, 0.95);
+      color: var(--color-primario);
+      padding: 6px 12px;
+      border-radius: var(--radio-borde);
+      font-size: 0.78rem;
+      font-weight: 600;
+      pointer-events: none;
+    }
+
+    .leyenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      padding: 12px 16px;
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      font-size: 0.82rem;
+    }
+
+    .leyenda-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--color-texto-oscuro);
+    }
+
+    .leyenda-muestra {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid var(--color-acento-suave);
+      flex-shrink: 0;
+    }
+
+    .panel-info {
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 16px 20px;
+      border-left: 4px solid var(--color-acento);
+      font-size: 0.9rem;
+    }
+
+    .panel-info h3 {
+      color: var(--color-primario);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .panel-info table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .panel-info th,
+    .panel-info td {
+      padding: 6px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--color-acento-suave);
+    }
+
+    .panel-info th {
+      color: var(--color-primario);
+      font-weight: 700;
+      width: 45%;
+    }
+
+    .panel-info td {
+      color: var(--color-texto-oscuro);
+    }
+
+    .panel-info .aviso {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      font-size: 0.85rem;
+      color: var(--color-texto-oscuro);
+      border-left: 3px solid var(--color-acento);
+    }
+
+    .panel-info .aviso strong {
+      color: var(--color-primario);
+    }
+
+    .footer-info {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 16px 28px;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+
+    .footer-info strong {
+      color: var(--color-acento-suave);
+    }
+
+    @media (max-width: 900px) {
+      .layout-principal {
+        grid-template-columns: 1fr;
+      }
+      .panel-control {
+        border-right: none;
+        border-bottom: 1px solid var(--color-acento-suave);
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      header h1 { font-size: 1.2rem; }
+      .panel-control, .panel-canvas { padding: 14px; }
+      .canvas-instrucciones { font-size: 0.7rem; padding: 4px 8px; }
+      .leyenda { font-size: 0.75rem; gap: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Visualizador: Funciones Polinomiales y División Sintética</h1>
+      <p>Visualizador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+      <div class="panel-control">
+        <h2>Parámetros del Polinomio</h2>
+
+        <div class="grupo-input">
+          <label for="input-grado">Grado del polinomio:</label>
+          <input type="number" id="input-grado" min="0" max="5" step="1" value="3">
+        </div>
+
+        <div id="coeficientes-container">
+          <!-- Los coeficientes se generan dinámicamente -->
+        </div>
+
+        <h3>División Sintética</h3>
+        <div class="grupo-input">
+          <label for="input-c">Valor de $c$ (divisor $x - c$):</label>
+          <input type="number" id="input-c" step="0.5" value="1">
+        </div>
+
+        <h3>Visualización</h3>
+        <label class="checkbox-grupo">
+          <input type="checkbox" id="check-cuadricula" checked>
+          Ver cuadrícula
+        </label>
+        <label class="checkbox-grupo">
+          <input type="checkbox" id="check-raices" checked>
+          Ver raíces reales
+        </label>
+        <label class="checkbox-grupo">
+          <input type="checkbox" id="check-evaluacion" checked>
+          Ver punto de evaluación $f(c)$
+        </label>
+        <label class="checkbox-grupo">
+          <input type="checkbox" id="check-division" checked>
+          Ver esquema de división sintética
+        </label>
+
+        <h3>Zoom</h3>
+        <div class="seccion-slider">
+          <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">25</span> px / unidad</label>
+          <input type="range" id="slider-zoom" min="10" max="60" step="1" value="25">
+        </div>
+
+        <button class="btn-secundario" id="btn-reiniciar">↺ Reiniciar</button>
+
+        <h3>Ejemplos</h3>
+        <button class="btn-ejemplo" data-ejemplo="cubica">
+          <span class="etiqueta">1)</span> $f(x) = x^3 - 3x^2 + 2x + 1$, $c = 1$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="cuartica">
+          <span class="etiqueta">2)</span> $f(x) = 2x^4 - 3x^3 + x - 2$, $c = -1$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="cuadratica">
+          <span class="etiqueta">3)</span> $f(x) = x^2 - 4x + 3$, $c = 2$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="quintica">
+          <span class="etiqueta">4)</span> $f(x) = x^5 - 2x^3 + x - 1$, $c = 0.5$
+        </button>
+      </div>
+
+      <div class="panel-canvas">
+        <div class="canvas-wrapper">
+          <canvas id="canvas" width="820" height="560" aria-label="Gráfica de la función polinomial y su división sintética"></canvas>
+          <div class="canvas-instrucciones">🖱️ Haz clic en la gráfica para evaluar $f(x)$</div>
+        </div>
+
+        <div class="leyenda">
+          <div class="leyenda-item">
+            <div class="leyenda-muestra" style="background:#5b7fa3;"></div>
+            <span>Curva $f(x)$</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="leyenda-muestra" style="background:#27ae60;"></div>
+            <span>Raíces reales</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="leyenda-muestra" style="background:#c0392b;"></div>
+            <span>Punto $(c, f(c))$</span>
+          </div>
+          <div class="leyenda-item">
+            <div class="leyenda-muestra" style="background:#a9c1d9;"></div>
+            <span>Cuadrícula</span>
+          </div>
+        </div>
+
+        <div class="panel-info" id="panelInfo" role="status" aria-live="polite">
+          <!-- Información dinámica -->
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Comprender la relación entre una función polinomial, sus raíces reales y el residuo de la división sintética por $x - c$, visualizando el valor $f(c)$ en la gráfica.
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // ESTADO GLOBAL
+    // ============================================================
+    var estado = {
+      coeficientes: [1, -3, 2, 1], // de mayor a menor grado
+      grado: 3,
+      c: 1,
+      zoom: 25,
+      verCuadricula: true,
+      verRaices: true,
+      verEvaluacion: true,
+      verDivision: true,
+      puntoClic: null
+    };
+
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var W = 820;
+    var H = 560;
+
+    // ============================================================
+    // UTILIDADES
+    // ============================================================
+    function renderMath(element) {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(function(err) { console.log(err); });
+      }
+    }
+
+    function formatearNumero(n) {
+      if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+      return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function mundoAPantalla(x, y) {
+      return {
+        px: W / 2 + x * estado.zoom,
+        py: H / 2 - y * estado.zoom
+      };
+    }
+
+    function pantallaAMundo(px, py) {
+      return {
+        x: (px - W / 2) / estado.zoom,
+        y: (H / 2 - py) / estado.zoom
+      };
+    }
+
+    // ============================================================
+    // EVALUACIÓN DEL POLINOMIO
+    // ============================================================
+    function evaluarPolinomio(coefs, x) {
+      var resultado = 0;
+      var grado = coefs.length - 1;
+      for (var i = 0; i < coefs.length; i++) {
+        resultado += coefs[i] * Math.pow(x, grado - i);
+      }
+      return resultado;
+    }
+
+    // ============================================================
+    // CONSTRUCCIÓN DE POLINOMIO EN LATEX
+    // ============================================================
+    function construirPolinomioLatex(coefs) {
+      var grado = coefs.length - 1;
+      var terminos = [];
+      for (var i = 0; i < coefs.length; i++) {
+        var coef = coefs[i];
+        var pot = grado - i;
+        if (Math.abs(coef) < 1e-12) continue;
+        var signo = coef < 0 ? '-' : (terminos.length > 0 ? '+' : '');
+        var absCoef = Math.abs(coef);
+        var coefStr = (Math.abs(absCoef - 1) < 1e-12 && pot > 0) ? '' : formatearNumero(absCoef);
+        var potStr = '';
+        if (pot === 1) potStr = 'x';
+        else if (pot > 1) potStr = 'x^{' + pot + '}';
+        terminos.push(signo + coefStr + potStr);
+      }
+      if (terminos.length === 0) return '0';
+      return terminos.join(' ').replace(/^\+ /, '');
+    }
+
+    // ============================================================
+    // DIVISIÓN SINTÉTICA
+    // ============================================================
+    function divisionSintetica(coefs, c) {
+      var n = coefs.length;
+      var resultado = new Array(n);
+      resultado[0] = coefs[0];
+      for (var i = 1; i < n; i++) {
+        resultado[i] = coefs[i] + resultado[i - 1] * c;
+      }
+      return {
+        cociente: resultado.slice(0, n - 1),
+        residuo: resultado[n - 1],
+        pasos: resultado
+      };
+    }
+
+    // ============================================================
+    // RAÍCES REALES (búsqueda numérica)
+    // ============================================================
+    function encontrarRaices(coefs) {
+      var raices = [];
+      var grado = coefs.length - 1;
+      if (grado < 1) return raices;
+
+      // Rango de búsqueda
+      var maxCoef = 0;
+      for (var i = 0; i < coefs.length; i++) {
+        maxCoef = Math.max(maxCoef, Math.abs(coefs[i]));
+      }
+      var limite = 1 + maxCoef;
+      if (limite > 50) limite = 50;
+
+      var paso = 0.02;
+      var xAnterior = -limite;
+      var yAnterior = evaluarPolinomio(coefs, xAnterior);
+
+      for (var x = -limite + paso; x <= limite; x += paso) {
+        var y = evaluarPolinomio(coefs, x);
+        if (yAnterior === 0) {
+          raices.push(parseFloat(xAnterior.toFixed(4)));
+        } else if (yAnterior * y < 0) {
+          // Bisección
+          var a = xAnterior, b = x;
+          for (var k = 0; k < 40; k++) {
+            var m = (a + b) / 2;
+            var ym = evaluarPolinomio(coefs, m);
+            if (yAnterior * ym <= 0) { b = m; }
+            else { a = m; yAnterior = ym; }
+          }
+          raices.push(parseFloat(((a + b) / 2).toFixed(4)));
+        }
+        xAnterior = x;
+        yAnterior = y;
+      }
+
+      // Eliminar duplicados
+      var unicas = [];
+      for (var i = 0; i < raices.length; i++) {
+        var dup = false;
+        for (var j = 0; j < unicas.length; j++) {
+          if (Math.abs(raices[i] - unicas[j]) < 0.05) { dup = true; break; }
+        }
+        if (!dup) unicas.push(raices[i]);
+      }
+      return unicas;
+    }
+
+    // ============================================================
+    // CONFIGURACIÓN HiDPI
+    // ============================================================
+    function configurarHiDPI() {
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = W * dpr;
+      canvas.height = H * dpr;
+      canvas.style.width = '100%';
+      canvas.style.height = 'auto';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    // ============================================================
+    // DIBUJO
+    // ============================================================
+    function dibujarCuadricula() {
+      if (!estado.verCuadricula) return;
+
+      ctx.strokeStyle = '#e8eef5';
+      ctx.lineWidth = 1;
+
+      var rangoX = W / (2 * estado.zoom);
+      var rangoY = H / (2 * estado.zoom);
+
+      // Verticales
+      for (var x = Math.ceil(-rangoX); x <= rangoX; x++) {
+        var p = mundoAPantalla(x, 0);
+        ctx.beginPath();
+        ctx.moveTo(p.px, 0);
+        ctx.lineTo(p.px, H);
+        ctx.stroke();
+      }
+
+      // Horizontales
+      for (var y = Math.ceil(-rangoY); y <= rangoY; y++) {
+        var p = mundoAPantalla(0, y);
+        ctx.beginPath();
+        ctx.moveTo(0, p.py);
+        ctx.lineTo(W, p.py);
+        ctx.stroke();
+      }
+    }
+
+    function dibujarEjes() {
+      ctx.strokeStyle = '#2c4966';
+      ctx.lineWidth = 2;
+
+      // Eje X
+      var origen = mundoAPantalla(0, 0);
+      ctx.beginPath();
+      ctx.moveTo(0, origen.py);
+      ctx.lineTo(W, origen.py);
+      ctx.stroke();
+
+      // Eje Y
+      ctx.beginPath();
+      ctx.moveTo(origen.px, 0);
+      ctx.lineTo(origen.px, H);
+      ctx.stroke();
+
+      // Flechas
+      ctx.fillStyle = '#2c4966';
+      // Flecha X
+      ctx.beginPath();
+      ctx.moveTo(W - 8, origen.py - 5);
+      ctx.lineTo(W, origen.py);
+      ctx.lineTo(W - 8, origen.py + 5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Flecha Y
+      ctx.beginPath();
+      ctx.moveTo(origen.px - 5, 8);
+      ctx.lineTo(origen.px, 0);
+      ctx.lineTo(origen.px + 5, 8);
+      ctx.closePath();
+      ctx.fill();
+
+      // Etiquetas numéricas
+      ctx.fillStyle = '#2c4966';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      var pasoEtiqueta = 1;
+      if (estado.zoom < 20) pasoEtiqueta = 2;
+      if (estado.zoom < 12) pasoEtiqueta = 5;
+
+      var rangoX = W / (2 * estado.zoom);
+      for (var x = -Math.floor(rangoX); x <= rangoX; x += pasoEtiqueta) {
+        if (x === 0) continue;
+        var p = mundoAPantalla(x, 0);
+        ctx.fillText(x.toString(), p.px, p.py + 6);
+      }
+
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      var rangoY = H / (2 * estado.zoom);
+      for (var y = -Math.floor(rangoY); y <= rangoY; y += pasoEtiqueta) {
+        if (y === 0) continue;
+        var p = mundoAPantalla(0, y);
+        ctx.fillText(y.toString(), p.px - 8, p.py);
+      }
+
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'top';
+      ctx.fillText('O', origen.px - 6, origen.py + 4);
+    }
+
+    function dibujarCurva() {
+      ctx.strokeStyle = '#5b7fa3';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+
+      var paso = 1; // píxeles
+      var primero = true;
+
+      for (var px = 0; px <= W; px += paso) {
+        var mundo = pantallaAMundo(px, 0);
+        var y = evaluarPolinomio(estado.coeficientes, mundo.x);
+        var p = mundoAPantalla(mundo.x, y);
+
+        // Evitar saltos enormes (asíntotas visuales)
+        if (p.py < -2000 || p.py > H + 2000) {
+          primero = true;
+          continue;
+        }
+
+        if (primero) {
+          ctx.moveTo(p.px, p.py);
+          primero = false;
+        } else {
+          ctx.lineTo(p.px, p.py);
+        }
+      }
+      ctx.stroke();
+    }
+
+    function dibujarRaices() {
+      if (!estado.verRaices) return;
+
+      var raices = encontrarRaices(estado.coeficientes);
+      ctx.fillStyle = '#27ae60';
+      ctx.strokeStyle = '#145a32';
+      ctx.lineWidth = 1.5;
+
+      raices.forEach(function(r) {
+        var p = mundoAPantalla(r, 0);
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+
+        // Etiqueta
+        ctx.fillStyle = '#145a32';
+        ctx.font = 'bold 11px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('x=' + formatearNumero(r), p.px, p.py - 8);
+        ctx.fillStyle = '#27ae60';
+      });
+    }
+
+    function dibujarPuntoEvaluacion() {
+      if (!estado.verEvaluacion) return;
+
+      var c = estado.c;
+      var fc = evaluarPolinomio(estado.coeficientes, c);
+      var p = mundoAPantalla(c, fc);
+
+      // Línea vertical punteada
+      ctx.strokeStyle = '#c0392b';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([6, 4]);
+      ctx.beginPath();
+      var pEjeX = mundoAPantalla(c, 0);
+      ctx.moveTo(p.px, pEjeX.py);
+      ctx.lineTo(p.px, p.py);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Punto
+      ctx.fillStyle = '#c0392b';
+      ctx.strokeStyle = '#78281f';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(p.px, p.py, 7, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+
+      // Etiqueta
+      ctx.fillStyle = '#78281f';
+      ctx.font = 'bold 12px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('(c, f(c)) = (' + formatearNumero(c) + ', ' + formatearNumero(fc) + ')', p.px + 10, p.py - 8);
+    }
+
+    function dibujarPuntoClic() {
+      if (!estado.puntoClic) return;
+      var x = estado.puntoClic.x;
+      var y = evaluarPolinomio(estado.coeficientes, x);
+      var p = mundoAPantalla(x, y);
+
+      ctx.fillStyle = '#5b7fa3';
+      ctx.strokeStyle = '#2c4966';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(p.px, p.py, 5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#2c4966';
+      ctx.font = 'bold 11px Segoe UI, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('(' + formatearNumero(x) + ', ' + formatearNumero(y) + ')', p.px + 8, p.py - 6);
+    }
+
+    // ============================================================
+    // RENDER PRINCIPAL
+    // ============================================================
+    function render() {
+      // Reset de transformación para evitar acumulación de HiDPI
+      ctx.save();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+
+      // Reaplicar transformación HiDPI
+      var dpr = window.devicePixelRatio || 1;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, W, H);
+
+      dibujarCuadricula();
+      dibujarEjes();
+      dibujarCurva();
+      dibujarRaices();
+      dibujarPuntoEvaluacion();
+      dibujarPuntoClic();
+
+      actualizarInfo();
+    }
+
+    // ============================================================
+    // ACTUALIZAR PANEL DE INFORMACIÓN
+    // ============================================================
+    function actualizarInfo() {
+      var coefs = estado.coeficientes;
+      var c = estado.c;
+      var fc = evaluarPolinomio(coefs, c);
+      var polLatex = construirPolinomioLatex(coefs);
+      var division = divisionSintetica(coefs, c);
+      var cocienteLatex = construirPolinomioLatex(division.cociente);
+      var residuo = division.residuo;
+      var raices = encontrarRaices(coefs);
+
+      var html = '<h3>📊 Información del polinomio</h3>';
+      html += '<table>';
+      html += '<tr><th>Polinomio $f(x)$</th><td>$' + polLatex + '$</td></tr>';
+      html += '<tr><th>Grado</th><td>$' + estado.grado + '$</td></tr>';
+      html += '<tr><th>Valor de $c$</th><td>$' + formatearNumero(c) + '$</td></tr>';
+      html += '<tr><th>Evaluación $f(c)$</th><td>$' + formatearNumero(fc) + '$</td></tr>';
+      html += '</table>';
+
+      if (estado.verDivision) {
+        html += '<h3 style="margin-top:14px;">🔢 División sintética</h3>';
+        html += '<table>';
+        html += '<tr><th>Cociente $q(x)$</th><td>$' + cocienteLatex + '$</td></tr>';
+        html += '<tr><th>Residuo $r$</th><td>$' + formatearNumero(residuo) + '$</td></tr>';
+        html += '</table>';
+
+        // Esquema de división sintética
+        var n = coefs.length;
+        var pasos = division.pasos;
+        var tablaHtml = '<table style="margin-top:8px; font-size:0.8rem;">';
+        tablaHtml += '<tr><th style="width:auto;">Coef.</th>';
+        for (var i = 0; i < n; i++) {
+          tablaHtml += '<td style="text-align:center; width:auto;">' + formatearNumero(coefs[i]) + '</td>';
+        }
+        tablaHtml += '</tr>';
+        tablaHtml += '<tr><th style="width:auto;">' + formatearNumero(c) + '</th><td></td>';
+        for (var i = 1; i < n; i++) {
+          var prod = pasos[i - 1] * c;
+          tablaHtml += '<td style="text-align:center; color:#5b7fa3;">' + formatearNumero(prod) + '</td>';
+        }
+        tablaHtml += '</tr>';
+        tablaHtml += '<tr><th style="width:auto;">Suma</th>';
+        for (var i = 0; i < n; i++) {
+          tablaHtml += '<td style="text-align:center; font-weight:700;">' + formatearNumero(pasos[i]) + '</td>';
+        }
+        tablaHtml += '</tr>';
+        tablaHtml += '</table>';
+        html += tablaHtml;
+      }
+
+      if (estado.verRaices && raices.length > 0) {
+        html += '<h3 style="margin-top:14px;">🌱 Raíces reales</h3>';
+        html += '<table>';
+        raices.forEach(function(r, idx) {
+          html += '<tr><th>Raíz $x_{' + (idx + 1) + '}$</th><td>$' + formatearNumero(r) + '$</td></tr>';
+        });
+        html += '</table>';
+      } else if (estado.verRaices) {
+        html += '<div class="aviso">No se encontraron raíces reales en el intervalo visible.</div>';
+      }
+
+      // Aviso pedagógico
+      if (Math.abs(fc) < 1e-6) {
+        html += '<div class="aviso">💡 <strong>Observación:</strong> $f(c) = 0$, lo que significa que $x = ' + formatearNumero(c) + '$ es una raíz del polinomio. El residuo de la división sintética es $0$.</div>';
+      } else {
+        html += '<div class="aviso">💡 <strong>Observación:</strong> El residuo de la división sintética es $' + formatearNumero(fc) + '$. Recuerda que $f(c)$ es igual al residuo de dividir $f(x)$ entre $x - c$.</div>';
+      }
+
+      var panelInfo = document.getElementById('panelInfo');
+      panelInfo.innerHTML = html;
+      renderMath(panelInfo);
+    }
+
+    // ============================================================
+    // ACTUALIZAR COEFICIENTES DINÁMICAMENTE
+    // ============================================================
+    function renderizarCoeficientes() {
+      var grado = parseInt(document.getElementById('input-grado').value, 10);
+      if (isNaN(grado) || grado < 0) grado = 0;
+      if (grado > 5) grado = 5;
+
+      var contenedor = document.getElementById('coeficientes-container');
+      contenedor.innerHTML = '';
+
+      var nombres = ['a_n', 'a_{n-1}', 'a_{n-2}', 'a_{n-3}', 'a_{n-4}', 'a_0'];
+
+      for (var i = 0; i <= grado; i++) {
+        var pot = grado - i;
+        var label = (pot === 0) ? 'Término constante' : 'Coeficiente de $x^{' + pot + '}$';
+        var valorActual = estado.coeficientes[i] !== undefined ? estado.coeficientes[i] : 0;
+
+        var div = document.createElement('div');
+        div.className = 'grupo-input';
+        div.innerHTML = '<label for="coef-' + i + '">' + label + ':</label>' +
+          '<input type="number" id="coef-' + i + '" step="0.5" value="' + valorActual + '">';
+
+        contenedor.appendChild(div);
+
+        // Event listener
+        (function(idx) {
+          document.getElementById('coef-' + idx).addEventListener('input', function() {
+            var val = parseFloat(this.value);
+            if (isNaN(val)) val = 0;
+            estado.coeficientes[idx] = val;
+            render();
+          });
+        })(i);
+      }
+
+      // Asegurar que el array de coeficientes tenga la longitud correcta
+      var nuevosCoefs = [];
+      for (var i = 0; i <= grado; i++) {
+        var input = document.getElementById('coef-' + i);
+        nuevosCoefs.push(input ? parseFloat(input.value) || 0 : 0);
+      }
+
+      // Si el grado cambió, recortar o extender
+      if (estado.coeficientes.length !== nuevosCoefs.length) {
+        estado.coeficientes = nuevosCoefs;
+        estado.grado = grado;
+      } else {
+        estado.coeficientes = nuevosCoefs;
+        estado.grado = grado;
+      }
+
+      renderMath(contenedor);
+    }
+
+    // ============================================================
+    // CARGAR EJEMPLOS
+    // ============================================================
+    function cargarEjemplo(tipo) {
+      var gradoInput = document.getElementById('input-grado');
+      var cInput = document.getElementById('input-c');
+
+      if (tipo === 'cubica') {
+        gradoInput.value = 3;
+        estado.coeficientes = [1, -3, 2, 1];
+        estado.grado = 3;
+        cInput.value = 1;
+      } else if (tipo === 'cuartica') {
+        gradoInput.value = 4;
+        estado.coeficientes = [2, -3, 0, 1, -2];
+        estado.grado = 4;
+        cInput.value = -1;
+      } else if (tipo === 'cuadratica') {
+        gradoInput.value = 2;
+        estado.coeficientes = [1, -4, 3];
+        estado.grado = 2;
+        cInput.value = 2;
+      } else if (tipo === 'quintica') {
+        gradoInput.value = 5;
+        estado.coeficientes = [1, 0, -2, 0, 1, -1];
+        estado.grado = 5;
+        cInput.value = 0.5;
+      }
+
+      estado.c = parseFloat(cInput.value);
+      estado.puntoClic = null;
+
+      renderizarCoeficientes();
+      render();
+    }
+
+    // ============================================================
+    // EVENTOS
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      configurarHiDPI();
+      renderizarCoeficientes();
+      render();
+
+      // Cambio de grado
+      document.getElementById('input-grado').addEventListener('input', function() {
+        var grado = parseInt(this.value, 10);
+        if (isNaN(grado) || grado < 0) grado = 0;
+        if (grado > 5) grado = 5;
+        this.value = grado;
+
+        // Ajustar array de coeficientes
+        var nuevosCoefs = [];
+        for (var i = 0; i <= grado; i++) {
+          nuevosCoefs.push(estado.coeficientes[i] !== undefined ? estado.coeficientes[i] : 0);
+        }
+        estado.coeficientes = nuevosCoefs;
+        estado.grado = grado;
+
+        renderizarCoeficientes();
+        render();
+      });
+
+      // Cambio de c
+      document.getElementById('input-c').addEventListener('input', function() {
+        var val = parseFloat(this.value);
+        if (isNaN(val)) val = 0;
+        estado.c = val;
+        render();
+      });
+
+      // Zoom
+      document.getElementById('slider-zoom').addEventListener('input', function() {
+        estado.zoom = parseInt(this.value, 10);
+        document.getElementById('val-zoom').textContent = estado.zoom;
+        render();
+      });
+
+      // Checkboxes
+      document.getElementById('check-cuadricula').addEventListener('change', function() {
+        estado.verCuadricula = this.checked;
+        render();
+      });
+      document.getElementById('check-raices').addEventListener('change', function() {
+        estado.verRaices = this.checked;
+        render();
+      });
+      document.getElementById('check-evaluacion').addEventListener('change', function() {
+        estado.verEvaluacion = this.checked;
+        render();
+      });
+      document.getElementById('check-division').addEventListener('change', function() {
+        estado.verDivision = this.checked;
+        render();
+      });
+
+      // Botón reiniciar
+      document.getElementById('btn-reiniciar').addEventListener('click', function() {
+        estado.coeficientes = [1, -3, 2, 1];
+        estado.grado = 3;
+        estado.c = 1;
+        estado.zoom = 25;
+        estado.verCuadricula = true;
+        estado.verRaices = true;
+        estado.verEvaluacion = true;
+        estado.verDivision = true;
+        estado.puntoClic = null;
+
+        document.getElementById('input-grado').value = 3;
+        document.getElementById('input-c').value = 1;
+        document.getElementById('slider-zoom').value = 25;
+        document.getElementById('val-zoom').textContent = '25';
+        document.getElementById('check-cuadricula').checked = true;
+        document.getElementById('check-raices').checked = true;
+        document.getElementById('check-evaluacion').checked = true;
+        document.getElementById('check-division').checked = true;
+
+        renderizarCoeficientes();
+        render();
+      });
+
+      // Botones de ejemplo
+      var botonesEjemplo = document.querySelectorAll('.btn-ejemplo');
+      for (var i = 0; i < botonesEjemplo.length; i++) {
+        botonesEjemplo[i].addEventListener('click', function() {
+          cargarEjemplo(this.getAttribute('data-ejemplo'));
+        });
+      }
+
+      // Clic en canvas
+      canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = W / rect.width;
+        var scaleY = H / rect.height;
+        var px = (e.clientX - rect.left) * scaleX;
+        var py = (e.clientY - rect.top) * scaleY;
+
+        var mundo = pantallaAMundo(px, py);
+        estado.puntoClic = { x: mundo.x };
+        render();
+      });
+    });
+  </script>
+</body>
+</html>

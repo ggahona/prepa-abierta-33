@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Solucionador paso a paso">
+  <title>Solucionador: Funciones Polinomiales y División Sintética | Matemáticas III</title>
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .contenedor {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 24px 28px;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.85;
+      margin-bottom: 6px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      gap: 0;
+      min-height: 600px;
+    }
+
+    .panel-control {
+      background: var(--color-base);
+      padding: 24px;
+      border-right: 1px solid var(--color-acento-suave);
+    }
+
+    .panel-control h2 {
+      color: var(--color-primario);
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .panel-control h3 {
+      color: var(--color-primario);
+      font-size: 0.95rem;
+      margin: 20px 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed var(--color-acento-suave);
+    }
+
+    .grupo-input {
+      margin-bottom: 14px;
+    }
+
+    .grupo-input label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      margin-bottom: 4px;
+    }
+
+    .grupo-input input,
+    .grupo-input select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .grupo-input input:focus,
+    .grupo-input select:focus {
+      outline: none;
+      border-color: var(--color-acento);
+      box-shadow: 0 0 0 3px rgba(91, 127, 163, 0.2);
+    }
+
+    .btn-primario {
+      width: 100%;
+      padding: 12px;
+      background: var(--color-acento);
+      color: var(--color-blanco);
+      border: none;
+      border-radius: var(--radio-borde);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      margin-bottom: 10px;
+    }
+
+    .btn-primario:hover {
+      background: var(--color-primario);
+    }
+
+    .btn-primario:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secundario {
+      width: 100%;
+      padding: 10px;
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-secundario:hover {
+      background: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .btn-ejemplo {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      font-size: 0.82rem;
+      font-family: inherit;
+      color: var(--color-texto-oscuro);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-ejemplo:hover {
+      background: var(--color-base);
+      border-color: var(--color-acento);
+    }
+
+    .btn-ejemplo .etiqueta {
+      font-weight: 700;
+      color: var(--color-acento);
+      margin-right: 6px;
+    }
+
+    .panel-desarrollo {
+      padding: 24px;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+
+    .panel-desarrollo h2 {
+      color: var(--color-primario);
+      font-size: 1.15rem;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .placeholder-inicial {
+      text-align: center;
+      color: var(--color-acento);
+      font-size: 1rem;
+      padding: 40px 20px;
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      border: 2px dashed var(--color-acento-suave);
+    }
+
+    .bloque-operacion {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+
+    .bloque-operacion .titulo-bloque {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--color-acento);
+      margin-bottom: 6px;
+    }
+
+    .bloque-operacion .expresion {
+      font-size: 1rem;
+      color: var(--color-primario);
+    }
+
+    .paso {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--color-base);
+    }
+
+    .paso:last-child {
+      border-bottom: none;
+    }
+
+    .num-paso {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--color-acento);
+      color: var(--color-blanco);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .cuerpo-paso {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .titulo-paso {
+      font-weight: 700;
+      color: var(--color-primario);
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .detalle-paso {
+      font-size: 0.92rem;
+      color: var(--color-texto-oscuro);
+      overflow-x: auto;
+    }
+
+    .resultado-final {
+      background: rgba(39, 174, 96, 0.1);
+      border: 2px solid var(--color-exito);
+      border-radius: var(--radio-borde);
+      padding: 16px 20px;
+      margin-top: 20px;
+    }
+
+    .resultado-final .titulo-final {
+      font-weight: 700;
+      color: var(--color-exito);
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .resultado-final .expresion-final {
+      font-size: 1.05rem;
+      color: var(--color-texto-oscuro);
+      overflow-x: auto;
+    }
+
+    .aviso-pedagogico {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 12px 16px;
+      margin-top: 16px;
+      font-size: 0.88rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .aviso-pedagogico strong {
+      color: var(--color-primario);
+    }
+
+    .mensaje-error {
+      background: rgba(192, 57, 43, 0.08);
+      border: 2px solid var(--color-error);
+      border-radius: var(--radio-borde);
+      padding: 16px 20px;
+      color: var(--color-error);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .footer-info {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 16px 28px;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+
+    .footer-info strong {
+      color: var(--color-acento-suave);
+    }
+
+    @media (max-width: 900px) {
+      .layout-principal {
+        grid-template-columns: 1fr;
+      }
+      .panel-control {
+        border-right: none;
+        border-bottom: 1px solid var(--color-acento-suave);
+      }
+      .panel-desarrollo {
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      header h1 {
+        font-size: 1.25rem;
+      }
+      .panel-control,
+      .panel-desarrollo {
+        padding: 16px;
+      }
+      .paso {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .num-paso {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Solucionador: Funciones Polinomiales y División Sintética</h1>
+      <p>Solucionador paso a paso | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+      <div class="panel-control">
+        <h2>Datos de entrada</h2>
+
+        <div class="grupo-input">
+          <label for="select-operacion">Tipo de operación:</label>
+          <select id="select-operacion">
+            <option value="suma">Suma de polinomios</option>
+            <option value="resta">Resta de polinomios</option>
+            <option value="multiplicacion">Multiplicación de polinomios</option>
+            <option value="division-larga">División larga</option>
+            <option value="division-sintetica">División sintética</option>
+          </select>
+        </div>
+
+        <div id="campos-dinamicos">
+          <!-- Los campos se generan dinámicamente -->
+        </div>
+
+        <button class="btn-primario" id="btn-resolver">▶ Resolver paso a paso</button>
+        <button class="btn-secundario" id="btn-reiniciar">↺ Reiniciar</button>
+
+        <h3>Ejemplos del módulo</h3>
+        <button class="btn-ejemplo" data-ejemplo="suma">
+          <span class="etiqueta">a)</span> $f(x)+g(x)$ con $f(x)=2x^3-3x^2+2x+1$, $g(x)=3x^3+4x^2+2x+1$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="resta">
+          <span class="etiqueta">b)</span> $f(x)-g(x)$ con los mismos polinomios
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="multiplicacion">
+          <span class="etiqueta">c)</span> $f(x)\cdot g(x)$ con los mismos polinomios
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="division-larga">
+          <span class="etiqueta">d)</span> $(2x^4-3x^2+8x+2) \div (x^2+2x-1)$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="division-sintetica">
+          <span class="etiqueta">e)</span> $(4x^3-3x^2+2x-1) \div (x+2)$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="division-sintetica-fraccion">
+          <span class="etiqueta">f)</span> $(2x^2+3x-2) \div (x-\frac{1}{2})$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="division-sintetica-ceros">
+          <span class="etiqueta">g)</span> $(3x^4+2x^2-1) \div (x-1)$
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="division-sintetica-parametro">
+          <span class="etiqueta">h)</span> $(2x^3-2cx^2+3c^2x-4c^3) \div (x-c)$
+        </button>
+      </div>
+
+      <div class="panel-desarrollo" id="panelDesarrollo" role="region" aria-label="Desarrollo paso a paso">
+        <h2>🧮 Desarrollo paso a paso</h2>
+        <div id="desarrollo">
+          <div class="placeholder-inicial">⚙️ Selecciona una operación, ingresa los datos y presiona "Resolver paso a paso".</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Aplicar el algoritmo de la división de polinomios y la división sintética, así como realizar operaciones básicas (suma, resta, multiplicación) con funciones polinomiales.
+    </div>
+  </div>
+
+  <script>
+    // ============================================================
+    // ESTADO GLOBAL
+    // ============================================================
+    var estado = {
+      operacion: 'suma',
+      coeficientesA: [],
+      coeficientesB: [],
+      coeficientesDividendo: [],
+      coeficientesDivisor: [],
+      c: null
+    };
+
+    // ============================================================
+    // UTILIDADES
+    // ============================================================
+    var TOL = 1e-9;
+
+    function casiIgual(x, y, tol) {
+      tol = tol || TOL;
+      return Math.abs(x - y) < tol;
+    }
+
+    function formatearNumero(n) {
+      if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+      return parseFloat(n.toFixed(4)).toString();
+    }
+
+    function parsearNumero(texto) {
+      if (texto == null) return NaN;
+      texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+      if (texto === '') return NaN;
+      if (texto.indexOf('/') !== -1) {
+        var p = texto.split('/');
+        if (p.length !== 2) return NaN;
+        var n = parseFloat(p[0]), d = parseFloat(p[1]);
+        if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+        return n / d;
+      }
+      var x = parseFloat(texto);
+      return isNaN(x) ? NaN : x;
+    }
+
+    function renderMath(element) {
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(function(err) { console.log(err); });
+      }
+    }
+
+    function limpiarLatex(texto) {
+      return String(texto)
+        .replace(/\$[^$]*\$/g, '')
+        .replace(/\\[a-zA-Z]+/g, '')
+        .replace(/[{}]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    // ============================================================
+    // CONSTRUCCIÓN DE POLINOMIOS
+    // ============================================================
+    function construirPolinomio(coefs) {
+      // coefs[0] es el coeficiente de mayor grado
+      var grado = coefs.length - 1;
+      var terminos = [];
+      for (var i = 0; i < coefs.length; i++) {
+        var coef = coefs[i];
+        var pot = grado - i;
+        if (Math.abs(coef) < 1e-12) continue;
+        var signo = coef < 0 ? '-' : (terminos.length > 0 ? '+' : '');
+        var absCoef = Math.abs(coef);
+        var coefStr = (Math.abs(absCoef - 1) < 1e-12 && pot > 0) ? '' : formatearNumero(absCoef);
+        var potStr = '';
+        if (pot === 1) potStr = 'x';
+        else if (pot > 1) potStr = 'x^{' + pot + '}';
+        terminos.push(signo + coefStr + potStr);
+      }
+      if (terminos.length === 0) return '0';
+      return terminos.join(' ').replace(/^\+ /, '');
+    }
+
+    function construirPolinomioLatex(coefs) {
+      var grado = coefs.length - 1;
+      var terminos = [];
+      for (var i = 0; i < coefs.length; i++) {
+        var coef = coefs[i];
+        var pot = grado - i;
+        if (Math.abs(coef) < 1e-12) continue;
+        var signo = coef < 0 ? '-' : (terminos.length > 0 ? '+' : '');
+        var absCoef = Math.abs(coef);
+        var coefStr = (Math.abs(absCoef - 1) < 1e-12 && pot > 0) ? '' : formatearNumero(absCoef);
+        var potStr = '';
+        if (pot === 1) potStr = 'x';
+        else if (pot > 1) potStr = 'x^{' + pot + '}';
+        terminos.push(signo + coefStr + potStr);
+      }
+      if (terminos.length === 0) return '0';
+      return terminos.join(' ').replace(/^\+ /, '');
+    }
+
+    // ============================================================
+    // PARSER DE POLINOMIOS DESDE TEXTO
+    // ============================================================
+    function parsearPolinomioTexto(texto) {
+      // Acepta formato: "2x^3 - 3x^2 + 2x + 1" o "2x3-3x2+2x+1" etc.
+      texto = String(texto).trim().replace(/\s+/g, '');
+      if (texto === '') return null;
+
+      // Normalizar signos
+      texto = texto.replace(/−/g, '-');
+
+      // Si empieza con '-', agregar '0' al inicio para facilitar split
+      if (texto[0] === '-') texto = '0' + texto;
+      else if (texto[0] !== '+') texto = '+' + texto;
+
+      // Tokenizar: separar en términos
+      var terminos = texto.match(/[+-][^+-]+/g);
+      if (!terminos) return null;
+
+      var maxGrado = 0;
+      var temp = [];
+
+      for (var i = 0; i < terminos.length; i++) {
+        var t = terminos[i];
+        var signo = t[0] === '-' ? -1 : 1;
+        var cuerpo = t.substring(1);
+
+        var coef = signo;
+        var pot = 0;
+
+        if (cuerpo.indexOf('x') !== -1) {
+          var partes = cuerpo.split('x');
+          var coefStr = partes[0];
+          var potStr = partes[1] || '';
+
+          if (coefStr === '' || coefStr === '+') coef = signo * 1;
+          else if (coefStr === '-') coef = signo * -1;
+          else coef = signo * parseFloat(coefStr);
+
+          if (potStr === '') pot = 1;
+          else if (potStr[0] === '^') pot = parseInt(potStr.substring(1), 10);
+          else pot = parseInt(potStr, 10);
+        } else {
+          coef = signo * parseFloat(cuerpo);
+          pot = 0;
+        }
+
+        if (isNaN(coef)) return null;
+        if (isNaN(pot)) pot = 0;
+
+        if (pot > maxGrado) maxGrado = pot;
+        temp.push({ coef: coef, pot: pot });
+      }
+
+      // Construir array de coeficientes de grado maxGrado a 0
+      var coefs = [];
+      for (var g = maxGrado; g >= 0; g--) {
+        var c = 0;
+        for (var j = 0; j < temp.length; j++) {
+          if (temp[j].pot === g) { c += temp[j].coef; }
+        }
+        coefs.push(c);
+      }
+
+      return coefs;
+    }
+
+    // ============================================================
+    // OPERACIONES CON POLINOMIOS
+    // ============================================================
+    function sumarPolinomios(a, b) {
+      var maxLen = Math.max(a.length, b.length);
+      var aPad = new Array(maxLen - a.length).fill(0).concat(a);
+      var bPad = new Array(maxLen - b.length).fill(0).concat(b);
+      var res = [];
+      for (var i = 0; i < maxLen; i++) {
+        res.push(aPad[i] + bPad[i]);
+      }
+      return res;
+    }
+
+    function restarPolinomios(a, b) {
+      var maxLen = Math.max(a.length, b.length);
+      var aPad = new Array(maxLen - a.length).fill(0).concat(a);
+      var bPad = new Array(maxLen - b.length).fill(0).concat(b);
+      var res = [];
+      for (var i = 0; i < maxLen; i++) {
+        res.push(aPad[i] - bPad[i]);
+      }
+      return res;
+    }
+
+    function multiplicarPolinomios(a, b) {
+      var res = new Array(a.length + b.length - 1).fill(0);
+      for (var i = 0; i < a.length; i++) {
+        for (var j = 0; j < b.length; j++) {
+          res[i + j] += a[i] * b[j];
+        }
+      }
+      return res;
+    }
+
+    // ============================================================
+    // DIVISIÓN LARGA
+    // ============================================================
+    function divisionLarga(dividendo, divisor) {
+      // Convertir a arrays de coeficientes (mayor a menor grado)
+      var div = dividendo.slice();
+      var dvs = divisor.slice();
+
+      // Eliminar ceros iniciales
+      while (div.length > 1 && Math.abs(div[0]) < 1e-12) div.shift();
+      while (dvs.length > 1 && Math.abs(dvs[0]) < 1e-12) dvs.shift();
+
+      if (dvs.length === 0 || Math.abs(dvs[0]) < 1e-12) return null;
+
+      var gradoDiv = div.length - 1;
+      var gradoDvs = dvs.length - 1;
+
+      if (gradoDiv < gradoDvs) {
+        return { cociente: [0], residuo: div.slice() };
+      }
+
+      var cociente = [];
+      var residuo = div.slice();
+
+      for (var k = 0; k <= gradoDiv - gradoDvs; k++) {
+        var coef = residuo[0] / dvs[0];
+        cociente.push(coef);
+
+        // Restar coef * dvs de residuo
+        for (var j = 0; j < dvs.length; j++) {
+          residuo[j] -= coef * dvs[j];
+        }
+
+        // Desplazar residuo
+        residuo.shift();
+      }
+
+      // Limpiar coeficientes muy pequeños
+      residuo = residuo.map(function(x) { return Math.abs(x) < 1e-12 ? 0 : x; });
+      cociente = cociente.map(function(x) { return Math.abs(x) < 1e-12 ? 0 : x; });
+
+      return { cociente: cociente, residuo: residuo };
+    }
+
+    // ============================================================
+    // DIVISIÓN SINTÉTICA
+    // ============================================================
+    function divisionSintetica(coefs, c) {
+      // coefs: coeficientes del dividendo de mayor a menor grado
+      var n = coefs.length;
+      var resultado = new Array(n);
+      resultado[0] = coefs[0];
+
+      for (var i = 1; i < n; i++) {
+        resultado[i] = coefs[i] + resultado[i - 1] * c;
+      }
+
+      var cociente = resultado.slice(0, n - 1);
+      var residuo = resultado[n - 1];
+
+      return { cociente: cociente, residuo: residuo };
+    }
+
+    // ============================================================
+    // CONSTRUCCIÓN DE PASOS
+    // ============================================================
+    function construirPaso(num, titulo, detalle) {
+      return '<div class="paso">' +
+        '<div class="num-paso">' + num + '</div>' +
+        '<div class="cuerpo-paso">' +
+          '<div class="titulo-paso">' + titulo + '</div>' +
+          '<div class="detalle-paso">' + detalle + '</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    function mostrarDesarrollo(html) {
+      var el = document.getElementById('desarrollo');
+      el.innerHTML = html;
+      renderMath(el);
+    }
+
+    function mostrarError(mensaje) {
+      var el = document.getElementById('desarrollo');
+      el.innerHTML = '<div class="mensaje-error">⚠️ ' + mensaje + '</div>';
+      renderMath(el);
+    }
+
+    // ============================================================
+    // RENDERIZADO DE CAMPOS DINÁMICOS
+    // ============================================================
+    function renderizarCampos() {
+      var op = document.getElementById('select-operacion').value;
+      var contenedor = document.getElementById('campos-dinamicos');
+      var html = '';
+
+      if (op === 'suma' || op === 'resta' || op === 'multiplicacion') {
+        html += '<div class="grupo-input">' +
+          '<label for="input-pol-a">Polinomio $f(x)$:</label>' +
+          '<input type="text" id="input-pol-a" placeholder="Ej: 2x^3 - 3x^2 + 2x + 1" value="2x^3 - 3x^2 + 2x + 1">' +
+        '</div>';
+        html += '<div class="grupo-input">' +
+          '<label for="input-pol-b">Polinomio $g(x)$:</label>' +
+          '<input type="text" id="input-pol-b" placeholder="Ej: 3x^3 + 4x^2 + 2x + 1" value="3x^3 + 4x^2 + 2x + 1">' +
+        '</div>';
+      } else if (op === 'division-larga') {
+        html += '<div class="grupo-input">' +
+          '<label for="input-dividendo">Dividendo $f(x)$:</label>' +
+          '<input type="text" id="input-dividendo" placeholder="Ej: 2x^4 - 3x^2 + 8x + 2" value="2x^4 - 3x^2 + 8x + 2">' +
+        '</div>';
+        html += '<div class="grupo-input">' +
+          '<label for="input-divisor">Divisor $g(x)$:</label>' +
+          '<input type="text" id="input-divisor" placeholder="Ej: x^2 + 2x - 1" value="x^2 + 2x - 1">' +
+        '</div>';
+      } else if (op === 'division-sintetica') {
+        html += '<div class="grupo-input">' +
+          '<label for="input-dividendo-sint">Dividendo $f(x)$:</label>' +
+          '<input type="text" id="input-dividendo-sint" placeholder="Ej: 4x^3 - 3x^2 + 2x - 1" value="4x^3 - 3x^2 + 2x - 1">' +
+        '</div>';
+        html += '<div class="grupo-input">' +
+          '<label for="input-divisor-sint">Divisor $x - c$ (escribe $c$):</label>' +
+          '<input type="text" id="input-divisor-sint" placeholder="Ej: -2 (para x + 2)" value="-2">' +
+        '</div>';
+      }
+
+      contenedor.innerHTML = html;
+      renderMath(contenedor);
+    }
+
+    // ============================================================
+    // RESOLUCIÓN PRINCIPAL
+    // ============================================================
+    function resolver() {
+      var op = document.getElementById('select-operacion').value;
+
+      if (op === 'suma' || op === 'resta' || op === 'multiplicacion') {
+        resolverOperacionBasica(op);
+      } else if (op === 'division-larga') {
+        resolverDivisionLarga();
+      } else if (op === 'division-sintetica') {
+        resolverDivisionSintetica();
+      }
+    }
+
+    function resolverOperacionBasica(op) {
+      var inputA = document.getElementById('input-pol-a');
+      var inputB = document.getElementById('input-pol-b');
+
+      if (!inputA || !inputB) { mostrarError('No se encontraron los campos de entrada.'); return; }
+
+      var coefsA = parsearPolinomioTexto(inputA.value);
+      var coefsB = parsearPolinomioTexto(inputB.value);
+
+      if (!coefsA) { mostrarError('El polinomio $f(x)$ no tiene un formato válido. Usa términos como $2x^3 - 3x^2 + 2x + 1$.'); return; }
+      if (!coefsB) { mostrarError('El polinomio $g(x)$ no tiene un formato válido. Usa términos como $3x^3 + 4x^2 + 2x + 1$.'); return; }
+
+      var polA = construirPolinomioLatex(coefsA);
+      var polB = construirPolinomioLatex(coefsB);
+
+      var html = '';
+      var resultado, resultadoLatex, tituloOperacion, signoOperacion;
+
+      if (op === 'suma') {
+        tituloOperacion = 'Suma de polinomios';
+        signoOperacion = '+';
+        resultado = sumarPolinomios(coefsA, coefsB);
+      } else if (op === 'resta') {
+        tituloOperacion = 'Resta de polinomios';
+        signoOperacion = '-';
+        resultado = restarPolinomios(coefsA, coefsB);
+      } else {
+        tituloOperacion = 'Multiplicación de polinomios';
+        signoOperacion = '\\cdot';
+        resultado = multiplicarPolinomios(coefsA, coefsB);
+      }
+
+      resultadoLatex = construirPolinomioLatex(resultado);
+
+      // Bloque de operación
+      html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — ' + tituloOperacion + '</div>' +
+        '<div class="expresion">$$f(x) = ' + polA + '$$</div>' +
+        '<div class="expresion">$$g(x) = ' + polB + '$$</div>' +
+        '<div class="expresion">$$f(x) ' + signoOperacion + ' g(x) = \\text{?}$$</div>' +
+      '</div>';
+
+      var pasoNum = 1;
+
+      if (op === 'suma' || op === 'resta') {
+        // Paso 1: Alinear términos
+        html += construirPaso(pasoNum++, 'Alinear términos semejantes',
+          'Escribimos ambos polinomios con las mismas potencias de $x$, completando con coeficiente $0$ donde falte:' +
+          '<br>$$f(x) = ' + polA + '$$' +
+          '<br>$$g(x) = ' + polB + '$$');
+
+        // Paso 2: Operar coeficientes
+        var signoTexto = (op === 'suma') ? 'sumamos' : 'restamos';
+        html += construirPaso(pasoNum++, 'Operar coeficientes de potencias iguales',
+          'Para cada potencia de $x$, ' + signoTexto + ' los coeficientes correspondientes.');
+
+        // Paso 3: Resultado
+        html += construirPaso(pasoNum++, 'Escribir el resultado',
+          'Combinando los términos semejantes obtenemos:' +
+          '<br>$$' + resultadoLatex + '$$');
+      } else {
+        // Multiplicación
+        html += construirPaso(pasoNum++, 'Aplicar la propiedad distributiva',
+          'Multiplicamos cada término de $f(x)$ por cada término de $g(x)$:' +
+          '<br>$$(' + polA + ') \\cdot (' + polB + ')$$');
+
+        // Mostrar desarrollo
+        var gradoA = coefsA.length - 1;
+        var gradoB = coefsB.length - 1;
+        var terminosA = [];
+        var terminosB = [];
+        for (var i = 0; i < coefsA.length; i++) {
+          if (Math.abs(coefsA[i]) > 1e-12) terminosA.push({ coef: coefsA[i], pot: gradoA - i });
+        }
+        for (var j = 0; j < coefsB.length; j++) {
+          if (Math.abs(coefsB[j]) > 1e-12) terminosB.push({ coef: coefsB[j], pot: gradoB - j });
+        }
+
+        var desarrollo = [];
+        for (var a = 0; a < terminosA.length; a++) {
+          for (var b = 0; b < terminosB.length; b++) {
+            var c = terminosA[a].coef * terminosB[b].coef;
+            var p = terminosA[a].pot + terminosB[b].pot;
+            var cStr = formatearNumero(c);
+            var pStr = (p === 0) ? '' : (p === 1 ? 'x' : 'x^{' + p + '}');
+            desarrollo.push(cStr + pStr);
+          }
+        }
+
+        html += construirPaso(pasoNum++, 'Desarrollar el producto',
+          '$$' + desarrollo.join(' + ') + '$$');
+
+        // Paso 3: Reducir términos semejantes
+        html += construirPaso(pasoNum++, 'Reducir términos semejantes',
+          'Agrupamos los términos con la misma potencia de $x$:' +
+          '<br>$$' + resultadoLatex + '$$');
+      }
+
+      // Resultado final
+      html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final</div>' +
+        '<div class="expresion-final">$$f(x) ' + signoOperacion + ' g(x) = ' + resultadoLatex + '$$</div>' +
+      '</div>';
+
+      // Aviso pedagógico
+      var aviso = '';
+      if (op === 'suma' || op === 'resta') {
+        aviso = 'Recuerda alinear correctamente los términos según su grado. Un error común es sumar o restar coeficientes de potencias diferentes.';
+      } else {
+        aviso = 'El grado del producto es la suma de los grados de los factores. Verifica que no falte ningún término cruzado en la distribución.';
+      }
+
+      html += '<div class="aviso-pedagogico">💡 <strong>Observación:</strong> ' + aviso + '</div>';
+
+      mostrarDesarrollo(html);
+    }
+
+    function resolverDivisionLarga() {
+      var inputDividendo = document.getElementById('input-dividendo');
+      var inputDivisor = document.getElementById('input-divisor');
+
+      if (!inputDividendo || !inputDivisor) { mostrarError('No se encontraron los campos de entrada.'); return; }
+
+      var coefsDividendo = parsearPolinomioTexto(inputDividendo.value);
+      var coefsDivisor = parsearPolinomioTexto(inputDivisor.value);
+
+      if (!coefsDividendo) { mostrarError('El dividendo no tiene un formato válido.'); return; }
+      if (!coefsDivisor) { mostrarError('El divisor no tiene un formato válido.'); return; }
+
+      // Eliminar ceros iniciales
+      while (coefsDividendo.length > 1 && Math.abs(coefsDividendo[0]) < 1e-12) coefsDividendo.shift();
+      while (coefsDivisor.length > 1 && Math.abs(coefsDivisor[0]) < 1e-12) coefsDivisor.shift();
+
+      if (coefsDivisor.length === 1 && Math.abs(coefsDivisor[0]) < 1e-12) {
+        mostrarError('El divisor no puede ser el polinomio cero.');
+        return;
+      }
+
+      var polDividendo = construirPolinomioLatex(coefsDividendo);
+      var polDivisor = construirPolinomioLatex(coefsDivisor);
+
+      var resultado = divisionLarga(coefsDividendo, coefsDivisor);
+
+      if (!resultado) {
+        mostrarError('No se pudo realizar la división. Verifica los polinomios.');
+        return;
+      }
+
+      var polCociente = construirPolinomioLatex(resultado.cociente);
+      var polResiduo = construirPolinomioLatex(resultado.residuo);
+
+      var gradoDividendo = coefsDividendo.length - 1;
+      var gradoDivisor = coefsDivisor.length - 1;
+      var gradoCociente = resultado.cociente.length - 1;
+
+      var html = '';
+      html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — División larga</div>' +
+        '<div class="expresion">$$\\frac{' + polDividendo + '}{' + polDivisor + '}$$</div>' +
+      '</div>';
+
+      var pasoNum = 1;
+
+      // Paso 1: Completar términos
+      html += construirPaso(pasoNum++, 'Completar el dividendo',
+        'Escribimos el dividendo con todas las potencias de $x$, usando coeficiente $0$ para los términos faltantes:' +
+        '<br>$$' + polDividendo + '$$');
+
+      // Paso 2: Dividir términos principales
+      html += construirPaso(pasoNum++, 'Dividir los términos principales',
+        'Dividimos el término de mayor grado del dividendo entre el término de mayor grado del divisor para obtener el primer término del cociente.');
+
+      // Paso 3: Multiplicar y restar
+      html += construirPaso(pasoNum++, 'Multiplicar y restar',
+        'Multiplicamos el término obtenido por todo el divisor y lo restamos del dividendo. Repetimos el proceso con el nuevo residuo.');
+
+      // Paso 4: Resultado
+      html += construirPaso(pasoNum++, 'Escribir el cociente y el residuo',
+        'El cociente tiene grado $' + gradoCociente + '$ (grado del dividendo menos grado del divisor) y el residuo tiene grado menor que $' + gradoDivisor + '$.');
+
+      html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final</div>' +
+        '<div class="expresion-final">' +
+          '$$q(x) = ' + polCociente + '$$' +
+          '$$r(x) = ' + polResiduo + '$$' +
+          '<br>$$' + polDividendo + ' = (' + polDivisor + ')(' + polCociente + ') + (' + polResiduo + ')$$' +
+        '</div>' +
+      '</div>';
+
+      html += '<div class="aviso-pedagogico">💡 <strong>Observación:</strong> Verifica que el grado del residuo sea menor que el grado del divisor. Un error común es no incluir los términos faltantes con coeficiente cero.</div>';
+
+      mostrarDesarrollo(html);
+    }
+
+    function resolverDivisionSintetica() {
+      var inputDividendo = document.getElementById('input-dividendo-sint');
+      var inputC = document.getElementById('input-divisor-sint');
+
+      if (!inputDividendo || !inputC) { mostrarError('No se encontraron los campos de entrada.'); return; }
+
+      var coefs = parsearPolinomioTexto(inputDividendo.value);
+      var c = parsearNumero(inputC.value);
+
+      if (!coefs) { mostrarError('El dividendo no tiene un formato válido.'); return; }
+      if (isNaN(c)) { mostrarError('El valor de $c$ no es válido.'); return; }
+
+      // Eliminar ceros iniciales
+      while (coefs.length > 1 && Math.abs(coefs[0]) < 1e-12) coefs.shift();
+
+      var polDividendo = construirPolinomioLatex(coefs);
+      var polDivisor = 'x ' + (c >= 0 ? '- ' : '+ ') + formatearNumero(Math.abs(c));
+
+      var resultado = divisionSintetica(coefs, c);
+      var polCociente = construirPolinomioLatex(resultado.cociente);
+      var residuo = resultado.residuo;
+
+      var gradoDividendo = coefs.length - 1;
+      var gradoCociente = resultado.cociente.length - 1;
+
+      var html = '';
+      html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Operación — División sintética</div>' +
+        '<div class="expresion">$$(' + polDividendo + ') \\div (' + polDivisor + ')$$</div>' +
+      '</div>';
+
+      var pasoNum = 1;
+
+      // Paso 1: Coeficientes
+      var coefsStr = coefs.map(function(x) { return formatearNumero(x); }).join(', ');
+      html += construirPaso(pasoNum++, 'Escribir los coeficientes del dividendo',
+        'Coeficientes en orden descendente: $' + coefsStr + '$');
+
+      // Paso 2: Valor de c
+      html += construirPaso(pasoNum++, 'Identificar el valor de $c$',
+        'Para el divisor $' + polDivisor + '$, el valor de $c$ es $' + formatearNumero(c) + '$. ' +
+        'Recuerda que si el divisor es $x + k$, entonces $c = -k$.');
+
+      // Paso 3: Esquema sintético
+      html += construirPaso(pasoNum++, 'Aplicar el esquema sintético',
+        'Bajamos el primer coeficiente, multiplicamos por $c$ y sumamos al siguiente coeficiente. Repetimos hasta el final.');
+
+      // Construir tabla del esquema sintético
+      var n = coefs.length;
+      var resultadoTabla = new Array(n);
+      resultadoTabla[0] = coefs[0];
+      for (var i = 1; i < n; i++) {
+        resultadoTabla[i] = coefs[i] + resultadoTabla[i - 1] * c;
+      }
+
+      var tablaHtml = '<table style="border-collapse:collapse; margin:10px 0; font-size:0.9rem;">';
+      tablaHtml += '<tr><td style="padding:4px 8px; border:1px solid #a9c1d9; background:#e8eef5; font-weight:700;">Coef.</td>';
+      for (var i = 0; i < n; i++) {
+        tablaHtml += '<td style="padding:4px 8px; border:1px solid #a9c1d9; text-align:center;">' + formatearNumero(coefs[i]) + '</td>';
+      }
+      tablaHtml += '</tr>';
+
+      tablaHtml += '<tr><td style="padding:4px 8px; border:1px solid #a9c1d9; background:#e8eef5; font-weight:700;">' + formatearNumero(c) + '</td>';
+      tablaHtml += '<td style="padding:4px 8px; border:1px solid #a9c1d9;"></td>';
+      for (var i = 1; i < n; i++) {
+        var prod = resultadoTabla[i - 1] * c;
+        tablaHtml += '<td style="padding:4px 8px; border:1px solid #a9c1d9; text-align:center; color:#5b7fa3;">' + formatearNumero(prod) + '</td>';
+      }
+      tablaHtml += '</tr>';
+
+      tablaHtml += '<tr><td style="padding:4px 8px; border:1px solid #a9c1d9; background:#e8eef5; font-weight:700;">Suma</td>';
+      for (var i = 0; i < n; i++) {
+        tablaHtml += '<td style="padding:4px 8px; border:1px solid #a9c1d9; text-align:center; font-weight:700;">' + formatearNumero(resultadoTabla[i]) + '</td>';
+      }
+      tablaHtml += '</tr>';
+      tablaHtml += '</table>';
+
+      html += construirPaso(pasoNum++, 'Esquema sintético',
+        tablaHtml);
+
+      // Paso 4: Interpretar
+      html += construirPaso(pasoNum++, 'Interpretar los resultados',
+        'Los primeros $' + (n - 1) + '$ números son los coeficientes del cociente (grado $' + gradoCociente + '$):<br>' +
+        '$$q(x) = ' + polCociente + '$$<br>' +
+        'El último número es el residuo:<br>' +
+        '$$r = ' + formatearNumero(residuo) + '$$');
+
+      // Resultado final
+      html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado final</div>' +
+        '<div class="expresion-final">' +
+          '$$q(x) = ' + polCociente + '$$' +
+          '$$r = ' + formatearNumero(residuo) + '$$' +
+          '<br>$$' + polDividendo + ' = (' + polDivisor + ')(' + polCociente + ') + ' + formatearNumero(residuo) + '$$' +
+        '</div>' +
+      '</div>';
+
+      html += '<div class="aviso-pedagogico">💡 <strong>Observación:</strong> Recuerda que si el divisor es $x + 3$, entonces $c = -3$. Un error común es usar el signo contrario. Además, no olvides incluir ceros para los términos faltantes.</div>';
+
+      mostrarDesarrollo(html);
+    }
+
+    // ============================================================
+    // REINICIAR
+    // ============================================================
+    function reiniciar() {
+      document.getElementById('select-operacion').value = 'suma';
+      renderizarCampos();
+      mostrarDesarrollo('<div class="placeholder-inicial">⚙️ Selecciona una operación, ingresa los datos y presiona "Resolver paso a paso".</div>');
+    }
+
+    // ============================================================
+    // CARGAR EJEMPLOS
+    // ============================================================
+    function cargarEjemplo(tipo) {
+      var select = document.getElementById('select-operacion');
+
+      if (tipo === 'suma') {
+        select.value = 'suma';
+        renderizarCampos();
+        document.getElementById('input-pol-a').value = '2x^3 - 3x^2 + 2x + 1';
+        document.getElementById('input-pol-b').value = '3x^3 + 4x^2 + 2x + 1';
+      } else if (tipo === 'resta') {
+        select.value = 'resta';
+        renderizarCampos();
+        document.getElementById('input-pol-a').value = '2x^3 - 3x^2 + 2x + 1';
+        document.getElementById('input-pol-b').value = '3x^3 + 4x^2 + 2x + 1';
+      } else if (tipo === 'multiplicacion') {
+        select.value = 'multiplicacion';
+        renderizarCampos();
+        document.getElementById('input-pol-a').value = '2x^3 - 3x^2 + 2x + 1';
+        document.getElementById('input-pol-b').value = '3x^3 + 4x^2 + 2x + 1';
+      } else if (tipo === 'division-larga') {
+        select.value = 'division-larga';
+        renderizarCampos();
+        document.getElementById('input-dividendo').value = '2x^4 - 3x^2 + 8x + 2';
+        document.getElementById('input-divisor').value = 'x^2 + 2x - 1';
+      } else if (tipo === 'division-sintetica') {
+        select.value = 'division-sintetica';
+        renderizarCampos();
+        document.getElementById('input-dividendo-sint').value = '4x^3 - 3x^2 + 2x - 1';
+        document.getElementById('input-divisor-sint').value = '-2';
+      } else if (tipo === 'division-sintetica-fraccion') {
+        select.value = 'division-sintetica';
+        renderizarCampos();
+        document.getElementById('input-dividendo-sint').value = '2x^2 + 3x - 2';
+        document.getElementById('input-divisor-sint').value = '1/2';
+      } else if (tipo === 'division-sintetica-ceros') {
+        select.value = 'division-sintetica';
+        renderizarCampos();
+        document.getElementById('input-dividendo-sint').value = '3x^4 + 2x^2 - 1';
+        document.getElementById('input-divisor-sint').value = '1';
+      } else if (tipo === 'division-sintetica-parametro') {
+        select.value = 'division-sintetica';
+        renderizarCampos();
+        // Para este caso, usamos un valor numérico para c y mostramos la estructura
+        document.getElementById('input-dividendo-sint').value = '2x^3 - 2cx^2 + 3c^2x - 4c^3';
+        document.getElementById('input-divisor-sint').value = 'c';
+      }
+
+      resolver();
+    }
+
+    // ============================================================
+    // INICIALIZACIÓN
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function() {
+      renderizarCampos();
+
+      document.getElementById('select-operacion').addEventListener('change', function() {
+        renderizarCampos();
+        mostrarDesarrollo('<div class="placeholder-inicial">⚙️ Ingresa los datos y presiona "Resolver paso a paso".</div>');
+      });
+
+      document.getElementById('btn-resolver').addEventListener('click', resolver);
+      document.getElementById('btn-reiniciar').addEventListener('click', reiniciar);
+
+      var botonesEjemplo = document.querySelectorAll('.btn-ejemplo');
+      for (var i = 0; i < botonesEjemplo.length; i++) {
+        botonesEjemplo[i].addEventListener('click', function() {
+          cargarEjemplo(this.getAttribute('data-ejemplo'));
+        });
+      }
+    });
+  </script>
+</body>
+</html>

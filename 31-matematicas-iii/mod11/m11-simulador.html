@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Simulador de autoevaluación">
+    <title>Simulador de Autoevaluación - Módulo 11: Desigualdades, Raíces y Radicales</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #e8eef5;
+            --accent-soft: #a9c1d9;
+            --accent-main: #5b7fa3;
+            --text-primary: #2c4966;
+            --success: #27ae60;
+            --success-text: #145a32;
+            --error: #c0392b;
+            --error-text: #78281f;
+            --card-bg: #ffffff;
+            --border-radius: 12px;
+            --text-dark: #1a2a3a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 24px rgba(44, 73, 102, 0.12);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--bg-base);
+            padding-bottom: 15px;
+        }
+
+        header .institution {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-main);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1rem;
+            color: var(--accent-main);
+            font-weight: 500;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: var(--bg-base);
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--accent-main);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        .quiz-view { display: block; }
+        .quiz-view.hidden { display: none; }
+
+        .question-meta {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--accent-main);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.12rem;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .options-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .option-item {
+            background: var(--bg-base);
+            border: 2px solid var(--accent-soft);
+            border-radius: 8px;
+            padding: 12px 18px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .option-item:hover:not(.disabled) {
+            background-color: var(--accent-soft);
+            border-color: var(--accent-main);
+        }
+
+        .option-item:focus {
+            outline: 3px solid var(--accent-main);
+            outline-offset: 2px;
+        }
+
+        .option-item.disabled { cursor: default; }
+
+        .option-item.es-correcta {
+            background-color: rgba(39, 174, 96, 0.2);
+            border-color: var(--success);
+            color: var(--success-text);
+            font-weight: 600;
+        }
+
+        .option-item.es-incorrecta {
+            background-color: rgba(192, 57, 43, 0.2);
+            border-color: var(--error);
+            color: var(--error-text);
+            font-weight: 600;
+        }
+
+        .feedback-box {
+            background-color: var(--bg-base);
+            border-left: 5px solid var(--accent-main);
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-dark);
+        }
+
+        .feedback-box.visible { display: block; }
+        .feedback-box strong { color: var(--accent-main); }
+
+        .btn-next {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background-color 0.2s;
+            display: none;
+            font-family: inherit;
+        }
+
+        .btn-next.visible { display: block; }
+        .btn-next:hover { background-color: var(--text-primary); }
+        .btn-next:focus { outline: 3px solid var(--accent-main); outline-offset: 2px; }
+
+        .results-view {
+            text-align: center;
+            display: none;
+        }
+
+        .results-view.visible { display: block; }
+
+        .results-view h2 {
+            color: var(--text-primary);
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .score-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--accent-main);
+            margin: 20px 0;
+        }
+
+        .results-message {
+            font-size: 1.05rem;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            text-align: justify;
+        }
+
+        .btn-restart {
+            background-color: var(--accent-main);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-restart:hover { background-color: var(--text-primary); }
+        .btn-restart:focus { outline: 3px solid var(--accent-main); outline-offset: 2px; }
+
+        .clearfix::after {
+            content: "";
+            clear: both;
+            display: table;
+        }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.1rem; }
+            .container { padding: 20px; }
+            .question-text { font-size: 1rem; }
+            .score-display { font-size: 2.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="institution">Preparatoria Abierta</div>
+            <h1>Simulador de Autoevaluación: Módulo 11</h1>
+            <p>Desigualdades, Raíces y Radicales</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" role="progressbar" aria-label="Progreso del simulador" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
+
+        <div id="quizView" class="quiz-view clearfix">
+            <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+            <div class="question-text" id="questionText">Cargando pregunta...</div>
+            <ul class="options-list" id="optionsList" role="list"></ul>
+            <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite"></div>
+            <button class="btn-next" id="btnNext" onclick="nextQuestion()" aria-label="Avanzar al siguiente reactivo">Siguiente Reactivo →</button>
+        </div>
+
+        <div id="resultsView" class="results-view">
+            <h2>Evaluación Finalizada</h2>
+            <div class="score-display" id="finalScore">0/10</div>
+            <div class="results-message" id="resultsMessage"></div>
+            <button class="btn-restart" onclick="restartQuiz()" aria-label="Reiniciar la evaluación">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // BANCO DE REACTIVOS — Módulo 11
+        // =========================================
+        const rawQuestions = [
+            {
+                id: 1,
+                text: "¿Cuál es el conjunto solución de la desigualdad $x^2 - 5x + 6 > 0$?",
+                options: [
+                    { text: "$(2, 3)$", correct: false },
+                    { text: "$(-\\infty, 2) \\cup (3, +\\infty)$", correct: true },
+                    { text: "$(-\\infty, 3) \\cup (2, +\\infty)$", correct: false },
+                    { text: "$[2, 3]$", correct: false }
+                ],
+                feedback: "Se factoriza como $(x-2)(x-3) > 0$. Como $a = 1 > 0$, la parábola abre hacia arriba y $f(x) > 0$ fuera de las raíces: $x < 2$ ó $x > 3$, es decir, $(-\\infty, 2) \\cup (3, +\\infty)$."
+            },
+            {
+                id: 2,
+                text: "¿Cuál es el conjunto solución de la desigualdad $x^2 - 9 < 0$?",
+                options: [
+                    { text: "$(-\\infty, 3)$", correct: false },
+                    { text: "$(-3, 3)$", correct: true },
+                    { text: "$(-\\infty, -3) \\cup (3, +\\infty)$", correct: false },
+                    { text: "$\\{-3, 3\\}$", correct: false }
+                ],
+                feedback: "Se factoriza como $(x-3)(x+3) < 0$. Como $a > 0$ y $f(x) < 0$, la solución es el intervalo entre las raíces: $(-3, 3)$."
+            },
+            {
+                id: 3,
+                text: "¿Cuál es el conjunto solución de la desigualdad $x^2 - 4x + 4 > 0$?",
+                options: [
+                    { text: "$\\mathbb{R}$", correct: false },
+                    { text: "$\\mathbb{R} \\setminus \\{2\\}$", correct: true },
+                    { text: "$\\varnothing$", correct: false },
+                    { text: "$\\{2\\}$", correct: false }
+                ],
+                feedback: "El trinomio es un cuadrado perfecto: $(x-2)^2 > 0$. Como todo cuadrado es $\\geq 0$ y solo es cero en $x = 2$, la solución es $\\mathbb{R} \\setminus \\{2\\}$."
+            },
+            {
+                id: 4,
+                text: "Sin resolver la ecuación $3x^2 - 12x + 7 = 0$, ¿cuál es la suma y el producto de sus raíces?",
+                options: [
+                    { text: "Suma $= 4$, producto $= 7/3$", correct: true },
+                    { text: "Suma $= 7/3$, producto $= 4$", correct: false },
+                    { text: "Suma $= -4$, producto $= -7/3$", correct: false },
+                    { text: "Suma $= 12$, producto $= 7$", correct: false }
+                ],
+                feedback: "Con $a = 3$, $b = -12$, $c = 7$: $r_1 + r_2 = -b/a = -(-12)/3 = 4$ y $r_1 \\cdot r_2 = c/a = 7/3$. Un error común es invertir las fórmulas."
+            },
+            {
+                id: 5,
+                text: "Para que la ecuación $2x^2 - 3x + K = 0$ tenga raíces iguales, ¿cuál debe ser el valor de $K$?",
+                options: [
+                    { text: "$K = 9/8$", correct: true },
+                    { text: "$K = 8/9$", correct: false },
+                    { text: "$K = 9$", correct: false },
+                    { text: "$K = -9/8$", correct: false }
+                ],
+                feedback: "Para raíces iguales, $\\Delta = 0$: $b^2 - 4ac = 0 \\Rightarrow 9 - 8K = 0 \\Rightarrow K = 9/8$."
+            },
+            {
+                id: 6,
+                text: "Resuelve la ecuación con radical $\\sqrt{2x + 5} - x = 1$. ¿Cuál es el conjunto solución?",
+                options: [
+                    { text: "$\\{-2, 2\\}$", correct: false },
+                    { text: "$\\{2\\}$", correct: true },
+                    { text: "$\\{-2\\}$", correct: false },
+                    { text: "$\\{1, 2\\}$", correct: false }
+                ],
+                feedback: "Se aísla el radical: $\\sqrt{2x+5} = x+1$. Al elevar al cuadrado: $2x+5 = x^2+2x+1 \\Rightarrow x^2 - 4 = 0 \\Rightarrow x = \\pm 2$. Verificando: $x = 2$ da $\\sqrt{9} - 2 = 1$ ✅; $x = -2$ da $\\sqrt{1} + 2 = 3 \\neq 1$ ❌ (raíz extraña). Solución: $\\{2\\}$."
+            },
+            {
+                id: 7,
+                text: "En la ecuación $x^2 - 2x - 1 = 0$, ¿cuál es el valor de $S^2 - 2P$ (donde $S$ es la suma y $P$ el producto de las raíces)?",
+                options: [
+                    { text: "$2$", correct: false },
+                    { text: "$6$", correct: true },
+                    { text: "$-2$", correct: false },
+                    { text: "$0$", correct: false }
+                ],
+                feedback: "Con $a = 1$, $b = -2$, $c = -1$: $S = 2$, $P = -1$. Entonces $S^2 - 2P = 4 - 2(-1) = 4 + 2 = 6$. Este valor es la suma de las raíces al cuadrado."
+            },
+            {
+                id: 8,
+                text: "En la ecuación $5x^{-2} + 12x^{-1} - 9 = 0$, ¿qué sustitución permite reducirla a forma cuadrática?",
+                options: [
+                    { text: "$z = x$", correct: false },
+                    { text: "$z = x^{-1}$", correct: true },
+                    { text: "$z = x^2$", correct: false },
+                    { text: "$z = \\sqrt{x}$", correct: false }
+                ],
+                feedback: "Como $x^{-2} = (x^{-1})^2$, la sustitución adecuada es $z = x^{-1}$. La ecuación se convierte en $5z^2 + 12z - 9 = 0$."
+            },
+            {
+                id: 9,
+                text: "Al resolver la ecuación reducible $(x^2 - 2x)^2 - (x^2 - 2x) - 6 = 0$ con $z = x^2 - 2x$, se obtienen $z = 3$ y $z = -2$. ¿Cuáles son los valores de $x$?",
+                options: [
+                    { text: "$\\{3, -1\\}$ solamente", correct: false },
+                    { text: "$\\{3, -1, 1+i, 1-i\\}$", correct: true },
+                    { text: "$\\{3, -1, 2, -2\\}$", correct: false },
+                    { text: "$\\{3, -1, -2\\}$", correct: false }
+                ],
+                feedback: "Para $z = 3$: $x^2 - 2x - 3 = 0 \\Rightarrow x = 3$ ó $x = -1$. Para $z = -2$: $x^2 - 2x + 2 = 0 \\Rightarrow x = 1 \\pm i$. Solución: $\\{3, -1, 1+i, 1-i\\}$."
+            },
+            {
+                id: 10,
+                text: "¿Cuál es la naturaleza de las raíces de la ecuación $x^2 + 3x - 10 = 0$ según su discriminante?",
+                options: [
+                    { text: "Raíces complejas conjugadas", correct: false },
+                    { text: "Raíz doble (reales e iguales)", correct: false },
+                    { text: "Raíces reales, racionales y distintas", correct: true },
+                    { text: "Raíces reales, irracionales y distintas", correct: false }
+                ],
+                feedback: "$\\Delta = b^2 - 4ac = 9 + 40 = 49$, que es un cuadrado perfecto ($7^2$). Por lo tanto, las raíces son reales, racionales y distintas."
+            }
+        ];
+
+        // =========================================
+        // ESTADO DEL SIMULADOR
+        // =========================================
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answered = false;
+
+        // =========================================
+        // ALGORITMO FISHER-YATES
+        // =========================================
+        function shuffleArray(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // =========================================
+        // RENDERIZAR MATHJAX
+        // =========================================
+        function renderMath(element) {
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                MathJax.typesetPromise(element ? [element] : undefined).catch(function(err){ console.log(err); });
+            } else if (window.MathJax && window.MathJax.typeset) {
+                MathJax.typeset();
+            }
+        }
+
+        // =========================================
+        // LIMPIAR LATEX PARA ARIA-LABEL
+        // =========================================
+        function limpiarLatex(texto) {
+            return String(texto)
+                .replace(/\$[^$]*\$/g, '')
+                .replace(/\\[a-zA-Z]+/g, '')
+                .replace(/[{}]/g, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+
+        // =========================================
+        // INICIALIZAR QUIZ
+        // =========================================
+        function initQuiz() {
+            questions = shuffleArray(rawQuestions).map(q => {
+                return {
+                    ...q,
+                    options: shuffleArray(q.options)
+                };
+            });
+            currentQuestionIndex = 0;
+            score = 0;
+            answered = false;
+            document.getElementById('resultsView').classList.remove('visible');
+            document.getElementById('quizView').classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // =========================================
+        // CARGAR PREGUNTA ACTUAL
+        // =========================================
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestionIndex];
+
+            document.getElementById('questionMeta').innerText = `Reactivo ${currentQuestionIndex + 1} de 10`;
+            document.getElementById('questionText').innerHTML = q.text;
+
+            const optionsList = document.getElementById('optionsList');
+            optionsList.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const li = document.createElement('li');
+                li.className = 'option-item';
+                li.setAttribute('role', 'button');
+                li.setAttribute('tabindex', '0');
+                li.setAttribute('aria-label', `Opción ${String.fromCharCode(97 + idx)}: ${limpiarLatex(opt.text)}`);
+                li.innerHTML = `<strong>${String.fromCharCode(97 + idx)})</strong> ${opt.text}`;
+
+                li.onclick = () => selectOption(opt.correct, li);
+
+                li.onkeydown = (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        selectOption(opt.correct, li);
+                    }
+                };
+
+                optionsList.appendChild(li);
+            });
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.innerHTML = '';
+
+            document.getElementById('btnNext').classList.remove('visible');
+            updateProgress();
+
+            renderMath(document.getElementById('quizView'));
+        }
+
+        // =========================================
+        // SELECCIONAR OPCIÓN Y MOSTRAR RETROALIMENTACIÓN
+        // =========================================
+        function selectOption(isCorrect, selectedElement) {
+            if (answered) return;
+            answered = true;
+
+            const optionItems = document.querySelectorAll('.option-item');
+            optionItems.forEach(item => {
+                item.classList.add('disabled');
+                item.setAttribute('tabindex', '-1');
+                item.setAttribute('aria-disabled', 'true');
+            });
+
+            if (isCorrect) {
+                selectedElement.classList.add('es-correcta');
+                selectedElement.setAttribute('aria-label', 'Opción correcta');
+                score++;
+            } else {
+                selectedElement.classList.add('es-incorrecta');
+                selectedElement.setAttribute('aria-label', 'Opción incorrecta');
+                const q = questions[currentQuestionIndex];
+                optionItems.forEach((item, idx) => {
+                    if (q.options[idx].correct) {
+                        item.classList.add('es-correcta');
+                    }
+                });
+            }
+
+            const feedbackBox = document.getElementById('feedbackBox');
+            feedbackBox.innerHTML = `<strong>Explicación:</strong> ${questions[currentQuestionIndex].feedback}`;
+            feedbackBox.classList.add('visible');
+
+            const btnNext = document.getElementById('btnNext');
+            if (currentQuestionIndex === questions.length - 1) {
+                btnNext.innerText = "Ver Resultados Finales →";
+                btnNext.setAttribute('aria-label', 'Ver resultados finales');
+            } else {
+                btnNext.innerText = "Siguiente Reactivo →";
+                btnNext.setAttribute('aria-label', 'Avanzar al siguiente reactivo');
+            }
+            btnNext.classList.add('visible');
+            btnNext.focus();
+
+            renderMath(document.getElementById('quizView'));
+        }
+
+        // =========================================
+        // SIGUIENTE PREGUNTA
+        // =========================================
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // =========================================
+        // ACTUALIZAR BARRA DE PROGRESO
+        // =========================================
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            const bar = document.getElementById('progressBar');
+            bar.style.width = `${progress}%`;
+            bar.setAttribute('aria-valuenow', Math.round(progress));
+        }
+
+        // =========================================
+        // MOSTRAR RESULTADOS FINALES
+        // =========================================
+        function showResults() {
+            document.getElementById('quizView').classList.add('hidden');
+            document.getElementById('resultsView').classList.add('visible');
+            const bar = document.getElementById('progressBar');
+            bar.style.width = '100%';
+            bar.setAttribute('aria-valuenow', '100');
+
+            document.getElementById('finalScore').innerText = `${score} / 10`;
+
+            const msg = document.getElementById('resultsMessage');
+            if (score === 10) {
+                msg.innerText = "¡Excelente dominio! Has respondido correctamente todos los reactivos del Módulo 11 sobre desigualdades cuadráticas, relaciones de raíces, discriminante y ecuaciones con radicales y reducibles.";
+            } else if (score >= 7) {
+                msg.innerText = "¡Buen trabajo! Tienes una sólida comprensión de las desigualdades cuadráticas y las relaciones de raíces. Repasa los detalles sobre las raíces extrañas en ecuaciones con radicales y las transformaciones de raíces para alcanzar la perfección.";
+            } else {
+                msg.innerText = "Es recomendable repasar los conceptos del Módulo 11: métodos gráfico y algebraico para desigualdades, fórmulas de suma y producto de raíces, discriminante y su relación con la naturaleza de las raíces, y resolución de ecuaciones con radicales. Vuelve a intentarlo.";
+            }
+
+            renderMath(document.getElementById('resultsView'));
+        }
+
+        // =========================================
+        // REINICIAR QUIZ
+        // =========================================
+        function restartQuiz() {
+            initQuiz();
+        }
+
+        // =========================================
+        // INICIALIZACIÓN
+        // =========================================
+        window.onload = initQuiz;
+    </script>
+</body>
+</html>

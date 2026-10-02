@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Índice del módulo">
+  <title>Módulo 11 — Desigualdades, Raíces y Radicales | Matemáticas III</title>
+
+  <!-- MathJax 3 — Configuración LIMPIA -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.6rem;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.35;
+      word-wrap: break-word;
+    }
+
+    header .subtitulo-modulo {
+      font-size: 1.05rem;
+      font-weight: 400;
+      opacity: 0.95;
+      margin-bottom: 0.6rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    main { padding: 1.5rem; }
+
+    .introduccion {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      padding: 1rem 1.2rem;
+      border-radius: var(--radio-borde);
+      margin-bottom: 1.5rem;
+    }
+
+    .introduccion h2 {
+      font-size: 1.05rem;
+      color: var(--color-primario);
+      margin-bottom: 0.5rem;
+    }
+
+    .introduccion p { font-size: 0.95rem; }
+
+    .progreso-general {
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .progreso-general .fila-progreso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .barra-progreso {
+      height: 10px;
+      background: var(--color-base);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+
+    .barra-progreso .fill {
+      height: 100%;
+      background: var(--color-exito);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    h2.seccion {
+      font-size: 1.15rem;
+      color: var(--color-primario);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .grid-recursos {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .tarjeta-recurso {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1.1rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .tarjeta-recurso:hover {
+      border-color: var(--color-acento);
+      transform: translateY(-3px);
+      box-shadow: var(--sombra-suave);
+    }
+
+    .tarjeta-recurso:focus-visible {
+      outline: 3px solid var(--color-acento);
+      outline-offset: 3px;
+    }
+
+    .tarjeta-recurso .icono {
+      font-size: 1.8rem;
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .tarjeta-recurso h3 {
+      font-size: 1rem;
+      color: var(--color-primario);
+      margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-recurso .archivo {
+      font-family: 'Courier New', monospace;
+      font-size: 0.75rem;
+      color: var(--color-acento);
+      background: var(--color-base);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 0.4rem;
+    }
+
+    .tarjeta-recurso p {
+      font-size: 0.85rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .tarjeta-recurso .check {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+      color: var(--color-exito);
+      font-size: 1.2rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .tarjeta-recurso.visitada .check { opacity: 1; }
+
+    .esquema {
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 1rem 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .esquema h3 {
+      font-size: 1rem;
+      color: var(--color-primario);
+      margin-bottom: 0.6rem;
+    }
+
+    .esquema ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .esquema ul li {
+      padding: 0.3rem 0 0.3rem 1.4rem;
+      position: relative;
+      font-size: 0.9rem;
+    }
+
+    .esquema ul li::before {
+      content: "▸";
+      position: absolute;
+      left: 0.4rem;
+      color: var(--color-acento);
+      font-weight: bold;
+    }
+
+    .esquema ul ul { margin-top: 0.2rem; }
+    .esquema ul ul li::before { content: "•"; }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.9rem;
+      color: var(--color-primario);
+    }
+
+    .footer-info strong { color: var(--color-primario); }
+
+    @media (max-width: 900px) {
+      header h1 { font-size: 1.3rem; }
+      header .subtitulo-modulo { font-size: 1rem; }
+      .grid-recursos { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1.5rem 1rem; }
+      main { padding: 1rem; }
+      header h1 { font-size: 1.15rem; }
+      header .subtitulo-modulo { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Módulo 11</h1>
+      <div class="subtitulo-modulo">Desigualdades Cuadráticas, Relaciones de Raíces y Ecuaciones con Radicales</div>
+      <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <main>
+      <div class="introduccion">
+        <h2>📘 Bienvenida al Módulo 11</h2>
+        <p>
+          En este módulo ampliamos el estudio de las ecuaciones cuadráticas hacia tres
+          aplicaciones fundamentales: las <strong>desigualdades cuadráticas</strong>
+          (métodos gráfico y algebraico), las <strong>relaciones entre raíces y
+          coeficientes</strong> (suma, producto y transformaciones), el
+          <strong>discriminante</strong> y su relación con la naturaleza de las raíces,
+          y la resolución de <strong>ecuaciones con radicales</strong> y
+          <strong>reducibles a forma cuadrática</strong>.
+        </p>
+      </div>
+
+      <div class="progreso-general">
+        <div class="fila-progreso">
+          <span>📊 Progreso del módulo</span>
+          <span id="textoProgreso" aria-live="polite">0 de 5 recursos visitados</span>
+        </div>
+        <div class="barra-progreso">
+          <div class="fill" id="fillProgreso" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+        </div>
+      </div>
+
+      <h2 class="seccion">🧭 Recursos del módulo</h2>
+
+      <div class="grid-recursos">
+        <a href="m11-presentacion.html" class="tarjeta-recurso" data-recurso="presentacion">
+          <span class="check" aria-hidden="true">✅</span>
+          <span class="icono" aria-hidden="true">📖</span>
+          <h3>Presentación del tema</h3>
+          <span class="archivo">m11-presentacion.html</span>
+          <p>Recorrido por las desigualdades cuadráticas, las relaciones de raíces, el discriminante y las ecuaciones con radicales.</p>
+        </a>
+
+        <a href="m11-visualizador.html" class="tarjeta-recurso" data-recurso="visualizador">
+          <span class="check" aria-hidden="true">✅</span>
+          <span class="icono" aria-hidden="true">📐</span>
+          <h3>Visualizador interactivo</h3>
+          <span class="archivo">m11-visualizador.html</span>
+          <p>Explora la parábola y la región solución de una desigualdad cuadrática en tiempo real.</p>
+        </a>
+
+        <a href="m11-laboratorio.html" class="tarjeta-recurso" data-recurso="laboratorio">
+          <span class="check" aria-hidden="true">✅</span>
+          <span class="icono" aria-hidden="true">🧪</span>
+          <h3>Laboratorio de práctica</h3>
+          <span class="archivo">m11-laboratorio.html</span>
+          <p>Casos guiados con dificultad progresiva para resolver desigualdades, relaciones de raíces y radicales.</p>
+        </a>
+
+        <a href="m11-solucionador.html" class="tarjeta-recurso" data-recurso="solucionador">
+          <span class="check" aria-hidden="true">✅</span>
+          <span class="icono" aria-hidden="true">🧮</span>
+          <h3>Solucionador paso a paso</h3>
+          <span class="archivo">m11-solucionador.html</span>
+          <p>Resuelve desigualdades, calcula suma y producto de raíces y analiza el discriminante paso a paso.</p>
+        </a>
+
+        <a href="m11-simulador.html" class="tarjeta-recurso" data-recurso="simulador">
+          <span class="check" aria-hidden="true">✅</span>
+          <span class="icono" aria-hidden="true">🎯</span>
+          <h3>Simulador de autoevaluación</h3>
+          <span class="archivo">m11-simulador.html</span>
+          <p>10 reactivos de opción múltiple para evaluar tu dominio del módulo.</p>
+        </a>
+      </div>
+
+      <div class="esquema" role="region" aria-labelledby="esquema-titulo">
+        <h3 id="esquema-titulo">📊 Esquema del módulo</h3>
+        <ul>
+          <li><strong>Desigualdades cuadráticas</strong>
+            <ul>
+              <li>Tipos: condicionales y absolutas</li>
+              <li>Propiedades de las desigualdades</li>
+              <li>Método gráfico</li>
+              <li>Método algebraico</li>
+            </ul>
+          </li>
+          <li><strong>Relaciones entre raíces y coeficientes</strong>
+            <ul>
+              <li>Suma y producto: $r_1 + r_2 = -\\dfrac{b}{a}$, $r_1 \\cdot r_2 = \\dfrac{c}{a}$</li>
+              <li>Formación de ecuaciones con raíces transformadas</li>
+            </ul>
+          </li>
+          <li><strong>Discriminante</strong>
+            <ul>
+              <li>$\\Delta = 0$: raíces reales e iguales</li>
+              <li>$\\Delta > 0$: raíces reales y distintas (racionales o irracionales)</li>
+              <li>$\\Delta < 0$: raíces complejas conjugadas</li>
+            </ul>
+          </li>
+          <li><strong>Ecuaciones con radicales</strong>
+            <ul>
+              <li>Aislar el radical y elevar al cuadrado</li>
+              <li>Verificación obligatoria de raíces extrañas</li>
+            </ul>
+          </li>
+          <li><strong>Ecuaciones reducibles a forma cuadrática</strong>
+            <ul>
+              <li>Cambio de variable $z = f(x)$</li>
+              <li>Casos con exponentes negativos</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </main>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Resolver desigualdades cuadráticas mediante los métodos gráfico y algebraico, aplicar las relaciones entre raíces y coeficientes para formar ecuaciones sin resolverlas, analizar la naturaleza de las raíces a través del discriminante, y resolver ecuaciones con radicales y ecuaciones reducibles a la forma cuadrática mediante cambios de variable.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'mod11_visitados';
+      var TOTAL_RECURSOS = 5;
+
+      function leerVisitados() {
+        try {
+          return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function marcarVisitado(recurso) {
+        var visitados = leerVisitados();
+        if (visitados.indexOf(recurso) === -1) {
+          visitados.push(recurso);
+          try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(visitados));
+          } catch (e) {
+            console.warn('No se pudo guardar progreso:', e);
+          }
+        }
+        actualizarProgreso();
+      }
+
+      function actualizarProgreso() {
+        var visitados = leerVisitados();
+        var n = visitados.length;
+
+        document.querySelectorAll('.tarjeta-recurso').forEach(function (t) {
+          if (visitados.indexOf(t.dataset.recurso) !== -1) {
+            t.classList.add('visitada');
+          }
+        });
+
+        var texto = document.getElementById('textoProgreso');
+        var fill = document.getElementById('fillProgreso');
+        if (texto) texto.textContent = n + ' de ' + TOTAL_RECURSOS + ' recursos visitados';
+        if (fill) {
+          var pct = (n / TOTAL_RECURSOS) * 100;
+          fill.style.width = pct + '%';
+          fill.setAttribute('aria-valuenow', String(Math.round(pct)));
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        actualizarProgreso();
+
+        document.querySelectorAll('.tarjeta-recurso').forEach(function (tarjeta) {
+          tarjeta.addEventListener('click', function () {
+            marcarVisitado(tarjeta.dataset.recurso);
+          });
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

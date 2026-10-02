@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Solucionador paso a paso">
+    <title>Solucionador: Desigualdades y Raíces | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1100px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-operacion {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 14px;
+            margin-bottom: 14px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-operacion label.etiqueta {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        select#tipo-operacion {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            font-family: inherit;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+        select#tipo-operacion:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .grupo-input {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento-suave);
+        }
+        .grupo-input .titulo-input {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 8px;
+        }
+        .fila-coef {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+        .fila-coef label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-acento);
+            min-width: 25px;
+            text-align: right;
+        }
+        .fila-coef input {
+            flex: 1;
+            padding: 8px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            text-align: center;
+            font-family: 'Consolas', 'Monaco', monospace;
+            transition: border-color 0.3s;
+        }
+        .fila-coef input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            flex: 1;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-desarrollo {
+            padding: 24px 28px;
+            background-color: var(--color-blanco);
+            min-height: 620px;
+        }
+        .panel-desarrollo h2 {
+            font-size: 1.1rem;
+            color: var(--color-primario);
+            margin-bottom: 16px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+
+        .placeholder-inicial {
+            text-align: center;
+            color: #8a9bb0;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 60px 20px;
+        }
+
+        .bloque-operacion {
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+            padding: 16px 20px;
+            margin-bottom: 18px;
+            border-left: 5px solid var(--color-acento);
+        }
+        .bloque-operacion .titulo-bloque {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-acento);
+            margin-bottom: 6px;
+        }
+        .bloque-operacion .expresion {
+            font-size: 1.15rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .paso {
+            display: flex;
+            gap: 12px;
+            padding: 14px 0;
+            border-bottom: 1px dashed var(--color-acento-suave);
+        }
+        .paso:last-child { border-bottom: none; }
+        .paso .num-paso {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            font-size: 0.75rem;
+            font-weight: 700;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .paso .cuerpo-paso { flex: 1; min-width: 0; }
+        .paso .titulo-paso {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+        }
+        .paso .detalle-paso {
+            font-size: 0.98rem;
+            color: var(--color-texto-oscuro);
+            line-height: 1.9;
+            overflow-x: auto;
+        }
+
+        .resultado-final {
+            margin-top: 18px;
+            padding: 16px 20px;
+            background-color: rgba(39,174,96,0.08);
+            border-left: 5px solid var(--color-exito);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .resultado-final .titulo-final {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--color-exito);
+            margin-bottom: 6px;
+        }
+        .resultado-final .expresion-final {
+            font-size: 1.15rem;
+            color: var(--color-texto-oscuro);
+            text-align: center;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 12px 16px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 14px;
+        }
+
+        .mensaje-error {
+            background-color: rgba(192,57,43,0.08);
+            border-left: 5px solid var(--color-error);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+            padding: 14px 18px;
+            font-size: 0.95rem;
+            color: #78281f;
+            margin-top: 12px;
+            display: none;
+        }
+        .mensaje-error.visible { display: block; }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-desarrollo { padding: 18px 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Solucionador: Desigualdades y Raíces</h1>
+        <p>Solucionador paso a paso | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <div class="panel-control">
+            <h2>Operación a resolver</h2>
+
+            <div class="seccion-operacion">
+                <label class="etiqueta" for="tipo-operacion">Selecciona la operación</label>
+                <select id="tipo-operacion" aria-label="Tipo de operación a resolver">
+                    <option value="desigualdad">Desigualdad cuadrática: ax² + bx + c ⋛ 0</option>
+                    <option value="relaciones">Suma y producto de raíces</option>
+                    <option value="discriminante">Análisis del discriminante</option>
+                </select>
+            </div>
+
+            <h3>Coeficientes</h3>
+
+            <div class="grupo-input">
+                <div class="titulo-input">Ecuación: $ax^2 + bx + c$</div>
+                <div class="fila-coef">
+                    <label for="a">a =</label>
+                    <input type="number" id="a" value="1" step="any" aria-label="Coeficiente a">
+                </div>
+                <div class="fila-coef">
+                    <label for="b">b =</label>
+                    <input type="number" id="b" value="-5" step="any" aria-label="Coeficiente b">
+                </div>
+                <div class="fila-coef">
+                    <label for="c">c =</label>
+                    <input type="number" id="c" value="6" step="any" aria-label="Coeficiente c">
+                </div>
+            </div>
+
+            <div class="grupo-input">
+                <div class="titulo-input">Sentido (solo desigualdad)</div>
+                <div class="fila-coef">
+                    <label for="sentido">⋛</label>
+                    <select id="sentido" style="flex:1;padding:8px;border:2px solid var(--color-acento-suave);border-radius:6px;font-family:inherit;font-size:0.95rem;">
+                        <option value="mayor">&gt; 0</option>
+                        <option value="menor">&lt; 0</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="botones-accion">
+                <button type="button" class="btn-primario" id="btn-resolver">▶ Resolver paso a paso</button>
+                <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar">↺</button>
+            </div>
+
+            <div class="seccion-ejemplos">
+                <h3>📚 Ejemplos del Módulo 11</h3>
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $x^2 - 5x + 6 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $x^2 - 9 < 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $x^2 - 4x + 4 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 Relaciones: $3x^2 - 12x + 7 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 Discriminante: $2x^2 + 4x - 6 = 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 Discriminante: $5x^2 - 4x + 1 = 0$</button>
+            </div>
+        </div>
+
+        <div class="panel-desarrollo" id="panelDesarrollo" role="region" aria-label="Desarrollo paso a paso">
+            <h2>🧮 Desarrollo paso a paso</h2>
+            <div id="desarrollo">
+                <div class="placeholder-inicial">
+                    ⚙️ Selecciona la operación, ingresa los coeficientes<br>
+                    y presiona <strong>"Resolver paso a paso"</strong>.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Resolver paso a paso desigualdades cuadráticas, calcular la suma y el producto
+        de raíces sin resolver la ecuación, y analizar la naturaleza de las raíces a través del discriminante,
+        mostrando cada paso algebraico con su interpretación geométrica.
+    </div>
+</div>
+
+<script>
+// =========================================
+// UTILIDADES
+// =========================================
+function formatearNumero(n) {
+    if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+    return parseFloat(n.toFixed(4)).toString();
+}
+
+function casiIgual(x, y, tol) {
+    tol = tol || 1e-9;
+    return Math.abs(x - y) < tol;
+}
+
+function renderMath(element) {
+    if (window.MathJax && window.MathJax.typesetPromise) {
+        MathJax.typesetPromise([element]).catch(console.log);
+    }
+}
+
+function simplificarRaiz(n) {
+    if (n < 0) n = -n;
+    var exterior = 1, interior = n;
+    for (var i = 2; i * i <= interior; i++) {
+        while (interior % (i * i) === 0) { exterior *= i; interior /= (i * i); }
+    }
+    return { exterior: exterior, interior: interior };
+}
+
+function latexRaizSimplificada(n) {
+    var s = simplificarRaiz(n);
+    if (s.interior === 1) return formatearNumero(s.exterior);
+    if (s.exterior === 1) return '\\sqrt{' + s.interior + '}';
+    return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
+}
+
+function construirPaso(num, titulo, detalle) {
+    return '<div class="paso">' +
+        '<div class="num-paso">' + num + '</div>' +
+        '<div class="cuerpo-paso">' +
+            '<div class="titulo-paso">' + titulo + '</div>' +
+            '<div class="detalle-paso">' + detalle + '</div>' +
+        '</div>' +
+    '</div>';
+}
+
+function mostrarDesarrollo(html) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = html;
+    renderMath(el);
+}
+
+function mostrarError(mensaje) {
+    var el = document.getElementById('desarrollo');
+    el.innerHTML = '<div class="mensaje-error visible">⚠️ ' + mensaje + '</div>';
+    renderMath(el);
+}
+
+function mostrarPlaceholder() {
+    document.getElementById('desarrollo').innerHTML =
+        '<div class="placeholder-inicial">⚙️ Ingresa los valores y presiona <strong>"Resolver paso a paso"</strong>.</div>';
+}
+
+function leerCoeficientes() {
+    var a = parseFloat(document.getElementById('a').value);
+    var b = parseFloat(document.getElementById('b').value);
+    var c = parseFloat(document.getElementById('c').value);
+    if (isNaN(a) || isNaN(b) || isNaN(c)) return null;
+    return { a: a, b: b, c: c };
+}
+
+// =========================================
+// RESOLUCIÓN: DESIGUALDAD CUADRÁTICA
+// =========================================
+function resolverDesigualdad(a, b, c, sentido) {
+    if (casiIgual(a, 0)) {
+        return { error: 'El coeficiente $a$ no puede ser cero en una desigualdad cuadrática.' };
+    }
+
+    var disc = b * b - 4 * a * c;
+    var pasos = [];
+    var signo = sentido === 'mayor' ? '>' : '<';
+
+    pasos.push(construirPaso(1, 'Planteamiento',
+        '$$' + formatearNumero(a) + 'x^2 ' + (b >= 0 ? '+ ' + formatearNumero(b) : '- ' + formatearNumero(-b)) + 'x ' +
+        (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' ' + signo + ' 0$$'));
+
+    pasos.push(construirPaso(2, 'Discriminante',
+        '$$\\Delta = b^2 - 4ac = (' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ') = ' + formatearNumero(disc) + '$$'));
+
+    var resultadoHTML = '';
+
+    if (disc < -1e-9) {
+        pasos.push(construirPaso(3, 'Análisis',
+            'Como $\\Delta < 0$, la parábola <strong>no corta</strong> al eje $X$.'));
+
+        var signoConstante = a > 0 ? 'siempre <strong>positivo</strong>' : 'siempre <strong>negativo</strong>';
+        pasos.push(construirPaso(4, 'Signo constante',
+            'El signo de $f(x)$ es ' + signoConstante + '.'));
+
+        if ((a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')) {
+            resultadoHTML = '$$\\mathbb{R} \\quad \\text{(todos los reales)}$$';
+        } else {
+            resultadoHTML = '$$\\varnothing \\quad \\text{(conjunto vacío)}$$';
+        }
+    } else if (casiIgual(disc, 0)) {
+        var r = -b / (2 * a);
+        pasos.push(construirPaso(3, 'Raíz doble',
+            '$$x = -\\frac{b}{2a} = -\\frac{' + formatearNumero(b) + '}{' + formatearNumero(2 * a) + '} = ' + formatearNumero(r) + '$$'));
+
+        pasos.push(construirPaso(4, 'Interpretación geométrica',
+            'La parábola es <strong>tangente</strong> al eje $X$ en $x = ' + formatearNumero(r) + '$. El signo de $f(x)$ es constante en $\\mathbb{R} \\setminus \\{' + formatearNumero(r) + '\\}$.'));
+
+        if ((a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')) {
+            resultadoHTML = '$$\\mathbb{R} \\setminus \\{' + formatearNumero(r) + '\\}$$';
+        } else {
+            resultadoHTML = '$$\\varnothing$$';
+        }
+    } else {
+        var sq = Math.sqrt(disc);
+        var r1 = (-b + sq) / (2 * a);
+        var r2 = (-b - sq) / (2 * a);
+        var rMenor = Math.min(r1, r2);
+        var rMayor = Math.max(r1, r2);
+
+        pasos.push(construirPaso(3, 'Raíces',
+            '$$x_1 = ' + formatearNumero(rMenor) + ' \\quad ; \\quad x_2 = ' + formatearNumero(rMayor) + '$$'));
+
+        var positivoAfuera = (a > 0);
+        var tipo = positivoAfuera ? 'abre hacia arriba' : 'abre hacia abajo';
+
+        pasos.push(construirPaso(4, 'Concavidad',
+            'Como $a = ' + formatearNumero(a) + (a > 0 ? ' > 0' : ' < 0') + '$, la parábola ' + tipo + '.'));
+
+        pasos.push(construirPaso(5, 'Intervalos solución',
+            'Los ceros dividen la recta real en tres intervalos. El signo de $f(x)$ cambia en cada raíz.'));
+
+        var sol1 = '';
+        if (sentido === 'mayor') {
+            sol1 = positivoAfuera
+                ? '$$(-\\infty, ' + formatearNumero(rMenor) + ') \\cup (' + formatearNumero(rMayor) + ', +\\infty)$$'
+                : '$$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$$';
+        } else {
+            sol1 = positivoAfuera
+                ? '$$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$$'
+                : '$$(-\\infty, ' + formatearNumero(rMenor) + ') \\cup (' + formatearNumero(rMayor) + ', +\\infty)$$';
+        }
+        resultadoHTML = sol1;
+    }
+
+    return {
+        pasos: pasos,
+        resultado: resultadoHTML,
+        aviso: 'Recuerda: cuando $a > 0$, $f(x) > 0$ se cumple <strong>fuera</strong> de las raíces y $f(x) < 0$ <strong>entre</strong> ellas. Con $a < 0$, ocurre lo contrario.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: RELACIONES DE RAÍCES
+// =========================================
+function resolverRelaciones(a, b, c) {
+    if (casiIgual(a, 0)) {
+        return { error: 'El coeficiente $a$ no puede ser cero.' };
+    }
+
+    var suma = -b / a;
+    var producto = c / a;
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar coeficientes',
+        '$$a = ' + formatearNumero(a) + ', \\quad b = ' + formatearNumero(b) + ', \\quad c = ' + formatearNumero(c) + '$$'));
+
+    pasos.push(construirPaso(2, 'Suma de raíces',
+        '$$r_1 + r_2 = -\\frac{b}{a} = -\\frac{' + formatearNumero(b) + '}{' + formatearNumero(a) + '} = ' + formatearNumero(suma) + '$$'));
+
+    pasos.push(construirPaso(3, 'Producto de raíces',
+        '$$r_1 \\cdot r_2 = \\frac{c}{a} = \\frac{' + formatearNumero(c) + '}{' + formatearNumero(a) + '} = ' + formatearNumero(producto) + '$$'));
+
+    pasos.push(construirPaso(4, 'Aplicación: ecuación con raíces al cuadrado',
+        '$$S_{\\text{nueva}} = S^2 - 2P = (' + formatearNumero(suma) + ')^2 - 2(' + formatearNumero(producto) + ') = ' +
+        formatearNumero(suma * suma - 2 * producto) + '$$' +
+        '$$P_{\\text{nueva}} = P^2 = (' + formatearNumero(producto) + ')^2 = ' + formatearNumero(producto * producto) + '$$'));
+
+    return {
+        pasos: pasos,
+        resultado: '<p><strong>Suma:</strong> $r_1 + r_2 = ' + formatearNumero(suma) + '$</p>' +
+            '<p><strong>Producto:</strong> $r_1 \\cdot r_2 = ' + formatearNumero(producto) + '$</p>' +
+            '<p><strong>Ecuación con raíces al cuadrado:</strong></p>' +
+            '$$x^2 - ' + formatearNumero(suma * suma - 2 * producto) + 'x + ' + formatearNumero(producto * producto) + ' = 0$$',
+        aviso: 'Las fórmulas de suma y producto permiten obtener información sobre las raíces <strong>sin resolver la ecuación</strong>.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN: DISCRIMINANTE
+// =========================================
+function resolverDiscriminante(a, b, c) {
+    if (casiIgual(a, 0)) {
+        return { error: 'El coeficiente $a$ no puede ser cero.' };
+    }
+
+    var disc = b * b - 4 * a * c;
+    var pasos = [];
+
+    pasos.push(construirPaso(1, 'Identificar coeficientes',
+        '$$a = ' + formatearNumero(a) + ', \\quad b = ' + formatearNumero(b) + ', \\quad c = ' + formatearNumero(c) + '$$'));
+
+    pasos.push(construirPaso(2, 'Sustituir en la fórmula del discriminante',
+        '$$\\Delta = b^2 - 4ac = (' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ')$$'));
+
+    pasos.push(construirPaso(3, 'Calcular',
+        '$$\\Delta = ' + formatearNumero(b * b) + ' - ' + formatearNumero(4 * a * c) + ' = ' + formatearNumero(disc) + '$$'));
+
+    var tipo = '';
+    var detalle = '';
+
+    if (casiIgual(disc, 0)) {
+        tipo = 'Reales e iguales (raíz doble)';
+        detalle = 'La parábola es <strong>tangente</strong> al eje $X$: lo toca en un solo punto (el vértice), sin atravesarlo.';
+    } else if (disc > 0) {
+        var sq = Math.sqrt(disc);
+        if (casiIgual(sq, Math.round(sq))) {
+            tipo = 'Reales, racionales y distintas';
+            detalle = 'La parábola corta al eje $X$ en dos puntos racionales.';
+        } else {
+            tipo = 'Reales, irracionales y distintas';
+            detalle = 'La parábola corta al eje $X$ en dos puntos irracionales.';
+        }
+    } else {
+        tipo = 'Complejas conjugadas';
+        detalle = 'La parábola no corta ni toca al eje $X$.';
+    }
+
+    pasos.push(construirPaso(4, 'Naturaleza de las raíces',
+        '<strong>' + tipo + '</strong><br>' + detalle));
+
+    return {
+        pasos: pasos,
+        resultado: '<p><strong>Discriminante:</strong> $\\Delta = ' + formatearNumero(disc) + '$</p>' +
+            '<p><strong>Naturaleza:</strong> ' + tipo + '</p>',
+        aviso: 'El discriminante anticipa la naturaleza de las raíces sin necesidad de calcularlas.'
+    };
+}
+
+// =========================================
+// RESOLUCIÓN PRINCIPAL
+// =========================================
+function resolver() {
+    var tipo = document.getElementById('tipo-operacion').value;
+    var coefs = leerCoeficientes();
+    if (!coefs) {
+        mostrarError('Debes ingresar valores numéricos válidos en $a$, $b$ y $c$.');
+        return;
+    }
+
+    var resultado;
+    switch (tipo) {
+        case 'desigualdad': {
+            var sentido = document.getElementById('sentido').value;
+            resultado = resolverDesigualdad(coefs.a, coefs.b, coefs.c, sentido);
+            break;
+        }
+        case 'relaciones':
+            resultado = resolverRelaciones(coefs.a, coefs.b, coefs.c);
+            break;
+        case 'discriminante':
+            resultado = resolverDiscriminante(coefs.a, coefs.b, coefs.c);
+            break;
+        default:
+            resultado = { error: 'Operación no reconocida.' };
+    }
+
+    if (resultado.error) {
+        mostrarError(resultado.error);
+        return;
+    }
+
+    var html = '';
+    html += '<div class="bloque-operacion">' +
+        '<div class="titulo-bloque">Desarrollo</div>' +
+        '</div>';
+    resultado.pasos.forEach(function(p) { html += p; });
+    html += '<div class="resultado-final">' +
+        '<div class="titulo-final">✅ Resultado</div>' +
+        '<div class="expresion-final">' + resultado.resultado + '</div>' +
+        '</div>';
+    if (resultado.aviso) {
+        html += '<div class="aviso-pedagogico">💡 ' + resultado.aviso + '</div>';
+    }
+
+    mostrarDesarrollo(html);
+}
+
+// =========================================
+// EVENTOS
+// =========================================
+document.getElementById('btn-resolver').addEventListener('click', resolver);
+document.getElementById('btn-reiniciar').addEventListener('click', function() {
+    document.getElementById('a').value = 1;
+    document.getElementById('b').value = -5;
+    document.getElementById('c').value = 6;
+    document.getElementById('sentido').value = 'mayor';
+    document.getElementById('tipo-operacion').value = 'desigualdad';
+    mostrarPlaceholder();
+});
+
+var ejemplos = {
+    1: { tipo: 'desigualdad', a: 1, b: -5, c: 6, sentido: 'mayor' },
+    2: { tipo: 'desigualdad', a: 1, b: 0, c: -9, sentido: 'menor' },
+    3: { tipo: 'desigualdad', a: 1, b: -4, c: 4, sentido: 'mayor' },
+    4: { tipo: 'relaciones', a: 3, b: -12, c: 7 },
+    5: { tipo: 'discriminante', a: 2, b: 4, c: -6 },
+    6: { tipo: 'discriminante', a: 5, b: -4, c: 1 }
+};
+
+document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var ej = this.getAttribute('data-ej');
+        var data = ejemplos[ej];
+        if (!data) return;
+
+        document.getElementById('tipo-operacion').value = data.tipo;
+        document.getElementById('a').value = data.a;
+        document.getElementById('b').value = data.b;
+        document.getElementById('c').value = data.c;
+        if (data.sentido) document.getElementById('sentido').value = data.sentido;
+
+        resolver();
+    });
+});
+
+document.querySelectorAll('#a, #b, #c').forEach(function(input) {
+    input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') resolver();
+    });
+});
+
+// =========================================
+// INICIALIZACIÓN
+// =========================================
+renderMath(document.body);
+
+</script>
+
+</body>
+</html>

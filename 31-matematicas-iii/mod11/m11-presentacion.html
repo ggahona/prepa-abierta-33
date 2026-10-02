@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Presentación didáctica">
+    <title>Módulo 11 — Desigualdades Cuadráticas, Relaciones de Raíces y Ecuaciones con Radicales | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 30px;
+            text-align: center;
+        }
+
+        header .institucion {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 8px;
+        }
+
+        header h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+        header p { font-size: 1rem; color: var(--color-acento-suave); font-weight: 300; }
+
+        .progreso {
+            width: 100%;
+            height: 6px;
+            background-color: var(--color-base);
+            overflow: hidden;
+        }
+
+        .progreso-barra {
+            height: 100%;
+            background-color: var(--color-acento);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        main {
+            padding: 40px 30px;
+            min-height: 540px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .diapositiva {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .diapositiva.activa { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            color: var(--color-primario);
+            font-size: 1.55rem;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--color-acento);
+            padding-left: 15px;
+        }
+
+        h3 {
+            color: var(--color-acento);
+            font-size: 1.15rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p { margin-bottom: 15px; text-align: justify; }
+        ul, ol { margin-left: 25px; margin-bottom: 15px; }
+        li { margin-bottom: 8px; }
+
+        .math-block { text-align: center; margin: 20px 0; font-size: 1.12rem; color: var(--color-primario); }
+
+        .caja-interactiva {
+            background-color: var(--color-base);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 22px;
+            margin: 22px 0;
+            box-shadow: var(--sombra-suave);
+        }
+
+        .caja-interactiva h3 {
+            color: var(--color-primario);
+            margin-top: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.05rem;
+        }
+
+        .grupo-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 12px 0;
+            align-items: flex-end;
+        }
+
+        .input-wrapper { display: flex; flex-direction: column; }
+
+        .input-wrapper label {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            margin-bottom: 4px;
+        }
+
+        input[type="number"], select {
+            padding: 9px;
+            border: 2px solid var(--color-acento-suave);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            background-color: var(--color-blanco);
+            width: 110px;
+            transition: border-color 0.3s;
+            font-family: inherit;
+        }
+
+        select { width: 150px; }
+
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: var(--color-acento);
+        }
+
+        .btn-primario {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+            font-family: inherit;
+        }
+
+        .btn-primario:hover { background-color: var(--color-primario); }
+        .btn-primario:active { transform: scale(0.98); }
+
+        .resultado {
+            margin-top: 12px;
+            padding: 14px;
+            background-color: var(--color-blanco);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 4px;
+            font-size: 1rem;
+            min-height: 20px;
+        }
+
+        .resultado.error {
+            border-left-color: var(--color-error);
+            color: var(--color-error);
+        }
+
+        .resultado.exito {
+            border-left-color: var(--color-exito);
+        }
+
+        .nota {
+            background-color: rgba(91, 127, 163, 0.1);
+            border-left: 4px solid var(--color-acento);
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            margin: 14px 0;
+        }
+
+        .alerta {
+            background-color: rgba(192, 57, 43, 0.1);
+            border-left: 4px solid var(--color-error);
+            padding: 14px 18px;
+            border-radius: 6px;
+            color: var(--color-error);
+            margin: 18px 0;
+            font-size: 0.93rem;
+        }
+
+        .alerta strong { color: var(--color-error); }
+
+        .navegacion {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+        }
+
+        .nav-btn {
+            background-color: var(--color-acento);
+            color: var(--color-blanco);
+            border: none;
+            padding: 10px 22px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, opacity 0.3s;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover:not(:disabled) { background-color: var(--color-primario); }
+        .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .indicador {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--color-primario);
+            letter-spacing: 0.5px;
+        }
+
+        .felicitacion {
+            background-color: var(--color-base);
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .felicitacion h3 { color: var(--color-primario); margin-bottom: 10px; }
+        .felicitacion p { text-align: center; margin: 0; }
+
+        .footer-info {
+            background-color: var(--color-base);
+            border-top: 1px solid var(--color-acento-suave);
+            padding: 15px 30px;
+            font-size: 0.9rem;
+            color: var(--color-primario);
+            text-align: center;
+        }
+
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.2rem; }
+            main { padding: 25px 20px; min-height: 400px; }
+            .grupo-inputs { flex-direction: column; align-items: stretch; }
+            input[type="number"], select { width: 100%; }
+            .navegacion { padding: 15px 20px; }
+            .nav-btn { padding: 8px 16px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Módulo 11 — Desigualdades Cuadráticas, Relaciones de Raíces y Ecuaciones con Radicales</h1>
+        <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+        <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+        <!-- DIAPOSITIVA 1: BIENVENIDA -->
+        <div class="diapositiva activa">
+            <h2>Bienvenida al Módulo 11</h2>
+            <p>En este módulo ampliamos el estudio de las ecuaciones cuadráticas hacia tres aplicaciones fundamentales:</p>
+            <ul>
+                <li><strong>Desigualdades cuadráticas</strong>: expresiones de la forma $ax^2 + bx + c > 0$ ó $ax^2 + bx + c < 0$.</li>
+                <li><strong>Relaciones entre raíces y coeficientes</strong>: suma y producto de las raíces sin resolver la ecuación.</li>
+                <li><strong>Ecuaciones con radicales y reducibles a forma cuadrática</strong>.</li>
+            </ul>
+            <div class="math-block">$$ax^2 + bx + c > 0 \quad \text{ó} \quad ax^2 + bx + c < 0$$</div>
+            <p>Estudiaremos los métodos <strong>gráfico</strong> y <strong>algebraico</strong> para resolver desigualdades, así como el uso del <strong>discriminante</strong> para anticipar la naturaleza de las raíces.</p>
+        </div>
+
+        <!-- DIAPOSITIVA 2: DESIGUALDADES CUADRÁTICAS -->
+        <div class="diapositiva">
+            <h2>1. Desigualdades Cuadráticas</h2>
+            <p>Una desigualdad cuadrática tiene una de las dos formas siguientes:</p>
+            <div class="math-block">$$ax^2 + bx + c > 0 \quad \text{ó} \quad ax^2 + bx + c < 0$$</div>
+
+            <h3>Tipos de desigualdades</h3>
+            <ul>
+                <li><strong>Condicional</strong>: es cierta sólo para algunos valores de la variable.
+                    <br><em>Ejemplo:</em> $3x - 6 < 0$ sólo es cierta para $x < 2$.</li>
+                <li><strong>Absoluta</strong>: es cierta para todos los valores reales de la variable.
+                    <br><em>Ejemplo:</em> $x^2 + y^2 + 1 > 0$ se cumple para todos los reales, ya que todo cuadrado es $\geq 0$.</li>
+            </ul>
+
+            <h3>Propiedades de las desigualdades</h3>
+            <ol>
+                <li>Sumar o restar un mismo número a ambos miembros no altera la desigualdad.</li>
+                <li>Multiplicar o dividir por un número <strong>positivo</strong> no invierte el sentido.</li>
+                <li>Multiplicar o dividir por un número <strong>negativo</strong> <u>sí invierte</u> el sentido.</li>
+            </ol>
+
+            <div class="caja-interactiva">
+                <h3>🧮 Analizador de desigualdades cuadráticas</h3>
+                <p>Ingresa los coeficientes $a$, $b$ y $c$ para obtener las raíces y los intervalos solución:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="d-a">a =</label><input type="number" id="d-a" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="d-b">b =</label><input type="number" id="d-b" value="-5" step="any"></div>
+                    <div class="input-wrapper"><label for="d-c">c =</label><input type="number" id="d-c" value="6" step="any"></div>
+                    <div class="input-wrapper">
+                        <label for="d-sentido">Sentido:</label>
+                        <select id="d-sentido">
+                            <option value="mayor">f(x) &gt; 0</option>
+                            <option value="menor">f(x) &lt; 0</option>
+                        </select>
+                    </div>
+                    <button class="btn-primario" id="btn-desigualdad">Analizar</button>
+                </div>
+                <div class="resultado" id="res-desigualdad" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 3: MÉTODO GRÁFICO -->
+        <div class="diapositiva">
+            <h2>2. Método Gráfico</h2>
+            <p>Consiste en graficar $y = ax^2 + bx + c$ y observar en qué intervalos la parábola queda <strong>arriba</strong> o <strong>debajo</strong> del eje $X$.</p>
+
+            <h3>Ejemplo: $x^2 - 5x > -6$</h3>
+            <p><strong>Paso 1:</strong> Llevar a la forma $f(x) > 0$:</p>
+            <div class="math-block">$$x^2 - 5x + 6 > 0$$</div>
+            <p><strong>Paso 2:</strong> Identificar las raíces: $x = 2$ y $x = 3$.</p>
+            <p><strong>Paso 3:</strong> La parábola abre hacia arriba. Queda arriba del eje $X$ cuando $x < 2$ ó $x > 3$.</p>
+            <div class="math-block">$$\{x \in \mathbb{R} \mid x < 2 \;\text{ó}\; x > 3\}$$</div>
+
+            <div class="nota">
+                <strong>💡 Regla:</strong> si la parábola abre hacia arriba ($a > 0$), la solución de $f(x) > 0$ son los intervalos <strong>exteriores</strong> a las raíces; la de $f(x) < 0$ es el intervalo <strong>entre</strong> las raíces.
+            </div>
+
+            <div class="caja-interactiva">
+                <h3>📊 Explorador del método gráfico</h3>
+                <p>Ingresa los coeficientes y observa los intervalos solución según el sentido de la desigualdad:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="g-a">a =</label><input type="number" id="g-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="g-b">b =</label><input type="number" id="g-b" value="-1" step="any"></div>
+                    <div class="input-wrapper"><label for="g-c">c =</label><input type="number" id="g-c" value="-10" step="any"></div>
+                    <div class="input-wrapper">
+                        <label for="g-sentido">Sentido:</label>
+                        <select id="g-sentido">
+                            <option value="mayor">f(x) &gt; 0</option>
+                            <option value="menor">f(x) &lt; 0</option>
+                        </select>
+                    </div>
+                    <button class="btn-primario" id="btn-grafico">Explorar</button>
+                </div>
+                <div class="resultado" id="res-grafico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 4: MÉTODO ALGEBRAICO -->
+        <div class="diapositiva">
+            <h2>3. Método Algebraico</h2>
+            <p>Consiste en factorizar $f(x)$, encontrar sus ceros y analizar el signo en cada intervalo determinado por ellos.</p>
+
+            <h3>Ejemplo: $3x^2 > 15 - 4x$</h3>
+            <p><strong>Paso 1:</strong> Llevar a la forma $f(x) > 0$:</p>
+            <div class="math-block">$$3x^2 + 4x - 15 > 0$$</div>
+            <p><strong>Paso 2:</strong> Factorizar: $(3x - 5)(x + 3) > 0$. Ceros en $x = \frac{5}{3}$ y $x = -3$.</p>
+            <p><strong>Paso 3:</strong> Analizar signos en los intervalos:</p>
+            <ul>
+                <li>$x < -3$: producto $(+)$</li>
+                <li>$-3 < x < \frac{5}{3}$: producto $(-)$</li>
+                <li>$x > \frac{5}{3}$: producto $(+)$</li>
+            </ul>
+            <p><strong>Resultado:</strong> $\left\{x \in \mathbb{R} \mid x < -3 \;\text{ó}\; x > \frac{5}{3}\right\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>🧩 Analizador de signos</h3>
+                <p>Ingresa los coeficientes y el sentido para ver el análisis de signos por intervalo:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="alg-a">a =</label><input type="number" id="alg-a" value="3" step="any"></div>
+                    <div class="input-wrapper"><label for="alg-b">b =</label><input type="number" id="alg-b" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="alg-c">c =</label><input type="number" id="alg-c" value="-15" step="any"></div>
+                    <div class="input-wrapper">
+                        <label for="alg-sentido">Sentido:</label>
+                        <select id="alg-sentido">
+                            <option value="mayor">f(x) &gt; 0</option>
+                            <option value="menor">f(x) &lt; 0</option>
+                        </select>
+                    </div>
+                    <button class="btn-primario" id="btn-algebraico">Analizar signos</button>
+                </div>
+                <div class="resultado" id="res-algebraico" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 5: RELACIONES DE RAÍCES -->
+        <div class="diapositiva">
+            <h2>4. Relaciones entre Raíces y Coeficientes</h2>
+            <p>Para la ecuación $ax^2 + bx + c = 0$ con raíces $r_1$ y $r_2$, se cumplen las siguientes relaciones:</p>
+            <div class="math-block">$$r_1 + r_2 = -\frac{b}{a} \quad ; \quad r_1 \cdot r_2 = \frac{c}{a}$$</div>
+            <p>Estas fórmulas permiten obtener información sobre las raíces <strong>sin resolver la ecuación</strong>.</p>
+
+            <h3>Ejemplo: $2x^2 - 4x + 8 = 0$</h3>
+            <p>Con $a = 2$, $b = -4$, $c = 8$:</p>
+            <div class="math-block">$$r_1 + r_2 = -\frac{-4}{2} = 2 \quad ; \quad r_1 \cdot r_2 = \frac{8}{2} = 4$$</div>
+
+            <div class="caja-interactiva">
+                <h3>📐 Calculadora de relaciones de raíces</h3>
+                <p>Ingresa los coeficientes de $ax^2 + bx + c = 0$ para obtener la suma y el producto de sus raíces:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="rr-a">a =</label><input type="number" id="rr-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="rr-b">b =</label><input type="number" id="rr-b" value="-4" step="any"></div>
+                    <div class="input-wrapper"><label for="rr-c">c =</label><input type="number" id="rr-c" value="8" step="any"></div>
+                    <button class="btn-primario" id="btn-relaciones">Calcular</button>
+                </div>
+                <div class="resultado" id="res-relaciones" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 6: FORMAR ECUACIONES CON RAÍCES TRANSFORMADAS -->
+        <div class="diapositiva">
+            <h2>5. Formar una Ecuación con Raíces Transformadas</h2>
+            <p>Conocidas la suma $S$ y el producto $P$ de las raíces originales, la nueva ecuación para raíces transformadas es:</p>
+            <div class="math-block">$$x^2 - S_{\text{nueva}}\,x + P_{\text{nueva}} = 0$$</div>
+
+            <h3>Transformaciones más comunes</h3>
+            <ul>
+                <li><strong>Cuadrado</strong> ($r^2$): $S_{\text{nueva}} = S^2 - 2P$, &nbsp; $P_{\text{nueva}} = P^2$.</li>
+                <li><strong>Triple</strong> ($3r$): $S_{\text{nueva}} = 3S$, &nbsp; $P_{\text{nueva}} = 9P$.</li>
+                <li><strong>Recíproco</strong> ($1/r$): $S_{\text{nueva}} = S/P$, &nbsp; $P_{\text{nueva}} = 1/P$.</li>
+            </ul>
+
+            <h3>Ejemplo verificado: raíces cuadradas de las de $x^2 - 5x + 6 = 0$</h3>
+            <p>Las raíces originales son $r_1 = 2$ y $r_2 = 3$ (suma $5$, producto $6$).</p>
+            <p>Las nuevas raíces son $r_1^2 = 4$ y $r_2^2 = 9$ (suma $13$, producto $36$).</p>
+            <p>La nueva ecuación es:</p>
+            <div class="math-block">$$x^2 - 13x + 36 = 0$$</div>
+            <p><strong>Verificación:</strong> al resolver, las raíces son efectivamente $4$ y $9$, que son los cuadrados de $2$ y $3$. ✅</p>
+
+            <div class="caja-interactiva">
+                <h3>🔁 Formador de ecuaciones con raíces transformadas</h3>
+                <p>Ingresa la suma $S$ y el producto $P$ de las raíces originales, y el tipo de transformación:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="f-S">S (suma) =</label><input type="number" id="f-S" value="5" step="any"></div>
+                    <div class="input-wrapper"><label for="f-P">P (producto) =</label><input type="number" id="f-P" value="6" step="any"></div>
+                    <div class="input-wrapper">
+                        <label for="f-tipo">Transformación:</label>
+                        <select id="f-tipo">
+                            <option value="cuadrado">Cuadrado (r²)</option>
+                            <option value="triple">Triple (3r)</option>
+                            <option value="reciproco">Recíproco (1/r)</option>
+                        </select>
+                    </div>
+                    <button class="btn-primario" id="btn-formar">Formar ecuación</button>
+                </div>
+                <div class="resultado" id="res-formar" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 7: DISCRIMINANTE -->
+        <div class="diapositiva">
+            <h2>6. El Discriminante $\Delta = b^2 - 4ac$</h2>
+            <p>El valor del discriminante determina la <strong>naturaleza de las raíces</strong> de una ecuación cuadrática:</p>
+            <ul>
+                <li><strong>$\Delta = 0$</strong>: raíces reales e iguales. Geométricamente, la parábola <strong>toca</strong> al eje $X$ en un solo punto (el vértice), <u>sin atravesarlo</u>.</li>
+                <li><strong>$\Delta > 0$ cuadrado perfecto</strong>: raíces reales, racionales y distintas. La parábola corta al eje $X$ en dos puntos racionales.</li>
+                <li><strong>$\Delta > 0$ no cuadrado perfecto</strong>: raíces reales, irracionales y distintas. La parábola corta al eje $X$ en dos puntos irracionales.</li>
+                <li><strong>$\Delta < 0$</strong>: raíces complejas conjugadas. La parábola no corta ni toca al eje $X$.</li>
+            </ul>
+
+            <div class="caja-interactiva">
+                <h3>🔍 Analizador del discriminante</h3>
+                <p>Ingresa los coeficientes para conocer la naturaleza de las raíces:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="disc-a">a =</label><input type="number" id="disc-a" value="2" step="any"></div>
+                    <div class="input-wrapper"><label for="disc-b">b =</label><input type="number" id="disc-b" value="4" step="any"></div>
+                    <div class="input-wrapper"><label for="disc-c">c =</label><input type="number" id="disc-c" value="-6" step="any"></div>
+                    <button class="btn-primario" id="btn-discriminante">Analizar</button>
+                </div>
+                <div class="resultado" id="res-discriminante" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 8: ECUACIONES CON RADICALES -->
+        <div class="diapositiva">
+            <h2>7. Ecuaciones con Radicales</h2>
+            <p>El método consiste en <strong>aislar un radical</strong> y elevar al cuadrado ambos miembros. Si hay varios radicales, se repite el proceso.</p>
+
+            <div class="alerta">
+                <strong>⚠️ Raíces extrañas:</strong> al elevar al cuadrado se pueden introducir soluciones que <u>no</u> satisfacen la ecuación original. Es obligatorio <strong>comprobar</strong> cada solución.
+            </div>
+
+            <h3>Ejemplo con raíz extraña: $x - 4 = \sqrt{3x + 6}$</h3>
+            <p><strong>Paso 1:</strong> Elevar al cuadrado: $(x - 4)^2 = 3x + 6$.</p>
+            <p><strong>Paso 2:</strong> Expandir: $x^2 - 8x + 16 = 3x + 6$.</p>
+            <p><strong>Paso 3:</strong> Reagrupar: $x^2 - 11x + 10 = 0$.</p>
+            <p><strong>Paso 4:</strong> Factorizar: $(x - 1)(x - 10) = 0 \Rightarrow x = 1$ ó $x = 10$.</p>
+            <p><strong>Paso 5 — Comprobación:</strong></p>
+            <ul>
+                <li>Para $x = 1$: $1 - 4 = -3$ y $\sqrt{3(1)+6} = \sqrt{9} = 3$. Como $-3 \neq 3$, $x = 1$ es <strong>raíz extraña</strong>. ❌</li>
+                <li>Para $x = 10$: $10 - 4 = 6$ y $\sqrt{3(10)+6} = \sqrt{36} = 6$. Como $6 = 6$, $x = 10$ es válida. ✅</li>
+            </ul>
+            <p><strong>Conjunto solución:</strong> $\{10\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>√ Verificador de raíces</h3>
+                <p>Ingresa un valor de $x$ para comprobar si satisface $x - 4 = \sqrt{3x + 6}$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="rad-x">x =</label><input type="number" id="rad-x" value="10" step="any"></div>
+                    <button class="btn-primario" id="btn-radical">Verificar</button>
+                </div>
+                <div class="resultado" id="res-radical" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 9: ECUACIONES REDUCIBLES -->
+        <div class="diapositiva">
+            <h2>8. Ecuaciones Reducibles a Forma Cuadrática</h2>
+            <p>Una ecuación de la forma $a[f(x)]^n + b[f(x)]^{n/2} + c = 0$ se resuelve con un <strong>cambio de variable</strong>.</p>
+
+            <h3>Caso 1 — Polinomio compuesto: $(x^2 - 2x)^2 - (x^2 - 2x) - 6 = 0$</h3>
+            <p>Hacemos $z = x^2 - 2x$:</p>
+            <div class="math-block">$$z^2 - z - 6 = 0 \Rightarrow (z - 3)(z + 2) = 0 \Rightarrow z = 3 \;\text{ó}\; z = -2$$</div>
+            <p>Sustituyendo de vuelta:</p>
+            <ul>
+                <li>$x^2 - 2x = 3 \Rightarrow x = 3$ ó $x = -1$</li>
+                <li>$x^2 - 2x = -2 \Rightarrow x = 1 \pm i$</li>
+            </ul>
+            <p><strong>Conjunto solución:</strong> $\{3, -1, 1+i, 1-i\}$</p>
+
+            <h3>Caso 2 — Exponentes negativos: $5x^{-2} + 12x^{-1} - 9 = 0$</h3>
+            <p>Hacemos $z = x^{-1}$ (nota: $x^{-2} = (x^{-1})^2 = z^2$):</p>
+            <div class="math-block">$$5z^2 + 12z - 9 = 0$$</div>
+            <p>Resolviendo por factorización o fórmula general:</p>
+            <div class="math-block">$$z = \frac{-12 \pm \sqrt{144 + 180}}{10} = \frac{-12 \pm 18}{10}$$</div>
+            <p>Entonces $z = \frac{3}{5}$ ó $z = -3$. Sustituyendo $z = 1/x$:</p>
+            <ul>
+                <li>$1/x = 3/5 \Rightarrow x = 5/3$</li>
+                <li>$1/x = -3 \Rightarrow x = -1/3$</li>
+            </ul>
+            <p><strong>Conjunto solución:</strong> $\{5/3, -1/3\}$</p>
+
+            <div class="caja-interactiva">
+                <h3>🔁 Resolvedor por cambio de variable</h3>
+                <p>Ingresa los valores de $S$ y $P$ de la ecuación auxiliar $z^2 - Sz + P = 0$:</p>
+                <div class="grupo-inputs">
+                    <div class="input-wrapper"><label for="cv-S">S (suma) =</label><input type="number" id="cv-S" value="1" step="any"></div>
+                    <div class="input-wrapper"><label for="cv-P">P (producto) =</label><input type="number" id="cv-P" value="-6" step="any"></div>
+                    <button class="btn-primario" id="btn-cambio">Resolver</button>
+                </div>
+                <div class="resultado" id="res-cambio" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+            </div>
+        </div>
+
+        <!-- DIAPOSITIVA 10: RESUMEN -->
+        <div class="diapositiva">
+            <h2>9. Resumen del Módulo</h2>
+            <h3>Ideas clave</h3>
+            <ul>
+                <li>Una <strong>desigualdad cuadrática</strong> tiene la forma $ax^2 + bx + c > 0$ ó $< 0$.</li>
+                <li>Puede ser <strong>condicional</strong> (cierta solo para algunos valores) o <strong>absoluta</strong> (cierta para todos los reales).</li>
+                <li>El <strong>método gráfico</strong> identifica los intervalos donde la parábola queda arriba o debajo del eje $X$.</li>
+                <li>El <strong>método algebraico</strong> factoriza, encuentra los ceros y analiza el signo por intervalos.</li>
+                <li>Las <strong>relaciones de raíces</strong> son: $r_1 + r_2 = -\dfrac{b}{a}$ y $r_1 \cdot r_2 = \dfrac{c}{a}$.</li>
+                <li>Conocidas $S$ y $P$, la ecuación es $x^2 - Sx + P = 0$; las transformaciones siguen reglas específicas ($r^2$, $3r$, $1/r$).</li>
+                <li>El <strong>discriminante</strong> $\Delta = b^2 - 4ac$ determina la naturaleza de las raíces.</li>
+                <li>Las <strong>ecuaciones con radicales</strong> se resuelven aislando el radical y elevando al cuadrado; siempre se deben verificar las soluciones para descartar raíces extrañas.</li>
+                <li>Las <strong>ecuaciones reducibles</strong> se resuelven con un cambio de variable $z = f(x)$, incluyendo casos con exponentes negativos.</li>
+            </ul>
+
+            <div class="felicitacion">
+                <h3>🎉 ¡Felicidades!</h3>
+                <p>Has completado el Módulo 11. Ahora dominas las desigualdades cuadráticas, las relaciones de raíces, el discriminante y las ecuaciones con radicales y reducibles.</p>
+            </div>
+        </div>
+    </main>
+
+    <div class="navegacion">
+        <button class="nav-btn" id="btnAnterior" disabled>← Anterior</button>
+        <span class="indicador" id="indicador">Diapositiva 1 de 10</span>
+        <button class="nav-btn" id="btnSiguiente">Siguiente →</button>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Resolver desigualdades cuadráticas mediante los métodos gráfico y algebraico,
+        aplicar las relaciones entre raíces y coeficientes para formar ecuaciones sin resolverlas,
+        analizar la naturaleza de las raíces a través del discriminante, y resolver ecuaciones con
+        radicales y ecuaciones reducibles a la forma cuadrática mediante cambios de variable.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // NAVEGACIÓN POR DIAPOSITIVAS
+    // =========================================
+    var diapositivas = document.querySelectorAll('.diapositiva');
+    var btnAnterior = document.getElementById('btnAnterior');
+    var btnSiguiente = document.getElementById('btnSiguiente');
+    var indicador = document.getElementById('indicador');
+    var progresoBarra = document.getElementById('progresoBarra');
+    var indiceActual = 0;
+    var totalDiapositivas = diapositivas.length;
+
+    function renderMath(element) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([element]).catch(function(err){ console.log(err); });
+        }
+    }
+
+    function actualizarDiapositiva() {
+        for (var i = 0; i < diapositivas.length; i++) {
+            if (i === indiceActual) {
+                diapositivas[i].classList.add('activa');
+            } else {
+                diapositivas[i].classList.remove('activa');
+            }
+        }
+
+        indicador.textContent = 'Diapositiva ' + (indiceActual + 1) + ' de ' + totalDiapositivas;
+        progresoBarra.style.width = (((indiceActual + 1) / totalDiapositivas) * 100) + '%';
+
+        btnAnterior.disabled = (indiceActual === 0);
+        btnSiguiente.disabled = (indiceActual === totalDiapositivas - 1);
+        btnSiguiente.textContent = (indiceActual === totalDiapositivas - 1) ? 'Fin' : 'Siguiente →';
+
+        renderMath(diapositivas[indiceActual]);
+    }
+
+    btnAnterior.addEventListener('click', function() {
+        if (indiceActual > 0) {
+            indiceActual--;
+            actualizarDiapositiva();
+        }
+    });
+
+    btnSiguiente.addEventListener('click', function() {
+        if (indiceActual < totalDiapositivas - 1) {
+            indiceActual++;
+            actualizarDiapositiva();
+        }
+    });
+
+    actualizarDiapositiva();
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(3)).toString();
+    }
+
+    function casiIgual(x, y, tol) {
+        tol = tol || 1e-9;
+        return Math.abs(x - y) < tol;
+    }
+
+    // =========================================
+    // 1. ANALIZADOR DE DESIGUALDADES CUADRÁTICAS
+    // =========================================
+    document.getElementById('btn-desigualdad').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('d-a').value);
+        var b = parseFloat(document.getElementById('d-b').value);
+        var c = parseFloat(document.getElementById('d-c').value);
+        var sentido = document.getElementById('d-sentido').value;
+        var res = document.getElementById('res-desigualdad');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var html = '<p>Función: $f(x) = ' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ')$</p>';
+        html += '<p>Discriminante: $\\Delta = ' + formatearNumero(disc) + '$</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Como $\\Delta < 0$, la parábola no corta al eje $X$. ';
+            if ((a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')) {
+                html += 'La solución es <strong>todos los reales</strong>.</p>';
+            } else {
+                html += 'La solución es el <strong>conjunto vacío</strong>.</p>';
+            }
+        } else if (casiIgual(disc, 0)) {
+            var r = -b / (2 * a);
+            html += '<p>Como $\\Delta = 0$, hay una raíz doble en $x = ' + formatearNumero(r) + '$.</p>';
+            html += '<p>La parábola es <strong>tangente</strong> al eje $X$ en ese punto.</p>';
+            if ((a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')) {
+                html += '<p><strong>Solución:</strong> $\\mathbb{R} \\setminus \\{' + formatearNumero(r) + '\\}$ (todos los reales excepto la raíz).</p>';
+            } else {
+                html += '<p><strong>Solución:</strong> conjunto vacío (el trinomio nunca es del signo pedido).</p>';
+            }
+        } else {
+            var sq = Math.sqrt(disc);
+            var r1 = (-b + sq) / (2 * a);
+            var r2 = (-b - sq) / (2 * a);
+            var rMenor = Math.min(r1, r2);
+            var rMayor = Math.max(r1, r2);
+            html += '<p>Raíces: $x_1 = ' + formatearNumero(rMenor) + '$, $x_2 = ' + formatearNumero(rMayor) + '$</p>';
+
+            var positivoAfuera = (a > 0);
+            var solucion = '';
+            if (sentido === 'mayor') {
+                solucion = positivoAfuera
+                    ? '$(-\\infty, ' + formatearNumero(rMenor) + ') \\cup (' + formatearNumero(rMayor) + ', +\\infty)$'
+                    : '$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$';
+            } else {
+                solucion = positivoAfuera
+                    ? '$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$'
+                    : '$(-\\infty, ' + formatearNumero(rMenor) + ') \\cup (' + formatearNumero(rMayor) + ', +\\infty)$';
+            }
+            html += '<p><strong>Solución:</strong> ' + solucion + '</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 2. EXPLORADOR DEL MÉTODO GRÁFICO
+    // =========================================
+    document.getElementById('btn-grafico').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('g-a').value);
+        var b = parseFloat(document.getElementById('g-b').value);
+        var c = parseFloat(document.getElementById('g-c').value);
+        var sentido = document.getElementById('g-sentido').value;
+        var res = document.getElementById('res-grafico');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var html = '<p>La parábola $y = ' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ')$ ';
+        html += (a > 0) ? 'abre hacia <strong>arriba</strong>.' : 'abre hacia <strong>abajo</strong>.';
+        html += '</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Como no corta al eje $X$, la región ' + (sentido === 'mayor' ? 'arriba' : 'debajo') + ' del eje ';
+            html += (a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')
+                ? 'ocupa <strong>todo el plano</strong>.' : 'está <strong>vacía</strong>.';
+            html += '</p>';
+        } else if (casiIgual(disc, 0)) {
+            var r = -b / (2 * a);
+            html += '<p>La parábola es <strong>tangente</strong> al eje $X$ en $x = ' + formatearNumero(r) + '$ (raíz doble).</p>';
+        } else {
+            var sq = Math.sqrt(disc);
+            var r1 = (-b + sq) / (2 * a);
+            var r2 = (-b - sq) / (2 * a);
+            var rMenor = Math.min(r1, r2);
+            var rMayor = Math.max(r1, r2);
+            html += '<p>Raíces: $x_1 = ' + formatearNumero(rMenor) + '$, $x_2 = ' + formatearNumero(rMayor) + '$</p>';
+            html += '<p>La parábola queda ' + (sentido === 'mayor' ? 'arriba' : 'debajo') + ' del eje $X$ en los intervalos que corresponden a la solución.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 3. ANALIZADOR DE SIGNOS (MÉTODO ALGEBRAICO)
+    // =========================================
+    document.getElementById('btn-algebraico').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('alg-a').value);
+        var b = parseFloat(document.getElementById('alg-b').value);
+        var c = parseFloat(document.getElementById('alg-c').value);
+        var sentido = document.getElementById('alg-sentido').value;
+        var res = document.getElementById('res-algebraico');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var html = '<p>Función: $f(x) = ' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ')$</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Como $\\Delta < 0$, no hay ceros reales. El signo de $f(x)$ es constante: ';
+            html += (a > 0) ? 'siempre <strong>positivo</strong>.' : 'siempre <strong>negativo</strong>.';
+            html += '</p>';
+        } else if (casiIgual(disc, 0)) {
+            var r = -b / (2 * a);
+            html += '<p>Como $\\Delta = 0$, hay una raíz doble en $x = ' + formatearNumero(r) + '$.</p>';
+            html += '<p>El signo de $f(x)$ es constante en $\\mathbb{R} \\setminus \\{' + formatearNumero(r) + '\\}$: ';
+            html += (a > 0) ? 'siempre <strong>positivo</strong>.' : 'siempre <strong>negativo</strong>.';
+            html += '</p>';
+            html += '<p>En $x = ' + formatearNumero(r) + '$, $f(x) = 0$.</p>';
+            if ((a > 0 && sentido === 'mayor') || (a < 0 && sentido === 'menor')) {
+                html += '<p><strong>Solución:</strong> todos los reales excepto $x = ' + formatearNumero(r) + '$.</p>';
+            } else {
+                html += '<p><strong>Solución:</strong> conjunto vacío.</p>';
+            }
+        } else {
+            var sq = Math.sqrt(disc);
+            var r1 = (-b + sq) / (2 * a);
+            var r2 = (-b - sq) / (2 * a);
+            var rMenor = Math.min(r1, r2);
+            var rMayor = Math.max(r1, r2);
+
+            html += '<p>Ceros: $x_1 = ' + formatearNumero(rMenor) + '$, $x_2 = ' + formatearNumero(rMayor) + '$</p>';
+            html += '<p>Intervalos y signos:</p><ul>';
+            html += '<li>$(-\\infty, ' + formatearNumero(rMenor) + ')$: signo ' + ((a > 0) ? '$(+)$' : '$(-)$') + '</li>';
+            html += '<li>$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$: signo ' + ((a > 0) ? '$(-)$' : '$(+)$') + '</li>';
+            html += '<li>$(' + formatearNumero(rMayor) + ', +\\infty)$: signo ' + ((a > 0) ? '$(+)$' : '$(-)$') + '</li>';
+            html += '</ul>';
+            html += '<p>La solución corresponde a los intervalos donde el signo es ' + (sentido === 'mayor' ? 'positivo' : 'negativo') + '.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+
+    // =========================================
+    // 4. CALCULADORA DE RELACIONES DE RAÍCES
+    // =========================================
+    document.getElementById('btn-relaciones').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('rr-a').value);
+        var b = parseFloat(document.getElementById('rr-b').value);
+        var c = parseFloat(document.getElementById('rr-c').value);
+        var res = document.getElementById('res-relaciones');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var suma = -b / a;
+        var producto = c / a;
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Para la ecuación $' + formatearNumero(a) + 'x^2 + (' + formatearNumero(b) + ')x + (' + formatearNumero(c) + ') = 0$:</p>' +
+            '$$r_1 + r_2 = -\\frac{b}{a} = -\\frac{' + formatearNumero(b) + '}{' + formatearNumero(a) + '} = ' + formatearNumero(suma) + '$$' +
+            '$$r_1 \\cdot r_2 = \\frac{c}{a} = \\frac{' + formatearNumero(c) + '}{' + formatearNumero(a) + '} = ' + formatearNumero(producto) + '$$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 5. FORMADOR DE ECUACIONES CON RAÍCES TRANSFORMADAS
+    // =========================================
+    document.getElementById('btn-formar').addEventListener('click', function() {
+        var S = parseFloat(document.getElementById('f-S').value);
+        var P = parseFloat(document.getElementById('f-P').value);
+        var tipo = document.getElementById('f-tipo').value;
+        var res = document.getElementById('res-formar');
+
+        if (isNaN(S) || isNaN(P)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa valores numéricos para $S$ y $P$.';
+            renderMath(res);
+            return;
+        }
+
+        var nuevaS, nuevaP, descripcion, formulaS, formulaP;
+
+        if (tipo === 'cuadrado') {
+            nuevaS = S * S - 2 * P;
+            nuevaP = P * P;
+            descripcion = 'las raíces al cuadrado ($r^2$)';
+            formulaS = 'S^2 - 2P = (' + formatearNumero(S) + ')^2 - 2(' + formatearNumero(P) + ')';
+            formulaP = 'P^2 = (' + formatearNumero(P) + ')^2';
+        } else if (tipo === 'triple') {
+            nuevaS = 3 * S;
+            nuevaP = 9 * P;
+            descripcion = 'las raíces triplicadas ($3r$)';
+            formulaS = '3S = 3(' + formatearNumero(S) + ')';
+            formulaP = '9P = 9(' + formatearNumero(P) + ')';
+        } else {
+            if (casiIgual(P, 0)) {
+                res.className = 'resultado error';
+                res.innerHTML = '⚠️ Si $P = 0$, una raíz es cero y no existe el recíproco.';
+                renderMath(res);
+                return;
+            }
+            nuevaS = S / P;
+            nuevaP = 1 / P;
+            descripcion = 'las raíces recíprocas ($1/r$)';
+            formulaS = 'S/P = ' + formatearNumero(S) + '/' + formatearNumero(P);
+            formulaP = '1/P = 1/' + formatearNumero(P);
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Para raíces originales con $S = ' + formatearNumero(S) + '$ y $P = ' + formatearNumero(P) + '$, la nueva ecuación para ' + descripcion + ' es:</p>' +
+            '$$S_{\\text{nueva}} = ' + formulaS + ' = ' + formatearNumero(nuevaS) + '$$' +
+            '$$P_{\\text{nueva}} = ' + formulaP + ' = ' + formatearNumero(nuevaP) + '$$' +
+            '<p><strong>Ecuación resultante:</strong></p>' +
+            '$$x^2 - ' + formatearNumero(nuevaS) + 'x + ' + formatearNumero(nuevaP) + ' = 0$$';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 6. ANALIZADOR DEL DISCRIMINANTE
+    // =========================================
+    document.getElementById('btn-discriminante').addEventListener('click', function() {
+        var a = parseFloat(document.getElementById('disc-a').value);
+        var b = parseFloat(document.getElementById('disc-b').value);
+        var c = parseFloat(document.getElementById('disc-c').value);
+        var res = document.getElementById('res-discriminante');
+
+        if (isNaN(a) || isNaN(b) || isNaN(c) || casiIgual(a, 0)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa coeficientes válidos con $a \\neq 0$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var tipo = '';
+        var detalle = '';
+
+        if (casiIgual(disc, 0)) {
+            tipo = 'Reales e iguales (raíz doble)';
+            detalle = 'La parábola es <strong>tangente</strong> al eje $X$: lo toca en un solo punto (el vértice), sin atravesarlo.';
+        } else if (disc > 0) {
+            var sq = Math.sqrt(disc);
+            if (casiIgual(sq, Math.round(sq))) {
+                tipo = 'Reales, racionales y distintas';
+                detalle = 'La parábola corta al eje $X$ en dos puntos racionales.';
+            } else {
+                tipo = 'Reales, irracionales y distintas';
+                detalle = 'La parábola corta al eje $X$ en dos puntos irracionales.';
+            }
+        } else {
+            tipo = 'Complejas conjugadas';
+            detalle = 'La parábola no corta ni toca al eje $X$.';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = '<p>Con $a = ' + formatearNumero(a) + '$, $b = ' + formatearNumero(b) + '$, $c = ' + formatearNumero(c) + '$:</p>' +
+            '$$\\Delta = b^2 - 4ac = (' + formatearNumero(b) + ')^2 - 4(' + formatearNumero(a) + ')(' + formatearNumero(c) + ') = ' + formatearNumero(disc) + '$$' +
+            '<p><strong>Naturaleza de las raíces:</strong> ' + tipo + '</p>' +
+            '<p>' + detalle + '</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 7. VERIFICADOR DE SOLUCIONES CON RADICALES
+    // =========================================
+    document.getElementById('btn-radical').addEventListener('click', function() {
+        var x = parseFloat(document.getElementById('rad-x').value);
+        var res = document.getElementById('res-radical');
+
+        if (isNaN(x)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa un valor numérico para $x$.';
+            renderMath(res);
+            return;
+        }
+
+        if (x < -2) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ El radicando $\\sqrt{3x + 6}$ requiere $x \\geq -2$.';
+            renderMath(res);
+            return;
+        }
+
+        var lhs = x - 4;
+        var rhs = Math.sqrt(3 * x + 6);
+        var cumple = casiIgual(lhs, rhs, 1e-6);
+
+        var lhsCuadrado = lhs * lhs;
+        var rhsCuadrado = 3 * x + 6;
+        var igualesCuadrado = casiIgual(lhsCuadrado, rhsCuadrado, 1e-6);
+
+        res.className = 'resultado ' + (cumple ? 'exito' : 'error');
+        res.innerHTML = '<p>Evaluamos en $x = ' + formatearNumero(x) + '$:</p>' +
+            '$$x - 4 = ' + formatearNumero(parseFloat(lhs.toFixed(4))) + '$$' +
+            '$$\\sqrt{3x + 6} = \\sqrt{' + formatearNumero(3 * x + 6) + '} = ' + formatearNumero(parseFloat(rhs.toFixed(4))) + '$$' +
+            '<p><strong>Verificación algebraica:</strong></p>' +
+            '$$(x - 4)^2 = (' + formatearNumero(x) + ' - 4)^2 = ' + formatearNumero(parseFloat(lhsCuadrado.toFixed(4))) + '$$' +
+            '$$3x + 6 = 3(' + formatearNumero(x) + ') + 6 = ' + formatearNumero(rhsCuadrado) + '$$' +
+            '<p>' + (igualesCuadrado ? 'Ambos cuadrados coinciden.' : 'Los cuadrados no coinciden.') + '</p>' +
+            '<p>' + (cumple
+                ? '✅ Ambas expresiones originales son iguales: la solución es <strong>válida</strong>.'
+                : '❌ Las expresiones originales NO son iguales. Aunque los cuadrados coincidan, la solución es una <strong>raíz extraña</strong> (el signo no se preservó al elevar al cuadrado).') + '</p>';
+        renderMath(res);
+    });
+
+    // =========================================
+    // 8. RESOLVEDOR POR CAMBIO DE VARIABLE
+    // =========================================
+    document.getElementById('btn-cambio').addEventListener('click', function() {
+        var S = parseFloat(document.getElementById('cv-S').value);
+        var P = parseFloat(document.getElementById('cv-P').value);
+        var res = document.getElementById('res-cambio');
+
+        if (isNaN(S) || isNaN(P)) {
+            res.className = 'resultado error';
+            res.innerHTML = '⚠️ Ingresa valores numéricos para $S$ y $P$.';
+            renderMath(res);
+            return;
+        }
+
+        var disc = S * S - 4 * P;
+        var html = '<p>Ecuación auxiliar: $z^2 - (' + formatearNumero(S) + ')z + (' + formatearNumero(P) + ') = 0$</p>';
+        html += '<p>Discriminante: $\\Delta = ' + formatearNumero(disc) + '$</p>';
+
+        if (disc < -1e-9) {
+            html += '<p>Las soluciones para $z$ son complejas. Requiere resolver con números complejos.</p>';
+        } else {
+            var sq = Math.sqrt(Math.max(disc, 0));
+            var z1 = (S + sq) / 2;
+            var z2 = (S - sq) / 2;
+            html += '<p>Valores de $z$: $z_1 = ' + formatearNumero(z1) + '$, $z_2 = ' + formatearNumero(z2) + '$</p>';
+            html += '<p>Ahora, para cada $z$, sustituye en $z = f(x)$ y resuelve la ecuación resultante.</p>';
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML = html;
+        renderMath(res);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="tipo-recurso" content="Visualizador interactivo">
+    <title>Visualizador: Desigualdades Cuadráticas | Matemáticas III</title>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' },
+            options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --color-base: #e8eef5;
+            --color-acento-suave: #a9c1d9;
+            --color-acento: #5b7fa3;
+            --color-primario: #2c4966;
+            --color-blanco: #ffffff;
+            --color-texto-oscuro: #1a2a3a;
+            --color-error: #c0392b;
+            --color-exito: #27ae60;
+            --radio-borde: 8px;
+            --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: var(--color-texto-oscuro);
+            line-height: 1.7;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contenedor {
+            width: 100%;
+            max-width: 1240px;
+            background-color: var(--color-blanco);
+            border-radius: 12px;
+            box-shadow: var(--sombra-suave);
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            padding: 24px 30px;
+            text-align: center;
+        }
+        header .institucion {
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--color-acento-suave);
+            margin-bottom: 6px;
+        }
+        header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+        header p { font-size: 0.95rem; color: var(--color-acento-suave); }
+
+        .layout-principal {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 0;
+        }
+
+        .panel-control {
+            background-color: var(--color-base);
+            padding: 22px 20px;
+            border-right: 1px solid var(--color-acento-suave);
+        }
+        .panel-control h2 {
+            font-size: 1.05rem;
+            color: var(--color-primario);
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 4px solid var(--color-acento);
+        }
+        .panel-control h3 {
+            font-size: 0.9rem;
+            color: var(--color-acento);
+            margin: 16px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .seccion-slider {
+            background-color: var(--color-blanco);
+            border-radius: var(--radio-borde);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            box-shadow: var(--sombra-suave);
+            border-left: 4px solid var(--color-acento);
+        }
+        .seccion-slider label {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--color-primario);
+            display: block;
+            margin-bottom: 6px;
+        }
+        .seccion-slider .valor-slider {
+            color: var(--color-acento);
+            font-weight: 700;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--color-acento);
+        }
+
+        .checkbox-linea {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-bottom: 6px;
+            cursor: pointer;
+            padding: 4px 0;
+        }
+        input[type="checkbox"] {
+            accent-color: var(--color-acento);
+            width: 16px; height: 16px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .btn-secundario {
+            background-color: var(--color-blanco);
+            color: var(--color-acento);
+            border: 2px solid var(--color-acento);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            width: 100%;
+            margin-top: 6px;
+        }
+        .btn-secundario:hover { background-color: var(--color-acento); color: var(--color-blanco); }
+
+        .seccion-ejemplos { margin-top: 8px; }
+        .btn-ejemplo {
+            display: block;
+            width: 100%;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            color: var(--color-primario);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 6px;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        .btn-ejemplo:hover {
+            background-color: var(--color-acento-suave);
+            border-color: var(--color-acento);
+        }
+
+        .panel-canvas {
+            padding: 22px;
+            background-color: var(--color-blanco);
+        }
+        .canvas-wrapper {
+            position: relative;
+            background-color: var(--color-blanco);
+            border: 1px solid var(--color-acento-suave);
+            border-radius: var(--radio-borde);
+            padding: 8px;
+            box-shadow: var(--sombra-suave);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 820 / 560;
+            background-color: var(--color-blanco);
+            border-radius: 4px;
+        }
+        .canvas-instrucciones {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background-color: rgba(232, 238, 245, 0.92);
+            color: var(--color-primario);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+        }
+
+        .leyenda {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-top: 14px;
+            padding: 10px 14px;
+            background-color: var(--color-base);
+            border-radius: var(--radio-borde);
+        }
+        .leyenda-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .leyenda-color {
+            width: 18px; height: 18px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px rgba(44,73,102,0.2);
+        }
+
+        .panel-info {
+            margin-top: 14px;
+            padding: 16px 20px;
+            background-color: var(--color-base);
+            border-left: 5px solid var(--color-acento);
+            border-radius: 0 var(--radio-borde) var(--radio-borde) 0;
+        }
+        .panel-info h3 {
+            font-size: 0.95rem;
+            color: var(--color-primario);
+            margin-bottom: 10px;
+        }
+        .tabla-info {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background-color: var(--color-blanco);
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--sombra-suave);
+        }
+        .tabla-info tr { border-bottom: 1px solid var(--color-base); }
+        .tabla-info tr:last-child { border-bottom: none; }
+        .tabla-info td {
+            padding: 8px 14px;
+            color: var(--color-texto-oscuro);
+            vertical-align: top;
+        }
+        .tabla-info td:first-child {
+            width: 42%;
+            color: var(--color-primario);
+            font-weight: 600;
+        }
+        .tabla-info td:last-child {
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+
+        .aviso-pedagogico {
+            background-color: rgba(91,127,163,0.1);
+            border-left: 4px solid var(--color-acento);
+            border-radius: 0 6px 6px 0;
+            padding: 10px 14px;
+            font-size: 0.88rem;
+            color: var(--color-primario);
+            margin-top: 12px;
+        }
+
+        .footer-info {
+            background-color: var(--color-base);
+            padding: 16px 30px;
+            border-top: 2px solid var(--color-acento-suave);
+            font-size: 0.9rem;
+            color: var(--color-primario);
+        }
+        .footer-info strong { color: var(--color-acento); }
+
+        @media (max-width: 900px) {
+            .layout-principal { grid-template-columns: 1fr; }
+            .panel-control { border-right: none; border-bottom: 1px solid var(--color-acento-suave); }
+        }
+        @media (max-width: 600px) {
+            header h1 { font-size: 1.15rem; }
+            .panel-control, .panel-canvas { padding: 18px 16px; }
+            .canvas-instrucciones { font-size: 0.7rem; top: 8px; right: 8px; }
+            .tabla-info { font-size: 0.82rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <header>
+        <div class="institucion">Preparatoria Abierta</div>
+        <h1>Visualizador: Desigualdades Cuadráticas</h1>
+        <p>Visualizador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+
+        <div class="panel-control">
+            <h2>Coeficientes</h2>
+
+            <div class="seccion-slider">
+                <label for="slider-a">$a$: <span class="valor-slider" id="val-a">1</span></label>
+                <input type="range" id="slider-a" min="-3" max="3" step="0.5" value="1" aria-label="Coeficiente a">
+            </div>
+
+            <div class="seccion-slider">
+                <label for="slider-b">$b$: <span class="valor-slider" id="val-b">-5</span></label>
+                <input type="range" id="slider-b" min="-10" max="10" step="0.5" value="-5" aria-label="Coeficiente b">
+            </div>
+
+            <div class="seccion-slider">
+                <label for="slider-c">$c$: <span class="valor-slider" id="val-c">6</span></label>
+                <input type="range" id="slider-c" min="-10" max="10" step="0.5" value="6" aria-label="Coeficiente c">
+            </div>
+
+            <h3>Sentido de la desigualdad</h3>
+            <div class="seccion-slider">
+                <label for="select-sentido">$f(x)$</label>
+                <select id="select-sentido" style="width:100%;padding:8px;border:2px solid var(--color-acento-suave);border-radius:6px;font-family:inherit;font-size:0.95rem;color:var(--color-primario);">
+                    <option value="mayor" selected>&gt; 0 (arriba del eje X)</option>
+                    <option value="menor">&lt; 0 (debajo del eje X)</option>
+                </select>
+            </div>
+
+            <h3>Visualización</h3>
+            <label class="checkbox-linea" for="chk-parabola">
+                <input type="checkbox" id="chk-parabola" checked aria-label="Mostrar parábola">
+                Parábola
+            </label>
+            <label class="checkbox-linea" for="chk-raices">
+                <input type="checkbox" id="chk-raices" checked aria-label="Mostrar raíces">
+                Raíces
+            </label>
+            <label class="checkbox-linea" for="chk-vertice">
+                <input type="checkbox" id="chk-vertice" checked aria-label="Mostrar vértice">
+                Vértice
+            </label>
+            <label class="checkbox-linea" for="chk-region">
+                <input type="checkbox" id="chk-region" checked aria-label="Mostrar región solución">
+                Región solución
+            </label>
+
+            <h3>Zoom</h3>
+            <div class="seccion-slider">
+                <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">30</span> px / unidad</label>
+                <input type="range" id="slider-zoom" min="15" max="50" step="1" value="30" aria-label="Zoom del plano">
+            </div>
+
+            <button type="button" class="btn-secundario" id="btn-reiniciar" aria-label="Reiniciar valores">↺ Reiniciar</button>
+
+            <h3>Ejemplos del Módulo 11</h3>
+            <div class="seccion-ejemplos">
+                <button type="button" class="btn-ejemplo" data-ej="1">📐 $x^2 - 5x + 6 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="2">📐 $x^2 - 9 < 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="3">📐 $x^2 - 4x + 4 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="4">📐 $-x^2 + 4 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="5">📐 $x^2 + 4 > 0$</button>
+                <button type="button" class="btn-ejemplo" data-ej="6">📐 $2x^2 - 8x + 6 < 0$</button>
+            </div>
+        </div>
+
+        <div class="panel-canvas">
+            <div class="canvas-wrapper">
+                <canvas id="canvas" width="820" height="560" aria-label="Gráfica de la parábola con región solución sombreada"></canvas>
+                <div class="canvas-instrucciones">🖱️ Mueve los sliders</div>
+            </div>
+
+            <div class="leyenda">
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#5b7fa3;"></div>
+                    <span>Parábola</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#27ae60;"></div>
+                    <span>Raíces</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:#c0392b;"></div>
+                    <span>Vértice</span>
+                </div>
+                <div class="leyenda-item">
+                    <div class="leyenda-color" style="background:rgba(91,127,163,0.35);"></div>
+                    <span>Región solución</span>
+                </div>
+            </div>
+
+            <div class="panel-info" id="panelInfo" role="status" aria-live="polite">
+                <h3>📊 Análisis de la desigualdad</h3>
+                <table class="tabla-info">
+                    <tr>
+                        <td>Desigualdad</td>
+                        <td id="info-desigualdad">—</td>
+                    </tr>
+                    <tr>
+                        <td>Discriminante $\Delta$</td>
+                        <td id="info-discriminante">—</td>
+                    </tr>
+                    <tr>
+                        <td>Raíces</td>
+                        <td id="info-raices">—</td>
+                    </tr>
+                    <tr>
+                        <td>Vértice</td>
+                        <td id="info-vertice">—</td>
+                    </tr>
+                    <tr>
+                        <td>Conjunto solución</td>
+                        <td id="info-solucion">—</td>
+                    </tr>
+                </table>
+                <div class="aviso-pedagogico" id="aviso-pedagogico">
+                    💡 <strong>Exploración:</strong> mueve los sliders y observa cómo cambia el conjunto solución.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-info">
+        <strong>Objetivo:</strong> Visualizar geométricamente la solución de una desigualdad cuadrática,
+        identificando los intervalos donde la parábola queda por encima o por debajo del eje $X$,
+        y relacionando el discriminante con la naturaleza del conjunto solución.
+    </div>
+</div>
+
+<script>
+    // =========================================
+    // CONFIGURACIÓN GLOBAL
+    // =========================================
+    var canvas = document.getElementById('canvas');
+    var ctx = canvas.getContext('2d');
+    var W = 820, H = 560;
+
+    var COLOR_PARABOLA = '#5b7fa3';
+    var COLOR_VERTICE = '#c0392b';
+    var COLOR_RAIZ = '#27ae60';
+    var COLOR_REGION = 'rgba(91, 127, 163, 0.28)';
+    var COLOR_EJE = '#2c4966';
+    var COLOR_CUADRICULA = '#e8eef5';
+
+    var TOL = 1e-9;
+
+    var estado = {
+        a: 1, b: -5, c: 6,
+        sentido: 'mayor',
+        zoom: 30,
+        mostrar: {
+            parabola: true,
+            raices: true,
+            vertice: true,
+            region: true
+        }
+    };
+
+    // =========================================
+    // SOPORTE HIPDI
+    // =========================================
+    function configurarHiDPI() {
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = '100%';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+
+    // =========================================
+    // UTILIDADES
+    // =========================================
+    function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(3)).toString();
+    }
+
+    function casiIgual(x, y, tol) {
+        tol = tol || TOL;
+        return Math.abs(x - y) < tol;
+    }
+
+    function f(x) {
+        return estado.a * x * x + estado.b * x + estado.c;
+    }
+
+    function calcularDiscriminante() {
+        return estado.b * estado.b - 4 * estado.a * estado.c;
+    }
+
+    function calcularVertice() {
+        if (casiIgual(estado.a, 0)) return { h: 0, k: 0 };
+        var h = -estado.b / (2 * estado.a);
+        return { h: h, k: f(h) };
+    }
+
+    function calcularRaices() {
+        var d = calcularDiscriminante();
+        if (d < -TOL) return [];
+        if (Math.abs(d) < TOL) return [-estado.b / (2 * estado.a)];
+        var sq = Math.sqrt(d);
+        return [
+            (-estado.b - sq) / (2 * estado.a),
+            (-estado.b + sq) / (2 * estado.a)
+        ];
+    }
+
+    function mundoAPantalla(x, y) {
+        return {
+            px: W / 2 + x * estado.zoom,
+            py: H / 2 - y * estado.zoom
+        };
+    }
+
+    function renderMath(el) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetPromise([el]).catch(console.log);
+        }
+    }
+
+    // =========================================
+    // DIBUJO
+    // =========================================
+    function dibujarCuadricula() {
+        ctx.strokeStyle = COLOR_CUADRICULA;
+        ctx.lineWidth = 1;
+        var paso = estado.zoom;
+        for (var x = (W / 2) % paso; x < W; x += paso) {
+            ctx.beginPath();
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, H);
+            ctx.stroke();
+        }
+        for (var y = (H / 2) % paso; y < H; y += paso) {
+            ctx.beginPath();
+            ctx.moveTo(0, y);
+            ctx.lineTo(W, y);
+            ctx.stroke();
+        }
+    }
+
+    function dibujarEjes() {
+        ctx.strokeStyle = COLOR_EJE;
+        ctx.fillStyle = COLOR_EJE;
+        ctx.lineWidth = 2;
+
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2);
+        ctx.lineTo(W, H / 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(W - 12, H / 2 - 6);
+        ctx.lineTo(W, H / 2);
+        ctx.lineTo(W - 12, H / 2 + 6);
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(W / 2, H);
+        ctx.lineTo(W / 2, 0);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(W / 2 - 6, 12);
+        ctx.lineTo(W / 2, 0);
+        ctx.lineTo(W / 2 + 6, 12);
+        ctx.fill();
+
+        ctx.font = '13px Segoe UI, sans-serif';
+        ctx.fillStyle = COLOR_EJE;
+        ctx.textAlign = 'right';
+        ctx.fillText('x', W - 8, H / 2 + 20);
+        ctx.textAlign = 'left';
+        ctx.fillText('y', W / 2 + 8, 16);
+
+        ctx.font = '10px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        var maxX = Math.floor((W / 2) / estado.zoom);
+        var pasoX = Math.max(1, Math.ceil(maxX / 8));
+        for (var i = -maxX; i <= maxX; i++) {
+            if (i % pasoX !== 0 || i === 0) continue;
+            var p = mundoAPantalla(i, 0);
+            ctx.fillStyle = COLOR_EJE;
+            ctx.beginPath();
+            ctx.arc(p.px, p.py, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillText(i.toString(), p.px, p.py + 14);
+        }
+        var maxY = Math.floor((H / 2) / estado.zoom);
+        var pasoY = Math.max(1, Math.ceil(maxY / 6));
+        ctx.textAlign = 'right';
+        for (var j = -maxY; j <= maxY; j++) {
+            if (j % pasoY !== 0 || j === 0) continue;
+            var q = mundoAPantalla(0, j);
+            ctx.fillStyle = COLOR_EJE;
+            ctx.beginPath();
+            ctx.arc(q.px, q.py, 2, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillText(j.toString(), q.px - 6, q.py + 4);
+        }
+        ctx.textAlign = 'left';
+        ctx.fillText('0', W / 2 + 6, H / 2 + 14);
+    }
+
+    function evaluaSolucion(x, y) {
+        var val = estado.a * x * x + estado.b * x + estado.c;
+        if (estado.sentido === 'mayor') return val > TOL;
+        return val < -TOL;
+    }
+
+    function dibujarRegionSolucion() {
+        var paso = 4;
+        ctx.fillStyle = COLOR_REGION;
+        for (var px = 0; px < W; px += paso) {
+            for (var py = 0; py < H; py += paso) {
+                var cx = (px - W / 2) / estado.zoom;
+                var cy = (H / 2 - py) / estado.zoom;
+                if (evaluaSolucion(cx, cy)) {
+                    ctx.fillRect(px, py, paso, paso);
+                }
+            }
+        }
+    }
+
+    function dibujarParabola() {
+        if (casiIgual(estado.a, 0)) return;
+
+        var puntos = 400;
+        var xMin = -W / 2 / estado.zoom - 1;
+        var xMax = W / 2 / estado.zoom + 1;
+        var paso = (xMax - xMin) / puntos;
+
+        ctx.save();
+        ctx.strokeStyle = COLOR_PARABOLA;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        var trazando = false;
+        for (var i = 0; i <= puntos; i++) {
+            var x = xMin + i * paso;
+            var y = f(x);
+            var p = mundoAPantalla(x, y);
+            var fueraY = (p.py < -H * 2 || p.py > H * 3);
+            var fueraX = (p.px < -W * 2 || p.px > W * 3);
+            if (fueraY || fueraX) { trazando = false; continue; }
+            if (!trazando) { ctx.moveTo(p.px, p.py); trazando = true; }
+            else ctx.lineTo(p.px, p.py);
+        }
+        ctx.stroke();
+        ctx.restore();
+    }
+
+    function dibujarPuntoMundo(x, y, color, etiqueta, tamano) {
+        var p = mundoAPantalla(x, y);
+        tamano = tamano || 7;
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, tamano + 2, 0, 2 * Math.PI);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, tamano, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        if (etiqueta) {
+            ctx.save();
+            ctx.font = 'bold 12px "Segoe UI", sans-serif';
+            var ancho = ctx.measureText(etiqueta).width;
+            var posX = p.px + 10;
+            var posY = p.py - 10;
+            if (posX + ancho + 6 > W) posX = p.px - ancho - 16;
+            if (posY < 15) posY = p.py + 22;
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(posX - 3, posY - 13, ancho + 6, 17);
+            ctx.fillStyle = color;
+            ctx.textAlign = 'left';
+            ctx.fillText(etiqueta, posX, posY);
+            ctx.restore();
+        }
+    }
+
+    // =========================================
+    // RENDER PRINCIPAL
+    // =========================================
+    function render() {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+
+        if (estado.mostrar.region) {
+            dibujarRegionSolucion();
+        }
+
+        dibujarCuadricula();
+        dibujarEjes();
+
+        if (estado.mostrar.parabola) {
+            dibujarParabola();
+        }
+
+        if (estado.mostrar.raices) {
+            var raices = calcularRaices();
+            raices.forEach(function(r, i) {
+                var etiqueta = raices.length === 1
+                    ? 'x = ' + formatearNumero(r) + ' (doble)'
+                    : 'x' + (i + 1) + ' = ' + formatearNumero(r);
+                dibujarPuntoMundo(r, 0, COLOR_RAIZ, etiqueta, 6);
+            });
+        }
+
+        if (estado.mostrar.vertice) {
+            var v = calcularVertice();
+            dibujarPuntoMundo(v.h, v.k, COLOR_VERTICE,
+                'V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')', 7);
+        }
+
+        actualizarInfo();
+    }
+
+    // =========================================
+    // ACTUALIZAR INFO
+    // =========================================
+    function actualizarInfo() {
+        var disc = calcularDiscriminante();
+        var v = calcularVertice();
+        var raices = calcularRaices();
+
+        var signo = estado.sentido === 'mayor' ? '>' : '<';
+        document.getElementById('info-desigualdad').innerHTML =
+            '$' + formatearNumero(estado.a) + 'x^2 ' +
+            (estado.b >= 0 ? '+ ' + formatearNumero(estado.b) : '- ' + formatearNumero(-estado.b)) + 'x ' +
+            (estado.c >= 0 ? '+ ' + formatearNumero(estado.c) : '- ' + formatearNumero(-estado.c)) + ' ' + signo + ' 0$';
+
+        document.getElementById('info-discriminante').innerHTML = '$\\Delta = ' + formatearNumero(disc) + '$';
+
+        if (raices.length === 0) {
+            document.getElementById('info-raices').innerHTML = 'Sin raíces reales';
+        } else if (raices.length === 1) {
+            document.getElementById('info-raices').innerHTML = '$x = ' + formatearNumero(raices[0]) + '$ (doble)';
+        } else {
+            document.getElementById('info-raices').innerHTML =
+                '$x_1 = ' + formatearNumero(raices[0]) + '$, $x_2 = ' + formatearNumero(raices[1]) + '$';
+        }
+
+        document.getElementById('info-vertice').innerHTML =
+            '$V(' + formatearNumero(v.h) + ', ' + formatearNumero(v.k) + ')$';
+
+        var sol = '';
+        if (disc < -TOL) {
+            var esPositivo = estado.a > 0;
+            if ((estado.sentido === 'mayor' && esPositivo) || (estado.sentido === 'menor' && !esPositivo)) {
+                sol = '$\\mathbb{R}$ (todos los reales)';
+            } else {
+                sol = '$\\varnothing$ (conjunto vacío)';
+            }
+        } else if (casiIgual(disc, 0)) {
+            var r = raices[0];
+            if ((estado.sentido === 'mayor' && estado.a > 0) || (estado.sentido === 'menor' && estado.a < 0)) {
+                sol = '$\\mathbb{R} \\setminus \\{' + formatearNumero(r) + '\\}$';
+            } else {
+                sol = '$\\varnothing$';
+            }
+        } else {
+            var rMenor = Math.min(raices[0], raices[1]);
+            var rMayor = Math.max(raices[0], raices[1]);
+            if ((estado.sentido === 'mayor' && estado.a > 0) || (estado.sentido === 'menor' && estado.a < 0)) {
+                sol = '$(-\\infty, ' + formatearNumero(rMenor) + ') \\cup (' + formatearNumero(rMayor) + ', +\\infty)$';
+            } else {
+                sol = '$(' + formatearNumero(rMenor) + ', ' + formatearNumero(rMayor) + ')$';
+            }
+        }
+        document.getElementById('info-solucion').innerHTML = sol;
+
+        var aviso = document.getElementById('aviso-pedagogico');
+        var html = '💡 <strong>Exploración:</strong> ';
+        if (disc < -TOL) {
+            html += 'la parábola no corta al eje $X$. El signo de $f(x)$ es constante, así que la solución es todos los reales o el conjunto vacío.';
+        } else if (casiIgual(disc, 0)) {
+            html += 'la parábola es tangente al eje $X$ en $x = ' + formatearNumero(raices[0]) + '$. La solución incluye (o excluye) a todos los reales según el sentido.';
+        } else {
+            html += 'la parábola corta al eje $X$ en $x = ' + formatearNumero(Math.min(raices[0], raices[1])) + '$ y $x = ' + formatearNumero(Math.max(raices[0], raices[1])) + '$. Los intervalos solución se alternan según el signo de $a$ y el sentido.';
+        }
+        aviso.innerHTML = html;
+
+        renderMath(document.getElementById('panelInfo'));
+    }
+
+    // =========================================
+    // SINCRONIZACIÓN
+    // =========================================
+    function sincronizarDesdeEstado() {
+        document.getElementById('slider-a').value = estado.a;
+        document.getElementById('val-a').textContent = formatearNumero(estado.a);
+        document.getElementById('slider-b').value = estado.b;
+        document.getElementById('val-b').textContent = formatearNumero(estado.b);
+        document.getElementById('slider-c').value = estado.c;
+        document.getElementById('val-c').textContent = formatearNumero(estado.c);
+        document.getElementById('slider-zoom').value = estado.zoom;
+        document.getElementById('val-zoom').textContent = estado.zoom;
+        document.getElementById('select-sentido').value = estado.sentido;
+    }
+
+    // =========================================
+    // EVENTOS
+    // =========================================
+    document.getElementById('slider-a').addEventListener('input', function() {
+        var nuevoA = parseFloat(this.value);
+        if (casiIgual(nuevoA, 0)) {
+            nuevoA = 0.5;
+            this.value = 0.5;
+        }
+        estado.a = nuevoA;
+        document.getElementById('val-a').textContent = formatearNumero(estado.a);
+        render();
+    });
+
+    document.getElementById('slider-b').addEventListener('input', function() {
+        estado.b = parseFloat(this.value);
+        document.getElementById('val-b').textContent = formatearNumero(estado.b);
+        render();
+    });
+
+    document.getElementById('slider-c').addEventListener('input', function() {
+        estado.c = parseFloat(this.value);
+        document.getElementById('val-c').textContent = formatearNumero(estado.c);
+        render();
+    });
+
+    document.getElementById('slider-zoom').addEventListener('input', function() {
+        estado.zoom = parseInt(this.value);
+        document.getElementById('val-zoom').textContent = this.value;
+        render();
+    });
+
+    document.getElementById('select-sentido').addEventListener('change', function() {
+        estado.sentido = this.value;
+        render();
+    });
+
+    var mapaCheckboxes = {
+        'chk-parabola': 'parabola',
+        'chk-raices': 'raices',
+        'chk-vertice': 'vertice',
+        'chk-region': 'region'
+    };
+
+    Object.keys(mapaCheckboxes).forEach(function(idCheckbox) {
+        var clave = mapaCheckboxes[idCheckbox];
+        document.getElementById(idCheckbox).addEventListener('change', function() {
+            estado.mostrar[clave] = this.checked;
+            render();
+        });
+    });
+
+    document.getElementById('btn-reiniciar').addEventListener('click', function() {
+        estado.a = 1;
+        estado.b = -5;
+        estado.c = 6;
+        estado.sentido = 'mayor';
+        estado.zoom = 30;
+        estado.mostrar = { parabola: true, raices: true, vertice: true, region: true };
+        sincronizarDesdeEstado();
+        render();
+    });
+
+    var ejemplos = {
+        1: { a: 1, b: -5, c: 6, sentido: 'mayor' },
+        2: { a: 1, b: 0, c: -9, sentido: 'menor' },
+        3: { a: 1, b: -4, c: 4, sentido: 'mayor' },
+        4: { a: -1, b: 0, c: 4, sentido: 'mayor' },
+        5: { a: 1, b: 0, c: 4, sentido: 'mayor' },
+        6: { a: 2, b: -8, c: 6, sentido: 'menor' }
+    };
+
+    document.querySelectorAll('.btn-ejemplo').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var ej = this.getAttribute('data-ej');
+            var data = ejemplos[ej];
+            if (!data) return;
+            estado.a = data.a;
+            estado.b = data.b;
+            estado.c = data.c;
+            estado.sentido = data.sentido;
+            sincronizarDesdeEstado();
+            render();
+        });
+    });
+
+    // =========================================
+    // INICIALIZACIÓN
+    // =========================================
+    function init() {
+        configurarHiDPI();
+        sincronizarDesdeEstado();
+        render();
+        renderMath(document.body);
+    }
+
+    window.addEventListener('load', init);
+
+</script>
+
+</body>
+</html>

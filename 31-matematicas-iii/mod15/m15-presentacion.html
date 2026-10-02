@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Presentación didáctica">
+  <title>Módulo 15 — Raíces Racionales y Regla de Descartes | Matemáticas III</title>
+
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      line-height: 1.35;
+      word-wrap: break-word;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .progreso {
+      height: 6px;
+      background: var(--color-base);
+    }
+
+    .progreso-barra {
+      height: 100%;
+      background: var(--color-acento);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    main {
+      padding: 1.5rem;
+      min-height: 520px;
+    }
+
+    .diapositiva {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .diapositiva.activa { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .diapositiva h2 {
+      font-size: 1.25rem;
+      color: var(--color-primario);
+      margin-bottom: 0.8rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .diapositiva p {
+      margin-bottom: 0.8rem;
+      font-size: 0.95rem;
+    }
+
+    .math-block {
+      background: var(--color-base);
+      padding: 0.9rem 1rem;
+      border-radius: var(--radio-borde);
+      margin: 0.9rem 0;
+      overflow-x: auto;
+      text-align: center;
+    }
+
+    .nota {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      padding: 0.7rem 1rem;
+      border-radius: var(--radio-borde);
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+
+    .alerta {
+      background: #fdecea;
+      border-left: 4px solid var(--color-error);
+      padding: 0.7rem 1rem;
+      border-radius: var(--radio-borde);
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+
+    .exito {
+      background: #eafaf1;
+      border-left: 4px solid var(--color-exito);
+      padding: 0.7rem 1rem;
+      border-radius: var(--radio-borde);
+      margin: 0.8rem 0;
+      font-size: 0.9rem;
+    }
+
+    .caja-interactiva {
+      background: var(--color-base);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1rem;
+      margin: 1rem 0;
+    }
+
+    .caja-interactiva h3 {
+      font-size: 1rem;
+      color: var(--color-primario);
+      margin-bottom: 0.5rem;
+    }
+
+    .caja-interactiva > p {
+      font-size: 0.85rem;
+      margin-bottom: 0.7rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .grupo-inputs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: flex-end;
+      margin-bottom: 0.7rem;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .input-wrapper label {
+      font-size: 0.8rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .input-wrapper input,
+    .input-wrapper select {
+      padding: 0.4rem 0.6rem;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      min-width: 100px;
+    }
+
+    .input-wrapper input:focus,
+    .input-wrapper select:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .btn-primario {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-primario:hover { background: var(--color-acento); }
+    .btn-primario:focus { outline: 2px solid var(--color-acento); outline-offset: 2px; }
+
+    .resultado {
+      background: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: 4px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.9rem;
+      min-height: 2.2rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .resultado.error { border-color: var(--color-error); color: var(--color-error); }
+    .resultado.exito { border-color: var(--color-exito); }
+
+    .navegacion {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+    }
+
+    .navegacion button {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .navegacion button:hover:not(:disabled) { background: var(--color-acento); }
+    .navegacion button:disabled {
+      background: var(--color-acento-suave);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .navegacion .indicador {
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem;
+      color: var(--color-primario);
+    }
+
+    @media (max-width: 900px) {
+      header h1 { font-size: 1.2rem; }
+      .grupo-inputs { flex-direction: column; align-items: stretch; }
+      .input-wrapper input,
+      .input-wrapper select { width: 100%; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      main { padding: 1rem; min-height: 460px; }
+      .diapositiva h2 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Módulo 15 — Raíces Racionales y Regla de los Signos de Descartes</h1>
+      <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+      <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+      <!-- Diapositiva 1: Bienvenida -->
+      <div class="diapositiva activa" data-indice="0">
+        <h2>📘 Bienvenida al Módulo 15</h2>
+        <p>
+          En este módulo aprenderás a <strong>determinar las raíces racionales</strong>
+          de una función polinomial usando el <strong>Teorema de la Raíz Racional</strong>,
+          la <strong>división sintética</strong> y la <strong>Regla de los Signos de
+          Descartes</strong>.
+        </p>
+        <div class="math-block">
+          $$f(x) = a_nx^n + a_{n-1}x^{n-1} + \dots + a_1x + a_0$$
+        </div>
+        <div class="nota">
+          <strong>💡 Propósito:</strong> Al terminar, podrás encontrar todas las raíces
+          racionales de un polinomio, acotar las reales con Descartes y factorizar
+          completamente.
+        </div>
+      </div>
+
+      <!-- Diapositiva 2: Teorema de la Raíz Racional -->
+      <div class="diapositiva" data-indice="1">
+        <h2>1. Teorema de la Raíz Racional</h2>
+        <p>
+          Sea $f(x) = a_nx^n + \dots + a_0$ con coeficientes enteros y $a_0 \neq 0$.
+          Para toda raíz racional $\frac{c}{d}$ de $f(x)$:
+        </p>
+        <div class="math-block">
+          $$c \text{ es factor de } a_0 \quad \text{y} \quad d \text{ es factor de } a_n$$
+        </div>
+        <p>
+          Además, $c$ y $d$ son primos entre sí y $c > 0$.
+        </p>
+
+        <div class="caja-interactiva">
+          <h3>🔍 Generador de posibles raíces racionales</h3>
+          <p>Ingresa el término independiente $a_0$ y el coeficiente principal $a_n$.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper">
+              <label for="a0">$a_0 =$</label>
+              <input type="text" id="a0" value="8" inputmode="decimal">
+            </div>
+            <div class="input-wrapper">
+              <label for="an">$a_n =$</label>
+              <input type="text" id="an" value="3" inputmode="decimal">
+            </div>
+            <button class="btn-primario" id="btn-raices-posibles">Generar</button>
+          </div>
+          <div class="resultado" id="res-raices-posibles" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 3: División sintética -->
+      <div class="diapositiva" data-indice="2">
+        <h2>2. División sintética para encontrar raíces</h2>
+        <p>
+          Una vez que tienes la lista de posibles raíces racionales, se prueba cada una
+          con <strong>división sintética</strong>. Si el residuo es $0$, entonces
+          $x - c$ es factor y $c$ es raíz.
+        </p>
+        <div class="math-block">
+          $$f(x) = (x - c) \cdot q(x) + r$$
+        </div>
+        <div class="nota">
+          <strong>💡 Recuerda:</strong> al dividir entre $x - c$, el valor a evaluar es
+          $c$. Al dividir entre $x + c$, el valor a evaluar es $-c$.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🧮 Probador de raíz</h3>
+          <p>Comprueba si $c$ es raíz de $f(x) = 3x^4 + 2x^3 - 18x^2 + 0x + 8$.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper">
+              <label for="c-probar">$c =$</label>
+              <input type="text" id="c-probar" value="2" inputmode="decimal">
+            </div>
+            <button class="btn-primario" id="btn-probar-raiz">Probar</button>
+          </div>
+          <div class="resultado" id="res-probar-raiz" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 4: Cambios de signo -->
+      <div class="diapositiva" data-indice="3">
+        <h2>3. Cambios de signo</h2>
+        <p>
+          Se dice que existe un <strong>cambio de signo</strong> cuando los signos de
+          dos términos consecutivos (ordenados por potencias descendentes) son diferentes.
+        </p>
+        <div class="nota">
+          <strong>Ejemplo 1:</strong> En $2x^4 + 7x^3 - 2x^2 - 13x + 6$ hay <strong>2 cambios de signo</strong>
+          (entre $+7$ y $-2$, y entre $-13$ y $+6$).<br><br>
+          <strong>Ejemplo 2:</strong> En $x^4 - x^3 + 6x^2 + 4x - 8$ hay <strong>3 cambios de signo</strong>.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🔢 Contador de cambios de signo</h3>
+          <p>Ingresa los coeficientes separados por comas (ej. <code>2,7,-2,-13,6</code>).</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper">
+              <label for="coefs-signos">Coeficientes:</label>
+              <input type="text" id="coefs-signos" value="2,7,-2,-13,6" inputmode="text">
+            </div>
+            <button class="btn-primario" id="btn-contar-signos">Contar</button>
+          </div>
+          <div class="resultado" id="res-contar-signos" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 5: Regla de los Signos de Descartes -->
+      <div class="diapositiva" data-indice="4">
+        <h2>4. Regla de los Signos de Descartes</h2>
+        <p>
+          Esta regla permite <strong>acotar el número máximo</strong> de raíces reales
+          positivas y negativas de un polinomio, antes de probarlas.
+        </p>
+        <div class="nota">
+          <strong>Raíces reales positivas:</strong> el número máximo es igual al número
+          de cambios de signo en $f(x)$.<br><br>
+          <strong>Raíces reales negativas:</strong> el número máximo es igual al número
+          de cambios de signo en $f(-x)$.
+        </div>
+        <div class="math-block">
+          $$\text{máx. positivas} = \text{cambios de signo en } f(x)$$
+          $$\text{máx. negativas} = \text{cambios de signo en } f(-x)$$
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🎯 Aplicador de la Regla de Descartes</h3>
+          <p>Para $f(x) = x^4 - x^3 + 6x^2 + 4x - 8$, calcula el máximo de raíces positivas y negativas.</p>
+          <div class="grupo-inputs">
+            <button class="btn-primario" id="btn-descartes">Aplicar Descartes</button>
+          </div>
+          <div class="resultado" id="res-descartes" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 6: Ejemplo completo con Descartes -->
+      <div class="diapositiva" data-indice="5">
+        <h2>5. Ejemplo completo con Descartes</h2>
+        <p>
+          Encuentra las raíces racionales de $3x^4 - x^3 - 21x^2 - 11x + 6 = 0$.
+        </p>
+        <div class="nota">
+          <strong>Paso 1 — Factores:</strong> $a_0 = 6$ → $1, 2, 3, 6$; $a_n = 3$ → $\pm 1, \pm 3$.<br>
+          <strong>Paso 2 — Posibles raíces:</strong> $\pm 1, \pm 2, \pm 3, \pm 6, \pm \frac{1}{3}, \pm \frac{2}{3}$.<br>
+          <strong>Paso 3 — Descartes:</strong> $f(x)$ tiene 2 cambios de signo → máx. 2 raíces positivas;
+          $f(-x) = 3x^4 + x^3 - 21x^2 + 11x + 6$ tiene 2 cambios → máx. 2 raíces negativas.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🔍 Verificador de cambios de signo en $f(-x)$</h3>
+          <p>Coeficientes de $f(x) = 3x^4 - x^3 - 21x^2 - 11x + 6$: <code>3,-1,-21,-11,6</code>.</p>
+          <div class="grupo-inputs">
+            <button class="btn-primario" id="btn-verificar-fneg">Calcular cambios en $f(-x)$</button>
+          </div>
+          <div class="resultado" id="res-verificar-fneg" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 7: Raíces repetidas -->
+      <div class="diapositiva" data-indice="6">
+        <h2>6. Raíces repetidas</h2>
+        <p>
+          Un polinomio puede tener la misma raíz varias veces. A esto se le llama
+          <strong>raíz repetida</strong> o raíz con multiplicidad.
+        </p>
+        <div class="nota">
+          <strong>Ejemplo:</strong> $x^4 - 7x^3 + 18x^2 - 20x + 8 = 0$ tiene raíces
+          $\{1, 2, 2, 2\}$. El $2$ aparece tres veces, así que es una raíz triple.
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error común:</strong> al encontrar una raíz, no volver a probarla
+          en la ecuación degradada, perdiendo multiplicidades.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🔁 Verificador de multiplicidad</h3>
+          <p>Comprueba si $x = 2$ es raíz repetida en $x^4 - 7x^3 + 18x^2 - 20x + 8$.</p>
+          <div class="grupo-inputs">
+            <button class="btn-primario" id="btn-multiplicidad">Verificar</button>
+          </div>
+          <div class="resultado" id="res-multiplicidad" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 8: Raíces complejas -->
+      <div class="diapositiva" data-indice="7">
+        <h2>7. Raíces complejas</h2>
+        <p>
+          No todas las raíces de un polinomio son reales. Cuando se agotan las
+          posibilidades racionales y queda una cuadrática con discriminante negativo,
+          las raíces restantes son <strong>complejas</strong>.
+        </p>
+        <div class="exito">
+          <strong>✅ Ejemplo:</strong> Si al degradar un polinomio de grado 4 se obtiene
+          $x^2 + x + 1 = 0$, el discriminante es $\Delta = 1 - 4 = -3 < 0$, así que las
+          dos raíces restantes son complejas.
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error común:</strong> concluir que la ecuación "no tiene solución"
+          cuando quedan raíces complejas. En realidad tiene $n$ raíces (grado $n$),
+          algunas complejas.
+        </div>
+      </div>
+
+      <!-- Diapositiva 9: Resumen -->
+      <div class="diapositiva" data-indice="8">
+        <h2>8. Resumen del Módulo</h2>
+        <div class="nota">
+          <strong>Ideas clave:</strong>
+          <ul style="margin: 0.5rem 0 0 1.2rem;">
+            <li>El <strong>Teorema de la Raíz Racional</strong> acota las posibles raíces
+                $\frac{c}{d}$: $c$ factor de $a_0$, $d$ factor de $a_n$.</li>
+            <li>La <strong>división sintética</strong> verifica si una posible raíz
+                realmente lo es (residuo $= 0$).</li>
+            <li>La <strong>Regla de Descartes</strong> acota el número máximo de raíces
+                reales positivas (cambios en $f(x)$) y negativas (cambios en $f(-x)$).</li>
+            <li>Las <strong>raíces repetidas</strong> deben verificarse en la ecuación
+                degradada.</li>
+            <li>Las raíces <strong>complejas</strong> aparecen cuando el discriminante de
+                la cuadrática restante es negativo.</li>
+          </ul>
+        </div>
+        <div class="exito" style="text-align: center; margin-top: 1rem;">
+          <strong>🎉 ¡Felicidades!</strong> Has completado el Módulo 15.
+        </div>
+      </div>
+    </main>
+
+    <div class="navegacion">
+      <button id="btnAnterior" disabled>← Anterior</button>
+      <span class="indicador" id="indicador">Diapositiva 1 de 9</span>
+      <button id="btnSiguiente">Siguiente →</button>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Determinar raíces racionales de funciones polinomiales mediante el Teorema de la Raíz Racional, la división sintética y la Regla de los Signos de Descartes.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var diapositivas = document.querySelectorAll('.diapositiva');
+      var total = diapositivas.length;
+      var actual = 0;
+
+      var btnAnterior = document.getElementById('btnAnterior');
+      var btnSiguiente = document.getElementById('btnSiguiente');
+      var indicador = document.getElementById('indicador');
+      var progresoBarra = document.getElementById('progresoBarra');
+
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      function mostrarDiapositiva(indice) {
+        diapositivas.forEach(function (d, i) {
+          d.classList.toggle('activa', i === indice);
+        });
+        actual = indice;
+        indicador.textContent = 'Diapositiva ' + (indice + 1) + ' de ' + total;
+        btnAnterior.disabled = (indice === 0);
+        btnSiguiente.disabled = (indice === total - 1);
+        progresoBarra.style.width = ((indice + 1) / total * 100) + '%';
+        renderMath(document.querySelector('.diapositiva.activa'));
+      }
+
+      btnAnterior.addEventListener('click', function () {
+        if (actual > 0) mostrarDiapositiva(actual - 1);
+      });
+
+      btnSiguiente.addEventListener('click', function () {
+        if (actual < total - 1) mostrarDiapositiva(actual + 1);
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' && actual > 0) mostrarDiapositiva(actual - 1);
+        if (e.key === 'ArrowRight' && actual < total - 1) mostrarDiapositiva(actual + 1);
+      });
+
+      // --- Utilidades ---
+      function parsearNumero(texto) {
+        if (texto == null) return NaN;
+        texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+        if (texto === '') return NaN;
+        if (texto.indexOf('/') !== -1) {
+          var p = texto.split('/');
+          if (p.length !== 2) return NaN;
+          var n = parseFloat(p[0]), d = parseFloat(p[1]);
+          if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+          return n / d;
+        }
+        var x = parseFloat(texto);
+        return isNaN(x) ? NaN : x;
+      }
+
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(4)).toString();
+      }
+
+      function factores(n) {
+        n = Math.abs(Math.round(n));
+        var f = [];
+        for (var i = 1; i <= n; i++) {
+          if (n % i === 0) f.push(i);
+        }
+        return f;
+      }
+
+      function mcd(a, b) {
+        a = Math.abs(a); b = Math.abs(b);
+        while (b) { var t = b; b = a % b; a = t; }
+        return a;
+      }
+
+      function evaluarPolinomio(coefs, c) {
+        var r = 0;
+        for (var i = 0; i < coefs.length; i++) r = r * c + coefs[i];
+        return r;
+      }
+
+      function divisionSintetica(coefs, c) {
+        var fila = [];
+        var acumulado = 0;
+        for (var i = 0; i < coefs.length; i++) {
+          acumulado = acumulado * c + coefs[i];
+          fila.push(acumulado);
+        }
+        return fila;
+      }
+
+      function contarCambiosSignos(coefs) {
+        var cambios = 0;
+        var signos = coefs.filter(function (v) { return Math.abs(v) > 1e-9; })
+          .map(function (v) { return v > 0 ? 1 : -1; });
+        for (var i = 1; i < signos.length; i++) {
+          if (signos[i] !== signos[i - 1]) cambios++;
+        }
+        return cambios;
+      }
+
+      // --- Caja 1: Generador de posibles raíces ---
+      document.getElementById('btn-raices-posibles').addEventListener('click', function () {
+        var a0 = parsearNumero(document.getElementById('a0').value);
+        var an = parsearNumero(document.getElementById('an').value);
+        var res = document.getElementById('res-raices-posibles');
+
+        if (isNaN(a0) || isNaN(an) || a0 === 0 || an === 0) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa valores numéricos distintos de cero para $a_0$ y $a_n$.';
+          renderMath(res);
+          return;
+        }
+
+        var fA0 = factores(a0);
+        var fAn = factores(an);
+        var posibles = [];
+
+        fA0.forEach(function (c) {
+          fAn.forEach(function (d) {
+            if (mcd(c, d) === 1) {
+              var fraccion = c + '/' + d;
+              if (posibles.indexOf(fraccion) === -1) posibles.push(fraccion);
+            }
+          });
+        });
+
+        var listaPos = posibles.map(function (f) { return '$+\\frac{' + f.split('/')[0] + '}{' + f.split('/')[1] + '}$'; });
+        var listaNeg = posibles.map(function (f) { return '$-\\frac{' + f.split('/')[0] + '}{' + f.split('/')[1] + '}$'; });
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p><strong>Factores de $a_0 = ' + formatearNumero(a0) + '$:</strong> $' + fA0.join(', ') + '$</p>' +
+          '<p><strong>Factores de $a_n = ' + formatearNumero(an) + '$:</strong> $' + fAn.join(', ') + '$</p>' +
+          '<p><strong>Posibles raíces racionales positivas:</strong> ' + listaPos.join(', ') + '</p>' +
+          '<p><strong>Posibles raíces racionales negativas:</strong> ' + listaNeg.join(', ') + '</p>' +
+          '<p>Total de posibilidades: $' + (posibles.length * 2) + '$ (incluyendo signos).</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 2: Probador de raíz ---
+      document.getElementById('btn-probar-raiz').addEventListener('click', function () {
+        var c = parsearNumero(document.getElementById('c-probar').value);
+        var res = document.getElementById('res-probar-raiz');
+
+        if (isNaN(c)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa un valor numérico válido para $c$.';
+          renderMath(res);
+          return;
+        }
+
+        var coefs = [3, 2, -18, 0, 8];
+        var fila = divisionSintetica(coefs, c);
+        var residuo = fila[fila.length - 1];
+        var esRaiz = Math.abs(residuo) < 1e-9;
+
+        res.className = 'resultado ' + (esRaiz ? 'exito' : 'error');
+        res.innerHTML =
+          '<p>División sintética de $3x^4 + 2x^3 - 18x^2 + 0x + 8$ entre $x - (' + formatearNumero(c) + ')$:</p>' +
+          '<p>Tercera fila: $' + fila.map(formatearNumero).join(', \\quad ') + '$</p>' +
+          '<p>Residuo: $' + formatearNumero(residuo) + '$</p>' +
+          '<p>' + (esRaiz
+            ? '✅ $c = ' + formatearNumero(c) + '$ <strong>es raíz</strong> del polinomio.'
+            : '❌ $c = ' + formatearNumero(c) + '$ <strong>no es raíz</strong> (el residuo no es cero).')
+          + '</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 3: Contador de cambios de signo ---
+      document.getElementById('btn-contar-signos').addEventListener('click', function () {
+        var texto = document.getElementById('coefs-signos').value;
+        var res = document.getElementById('res-contar-signos');
+
+        var partes = texto.split(',').map(function (s) { return parsearNumero(s); });
+        if (partes.some(isNaN)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa los coeficientes separados por comas (ej. <code>2,7,-2,-13,6</code>).';
+          renderMath(res);
+          return;
+        }
+
+        var cambios = contarCambiosSignos(partes);
+        var signos = partes.filter(function (v) { return Math.abs(v) > 1e-9; })
+          .map(function (v) { return v > 0 ? '+' : '−'; }).join(', ');
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>Signos de los coeficientes: $' + signos + '$</p>' +
+          '<p><strong>Cambios de signo:</strong> $' + cambios + '$</p>' +
+          '<p>El polinomio tiene a lo más $' + cambios + '$ raíces reales positivas.</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 4: Aplicador de Descartes ---
+      document.getElementById('btn-descartes').addEventListener('click', function () {
+        var res = document.getElementById('res-descartes');
+        var coefsF = [1, -1, 6, 4, -8];
+        // f(-x): cambiar signo de coeficientes de potencias impares
+        var coefsFneg = coefsF.map(function (v, i) {
+          var grado = coefsF.length - 1 - i;
+          return grado % 2 === 1 ? -v : v;
+        });
+
+        var cambiosF = contarCambiosSignos(coefsF);
+        var cambiosFneg = contarCambiosSignos(coefsFneg);
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p><strong>Para $f(x)$:</strong> coeficientes $' + coefsF.join(', ') + '$ → $' + cambiosF + '$ cambios de signo.</p>' +
+          '<p>Máximo de raíces reales positivas: $' + cambiosF + '$.</p>' +
+          '<p><strong>Para $f(-x)$:</strong> coeficientes $' + coefsFneg.join(', ') + '$ → $' + cambiosFneg + '$ cambios de signo.</p>' +
+          '<p>Máximo de raíces reales negativas: $' + cambiosFneg + '$.</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 5: Verificador de cambios en f(-x) ---
+      document.getElementById('btn-verificar-fneg').addEventListener('click', function () {
+        var res = document.getElementById('res-verificar-fneg');
+        var coefs = [3, -1, -21, -11, 6];
+        var coefsFneg = coefs.map(function (v, i) {
+          var grado = coefs.length - 1 - i;
+          return grado % 2 === 1 ? -v : v;
+        });
+
+        var cambiosF = contarCambiosSignos(coefs);
+        var cambiosFneg = contarCambiosSignos(coefsFneg);
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>$f(x) = 3x^4 - x^3 - 21x^2 - 11x + 6$ → $' + cambiosF + '$ cambios de signo.</p>' +
+          '<p>$f(-x) = 3x^4 + x^3 - 21x^2 + 11x + 6$ → $' + cambiosFneg + '$ cambios de signo.</p>' +
+          '<p>Máximo de raíces positivas: $' + cambiosF + '$ · Máximo de raíces negativas: $' + cambiosFneg + '$.</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 6: Verificador de multiplicidad ---
+      document.getElementById('btn-multiplicidad').addEventListener('click', function () {
+        var res = document.getElementById('res-multiplicidad');
+        var coefs = [1, -7, 18, -20, 8];
+        var fila = coefs.slice();
+        var veces = 0;
+
+        while (true) {
+          var resultado = divisionSintetica(fila, 2);
+          var residuo = resultado[resultado.length - 1];
+          if (Math.abs(residuo) < 1e-9) {
+            veces++;
+            fila = resultado.slice(0, -1);
+          } else {
+            break;
+          }
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>$x = 2$ aparece como raíz <strong>' + veces + ' veces</strong> en el polinomio.</p>' +
+          '<p>Conclusión: $x = 2$ es una raíz con multiplicidad $' + veces + '$.</p>';
+        renderMath(res);
+      });
+
+      // Inicializar
+      document.addEventListener('DOMContentLoaded', function () {
+        mostrarDiapositiva(0);
+      });
+    })();
+  </script>
+</body>
+</html>

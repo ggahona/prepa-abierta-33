@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Visualizador interactivo">
+  <title>Visualizador: Raíces Racionales y Descartes | Matemáticas III</title>
+
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .contenedor {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .layout-principal {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 0;
+    }
+
+    .panel-control {
+      background: var(--color-base);
+      padding: 1.2rem;
+      border-right: 2px solid var(--color-acento-suave);
+      overflow-y: auto;
+      max-height: 760px;
+    }
+
+    .panel-control h2 {
+      font-size: 1rem;
+      color: var(--color-primario);
+      margin-bottom: 0.6rem;
+      padding-bottom: 0.3rem;
+      border-bottom: 1px solid var(--color-acento-suave);
+    }
+
+    .panel-control h3 {
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      margin: 0.8rem 0 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .seccion-slider {
+      margin-bottom: 0.7rem;
+    }
+
+    .seccion-slider label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--color-primario);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+
+    .valor-slider {
+      color: var(--color-acento);
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+    }
+
+    .seccion-slider input[type="range"] {
+      width: 100%;
+      accent-color: var(--color-acento);
+    }
+
+    .checkbox-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+      cursor: pointer;
+    }
+
+    .checkbox-wrapper input[type="checkbox"] {
+      accent-color: var(--color-acento);
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .btn-secundario {
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      border: 2px solid var(--color-acento-suave);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 0.4rem;
+      width: 100%;
+    }
+
+    .btn-secundario:hover {
+      border-color: var(--color-acento);
+      background: var(--color-base);
+    }
+
+    .btn-ejemplo {
+      display: block;
+      width: 100%;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      border: 1px solid var(--color-acento-suave);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      margin-bottom: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-ejemplo:hover {
+      border-color: var(--color-acento);
+      background: var(--color-base);
+    }
+
+    .btn-ejemplo.activo {
+      background: var(--color-acento);
+      color: var(--color-blanco);
+      border-color: var(--color-primario);
+    }
+
+    .panel-canvas {
+      padding: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      overflow: hidden;
+    }
+
+    #canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-width: 820px;
+      margin: 0 auto;
+      cursor: crosshair;
+    }
+
+    .canvas-instrucciones {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: 4px;
+      padding: 0.25rem 0.5rem;
+      font-size: 0.75rem;
+      color: var(--color-primario);
+      pointer-events: none;
+    }
+
+    .leyenda {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 0.6rem 0.8rem;
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      font-size: 0.8rem;
+    }
+
+    .leyenda-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .leyenda-muestra {
+      width: 18px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    .leyenda-muestra.punto {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .panel-info {
+      background: var(--color-base);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 0.9rem 1rem;
+      font-size: 0.85rem;
+      min-height: 80px;
+    }
+
+    .panel-info h3 {
+      font-size: 0.95rem;
+      color: var(--color-primario);
+      margin-bottom: 0.5rem;
+    }
+
+    .panel-info table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .panel-info table th,
+    .panel-info table td {
+      padding: 0.3rem 0.4rem;
+      border: 1px solid var(--color-acento-suave);
+      text-align: left;
+    }
+
+    .panel-info table th {
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .aviso-pedagogico {
+      margin-top: 0.6rem;
+      padding: 0.5rem 0.7rem;
+      border-left: 3px solid var(--color-acento);
+      background: var(--color-blanco);
+      border-radius: 4px;
+      font-size: 0.82rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .aviso-pedagogico.alerta {
+      border-left-color: var(--color-error);
+      background: #fdecea;
+    }
+
+    .aviso-pedagogico.exito {
+      border-left-color: var(--color-exito);
+      background: #eafaf1;
+    }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem;
+      color: var(--color-primario);
+    }
+
+    @media (max-width: 900px) {
+      .layout-principal {
+        grid-template-columns: 1fr;
+      }
+      .panel-control {
+        border-right: none;
+        border-bottom: 2px solid var(--color-acento-suave);
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.1rem; }
+      .panel-control, .panel-canvas { padding: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Visualizador: Raíces Racionales y Regla de Descartes</h1>
+      <p>Visualizador interactivo | Matemáticas III</p>
+    </header>
+
+    <div class="layout-principal">
+      <!-- Panel de control -->
+      <div class="panel-control">
+        <h2>🎛️ Parámetros</h2>
+
+        <div class="seccion-slider">
+          <label for="coef-a">Coeficiente $a$ (grado mayor): <span class="valor-slider" id="val-a">1</span></label>
+          <input type="range" id="coef-a" min="-3" max="3" step="0.5" value="1">
+        </div>
+
+        <div class="seccion-slider">
+          <label for="coef-b">Coeficiente $b$: <span class="valor-slider" id="val-b">5</span></label>
+          <input type="range" id="coef-b" min="-10" max="10" step="0.5" value="5">
+        </div>
+
+        <div class="seccion-slider">
+          <label for="coef-c">Coeficiente $c$: <span class="valor-slider" id="val-c">-2</span></label>
+          <input type="range" id="coef-c" min="-15" max="15" step="0.5" value="-2">
+        </div>
+
+        <div class="seccion-slider">
+          <label for="coef-d">Coeficiente $d$: <span class="valor-slider" id="val-d">-24</span></label>
+          <input type="range" id="coef-d" min="-30" max="30" step="1" value="-24">
+        </div>
+
+        <h3>👁️ Visualización</h3>
+        <label class="checkbox-wrapper">
+          <input type="checkbox" id="chk-cuadricula" checked>
+          Mostrar cuadrícula
+        </label>
+        <label class="checkbox-wrapper">
+          <input type="checkbox" id="chk-cambios" checked>
+          Marcar cambios de signo
+        </label>
+        <label class="checkbox-wrapper">
+          <input type="checkbox" id="chk-raices" checked>
+          Marcar raíces reales
+        </label>
+        <label class="checkbox-wrapper">
+          <input type="checkbox" id="chk-fneg">
+          Mostrar $f(-x)$ superpuesta
+        </label>
+
+        <h3>🔍 Zoom</h3>
+        <div class="seccion-slider">
+          <label for="slider-zoom">Escala: <span class="valor-slider" id="val-zoom">25</span> px / unidad</label>
+          <input type="range" id="slider-zoom" min="10" max="50" step="1" value="25">
+        </div>
+
+        <button class="btn-secundario" id="btn-reiniciar">↺ Reiniciar vista</button>
+
+        <h3>📚 Ejemplos</h3>
+        <button class="btn-ejemplo" data-ejemplo="0">
+          <strong>f(x) = 3x⁴ + 2x³ − 18x² + 8</strong><br>
+          <span style="font-size:0.72rem;color:var(--color-acento);">Raíces 2 y −2/3</span>
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="1">
+          <strong>f(x) = 3x⁴ − x³ − 21x² − 11x + 6</strong><br>
+          <span style="font-size:0.72rem;color:var(--color-acento);">Raíces −2, −1, 1/3, 3</span>
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="2">
+          <strong>f(x) = x⁴ − 7x³ + 18x² − 20x + 8</strong><br>
+          <span style="font-size:0.72rem;color:var(--color-acento);">Raíz triple en 2</span>
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="3">
+          <strong>f(x) = x³ + 8x² + 3x − 10</strong><br>
+          <span style="font-size:0.72rem;color:var(--color-acento);">Raíces −5, 1, −2</span>
+        </button>
+        <button class="btn-ejemplo" data-ejemplo="4">
+          <strong>f(x) = 2x⁴ + 7x³ − 2x² − 13x + 6</strong><br>
+          <span style="font-size:0.72rem;color:var(--color-acento);">2 cambios de signo</span>
+        </button>
+      </div>
+
+      <!-- Panel de canvas -->
+      <div class="panel-canvas">
+        <div class="canvas-wrapper">
+          <canvas id="canvas" width="820" height="560" aria-label="Gráfica de función polinomial"></canvas>
+          <div class="canvas-instrucciones">🖱️ Clic para fijar un valor de x</div>
+        </div>
+
+        <div class="leyenda">
+          <div class="leyenda-item">
+            <span class="leyenda-muestra" style="background:#5b7fa3;"></span>
+            <span>Curva $f(x)$</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-muestra" style="background:#c0392b;"></span>
+            <span>Curva $f(-x)$</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-muestra punto" style="background:#27ae60;"></span>
+            <span>Raíces reales</span>
+          </div>
+          <div class="leyenda-item">
+            <span class="leyenda-muestra punto" style="background:#c0392b;"></span>
+            <span>Punto seleccionado</span>
+          </div>
+        </div>
+
+        <div class="panel-info" id="panelInfo" role="status" aria-live="polite">
+          <h3>📊 Información</h3>
+          <p>Cargando información...</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Visualizar las raíces racionales de funciones polinomiales y comprender la Regla de los Signos de Descartes mediante los cambios de signo de $f(x)$ y $f(-x)$.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // --- Configuración ---
+      var W = 820, H = 560;
+      var canvas = document.getElementById('canvas');
+      var ctx = canvas.getContext('2d');
+
+      // --- Estado global ---
+      var estado = {
+        a: 1, b: 5, c: -2, d: -24,
+        zoom: 25,
+        mostrarCuadricula: true,
+        mostrarCambios: true,
+        mostrarRaices: true,
+        mostrarFneg: false,
+        puntoSeleccionado: null
+      };
+
+      // --- HiDPI ---
+      function configurarHiDPI() {
+        var dpr = window.devicePixelRatio || 1;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        canvas.style.width = '100%';
+        canvas.style.maxWidth = W + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      // --- Transformaciones ---
+      function mundoAPantalla(x, y) {
+        return {
+          px: W / 2 + x * estado.zoom,
+          py: H / 2 - y * estado.zoom
+        };
+      }
+
+      function pantallaAMundo(px, py) {
+        return {
+          x: (px - W / 2) / estado.zoom,
+          y: (H / 2 - py) / estado.zoom
+        };
+      }
+
+      // --- Utilidades ---
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(3)).toString();
+      }
+
+      // --- Evaluación ---
+      function evaluar(x) {
+        return estado.a * Math.pow(x, 3) + estado.b * Math.pow(x, 2) + estado.c * x + estado.d;
+      }
+
+      function evaluarFneg(x) {
+        return estado.a * Math.pow(-x, 3) + estado.b * Math.pow(-x, 2) + estado.c * (-x) + estado.d;
+      }
+
+      // --- Coeficientes ---
+      function coeficientesF() {
+        return [estado.a, estado.b, estado.c, estado.d];
+      }
+
+      function coeficientesFneg() {
+        var c = coeficientesF();
+        return c.map(function (v, i) {
+          var grado = c.length - 1 - i;
+          return grado % 2 === 1 ? -v : v;
+        });
+      }
+
+      // --- Cambios de signo ---
+      function contarCambiosSignos(coefs) {
+        var cambios = 0;
+        var signos = coefs.filter(function (v) { return Math.abs(v) > 1e-9; })
+          .map(function (v) { return v > 0 ? 1 : -1; });
+        for (var i = 1; i < signos.length; i++) {
+          if (signos[i] !== signos[i - 1]) cambios++;
+        }
+        return cambios;
+      }
+
+      // --- Encontrar raíces reales ---
+      function encontrarRaices() {
+        var raices = [];
+        var paso = 0.05;
+        var xAnterior = -20;
+        var yAnterior = evaluar(xAnterior);
+        for (var x = -20 + paso; x <= 20; x += paso) {
+          var y = evaluar(x);
+          if (Math.abs(y) < 0.001) {
+            raices.push(parseFloat(x.toFixed(3)));
+          } else if (yAnterior * y < 0) {
+            var a = xAnterior, b = x;
+            for (var k = 0; k < 40; k++) {
+              var m = (a + b) / 2;
+              if (evaluar(a) * evaluar(m) < 0) b = m; else a = m;
+            }
+            raices.push(parseFloat(((a + b) / 2).toFixed(3)));
+          }
+          xAnterior = x;
+          yAnterior = y;
+        }
+        var unicas = [];
+        raices.forEach(function (r) {
+          if (!unicas.some(function (u) { return Math.abs(u - r) < 0.01; })) {
+            unicas.push(r);
+          }
+        });
+        return unicas;
+      }
+
+      // --- Dibujo ---
+      function dibujarCuadricula() {
+        if (!estado.mostrarCuadricula) return;
+        ctx.strokeStyle = '#e8eef5';
+        ctx.lineWidth = 1;
+        var paso = estado.zoom;
+        if (paso < 15) paso *= 2;
+        if (paso < 15) paso *= 2;
+
+        ctx.beginPath();
+        for (var x = W / 2; x < W; x += paso) {
+          ctx.moveTo(x, 0); ctx.lineTo(x, H);
+          ctx.moveTo(W - x, 0); ctx.lineTo(W - x, H);
+        }
+        for (var y = H / 2; y < H; y += paso) {
+          ctx.moveTo(0, y); ctx.lineTo(W, y);
+          ctx.moveTo(0, H - y); ctx.lineTo(W, H - y);
+        }
+        ctx.stroke();
+      }
+
+      function dibujarEjes() {
+        ctx.strokeStyle = '#2c4966';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, H / 2); ctx.lineTo(W, H / 2);
+        ctx.moveTo(W / 2, 0); ctx.lineTo(W / 2, H);
+        ctx.stroke();
+
+        ctx.fillStyle = '#2c4966';
+        ctx.beginPath();
+        ctx.moveTo(W - 10, H / 2);
+        ctx.lineTo(W - 20, H / 2 - 5);
+        ctx.lineTo(W - 20, H / 2 + 5);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(W / 2, 10);
+        ctx.lineTo(W / 2 - 5, 20);
+        ctx.lineTo(W / 2 + 5, 20);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#2c4966';
+        ctx.font = '12px Segoe UI, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('x', W - 15, H / 2 + 18);
+        ctx.fillText('y', W / 2 + 18, 18);
+
+        ctx.font = '10px Segoe UI, sans-serif';
+        var pasoNum = 1;
+        if (estado.zoom < 20) pasoNum = 2;
+        if (estado.zoom < 12) pasoNum = 5;
+
+        for (var i = pasoNum; i * estado.zoom < W / 2; i += pasoNum) {
+          var px = W / 2 + i * estado.zoom;
+          var py = H / 2;
+          ctx.beginPath();
+          ctx.moveTo(px, py - 3); ctx.lineTo(px, py + 3);
+          ctx.stroke();
+          ctx.fillText(i, px, py + 14);
+
+          var px2 = W / 2 - i * estado.zoom;
+          ctx.beginPath();
+          ctx.moveTo(px2, py - 3); ctx.lineTo(px2, py + 3);
+          ctx.stroke();
+          ctx.fillText(-i, px2, py + 14);
+        }
+        for (var j = pasoNum; j * estado.zoom < H / 2; j += pasoNum) {
+          var px3 = W / 2;
+          var py3 = H / 2 + j * estado.zoom;
+          ctx.beginPath();
+          ctx.moveTo(px3 - 3, py3); ctx.lineTo(px3 + 3, py3);
+          ctx.stroke();
+          ctx.fillText(-j, px3 - 16, py3 + 4);
+
+          var py4 = H / 2 - j * estado.zoom;
+          ctx.beginPath();
+          ctx.moveTo(px3 - 3, py4); ctx.lineTo(px3 + 3, py4);
+          ctx.stroke();
+          ctx.fillText(j, px3 - 16, py4 + 4);
+        }
+      }
+
+      function dibujarCurva() {
+        ctx.strokeStyle = '#5b7fa3';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        var primero = true;
+        for (var px = 0; px <= W; px += 1) {
+          var mundo = pantallaAMundo(px, 0);
+          var y = evaluar(mundo.x);
+          var punto = mundoAPantalla(mundo.x, y);
+          if (punto.py < -1000 || punto.py > H + 1000) {
+            primero = true;
+            continue;
+          }
+          if (primero) {
+            ctx.moveTo(punto.px, punto.py);
+            primero = false;
+          } else {
+            ctx.lineTo(punto.px, punto.py);
+          }
+        }
+        ctx.stroke();
+      }
+
+      function dibujarFneg() {
+        if (!estado.mostrarFneg) return;
+        ctx.strokeStyle = '#c0392b';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.beginPath();
+        var primero = true;
+        for (var px = 0; px <= W; px += 1) {
+          var mundo = pantallaAMundo(px, 0);
+          var y = evaluarFneg(mundo.x);
+          var punto = mundoAPantalla(mundo.x, y);
+          if (punto.py < -1000 || punto.py > H + 1000) {
+            primero = true;
+            continue;
+          }
+          if (primero) {
+            ctx.moveTo(punto.px, punto.py);
+            primero = false;
+          } else {
+            ctx.lineTo(punto.px, punto.py);
+          }
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      function dibujarRaices() {
+        if (!estado.mostrarRaices) return;
+        var raices = encontrarRaices();
+        raices.forEach(function (r) {
+          var p = mundoAPantalla(r, 0);
+          ctx.fillStyle = '#27ae60';
+          ctx.beginPath();
+          ctx.arc(p.px, p.py, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        });
+      }
+
+      function dibujarPuntoSeleccionado() {
+        if (estado.puntoSeleccionado === null) return;
+        var x = estado.puntoSeleccionado;
+        var y = evaluar(x);
+        var p = mundoAPantalla(x, y);
+
+        ctx.fillStyle = '#c0392b';
+        ctx.beginPath();
+        ctx.arc(p.px, p.py, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = '#c0392b';
+        ctx.font = 'bold 12px Segoe UI, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.fillText('(' + formatearNumero(x) + ', ' + formatearNumero(y) + ')', p.px + 10, p.py - 8);
+      }
+
+      // --- Info ---
+      function actualizarInfo() {
+        var panelInfo = document.getElementById('panelInfo');
+        var coefsF = coeficientesF();
+        var coefsFneg = coeficientesFneg();
+        var cambiosF = contarCambiosSignos(coefsF);
+        var cambiosFneg = contarCambiosSignos(coefsFneg);
+        var raices = encontrarRaices();
+
+        var html = '<h3>📊 Análisis del polinomio</h3>';
+
+        html += '<table>';
+        html += '<tr><th>Elemento</th><th>Valor</th></tr>';
+        html += '<tr><td>Coeficientes de $f(x)$</td><td>$' + coefsF.map(formatearNumero).join(', ') + '$</td></tr>';
+        html += '<tr><td>Cambios de signo en $f(x)$</td><td>$' + cambiosF + '$</td></tr>';
+        html += '<tr><td>Coeficientes de $f(-x)$</td><td>$' + coefsFneg.map(formatearNumero).join(', ') + '$</td></tr>';
+        html += '<tr><td>Cambios de signo en $f(-x)$</td><td>$' + cambiosFneg + '$</td></tr>';
+        html += '<tr><td>Raíces reales detectadas</td><td>$' + (raices.length > 0 ? raices.map(formatearNumero).join(', ') : 'ninguna') + '$</td></tr>';
+        html += '</table>';
+
+        if (estado.puntoSeleccionado !== null) {
+          var y = evaluar(estado.puntoSeleccionado);
+          html += '<p style="margin-top:0.4rem;"><strong>Punto seleccionado:</strong> $(' +
+            formatearNumero(estado.puntoSeleccionado) + ', ' + formatearNumero(y) + ')$</p>';
+        }
+
+        // Aviso pedagógico
+        var aviso = '';
+        var claseAviso = 'aviso-pedagogico';
+
+        if (cambiosF === 0 && cambiosFneg === 0) {
+          aviso = '💡 Ni $f(x)$ ni $f(-x)$ tienen cambios de signo: el polinomio no tiene raíces reales positivas ni negativas.';
+          claseAviso += ' alerta';
+        } else if (raices.length === 0) {
+          aviso = '💡 No se detectan raíces reales en el intervalo visible. Puede tener raíces complejas.';
+          claseAviso += ' alerta';
+        } else if (cambiosF > 0 && cambiosFneg > 0) {
+          aviso = '✅ Descartes: máximo $' + cambiosF + '$ raíces positivas y $' + cambiosFneg + '$ raíces negativas. Se detectaron $' + raices.length + '$ reales.';
+          claseAviso += ' exito';
+        } else {
+          aviso = '💡 Descartes: máximo $' + cambiosF + '$ positivas y $' + cambiosFneg + '$ negativas.';
+        }
+
+        html += '<div class="' + claseAviso + '">' + aviso + '</div>';
+
+        panelInfo.innerHTML = html;
+        renderMath(panelInfo);
+      }
+
+      // --- Render principal ---
+      function render() {
+        ctx.save();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, W, H);
+
+        dibujarCuadricula();
+        dibujarEjes();
+        dibujarFneg();
+        dibujarCurva();
+        dibujarRaices();
+        dibujarPuntoSeleccionado();
+        actualizarInfo();
+        renderMath(document.getElementById('panelInfo'));
+      }
+
+      // --- Eventos: sliders ---
+      function vincularSlider(idSlider, idValor, propiedad) {
+        var slider = document.getElementById(idSlider);
+        var valor = document.getElementById(idValor);
+        slider.addEventListener('input', function () {
+          var v = parseFloat(slider.value);
+          estado[propiedad] = v;
+          valor.textContent = formatearNumero(v);
+          estado.puntoSeleccionado = null;
+          render();
+        });
+        valor.textContent = formatearNumero(estado[propiedad]);
+      }
+
+      vincularSlider('coef-a', 'val-a', 'a');
+      vincularSlider('coef-b', 'val-b', 'b');
+      vincularSlider('coef-c', 'val-c', 'c');
+      vincularSlider('coef-d', 'val-d', 'd');
+      vincularSlider('slider-zoom', 'val-zoom', 'zoom');
+
+      // --- Eventos: checkboxes ---
+      document.getElementById('chk-cuadricula').addEventListener('change', function (e) {
+        estado.mostrarCuadricula = e.target.checked;
+        render();
+      });
+      document.getElementById('chk-cambios').addEventListener('change', function (e) {
+        estado.mostrarCambios = e.target.checked;
+        render();
+      });
+      document.getElementById('chk-raices').addEventListener('change', function (e) {
+        estado.mostrarRaices = e.target.checked;
+        render();
+      });
+      document.getElementById('chk-fneg').addEventListener('change', function (e) {
+        estado.mostrarFneg = e.target.checked;
+        render();
+      });
+
+      // --- Eventos: clic en canvas ---
+      canvas.addEventListener('click', function (e) {
+        var rect = canvas.getBoundingClientRect();
+        var escalaX = W / rect.width;
+        var escalaY = H / rect.height;
+        var px = (e.clientX - rect.left) * escalaX;
+        var py = (e.clientY - rect.top) * escalaY;
+        var mundo = pantallaAMundo(px, py);
+        estado.puntoSeleccionado = parseFloat(mundo.x.toFixed(2));
+        render();
+      });
+
+      // --- Eventos: botones ejemplo ---
+      var ejemplos = [
+        { a: 3, b: 2, c: -18, d: 8 },
+        { a: 3, b: -1, c: -21, d: -11 },
+        { a: 1, b: -7, c: 18, d: -20 },
+        { a: 1, b: 8, c: 3, d: -10 },
+        { a: 2, b: 7, c: -2, d: -13 }
+      ];
+
+      document.querySelectorAll('.btn-ejemplo').forEach(function (btn, idx) {
+        btn.addEventListener('click', function () {
+          var ej = ejemplos[idx];
+          estado.a = ej.a;
+          estado.b = ej.b;
+          estado.c = ej.c;
+          estado.d = ej.d;
+          estado.puntoSeleccionado = null;
+
+          document.getElementById('coef-a').value = ej.a;
+          document.getElementById('coef-b').value = ej.b;
+          document.getElementById('coef-c').value = ej.c;
+          document.getElementById('coef-d').value = ej.d;
+
+          document.getElementById('val-a').textContent = formatearNumero(ej.a);
+          document.getElementById('val-b').textContent = formatearNumero(ej.b);
+          document.getElementById('val-c').textContent = formatearNumero(ej.c);
+          document.getElementById('val-d').textContent = formatearNumero(ej.d);
+
+          document.querySelectorAll('.btn-ejemplo').forEach(function (b) { b.classList.remove('activo'); });
+          btn.classList.add('activo');
+
+          render();
+        });
+      });
+
+      // --- Eventos: reiniciar ---
+      document.getElementById('btn-reiniciar').addEventListener('click', function () {
+        estado.a = 1; estado.b = 5; estado.c = -2; estado.d = -24;
+        estado.zoom = 25;
+        estado.puntoSeleccionado = null;
+        estado.mostrarFneg = false;
+
+        document.getElementById('coef-a').value = 1;
+        document.getElementById('coef-b').value = 5;
+        document.getElementById('coef-c').value = -2;
+        document.getElementById('coef-d').value = -24;
+        document.getElementById('slider-zoom').value = 25;
+        document.getElementById('chk-fneg').checked = false;
+
+        document.getElementById('val-a').textContent = '1';
+        document.getElementById('val-b').textContent = '5';
+        document.getElementById('val-c').textContent = '-2';
+        document.getElementById('val-d').textContent = '-24';
+        document.getElementById('val-zoom').textContent = '25';
+
+        document.querySelectorAll('.btn-ejemplo').forEach(function (b) { b.classList.remove('activo'); });
+
+        render();
+      });
+
+      // --- Inicializar ---
+      document.addEventListener('DOMContentLoaded', function () {
+        configurarHiDPI();
+        render();
+      });
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          configurarHiDPI();
+          render();
+        }, 200);
+      });
+    })();
+  </script>
+</body>
+</html>

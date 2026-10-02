@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Laboratorio de práctica">
+  <title>Laboratorio: Raíces Racionales y Descartes | Matemáticas III</title>
+
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .barra-progreso-general {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--color-base);
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .texto-progreso {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      white-space: nowrap;
+    }
+
+    .progreso-track {
+      flex: 1;
+      height: 10px;
+      background: var(--color-blanco);
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--color-acento-suave);
+    }
+
+    .progreso-fill {
+      height: 100%;
+      background: var(--color-acento);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    main { padding: 1.5rem; }
+
+    .tarjeta-caso {
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1.2rem;
+    }
+
+    .meta-caso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .numero-caso {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-primario);
+    }
+
+    .nivel-caso {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nivel-caso.basico { background: #d4edda; color: #145a32; }
+    .nivel-caso.medio { background: #fff3cd; color: #7d6608; }
+    .nivel-caso.alto { background: #f8d7da; color: #78281f; }
+
+    .enunciado {
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .etiqueta-caso {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .expresion-caso {
+      margin-top: 0.6rem;
+      padding: 0.5rem;
+      background: var(--color-blanco);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    .fase {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    .fase.bloqueada {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .fase.resuelta {
+      border-left-color: var(--color-exito);
+      background: #f0faf4;
+    }
+
+    .fase-titulo {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fase-contador {
+      font-size: 0.75rem;
+      color: var(--color-acento);
+      font-weight: 600;
+    }
+
+    .opciones-lista {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+    }
+
+    .opciones-lista li {
+      margin-bottom: 0.4rem;
+    }
+
+    .opcion {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .opcion:hover:not(:disabled) {
+      border-color: var(--color-acento);
+      background: var(--color-base);
+    }
+
+    .opcion:disabled { cursor: not-allowed; }
+
+    .opcion.correcta {
+      background: #d4edda;
+      border-color: var(--color-exito);
+      color: #145a32;
+      font-weight: 600;
+    }
+
+    .opcion.incorrecta {
+      background: #f8d7da;
+      border-color: var(--color-error);
+      color: #78281f;
+    }
+
+    .input-grupo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: flex-end;
+      margin: 0.6rem 0;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .input-wrapper label {
+      font-size: 0.78rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .input-wrapper input {
+      padding: 0.45rem 0.6rem;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      min-width: 120px;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .btn-primario {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-primario:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-primario:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+
+    .btn-pista {
+      background: #fff3cd;
+      color: #7d6608;
+      border: 2px solid #ffc107;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.4rem;
+    }
+
+    .btn-reintentar {
+      background: var(--color-blanco);
+      color: var(--color-error);
+      border: 2px solid var(--color-error);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.4rem;
+    }
+
+    .feedback {
+      margin-top: 0.6rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .feedback.visible { display: block; }
+    .feedback.exito { background: #d4edda; color: #145a32; border-left: 3px solid var(--color-exito); }
+    .feedback.error { background: #f8d7da; color: #78281f; border-left: 3px solid var(--color-error); }
+    .feedback.pista { background: #fff3cd; color: #7d6608; border-left: 3px solid #ffc107; }
+
+    .navegacion-casos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.2rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--color-acento-suave);
+    }
+
+    .btn-navegacion {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-navegacion:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-navegacion:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      border: 2px solid var(--color-acento-suave);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) { border-color: var(--color-acento); }
+
+    .indicador-caso {
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .pantalla-final {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .pantalla-final.visible { display: block; }
+
+    .medalla {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pantalla-final h2 {
+      color: var(--color-primario);
+      margin-bottom: 0.8rem;
+    }
+
+    .puntaje-final {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      margin-bottom: 0.8rem;
+    }
+
+    .pantalla-final p {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem;
+      color: var(--color-primario);
+    }
+
+    @media (max-width: 900px) {
+      .input-grupo { flex-direction: column; align-items: stretch; }
+      .input-wrapper input { width: 100%; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.1rem; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Laboratorio: Raíces Racionales y Regla de Descartes</h1>
+      <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+      <span class="texto-progreso" id="progresoTexto">Caso 1 de 9</span>
+      <div class="progreso-track">
+        <div class="progreso-fill" id="progresoFill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
+      <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 9</span>
+    </div>
+
+    <main>
+      <div class="tarjeta-caso" id="tarjetaCaso">
+        <div class="meta-caso">
+          <div class="numero-caso" id="numeroCaso">Caso 1 de 9</div>
+          <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+        </div>
+
+        <div class="enunciado" id="enunciadoCaso">
+          <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+          <div id="textoEnunciado">Cargando caso...</div>
+          <div class="expresion-caso" id="expresionCaso"></div>
+        </div>
+
+        <!-- Fase 1: Diagnóstico -->
+        <div class="fase" id="fase1">
+          <div class="fase-titulo">
+            <span>🔍 Fase 1 — Diagnóstico</span>
+            <span class="fase-contador" id="contador1">Intentos: 3</span>
+          </div>
+          <p id="pregunta1"></p>
+          <ul class="opciones-lista" id="opciones1"></ul>
+          <button class="btn-reintentar" id="btnReintentar1" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Fase 2: Estrategia -->
+        <div class="fase bloqueada" id="fase2">
+          <div class="fase-titulo">
+            <span>🧭 Fase 2 — Estrategia / Cálculo intermedio</span>
+            <span class="fase-contador" id="contador2">Intentos: 3</span>
+          </div>
+          <p id="pregunta2"></p>
+          <div class="input-grupo" id="inputs2"></div>
+          <button class="btn-primario" id="btnVerificar2">Verificar</button>
+          <button class="btn-pista" id="btnPista2">💡 Pista</button>
+          <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <!-- Fase 3: Ejecución -->
+        <div class="fase bloqueada" id="fase3">
+          <div class="fase-titulo">
+            <span>⚙️ Fase 3 — Ejecución / Resultado</span>
+            <span class="fase-contador" id="contador3">Intentos: 3</span>
+          </div>
+          <p id="pregunta3"></p>
+          <div class="input-grupo" id="inputs3"></div>
+          <button class="btn-primario" id="btnVerificar3">Verificar</button>
+          <button class="btn-pista" id="btnPista3">💡 Pista</button>
+          <div class="feedback" id="feedback3"></div>
+        </div>
+
+        <!-- Fase 4: Error frecuente -->
+        <div class="fase bloqueada" id="fase4">
+          <div class="fase-titulo">
+            <span>🎯 Fase 4 — Error frecuente</span>
+            <span class="fase-contador" id="contador4">Intentos: 3</span>
+          </div>
+          <p id="pregunta4"></p>
+          <ul class="opciones-lista" id="opciones4"></ul>
+          <button class="btn-reintentar" id="btnReintentar4" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback4"></div>
+        </div>
+
+        <div class="navegacion-casos">
+          <button class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+          <span class="indicador-caso" id="indicadorCaso">Caso 1 de 9</span>
+          <button class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+
+      <div class="pantalla-final" id="pantallaFinal">
+        <div class="medalla" id="medallaFinal">🏅</div>
+        <h2>¡Laboratorio completado!</h2>
+        <div class="puntaje-final" id="puntajeFinal">0 / 9</div>
+        <p id="mensajeFinal"></p>
+        <button class="btn-primario" id="btnReiniciar">🔄 Reiniciar laboratorio</button>
+      </div>
+    </main>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Aplicar el Teorema de la Raíz Racional, la división sintética y la Regla de los Signos de Descartes en casos de dificultad progresiva.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'lab_mod15_resueltos';
+
+      // --- Utilidades ---
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(4)).toString();
+      }
+
+      function parsearNumero(texto) {
+        if (texto == null) return NaN;
+        texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+        if (texto === '') return NaN;
+        if (texto.indexOf('/') !== -1) {
+          var p = texto.split('/');
+          if (p.length !== 2) return NaN;
+          var n = parseFloat(p[0]), d = parseFloat(p[1]);
+          if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+          return n / d;
+        }
+        var x = parseFloat(texto);
+        return isNaN(x) ? NaN : x;
+      }
+
+      function verificarAproximado(valor, correcto, tolerancia) {
+        tolerancia = tolerancia || 0.02;
+        return Math.abs(valor - correcto) < tolerancia;
+      }
+
+      // --- Banco de casos ---
+      var casos = [
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 1 · Teorema de la Raíz Racional',
+          enunciado: 'Encuentra las posibles raíces racionales de $f(x) = x^3 + 8x^2 + 3x - 10$.',
+          expresion: '$$f(x) = x^3 + 8x^2 + 3x - 10$$',
+          f1: {
+            pregunta: '¿Cuáles son los factores del término independiente $a_0 = -10$?',
+            opciones: [
+              { texto: '$1, 2, 5, 10$', correcta: true },
+              { texto: '$1, 2, 3, 5$', correcta: false },
+              { texto: '$1, 5, 10, 15$', correcta: false },
+              { texto: '$1, 2, 4, 8$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: los factores positivos de $10$ son $1, 2, 5, 10$.',
+            feedbackErr: 'Busca todos los números que dividen exactamente a $10$.'
+          },
+          f2: {
+            pregunta: 'Si $a_n = 1$, ¿cuántas posibles raíces racionales (positivas y negativas) hay?',
+            inputs: [{ id: 'f2a', label: 'Número total:', correcto: 8 }],
+            pista: 'Los factores de $a_n = 1$ son solo $\pm 1$. Combina con los factores de $a_0$.',
+            feedbackOk: 'Correcto: $\pm 1, \pm 2, \pm 5, \pm 10$ → 8 posibilidades.',
+            feedbackErr: 'Cuenta todas las combinaciones positivas y negativas.'
+          },
+          f3: {
+            pregunta: 'Prueba con $x = 1$. ¿Cuánto vale $f(1)$?',
+            inputs: [{ id: 'f3a', label: '$f(1) =$', correcto: 2 }],
+            pista: 'Sustituye $x = 1$ en $f(x)$.',
+            feedbackOk: 'Correcto: $f(1) = 1 + 8 + 3 - 10 = 2 \\neq 0$, así que $x = 1$ no es raíz.',
+            feedbackErr: 'Sustituye $x = 1$ con cuidado.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar el Teorema de la Raíz Racional?',
+            opciones: [
+              { texto: 'Confundir factores de $a_0$ con factores de $a_n$', correcta: true },
+              { texto: 'Olvidar incluir coeficientes cero', correcta: false },
+              { texto: 'Usar mal la división sintética', correcta: false },
+              { texto: 'No simplificar la fracción', correcta: false }
+            ],
+            feedbackOk: 'Correcto. $c$ es factor de $a_0$ y $d$ es factor de $a_n$.',
+            feedbackErr: 'El error más común es invertir los factores: $c$ va con $a_0$ y $d$ con $a_n$.'
+          }
+        },
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 2 · Completar coeficientes',
+          enunciado: 'Analiza $f(x) = 4x^3 - 7x - 3$. ¿Qué coeficientes se colocan en la división sintética?',
+          expresion: '$$f(x) = 4x^3 - 7x - 3$$',
+          f1: {
+            pregunta: '¿Cuál es el coeficiente del término $x^2$?',
+            opciones: [
+              { texto: '$0$', correcta: true },
+              { texto: '$1$', correcta: false },
+              { texto: '$-7$', correcta: false },
+              { texto: '$-3$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: el término $x^2$ no aparece, así que su coeficiente es $0$.',
+            feedbackErr: 'Si el término no aparece, su coeficiente es 0.'
+          },
+          f2: {
+            pregunta: '¿Cuáles son los coeficientes que se colocan en la tabla?',
+            inputs: [{ id: 'f2a', label: 'Coeficientes separados por comas:', correcto: '4,0,-7,-3', tipo: 'texto' }],
+            pista: 'Incluye un 0 donde falta el término $x^2$.',
+            feedbackOk: 'Correcto: $4, 0, -7, -3$.',
+            feedbackErr: 'Recuerda incluir el 0 del término faltante.'
+          },
+          f3: {
+            pregunta: 'Prueba con $x = \\frac{3}{2}$. ¿Es raíz? (1 = sí, 0 = no)',
+            inputs: [{ id: 'f3a', label: 'Respuesta (1/0):', correcto: 0 }],
+            pista: 'Evalúa $f(3/2)$ o usa división sintética con $c = 3/2$.',
+            feedbackOk: 'Correcto: $x = 3/2$ no es raíz de este polinomio.',
+            feedbackErr: 'Revisa la división sintética con $c = 3/2$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente en este tipo de polinomios?',
+            opciones: [
+              { texto: 'No incluir el coeficiente 0 del término faltante', correcta: true },
+              { texto: 'Confundir los factores de $a_0$', correcta: false },
+              { texto: 'Usar mal Descartes', correcta: false },
+              { texto: 'No probar raíces negativas', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Omitir el 0 desalinea toda la división sintética.',
+            feedbackErr: 'El error más común es olvidar el coeficiente 0.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 3 · Aplicar Descartes',
+          enunciado: 'Aplica la Regla de los Signos de Descartes a $f(x) = x^3 - 4x^2 - 11x - 8$.',
+          expresion: '$$f(x) = x^3 - 4x^2 - 11x - 8$$',
+          f1: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(x)$?',
+            opciones: [
+              { texto: '$1$', correcta: true },
+              { texto: '$2$', correcta: false },
+              { texto: '$3$', correcta: false },
+              { texto: '$0$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: solo hay un cambio de signo (entre $+1$ y $-4$).',
+            feedbackErr: 'Cuenta los cambios entre signos consecutivos.'
+          },
+          f2: {
+            pregunta: '¿Cuál es $f(-x)$? Escribe los coeficientes separados por comas.',
+            inputs: [{ id: 'f2a', label: 'Coeficientes de $f(-x)$:', correcto: '-1,-4,11,-8', tipo: 'texto' }],
+            pista: 'Cambia el signo de los términos con potencia impar.',
+            feedbackOk: 'Correcto: $f(-x) = -x^3 - 4x^2 + 11x - 8$.',
+            feedbackErr: 'Cambia solo los signos de los términos de grado impar.'
+          },
+          f3: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(-x)$?',
+            inputs: [{ id: 'f3a', label: 'Número de cambios:', correcto: 2 }],
+            pista: 'Cuenta los cambios entre signos consecutivos en $f(-x)$.',
+            feedbackOk: 'Correcto: $f(-x)$ tiene 2 cambios de signo.',
+            feedbackErr: 'Cuenta con cuidado los cambios en $f(-x)$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar Descartes?',
+            opciones: [
+              { texto: 'Confundir cambios de signo en $f(x)$ con $f(-x)$', correcta: true },
+              { texto: 'No factorizar $a_0$', correcta: false },
+              { texto: 'Olvidar los coeficientes cero', correcta: false },
+              { texto: 'Usar mal la división sintética', correcta: false }
+            ],
+            feedbackOk: 'Correcto. $f(-x)$ requiere cambiar el signo de los términos impares.',
+            feedbackErr: 'El error más común es confundir $f(x)$ con $f(-x)$.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 4 · Probar raíces racionales',
+          enunciado: 'Para $f(x) = 3x^3 - x^2 + 2x - 1$, prueba si $x = \\frac{1}{3}$ es raíz.',
+          expresion: '$$f(x) = 3x^3 - x^2 + 2x - 1$$',
+          f1: {
+            pregunta: '¿Cuál es el valor de $c$ a probar?',
+            opciones: [
+              { texto: '$\\frac{1}{3}$', correcta: true },
+              { texto: '$3$', correcta: false },
+              { texto: '$-\\frac{1}{3}$', correcta: false },
+              { texto: '$1$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $c = \\frac{1}{3}$.',
+            feedbackErr: 'Recuerda que $c$ es el valor de la raíz a probar.'
+          },
+          f2: {
+            pregunta: 'Aplica división sintética con $c = \\frac{1}{3}$. ¿Cuál es el segundo valor de la tercera fila?',
+            inputs: [{ id: 'f2a', label: 'Segundo valor:', correcto: 0 }],
+            pista: 'Multiplica $\\frac{1}{3} \\cdot 3 = 1$, y suma a $-1$.',
+            feedbackOk: 'Correcto: $1 + (-1) = 0$.',
+            feedbackErr: 'Multiplica $c$ por el primer valor y suma al siguiente coeficiente.'
+          },
+          f3: {
+            pregunta: '¿Es $x = \\frac{1}{3}$ raíz? (1 = sí, 0 = no)',
+            inputs: [{ id: 'f3a', label: 'Respuesta (1/0):', correcto: 1 }],
+            pista: 'El último valor de la tercera fila es el residuo.',
+            feedbackOk: 'Correcto: $x = \\frac{1}{3}$ es raíz.',
+            feedbackErr: 'Verifica el residuo de la división sintética.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al probar raíces fraccionarias?',
+            opciones: [
+              { texto: 'No incluir el signo al probar $c$', correcta: false },
+              { texto: 'Calcular mal el producto con $c$ fraccionario', correcta: true },
+              { texto: 'Olvidar los coeficientes cero', correcta: false },
+              { texto: 'Usar mal Descartes', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Los productos con fracciones son propensos a errores aritméticos.',
+            feedbackErr: 'El error más común es calcular mal los productos con fracciones.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 5 · Descartes con múltiples cambios',
+          enunciado: 'Analiza $f(x) = 2x^4 + 7x^3 - 2x^2 - 13x + 6$.',
+          expresion: '$$f(x) = 2x^4 + 7x^3 - 2x^2 - 13x + 6$$',
+          f1: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(x)$?',
+            opciones: [
+              { texto: '$2$', correcta: true },
+              { texto: '$3$', correcta: false },
+              { texto: '$4$', correcta: false },
+              { texto: '$1$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay 2 cambios de signo.',
+            feedbackErr: 'Cuenta los cambios entre signos consecutivos.'
+          },
+          f2: {
+            pregunta: '¿Cuál es $f(-x)$? Escribe los coeficientes separados por comas.',
+            inputs: [{ id: 'f2a', label: 'Coeficientes de $f(-x)$:', correcto: '2,-7,-2,13,6', tipo: 'texto' }],
+            pista: 'Cambia el signo de los términos con potencia impar.',
+            feedbackOk: 'Correcto: $f(-x) = 2x^4 - 7x^3 - 2x^2 + 13x + 6$.',
+            feedbackErr: 'Cambia solo los signos de los términos de grado impar.'
+          },
+          f3: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(-x)$?',
+            inputs: [{ id: 'f3a', label: 'Número de cambios:', correcto: 2 }],
+            pista: 'Cuenta los cambios entre signos consecutivos en $f(-x)$.',
+            feedbackOk: 'Correcto: $f(-x)$ tiene 2 cambios de signo.',
+            feedbackErr: 'Cuenta con cuidado los cambios en $f(-x)$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar Descartes con coeficientes grandes?',
+            opciones: [
+              { texto: 'Confundir el signo de los términos de grado impar', correcta: true },
+              { texto: 'No factorizar $a_0$', correcta: false },
+              { texto: 'Olvidar los coeficientes cero', correcta: false },
+              { texto: 'No probar raíces negativas', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Los signos de los términos impares son los que cambian.',
+            feedbackErr: 'El error más común es confundir qué términos cambian de signo.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 6 · Raíces repetidas',
+          enunciado: 'Analiza $f(x) = x^4 - 7x^3 + 18x^2 - 20x + 8$. ¿Qué tipo de raíz es $x = 2$?',
+          expresion: '$$f(x) = x^4 - 7x^3 + 18x^2 - 20x + 8$$',
+          f1: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(x)$?',
+            opciones: [
+              { texto: '$4$', correcta: true },
+              { texto: '$2$', correcta: false },
+              { texto: '$3$', correcta: false },
+              { texto: '$0$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay 4 cambios de signo, así que puede haber hasta 4 raíces positivas.',
+            feedbackErr: 'Cuenta los cambios entre signos consecutivos.'
+          },
+          f2: {
+            pregunta: 'Prueba con $x = 1$. ¿Es raíz? (1 = sí, 0 = no)',
+            inputs: [{ id: 'f2a', label: 'Respuesta (1/0):', correcto: 1 }],
+            pista: 'Evalúa $f(1)$ o usa división sintética.',
+            feedbackOk: 'Correcto: $x = 1$ es raíz.',
+            feedbackErr: 'Verifica con división sintética.'
+          },
+          f3: {
+            pregunta: '¿Cuántas veces aparece $x = 2$ como raíz?',
+            inputs: [{ id: 'f3a', label: 'Multiplicidad de 2:', correcto: 3 }],
+            pista: 'Divide sucesivamente entre $x - 2$ hasta que el residuo no sea cero.',
+            feedbackOk: 'Correcto: $x = 2$ aparece 3 veces (multiplicidad 3).',
+            feedbackErr: 'Divide varias veces entre $x - 2$ para contar la multiplicidad.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente con raíces repetidas?',
+            opciones: [
+              { texto: 'No volver a probar la raíz en la ecuación degradada', correcta: true },
+              { texto: 'Confundir factores de $a_0$', correcta: false },
+              { texto: 'Usar mal Descartes', correcta: false },
+              { texto: 'Olvidar coeficientes cero', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Hay que probar la misma raíz en la ecuación degradada.',
+            feedbackErr: 'El error más común es no probar la misma raíz varias veces.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 7 · Raíces complejas',
+          enunciado: 'Analiza $f(x) = 4x^4 - 8x^3 + 19x^2 + 2x - 6$. ¿Qué tipo de raíces tiene?',
+          expresion: '$$f(x) = 4x^4 - 8x^3 + 19x^2 + 2x - 6$$',
+          f1: {
+            pregunta: '¿Cuál es el grado del polinomio?',
+            opciones: [
+              { texto: '$4$', correcta: true },
+              { texto: '$3$', correcta: false },
+              { texto: '$2$', correcta: false },
+              { texto: '$5$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: grado 4, así que tiene 4 raíces (contando multiplicidades).',
+            feedbackErr: 'El grado es el mayor exponente.'
+          },
+          f2: {
+            pregunta: 'Si al factorizar quedan dos raíces racionales y una cuadrática con discriminante negativo, ¿cuántas raíces complejas hay?',
+            inputs: [{ id: 'f2a', label: 'Número de raíces complejas:', correcto: 2 }],
+            pista: 'Una cuadrática con discriminante negativo tiene 2 raíces complejas.',
+            feedbackOk: 'Correcto: 2 raíces complejas.',
+            feedbackErr: 'Una cuadrática con $\\Delta < 0$ tiene 2 raíces complejas.'
+          },
+          f3: {
+            pregunta: '¿Cuál es el número total de raíces (reales + complejas)?',
+            inputs: [{ id: 'f3a', label: 'Total de raíces:', correcto: 4 }],
+            pista: 'El grado del polinomio es 4.',
+            feedbackOk: 'Correcto: 4 raíces en total.',
+            feedbackErr: 'El grado del polinomio determina el total de raíces.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente cuando quedan raíces complejas?',
+            opciones: [
+              { texto: 'Concluir que la ecuación "no tiene solución"', correcta: true },
+              { texto: 'Confundir los factores de $a_0$', correcta: false },
+              { texto: 'No aplicar Descartes', correcta: false },
+              { texto: 'Olvidar coeficientes cero', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Sí tiene solución: las raíces complejas.',
+            feedbackErr: 'El error más común es decir "no tiene solución" cuando hay complejas.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 8 · Descartes y factorización completa',
+          enunciado: 'Encuentra todas las raíces racionales de $f(x) = 8x^4 + 8x^3 - 61x^2 + 11x + 8 = 0$.',
+          expresion: '$$8x^4 + 8x^3 - 61x^2 + 11x + 8 = 0$$',
+          f1: {
+            pregunta: '¿Cuál es el valor de $a_0$?',
+            opciones: [
+              { texto: '$8$', correcta: true },
+              { texto: '$11$', correcta: false },
+              { texto: '$-61$', correcta: false },
+              { texto: '$1$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $a_0 = 8$ (término independiente).',
+            feedbackErr: '$a_0$ es el término independiente.'
+          },
+          f2: {
+            pregunta: 'Si $a_0 = 8$ y $a_n = 8$, ¿cuál es la lista de posibles raíces positivas?',
+            inputs: [{ id: 'f2a', label: 'Escribe 1,2,4,8 y sus fracciones:', correcto: '1,2,4,8,1/2,1/4,1/8', tipo: 'texto' }],
+            pista: 'Factores de 8: 1, 2, 4, 8. Factores de 8 (denominador): 1, 2, 4, 8.',
+            feedbackOk: 'Correcto: las posibles raíces positivas son $1, 2, 4, 8, \\frac{1}{2}, \\frac{1}{4}, \\frac{1}{8}$.',
+            feedbackErr: 'Combina los factores de $a_0$ con los de $a_n$.'
+          },
+          f3: {
+            pregunta: 'Prueba con $x = \\frac{1}{2}$. ¿Es raíz? (1 = sí, 0 = no)',
+            inputs: [{ id: 'f3a', label: 'Respuesta (1/0):', correcto: 0 }],
+            pista: 'Evalúa $f(1/2)$ o usa división sintética.',
+            feedbackOk: 'Correcto: $x = \\frac{1}{2}$ no es raíz de este polinomio.',
+            feedbackErr: 'Revisa la división sintética con $c = 1/2$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente cuando $a_0 = a_n$?',
+            opciones: [
+              { texto: 'Omitir las fracciones con numerador 1', correcta: true },
+              { texto: 'Confundir Descartes', correcta: false },
+              { texto: 'Olvidar coeficientes cero', correcta: false },
+              { texto: 'No probar negativas', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Cuando $a_0 = a_n$, hay que incluir fracciones como $\\frac{1}{2}, \\frac{1}{4}, \\frac{1}{8}$.',
+            feedbackErr: 'El error más común es omitir fracciones cuando los factores coinciden.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 9 · Descartes y factorización por agrupación',
+          enunciado: 'Factoriza completamente $f(x) = x^5 - x^4 - x + 1$.',
+          expresion: '$$f(x) = x^5 - x^4 - x + 1$$',
+          f1: {
+            pregunta: '¿Se puede factorizar por agrupación?',
+            opciones: [
+              { texto: 'Sí: agrupar $(x^5 - x^4) + (-x + 1)$', correcta: true },
+              { texto: 'No, no hay factor común', correcta: false },
+              { texto: 'Solo con Descartes', correcta: false },
+              { texto: 'Solo con división sintética', correcta: false }
+            ],
+            feedbackOk: 'Correcto: se puede agrupar y factorizar.',
+            feedbackErr: 'Intenta agrupar los términos en pares.'
+          },
+          f2: {
+            pregunta: 'Al factorizar $x^5 - x^4 - x + 1$, ¿cuál es el factor común de los dos primeros términos?',
+            inputs: [{ id: 'f2a', label: 'Factor común:', correcto: 'x^4', tipo: 'texto' }],
+            pista: '¿Qué potencia de $x$ se repite en $x^5$ y $x^4$?',
+            feedbackOk: 'Correcto: $x^4$ es el factor común.',
+            feedbackErr: 'La potencia más baja de $x$ en esos dos términos.'
+          },
+          f3: {
+            pregunta: '¿Cuál es la factorización completa? Escribe los factores separados por comas.',
+            inputs: [{ id: 'f3a', label: 'Factores:', correcto: '(x-1),(x^4-1)', tipo: 'texto' }],
+            pista: 'Después de agrupar, verifica si $x^4 - 1$ se puede seguir factorizando.',
+            feedbackOk: 'Correcto: $(x - 1)(x^4 - 1)$, que sigue factorizándose.',
+            feedbackErr: 'Revisa la factorización por agrupación.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente en este tipo de factorización?',
+            opciones: [
+              { texto: 'No seguir factorizando $x^4 - 1$ como diferencia de cuadrados', correcta: true },
+              { texto: 'Confundir Descartes', correcta: false },
+              { texto: 'No probar raíces negativas', correcta: false },
+              { texto: 'Olvidar coeficientes cero', correcta: false }
+            ],
+            feedbackOk: 'Correcto. $x^4 - 1 = (x^2 - 1)(x^2 + 1)$ y sigue factorizándose.',
+            feedbackErr: 'El error más común es no factorizar completamente.'
+          }
+        }
+      ];
+
+      // --- Estado ---
+      var casoActual = 0;
+      var intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+      var resueltos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+      // --- Render ---
+      function renderCaso() {
+        var c = casos[casoActual];
+
+        document.getElementById('numeroCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('indicadorCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('nivelCaso').textContent = c.nivel.charAt(0).toUpperCase() + c.nivel.slice(1);
+        document.getElementById('nivelCaso').className = 'nivel-caso ' + c.nivel;
+        document.getElementById('etiquetaCaso').textContent = c.etiqueta;
+        document.getElementById('textoEnunciado').innerHTML = c.enunciado;
+        document.getElementById('expresionCaso').innerHTML = c.expresion;
+
+        intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+
+        renderFase1();
+        renderFase2();
+        renderFase3();
+        renderFase4();
+
+        document.getElementById('fase1').classList.remove('bloqueada');
+        document.getElementById('fase2').classList.add('bloqueada');
+        document.getElementById('fase3').classList.add('bloqueada');
+        document.getElementById('fase4').classList.add('bloqueada');
+
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('feedback2').className = 'feedback';
+        document.getElementById('feedback3').className = 'feedback';
+        document.getElementById('feedback4').className = 'feedback';
+
+        document.getElementById('btnReintentar1').style.display = 'none';
+        document.getElementById('btnReintentar4').style.display = 'none';
+
+        document.getElementById('btnAnterior').disabled = (casoActual === 0);
+        document.getElementById('btnSiguiente').disabled = true;
+
+        actualizarProgreso();
+        renderMath(document.body);
+      }
+
+      function renderFase1() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta1').innerHTML = c.f1.pregunta;
+        document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+
+        var ul = document.getElementById('opciones1');
+        ul.innerHTML = '';
+        c.f1.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.dataset.idx = idx;
+          btn.addEventListener('click', function () {
+            manejarOpcionFase1(idx, btn);
+          });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase1(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback1');
+        var esCorrecta = c.f1.opciones[idx].correcta;
+
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f1.feedbackOk;
+          desbloquearFase(2);
+        } else {
+          btn.classList.add('incorrecta');
+          btn.disabled = true;
+          intentos[1]--;
+          document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f1.feedbackErr;
+          if (intentos[1] <= 0) {
+            document.getElementById('btnReintentar1').style.display = 'inline-block';
+          }
+        }
+        renderMath(fb);
+      }
+
+      function renderFase2() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta2').innerHTML = c.f2.pregunta;
+        document.getElementById('contador2').textContent = 'Intentos: ' + intentos[2];
+
+        var cont = document.getElementById('inputs2');
+        cont.innerHTML = '';
+        c.f2.inputs.forEach(function (inp) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'input-wrapper';
+          var label = document.createElement('label');
+          label.setAttribute('for', inp.id);
+          label.innerHTML = inp.label;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.id = inp.id;
+          input.setAttribute('inputmode', 'decimal');
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          cont.appendChild(wrapper);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase3() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta3').innerHTML = c.f3.pregunta;
+        document.getElementById('contador3').textContent = 'Intentos: ' + intentos[3];
+
+        var cont = document.getElementById('inputs3');
+        cont.innerHTML = '';
+        c.f3.inputs.forEach(function (inp) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'input-wrapper';
+          var label = document.createElement('label');
+          label.setAttribute('for', inp.id);
+          label.innerHTML = inp.label;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.id = inp.id;
+          input.setAttribute('inputmode', 'decimal');
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          cont.appendChild(wrapper);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase4() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta4').innerHTML = c.f4.pregunta;
+        document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+
+        var ul = document.getElementById('opciones4');
+        ul.innerHTML = '';
+        c.f4.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.dataset.idx = idx;
+          btn.addEventListener('click', function () {
+            manejarOpcionFase4(idx, btn);
+          });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase4(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback4');
+        var esCorrecta = c.f4.opciones[idx].correcta;
+
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f4.feedbackOk;
+          completarCaso();
+        } else {
+          btn.classList.add('incorrecta');
+          btn.disabled = true;
+          intentos[4]--;
+          document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f4.feedbackErr;
+          if (intentos[4] <= 0) {
+            document.getElementById('btnReintentar4').style.display = 'inline-block';
+          }
+        }
+        renderMath(fb);
+      }
+
+      function desbloquearFase(num) {
+        var fase = document.getElementById('fase' + num);
+        if (fase) fase.classList.remove('bloqueada');
+      }
+
+      // --- Verificadores ---
+      document.getElementById('btnVerificar2').addEventListener('click', function () {
+        verificarFase(2);
+      });
+      document.getElementById('btnVerificar3').addEventListener('click', function () {
+        verificarFase(3);
+      });
+
+      function verificarFase(num) {
+        var c = casos[casoActual];
+        var fase = c['f' + num];
+        var fb = document.getElementById('feedback' + num);
+        var todosCorrectos = true;
+
+        fase.inputs.forEach(function (inp) {
+          var input = document.getElementById(inp.id);
+          var valorUsuario = input.value;
+          var correcto;
+
+          if (inp.tipo === 'texto') {
+            var normalizado = String(valorUsuario).trim().toLowerCase().replace(/\s+/g, '');
+            var correctoNorm = String(inp.correcto).trim().toLowerCase().replace(/\s+/g, '');
+            correcto = (normalizado === correctoNorm);
+          } else {
+            var valor = parsearNumero(valorUsuario);
+            correcto = verificarAproximado(valor, inp.correcto);
+          }
+          if (!correcto) todosCorrectos = false;
+        });
+
+        if (todosCorrectos) {
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + fase.feedbackOk;
+          desbloquearFase(num + 1);
+        } else {
+          intentos[num]--;
+          document.getElementById('contador' + num).textContent = 'Intentos: ' + intentos[num];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + fase.feedbackErr;
+          if (intentos[num] <= 0) {
+            fb.innerHTML += '<br><br>⚠️ Se agotaron los intentos. Puedes continuar, pero el caso no se marcará como completado.';
+            desbloquearFase(num + 1);
+          }
+        }
+        renderMath(fb);
+      }
+
+      // --- Pistas ---
+      document.getElementById('btnPista2').addEventListener('click', function () {
+        var fb = document.getElementById('feedback2');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f2.pista;
+        renderMath(fb);
+      });
+      document.getElementById('btnPista3').addEventListener('click', function () {
+        var fb = document.getElementById('feedback3');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f3.pista;
+        renderMath(fb);
+      });
+
+      // --- Completar caso ---
+      function completarCaso() {
+        if (resueltos.indexOf(casoActual) === -1) {
+          resueltos.push(casoActual);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(resueltos));
+        }
+        document.getElementById('btnSiguiente').disabled = false;
+        actualizarProgreso();
+      }
+
+      // --- Navegación ---
+      document.getElementById('btnSiguiente').addEventListener('click', function () {
+        if (casoActual < casos.length - 1) {
+          casoActual++;
+          renderCaso();
+        } else {
+          mostrarPantallaFinal();
+        }
+      });
+
+      document.getElementById('btnAnterior').addEventListener('click', function () {
+        if (casoActual > 0) {
+          casoActual--;
+          renderCaso();
+        }
+      });
+
+      // --- Reintentar fases ---
+      document.getElementById('btnReintentar1').addEventListener('click', function () {
+        intentos[1] = 3;
+        renderFase1();
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('btnReintentar1').style.display = 'none';
+      });
+      document.getElementById('btnReintentar4').addEventListener('click', function () {
+        intentos[4] = 3;
+        renderFase4();
+        document.getElementById('feedback4').className = 'feedback';
+        document.getElementById('btnReintentar4').style.display = 'none';
+      });
+
+      // --- Pantalla final ---
+      function mostrarPantallaFinal() {
+        document.getElementById('tarjetaCaso').style.display = 'none';
+        document.getElementById('pantallaFinal').classList.add('visible');
+        var puntaje = resueltos.length;
+        document.getElementById('puntajeFinal').textContent = puntaje + ' / ' + casos.length;
+
+        var medalla = '🥉';
+        var mensaje = '';
+        if (puntaje === casos.length) {
+          medalla = '🏆';
+          mensaje = '¡Excelente! Has resuelto todos los casos del laboratorio. Dominas el Teorema de la Raíz Racional y la Regla de Descartes.';
+        } else if (puntaje >= casos.length * 0.7) {
+          medalla = '🥈';
+          mensaje = '¡Buen trabajo! Has resuelto la mayoría de los casos. Repasa los que quedaron pendientes.';
+        } else {
+          medalla = '🥉';
+          mensaje = 'Has completado algunos casos. Te recomendamos repasar los teoremas y volver a intentarlo.';
+        }
+        document.getElementById('medallaFinal').textContent = medalla;
+        document.getElementById('mensajeFinal').textContent = mensaje;
+      }
+
+      document.getElementById('btnReiniciar').addEventListener('click', function () {
+        resueltos = [];
+        localStorage.removeItem(STORAGE_KEY);
+        casoActual = 0;
+        document.getElementById('tarjetaCaso').style.display = 'block';
+        document.getElementById('pantallaFinal').classList.remove('visible');
+        renderCaso();
+      });
+
+      // --- Progreso ---
+      function actualizarProgreso() {
+        var pct = (resueltos.length / casos.length) * 100;
+        document.getElementById('progresoFill').style.width = pct + '%';
+        document.getElementById('progresoFill').setAttribute('aria-valuenow', String(Math.round(pct)));
+        document.getElementById('progresoPuntaje').textContent = '✓ ' + resueltos.length + ' / ' + casos.length;
+      }
+
+      // --- Inicializar ---
+      document.addEventListener('DOMContentLoaded', function () {
+        renderCaso();
+      });
+    })();
+  </script>
+</body>
+</html>

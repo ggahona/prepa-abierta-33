@@ -1,3 +1,70 @@
+## Prepa Abierta 33
+
+Recursos educativos interactivos para las asignaturas del plan de estudios de **Preparatoria Abierta 33**.
+
+## ¿Qué encontrarás aquí?
+
+Materiales de estudio en formato HTML interactivo, organizados por asignatura y por módulo, diseñados para acompañar la preparación del examen de Prepa Abierta.
+
+Cada recurso incluye presentaciones, laboratorios interactivos, visualizadores y simuladores que puedes usar directamente en el navegador, sin instalar nada.
+
+## Asignaturas disponibles
+
+| Asignatura | Módulos | Estado |
+|---|---|---|
+| [Matemáticas III](31-matematicas-iii/) | 16 | Disponible |
+
+> Se irán agregando más asignaturas conforme se desarrollen.
+
+## Estructura del repositorio
+
+```
+prepa-abierta-33/
+└── 31-matematicas-iii/
+    ├── mod01/    → Ecuaciones lineales
+    ├── mod02/    → Sistemas de ecuaciones
+    ├── mod03/    → Determinantes y Regla de Cramer
+    ├── mod04/    → Desigualdades y programación lineal
+    ├── mod05/    → Números Complejos: Suma y Propiedades
+    ├── mod06/    → Multiplicación de Números Complejos y el Campo ℂ
+    ├── mod07/    → Forma Rectangular, Resta, División y Conjugados
+    ├── mod08/    → Raíces Cuadradas, Representación Geométrica y Valor Absoluto
+    ├── mod09/    → La Función Cuadrática y su Gráfica
+    ├── mod10/    → Métodos de Solución para una Ecuación Cuadrática
+    ├── mod11/    → Desigualdades Cuadráticas, Relaciones de Raíces y Ecuaciones con Radicales
+    ├── mod12/    → Sistemas de Ecuaciones Cuadráticas
+    ├── mod13/    → Funciones Polinomiales y División Sintética
+    ├── mod14/    → Teoremas del Residuo, del Factor y Graficación de Funciones Polinomiales
+    ├── mod15/    → Determinación de Raíces Racionales y Regla de los Signos de Descartes
+    └── mod16/    → Raíces Imaginarias e Irracionales de Funciones Polinomiales
+```
+
+Cada módulo contiene 6 recursos estandarizados:
+
+- `index.html` — Índice del módulo con enlaces a los 5 recursos
+- `mXX-presentacion.html` — Presentación del tema
+- `mXX-visualizador.html` — Visualizador interactivo
+- `mXX-laboratorio.html` — Laboratorio de práctica guiada
+- `mXX-solucionador.html` — Solucionador paso a paso
+- `mXX-simulador.html` — Simulador de autoevaluación
+
+## Cómo usarlo
+
+**Opción 1: En línea (recomendado)**
+
+Visita el sitio publicado:
+
+https://ggahona.github.io/prepa-abierta-33/
+
+Navega por asignaturas → módulos → recursos. Todo funciona en el navegador, sin descargas.
+
+**Opción 2: Local**
+
+1. Clona este repositorio:
+
+   ```
+   git clone https://github.com/ggahona/prepa-abierta-33.git
+   ```
 
 2. Abre el archivo `index.html` en tu navegador.
 

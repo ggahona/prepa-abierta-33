@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Laboratorio de práctica">
+  <title>Laboratorio: Teoremas del Residuo y del Factor | Matemáticas III</title>
+
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5;
+      --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3;
+      --color-primario: #2c4966;
+      --color-blanco: #ffffff;
+      --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b;
+      --color-exito: #27ae60;
+      --radio-borde: 8px;
+      --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base);
+      color: var(--color-texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .contenedor {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde);
+      box-shadow: var(--sombra-suave);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    header .institucion {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .barra-progreso-general {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.8rem 1.5rem;
+      background: var(--color-base);
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .texto-progreso {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--color-primario);
+      white-space: nowrap;
+    }
+
+    .progreso-track {
+      flex: 1;
+      height: 10px;
+      background: var(--color-blanco);
+      border-radius: 5px;
+      overflow: hidden;
+      border: 1px solid var(--color-acento-suave);
+    }
+
+    .progreso-fill {
+      height: 100%;
+      background: var(--color-acento);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    main { padding: 1.5rem; }
+
+    .tarjeta-caso {
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1.2rem;
+    }
+
+    .meta-caso {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+
+    .numero-caso {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--color-primario);
+    }
+
+    .nivel-caso {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .nivel-caso.basico { background: #d4edda; color: #145a32; }
+    .nivel-caso.medio { background: #fff3cd; color: #7d6608; }
+    .nivel-caso.alto { background: #f8d7da; color: #78281f; }
+
+    .enunciado {
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .etiqueta-caso {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+    }
+
+    .expresion-caso {
+      margin-top: 0.6rem;
+      padding: 0.5rem;
+      background: var(--color-blanco);
+      border-radius: 4px;
+      text-align: center;
+      font-size: 1.05rem;
+    }
+
+    .fase {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    .fase.bloqueada {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .fase.resuelta {
+      border-left-color: var(--color-exito);
+      background: #f0faf4;
+    }
+
+    .fase-titulo {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--color-primario);
+      margin-bottom: 0.6rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fase-contador {
+      font-size: 0.75rem;
+      color: var(--color-acento);
+      font-weight: 600;
+    }
+
+    .opciones-lista {
+      list-style: none;
+      padding: 0;
+      margin: 0.5rem 0;
+    }
+
+    .opciones-lista li {
+      margin-bottom: 0.4rem;
+    }
+
+    .opcion {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .opcion:hover:not(:disabled) {
+      border-color: var(--color-acento);
+      background: var(--color-base);
+    }
+
+    .opcion:disabled { cursor: not-allowed; }
+
+    .opcion.correcta {
+      background: #d4edda;
+      border-color: var(--color-exito);
+      color: #145a32;
+      font-weight: 600;
+    }
+
+    .opcion.incorrecta {
+      background: #f8d7da;
+      border-color: var(--color-error);
+      color: #78281f;
+    }
+
+    .input-grupo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: flex-end;
+      margin: 0.6rem 0;
+    }
+
+    .input-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .input-wrapper label {
+      font-size: 0.78rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .input-wrapper input {
+      padding: 0.45rem 0.6rem;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      background: var(--color-blanco);
+      color: var(--color-texto-oscuro);
+      min-width: 120px;
+    }
+
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--color-acento);
+    }
+
+    .btn-primario {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-primario:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-primario:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+
+    .btn-pista {
+      background: #fff3cd;
+      color: #7d6608;
+      border: 2px solid #ffc107;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.4rem;
+    }
+
+    .btn-reintentar {
+      background: var(--color-blanco);
+      color: var(--color-error);
+      border: 2px solid var(--color-error);
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      margin-top: 0.4rem;
+    }
+
+    .feedback {
+      margin-top: 0.6rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    .feedback.visible { display: block; }
+    .feedback.exito { background: #d4edda; color: #145a32; border-left: 3px solid var(--color-exito); }
+    .feedback.error { background: #f8d7da; color: #78281f; border-left: 3px solid var(--color-error); }
+    .feedback.pista { background: #fff3cd; color: #7d6608; border-left: 3px solid #ffc107; }
+
+    .navegacion-casos {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.2rem;
+      padding-top: 1rem;
+      border-top: 2px solid var(--color-acento-suave);
+    }
+
+    .btn-navegacion {
+      background: var(--color-primario);
+      color: var(--color-blanco);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      font-size: 0.88rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-navegacion:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-navegacion:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background: var(--color-blanco);
+      color: var(--color-primario);
+      border: 2px solid var(--color-acento-suave);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) { border-color: var(--color-acento); }
+
+    .indicador-caso {
+      font-size: 0.85rem;
+      color: var(--color-primario);
+      font-weight: 600;
+    }
+
+    .pantalla-final {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .pantalla-final.visible { display: block; }
+
+    .medalla {
+      font-size: 4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .pantalla-final h2 {
+      color: var(--color-primario);
+      margin-bottom: 0.8rem;
+    }
+
+    .puntaje-final {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--color-acento);
+      margin-bottom: 0.8rem;
+    }
+
+    .pantalla-final p {
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+      color: var(--color-texto-oscuro);
+    }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem;
+      color: var(--color-primario);
+    }
+
+    @media (max-width: 900px) {
+      .input-grupo { flex-direction: column; align-items: stretch; }
+      .input-wrapper input { width: 100%; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.1rem; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Laboratorio: Teoremas del Residuo y del Factor</h1>
+      <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+      <span class="texto-progreso" id="progresoTexto">Caso 1 de 9</span>
+      <div class="progreso-track">
+        <div class="progreso-fill" id="progresoFill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
+      <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 9</span>
+    </div>
+
+    <main>
+      <div class="tarjeta-caso" id="tarjetaCaso">
+        <div class="meta-caso">
+          <div class="numero-caso" id="numeroCaso">Caso 1 de 9</div>
+          <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+        </div>
+
+        <div class="enunciado" id="enunciadoCaso">
+          <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+          <div id="textoEnunciado">Cargando caso...</div>
+          <div class="expresion-caso" id="expresionCaso"></div>
+        </div>
+
+        <!-- Fase 1: Diagnóstico -->
+        <div class="fase" id="fase1">
+          <div class="fase-titulo">
+            <span>🔍 Fase 1 — Diagnóstico</span>
+            <span class="fase-contador" id="contador1">Intentos: 3</span>
+          </div>
+          <p id="pregunta1"></p>
+          <ul class="opciones-lista" id="opciones1"></ul>
+          <button class="btn-reintentar" id="btnReintentar1" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <!-- Fase 2: Estrategia -->
+        <div class="fase bloqueada" id="fase2">
+          <div class="fase-titulo">
+            <span>🧭 Fase 2 — Estrategia / Cálculo intermedio</span>
+            <span class="fase-contador" id="contador2">Intentos: 3</span>
+          </div>
+          <p id="pregunta2"></p>
+          <div class="input-grupo" id="inputs2"></div>
+          <button class="btn-primario" id="btnVerificar2">Verificar</button>
+          <button class="btn-pista" id="btnPista2">💡 Pista</button>
+          <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <!-- Fase 3: Ejecución -->
+        <div class="fase bloqueada" id="fase3">
+          <div class="fase-titulo">
+            <span>⚙️ Fase 3 — Ejecución / Resultado</span>
+            <span class="fase-contador" id="contador3">Intentos: 3</span>
+          </div>
+          <p id="pregunta3"></p>
+          <div class="input-grupo" id="inputs3"></div>
+          <button class="btn-primario" id="btnVerificar3">Verificar</button>
+          <button class="btn-pista" id="btnPista3">💡 Pista</button>
+          <div class="feedback" id="feedback3"></div>
+        </div>
+
+        <!-- Fase 4: Error frecuente -->
+        <div class="fase bloqueada" id="fase4">
+          <div class="fase-titulo">
+            <span>🎯 Fase 4 — Error frecuente</span>
+            <span class="fase-contador" id="contador4">Intentos: 3</span>
+          </div>
+          <p id="pregunta4"></p>
+          <ul class="opciones-lista" id="opciones4"></ul>
+          <button class="btn-reintentar" id="btnReintentar4" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback4"></div>
+        </div>
+
+        <div class="navegacion-casos">
+          <button class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+          <span class="indicador-caso" id="indicadorCaso">Caso 1 de 9</span>
+          <button class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+
+      <div class="pantalla-final" id="pantallaFinal">
+        <div class="medalla" id="medallaFinal">🏅</div>
+        <h2>¡Laboratorio completado!</h2>
+        <div class="puntaje-final" id="puntajeFinal">0 / 9</div>
+        <p id="mensajeFinal"></p>
+        <button class="btn-primario" id="btnReiniciar">🔄 Reiniciar laboratorio</button>
+      </div>
+    </main>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Aplicar el Teorema del Residuo, el Teorema del Factor y la división sintética en casos de dificultad progresiva.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'lab_mod14_resueltos';
+
+      // --- Utilidades ---
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(4)).toString();
+      }
+
+      function parsearNumero(texto) {
+        if (texto == null) return NaN;
+        texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+        if (texto === '') return NaN;
+        if (texto.indexOf('/') !== -1) {
+          var p = texto.split('/');
+          if (p.length !== 2) return NaN;
+          var n = parseFloat(p[0]), d = parseFloat(p[1]);
+          if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+          return n / d;
+        }
+        var x = parseFloat(texto);
+        return isNaN(x) ? NaN : x;
+      }
+
+      function verificarAproximado(valor, correcto, tolerancia) {
+        tolerancia = tolerancia || 0.02;
+        return Math.abs(valor - correcto) < tolerancia;
+      }
+
+      function evaluarPolinomio(coefs, c) {
+        var r = 0;
+        for (var i = 0; i < coefs.length; i++) r = r * c + coefs[i];
+        return r;
+      }
+
+      // --- Banco de casos ---
+      var casos = [
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 1 · Teorema del Residuo',
+          enunciado: 'Confirma el Teorema del Residuo para el polinomio $f(x) = x^3 + 2x^2 - 25x - 50$ con $c = 5$.',
+          expresion: '$$f(x) = x^3 + 2x^2 - 25x - 50, \\quad c = 5$$',
+          f1: {
+            pregunta: '¿Qué método es el más eficiente para evaluar $f(5)$?',
+            opciones: [
+              { texto: 'División sintética con $c = 5$', correcta: true },
+              { texto: 'Factorización por agrupación', correcta: false },
+              { texto: 'Fórmula general de segundo grado', correcta: false },
+              { texto: 'Sustitución directa en todos los términos', correcta: false }
+            ],
+            feedbackOk: 'La división sintética evalúa el polinomio de forma eficiente y directa.',
+            feedbackErr: 'La división sintética es el método más eficiente para evaluar un polinomio en un valor dado.'
+          },
+          f2: {
+            pregunta: 'Completa la tabla de división sintética. Los coeficientes son $1, 2, -25, -50$. ¿Cuál es el primer producto que se suma a $2$?',
+            inputs: [{ id: 'f2a', label: 'Primer producto ($5 \\cdot 1$):', correcto: 5 }],
+            pista: 'Multiplica el divisor ($c = 5$) por el primer coeficiente (1).',
+            feedbackOk: 'Correcto: $5 \\cdot 1 = 5$, que se suma a $2$ para dar $7$.',
+            feedbackErr: 'Multiplica $c$ por el primer coeficiente.'
+          },
+          f3: {
+            pregunta: '¿Cuál es el residuo de la división? (Es el valor de $f(5)$.)',
+            inputs: [{ id: 'f3a', label: 'Residuo:', correcto: 0 }],
+            pista: 'Completa la división sintética. El último número de la tercera fila es el residuo.',
+            feedbackOk: 'Correcto: $f(5) = 0$. El residuo es 0, lo que confirma el Teorema del Residuo.',
+            feedbackErr: 'Revisa la división sintética. El residuo es el último valor de la tercera fila.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar el Teorema del Residuo?',
+            opciones: [
+              { texto: 'Confundir el residuo con el cociente', correcta: false },
+              { texto: 'Olvidar incluir coeficientes cero para términos faltantes', correcta: true },
+              { texto: 'Usar $c$ en lugar de $-c$', correcta: false },
+              { texto: 'Sumar en lugar de multiplicar en la división sintética', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Omitir un coeficiente cero (por ejemplo, si falta el término $x^2$) altera toda la tabla.',
+            feedbackErr: 'El error más común es omitir coeficientes cero para términos faltantes.'
+          }
+        },
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 2 · Teorema del Factor',
+          enunciado: 'Prueba si $x - 2$ es un factor de $f(x) = x^3 - 4x^2 + 3x + 2$.',
+          expresion: '$$f(x) = x^3 - 4x^2 + 3x + 2, \\quad x - 2$$',
+          f1: {
+            pregunta: '¿Qué condición debe cumplirse para que $x - 2$ sea factor?',
+            opciones: [
+              { texto: '$f(2) = 0$', correcta: true },
+              { texto: '$f(-2) = 0$', correcta: false },
+              { texto: '$f(0) = 2$', correcta: false },
+              { texto: '$f(2) = 2$', correcta: false }
+            ],
+            feedbackOk: 'Por el Teorema del Factor, $x - c$ es factor si y sólo si $f(c) = 0$.',
+            feedbackErr: 'El Teorema del Factor dice: $x - c$ es factor si y sólo si $f(c) = 0$.'
+          },
+          f2: {
+            pregunta: 'Aplica división sintética con $c = 2$ a los coeficientes $1, -4, 3, 2$. ¿Cuál es el primer producto?',
+            inputs: [{ id: 'f2a', label: 'Primer producto ($2 \\cdot 1$):', correcto: 2 }],
+            pista: 'Multiplica $c$ por el primer coeficiente.',
+            feedbackOk: 'Correcto: $2 \\cdot 1 = 2$.',
+            feedbackErr: 'Multiplica $c$ por el primer coeficiente (1).'
+          },
+          f3: {
+            pregunta: '¿Cuál es el residuo de la división?',
+            inputs: [{ id: 'f3a', label: 'Residuo:', correcto: 0 }],
+            pista: 'Completa la división sintética. El último número es el residuo.',
+            feedbackOk: 'Correcto: el residuo es 0, por lo que $x - 2$ sí es factor.',
+            feedbackErr: 'Revisa la división. El residuo es 0.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar el Teorema del Factor?',
+            opciones: [
+              { texto: 'Usar $x + c$ en lugar de $x - c$', correcta: true },
+              { texto: 'Confundir factor con raíz', correcta: false },
+              { texto: 'Calcular mal el residuo', correcta: false },
+              { texto: 'No simplificar el cociente', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Al usar $x + c$, el valor a evaluar es $-c$, no $c$.',
+            feedbackErr: 'El error más común es confundir el signo: para $x + c$, se evalúa $f(-c)$.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 3 · Evaluación por división sintética',
+          enunciado: 'Evalúa $f(2)$ para $f(x) = 2x^3 + x^2 - 3x + 5$ usando división sintética.',
+          expresion: '$$f(x) = 2x^3 + x^2 - 3x + 5, \\quad c = 2$$',
+          f1: {
+            pregunta: '¿Cuáles son los coeficientes que se colocan en la tabla?',
+            opciones: [
+              { texto: '$2, 1, -3, 5$', correcta: true },
+              { texto: '$2, 0, -3, 5$', correcta: false },
+              { texto: '$2, 1, 3, 5$', correcta: false },
+              { texto: '$2, 1, -3, 0$', correcta: false }
+            ],
+            feedbackOk: 'Todos los términos están presentes: $2, 1, -3, 5$.',
+            feedbackErr: 'Copia los coeficientes tal como aparecen, incluyendo sus signos.'
+          },
+          f2: {
+            pregunta: 'Completa la división sintética. ¿Cuál es el valor de la segunda fila en la posición 2 (después del primer 2)?',
+            inputs: [{ id: 'f2a', label: 'Segundo valor de la fila inferior:', correcto: 5 }],
+            pista: 'Multiplica $c = 2$ por el primer resultado (2) y suma al siguiente coeficiente (1).',
+            feedbackOk: 'Correcto: $2 \\cdot 2 = 4$, y $4 + 1 = 5$.',
+            feedbackErr: 'Recuerda: multiplica y luego suma.'
+          },
+          f3: {
+            pregunta: '¿Cuál es el residuo? (Es el valor de $f(2)$.)',
+            inputs: [{ id: 'f3a', label: 'Residuo:', correcto: 19 }],
+            pista: 'Completa la tabla. El último valor de la tercera fila es el residuo.',
+            feedbackOk: 'Correcto: $f(2) = 19$.',
+            feedbackErr: 'Revisa la tabla. El residuo es 19.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al evaluar por división sintética?',
+            opciones: [
+              { texto: 'Sumar en lugar de multiplicar', correcta: false },
+              { texto: 'Olvidar el signo negativo de algún coeficiente', correcta: true },
+              { texto: 'Usar mal la fórmula general', correcta: false },
+              { texto: 'No ordenar los términos', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Un signo mal copiado cambia todo el resultado.',
+            feedbackErr: 'El error más común es copiar mal los signos de los coeficientes.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 4 · Cota superior',
+          enunciado: 'Para $f(x) = x^3 + 5x^2 - 2x - 24$, verifica si $c = 3$ es cota superior de las raíces.',
+          expresion: '$$f(x) = x^3 + 5x^2 - 2x - 24, \\quad c = 3$$',
+          f1: {
+            pregunta: '¿Qué condición debe cumplirse para que $c > 0$ sea cota superior?',
+            opciones: [
+              { texto: 'Todos los valores de la tercera fila son positivos (o cero)', correcta: true },
+              { texto: 'Todos los valores de la tercera fila son negativos', correcta: false },
+              { texto: 'Los signos de la tercera fila se alternan', correcta: false },
+              { texto: '$f(c) = 0$', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Si $c > 0$ y todos los valores son positivos o cero, $c$ es cota superior.',
+            feedbackErr: 'Para cota superior: $c > 0$ y todos los valores de la tercera fila son positivos o cero.'
+          },
+          f2: {
+            pregunta: 'Aplica división sintética con $c = 3$ a los coeficientes $1, 5, -2, -24$. ¿Cuál es el segundo valor de la tercera fila?',
+            inputs: [{ id: 'f2a', label: 'Segundo valor:', correcto: 8 }],
+            pista: 'Multiplica $3 \\cdot 1 = 3$, y suma a $5$.',
+            feedbackOk: 'Correcto: $3 + 5 = 8$.',
+            feedbackErr: 'Multiplica $c$ por el primer valor y suma al siguiente coeficiente.'
+          },
+          f3: {
+            pregunta: '¿Es $c = 3$ cota superior? (Escribe 1 para sí, 0 para no.)',
+            inputs: [{ id: 'f3a', label: 'Respuesta (1/0):', correcto: 1 }],
+            pista: 'Verifica que todos los valores de la tercera fila sean positivos o cero.',
+            feedbackOk: 'Correcto: todos los valores son positivos, así que $3$ es cota superior.',
+            feedbackErr: 'Revisa los valores. Todos deben ser positivos o cero.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al verificar cotas?',
+            opciones: [
+              { texto: 'Confundir cota con raíz', correcta: true },
+              { texto: 'Usar mal la división sintética', correcta: false },
+              { texto: 'No ordenar los coeficientes', correcta: false },
+              { texto: 'Calcular mal el residuo', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Una cota no es necesariamente una raíz; es un límite.',
+            feedbackErr: 'El error más común es confundir una cota con una raíz.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 5 · Cota inferior',
+          enunciado: 'Para $f(x) = x^3 + 5x^2 - 2x - 24$, verifica si $c = -6$ es cota inferior.',
+          expresion: '$$f(x) = x^3 + 5x^2 - 2x - 24, \\quad c = -6$$',
+          f1: {
+            pregunta: '¿Qué condición debe cumplirse para que $c < 0$ sea cota inferior?',
+            opciones: [
+              { texto: 'Los signos de la tercera fila se alternan', correcta: true },
+              { texto: 'Todos los valores son positivos', correcta: false },
+              { texto: 'Todos los valores son negativos', correcta: false },
+              { texto: '$f(c) = 0$', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Para cota inferior, los signos de la tercera fila deben alternarse.',
+            feedbackErr: 'Para cota inferior: $c < 0$ y los signos de la tercera fila se alternan.'
+          },
+          f2: {
+            pregunta: 'Aplica división sintética con $c = -6$ a $1, 5, -2, -24$. ¿Cuál es el segundo valor de la tercera fila?',
+            inputs: [{ id: 'f2a', label: 'Segundo valor:', correcto: -1 }],
+            pista: 'Multiplica $-6 \\cdot 1 = -6$, y suma a $5$.',
+            feedbackOk: 'Correcto: $-6 + 5 = -1$.',
+            feedbackErr: 'Multiplica $c$ por el primer valor y suma.'
+          },
+          f3: {
+            pregunta: '¿Es $c = -6$ cota inferior? (1 = sí, 0 = no)',
+            inputs: [{ id: 'f3a', label: 'Respuesta (1/0):', correcto: 1 }],
+            pista: 'Verifica si los signos se alternan: $+, -, +, -$.',
+            feedbackOk: 'Correcto: los signos se alternan, así que $-6$ es cota inferior.',
+            feedbackErr: 'Revisa los signos. Deben alternarse: $+, -, +, -$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al verificar cotas inferiores?',
+            opciones: [
+              { texto: 'No alternar correctamente los signos', correcta: true },
+              { texto: 'Usar mal la división sintética', correcta: false },
+              { texto: 'Confundir el residuo con el cociente', correcta: false },
+              { texto: 'Omitir coeficientes cero', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Un error en los signos rompe la alternancia requerida.',
+            feedbackErr: 'El error más común es no verificar correctamente la alternancia de signos.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 6 · Raíz doble',
+          enunciado: 'Analiza $f(x) = x^4 + x^3 - 18x^2$. Determina si $x = 0$ es una raíz doble.',
+          expresion: '$$f(x) = x^4 + x^3 - 18x^2 = x^2(x^2 + x - 18)$$',
+          f1: {
+            pregunta: '¿Cuál es el factor común de todos los términos?',
+            opciones: [
+              { texto: '$x^2$', correcta: true },
+              { texto: '$x$', correcta: false },
+              { texto: '$x^3$', correcta: false },
+              { texto: '$18$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $x^2$ es el factor común.',
+            feedbackErr: 'Busca la potencia más baja de $x$ en todos los términos.'
+          },
+          f2: {
+            pregunta: 'Al factorizar $x^2$, ¿qué expresión queda dentro del paréntesis?',
+            inputs: [{ id: 'f2a', label: 'Expresión:', correcto: 'x^2 + x - 18', tipo: 'texto' }],
+            pista: 'Divide cada término entre $x^2$.',
+            feedbackOk: 'Correcto: $x^2 + x - 18$.',
+            feedbackErr: 'Divide cada término entre $x^2$.'
+          },
+          f3: {
+            pregunta: '¿Qué tipo de raíz es $x = 0$?',
+            inputs: [{ id: 'f3a', label: 'Escribe 1 para simple, 2 para doble:', correcto: 2 }],
+            pista: 'Observa el exponente de $x^2$.',
+            feedbackOk: 'Correcto: $x = 0$ es raíz doble. La gráfica toca pero no cruza el eje $X$.',
+            feedbackErr: 'El exponente 2 indica una raíz doble.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente con raíces dobles?',
+            opciones: [
+              { texto: 'Afirmar que la gráfica cruza el eje $X$ en la raíz doble', correcta: true },
+              { texto: 'Factorizar mal el polinomio', correcta: false },
+              { texto: 'Confundir el grado del polinomio', correcta: false },
+              { texto: 'No encontrar las otras raíces', correcta: false }
+            ],
+            feedbackOk: 'Correcto. En una raíz doble, la gráfica toca pero no cruza.',
+            feedbackErr: 'El error más común es confundir una raíz doble con un cruce del eje $X$.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 7 · Todas las raíces complejas',
+          enunciado: 'Analiza $f(x) = x^4 + 2x^3 - 7x^2 - 8x + 20$. ¿Tiene raíces reales?',
+          expresion: '$$f(x) = x^4 + 2x^3 - 7x^2 - 8x + 20$$',
+          f1: {
+            pregunta: 'Si todos los valores de $f(x)$ son positivos, ¿qué se concluye?',
+            opciones: [
+              { texto: 'Todas las raíces son complejas', correcta: true },
+              { texto: 'No tiene raíces', correcta: false },
+              { texto: 'Tiene 4 raíces reales', correcta: false },
+              { texto: 'Tiene 2 raíces reales', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Si la gráfica nunca toca el eje $X$, todas las raíces son complejas.',
+            feedbackErr: 'Si $f(x) > 0$ para todo $x$, no hay raíces reales.'
+          },
+          f2: {
+            pregunta: 'Evalúa $f(0)$. ¿Cuál es el valor?',
+            inputs: [{ id: 'f2a', label: '$f(0) =$', correcto: 20 }],
+            pista: 'Sustituye $x = 0$.',
+            feedbackOk: 'Correcto: $f(0) = 20 > 0$.',
+            feedbackErr: 'Sustituye $x = 0$ en el polinomio.'
+          },
+          f3: {
+            pregunta: '¿Cuántas raíces complejas tiene este polinomio?',
+            inputs: [{ id: 'f3a', label: 'Número de raíces complejas:', correcto: 4 }],
+            pista: 'El grado del polinomio es 4.',
+            feedbackOk: 'Correcto: 4 raíces complejas (grado 4).',
+            feedbackErr: 'El grado del polinomio determina el número total de raíces.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente cuando todas las raíces son complejas?',
+            opciones: [
+              { texto: 'Afirmar que "no tiene solución"', correcta: true },
+              { texto: 'Factorizar mal el polinomio', correcta: false },
+              { texto: 'No verificar el grado', correcta: false },
+              { texto: 'Confundir raíces con factores', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Sí tiene solución: 4 raíces complejas.',
+            feedbackErr: 'El error más común es decir "no tiene solución" en lugar de "todas sus raíces son complejas".'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 8 · Dominio restringido',
+          enunciado: 'Para $f(x) = x^4 - 10x^2 + 25x - 8$, ¿qué pasa si el dominio se restringe a $-2 \\leq x \\leq 7$?',
+          expresion: '$$f(x) = x^4 - 10x^2 + 25x - 8, \\quad -2 \\leq x \\leq 7$$',
+          f1: {
+            pregunta: '¿Qué efecto tiene restringir el dominio?',
+            opciones: [
+              { texto: 'Puede ocultar raíces que están fuera del intervalo', correcta: true },
+              { texto: 'Elimina raíces del polinomio', correcta: false },
+              { texto: 'Cambia el grado del polinomio', correcta: false },
+              { texto: 'No afecta la gráfica', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Restringir el dominio puede ocultar raíces reales.',
+            feedbackErr: 'Restringir el dominio puede ocultar raíces fuera del intervalo.'
+          },
+          f2: {
+            pregunta: 'Evalúa $f(-2)$. ¿Cuál es el valor?',
+            inputs: [{ id: 'f2a', label: '$f(-2) =$', correcto: -8 }],
+            pista: 'Sustituye $x = -2$.',
+            feedbackOk: 'Correcto: $f(-2) = -8$.',
+            feedbackErr: 'Sustituye $x = -2$ con cuidado en los signos.'
+          },
+          f3: {
+            pregunta: 'Si el dominio original era $-6 \\leq x \\leq 7$ y se restringe a $-2 \\leq x \\leq 7$, ¿se pierden raíces?',
+            inputs: [{ id: 'f3a', label: 'Escribe 1 para sí, 0 para no:', correcto: 1 }],
+            pista: 'Compara los intervalos. ¿Qué rango se elimina?',
+            feedbackOk: 'Correcto: se pierden las raíces entre $-6$ y $-2$.',
+            feedbackErr: 'Restringir el dominio puede ocultar raíces.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente con dominios restringidos?',
+            opciones: [
+              { texto: 'Concluir que no hay raíces cuando sí las hay fuera del intervalo', correcta: true },
+              { texto: 'Confundir el dominio con el rango', correcta: false },
+              { texto: 'No tabular suficientes valores', correcta: false },
+              { texto: 'Calcular mal los valores de $y$', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Un dominio restringido puede ocultar raíces reales.',
+            feedbackErr: 'El error más común es concluir que no hay raíces cuando solo están fuera del intervalo visible.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 9 · Síntesis de teoremas',
+          enunciado: 'Para $f(x) = x^3 + 5x^2 - 2x - 24$, encuentra todas las raíces reales y factoriza completamente.',
+          expresion: '$$f(x) = x^3 + 5x^2 - 2x - 24$$',
+          f1: {
+            pregunta: '¿Qué teoremas aplicarás para encontrar las raíces?',
+            opciones: [
+              { texto: 'Teorema del Residuo y del Factor', correcta: true },
+              { texto: 'Fórmula general únicamente', correcta: false },
+              { texto: 'Teorema de Pitágoras', correcta: false },
+              { texto: 'Ley de los senos', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Los teoremas del Residuo y del Factor son las herramientas clave.',
+            feedbackErr: 'Necesitas los teoremas del Residuo y del Factor.'
+          },
+          f2: {
+            pregunta: 'Encuentra una raíz entera probando con divisores de $-24$. ¿Cuál es una raíz?',
+            inputs: [{ id: 'f2a', label: 'Raíz entera:', correcto: 2 }],
+            pista: 'Prueba con valores como $1, 2, -3, -4$.',
+            feedbackOk: 'Correcto: $x = 2$ es una raíz ($f(2) = 0$).',
+            feedbackErr: 'Prueba divisores de $-24$: $1, 2, 3, 4, 6, 8, 12, 24$ (y sus negativos).'
+          },
+          f3: {
+            pregunta: 'Después de dividir entre $x - 2$, el cociente es $x^2 + 7x + 12$. ¿Cuáles son las otras dos raíces?',
+            inputs: [
+              { id: 'f3a', label: 'Raíz 1:', correcto: -3 },
+              { id: 'f3b', label: 'Raíz 2:', correcto: -4 }
+            ],
+            pista: 'Factoriza $x^2 + 7x + 12$: busca dos números que sumen 7 y multipliquen 12.',
+            feedbackOk: 'Correcto: $x = -3$ y $x = -4$. Las tres raíces son $2, -3, -4$.',
+            feedbackErr: 'Factoriza $x^2 + 7x + 12 = (x + 3)(x + 4)$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al sintetizar los teoremas?',
+            opciones: [
+              { texto: 'No verificar todas las raíces posibles', correcta: false },
+              { texto: 'Olvidar que el grado determina el número total de raíces', correcta: true },
+              { texto: 'Usar mal la división sintética', correcta: false },
+              { texto: 'Confundir el residuo con el cociente', correcta: false }
+            ],
+            feedbackOk: 'Correcto. Un polinomio de grado 3 tiene exactamente 3 raíces (contando multiplicidades).',
+            feedbackErr: 'El error más común es olvidar el número total de raíces según el grado.'
+          }
+        }
+      ];
+
+      // --- Estado ---
+      var casoActual = 0;
+      var faseActual = 1;
+      var intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+      var fasesCompletadas = { 1: false, 2: false, 3: false, 4: false };
+      var resueltos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+      // --- Render ---
+      function renderCaso() {
+        var c = casos[casoActual];
+
+        document.getElementById('numeroCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('indicadorCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('nivelCaso').textContent = c.nivel.charAt(0).toUpperCase() + c.nivel.slice(1);
+        document.getElementById('nivelCaso').className = 'nivel-caso ' + c.nivel;
+        document.getElementById('etiquetaCaso').textContent = c.etiqueta;
+        document.getElementById('textoEnunciado').innerHTML = c.enunciado;
+        document.getElementById('expresionCaso').innerHTML = c.expresion;
+
+        // Resetear fases
+        intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+        fasesCompletadas = { 1: false, 2: false, 3: false, 4: false };
+
+        renderFase1();
+        renderFase2();
+        renderFase3();
+        renderFase4();
+
+        document.getElementById('fase1').classList.remove('bloqueada');
+        document.getElementById('fase2').classList.add('bloqueada');
+        document.getElementById('fase3').classList.add('bloqueada');
+        document.getElementById('fase4').classList.add('bloqueada');
+
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('feedback2').className = 'feedback';
+        document.getElementById('feedback3').className = 'feedback';
+        document.getElementById('feedback4').className = 'feedback';
+
+        document.getElementById('btnReintentar1').style.display = 'none';
+        document.getElementById('btnReintentar4').style.display = 'none';
+
+        document.getElementById('btnAnterior').disabled = (casoActual === 0);
+        document.getElementById('btnSiguiente').disabled = true;
+
+        actualizarProgreso();
+        renderMath(document.body);
+      }
+
+      function renderFase1() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta1').innerHTML = c.f1.pregunta;
+        document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+
+        var ul = document.getElementById('opciones1');
+        ul.innerHTML = '';
+        c.f1.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.dataset.idx = idx;
+          btn.addEventListener('click', function () {
+            manejarOpcionFase1(idx, btn);
+          });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase1(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback1');
+        var esCorrecta = c.f1.opciones[idx].correcta;
+
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f1.feedbackOk;
+          desbloquearFase(2);
+        } else {
+          btn.classList.add('incorrecta');
+          btn.disabled = true;
+          intentos[1]--;
+          document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f1.feedbackErr;
+          if (intentos[1] <= 0) {
+            document.getElementById('btnReintentar1').style.display = 'inline-block';
+          }
+        }
+        renderMath(fb);
+      }
+
+      function renderFase2() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta2').innerHTML = c.f2.pregunta;
+        document.getElementById('contador2').textContent = 'Intentos: ' + intentos[2];
+
+        var cont = document.getElementById('inputs2');
+        cont.innerHTML = '';
+        c.f2.inputs.forEach(function (inp) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'input-wrapper';
+          var label = document.createElement('label');
+          label.setAttribute('for', inp.id);
+          label.innerHTML = inp.label;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.id = inp.id;
+          input.setAttribute('inputmode', 'decimal');
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          cont.appendChild(wrapper);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase3() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta3').innerHTML = c.f3.pregunta;
+        document.getElementById('contador3').textContent = 'Intentos: ' + intentos[3];
+
+        var cont = document.getElementById('inputs3');
+        cont.innerHTML = '';
+        c.f3.inputs.forEach(function (inp) {
+          var wrapper = document.createElement('div');
+          wrapper.className = 'input-wrapper';
+          var label = document.createElement('label');
+          label.setAttribute('for', inp.id);
+          label.innerHTML = inp.label;
+          var input = document.createElement('input');
+          input.type = 'text';
+          input.id = inp.id;
+          input.setAttribute('inputmode', 'decimal');
+          wrapper.appendChild(label);
+          wrapper.appendChild(input);
+          cont.appendChild(wrapper);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase4() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta4').innerHTML = c.f4.pregunta;
+        document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+
+        var ul = document.getElementById('opciones4');
+        ul.innerHTML = '';
+        c.f4.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.dataset.idx = idx;
+          btn.addEventListener('click', function () {
+            manejarOpcionFase4(idx, btn);
+          });
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase4(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback4');
+        var esCorrecta = c.f4.opciones[idx].correcta;
+
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f4.feedbackOk;
+          completarCaso();
+        } else {
+          btn.classList.add('incorrecta');
+          btn.disabled = true;
+          intentos[4]--;
+          document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f4.feedbackErr;
+          if (intentos[4] <= 0) {
+            document.getElementById('btnReintentar4').style.display = 'inline-block';
+          }
+        }
+        renderMath(fb);
+      }
+
+      function desbloquearFase(num) {
+        var fase = document.getElementById('fase' + num);
+        if (fase) fase.classList.remove('bloqueada');
+      }
+
+      // --- Verificadores ---
+      document.getElementById('btnVerificar2').addEventListener('click', function () {
+        verificarFase(2);
+      });
+      document.getElementById('btnVerificar3').addEventListener('click', function () {
+        verificarFase(3);
+      });
+
+      function verificarFase(num) {
+        var c = casos[casoActual];
+        var fase = c['f' + num];
+        var fb = document.getElementById('feedback' + num);
+        var cont = document.getElementById('inputs' + num);
+        var todosCorrectos = true;
+
+        fase.inputs.forEach(function (inp) {
+          var input = document.getElementById(inp.id);
+          var valor = parsearNumero(input.value);
+          var correcto = verificarAproximado(valor, inp.correcto);
+          if (!correcto) todosCorrectos = false;
+        });
+
+        if (todosCorrectos) {
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + fase.feedbackOk;
+          desbloquearFase(num + 1);
+        } else {
+          intentos[num]--;
+          document.getElementById('contador' + num).textContent = 'Intentos: ' + intentos[num];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + fase.feedbackErr;
+          if (intentos[num] <= 0) {
+            fb.innerHTML += '<br><br>⚠️ Se agotaron los intentos. Puedes continuar, pero el caso no se marcará como completado.';
+            desbloquearFase(num + 1);
+          }
+        }
+        renderMath(fb);
+      }
+
+      // --- Pistas ---
+      document.getElementById('btnPista2').addEventListener('click', function () {
+        var fb = document.getElementById('feedback2');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f2.pista;
+        renderMath(fb);
+      });
+      document.getElementById('btnPista3').addEventListener('click', function () {
+        var fb = document.getElementById('feedback3');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f3.pista;
+        renderMath(fb);
+      });
+
+      // --- Completar caso ---
+      function completarCaso() {
+        if (resueltos.indexOf(casoActual) === -1) {
+          resueltos.push(casoActual);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(resueltos));
+        }
+        document.getElementById('btnSiguiente').disabled = false;
+        actualizarProgreso();
+      }
+
+      // --- Navegación ---
+      document.getElementById('btnSiguiente').addEventListener('click', function () {
+        if (casoActual < casos.length - 1) {
+          casoActual++;
+          renderCaso();
+        } else {
+          mostrarPantallaFinal();
+        }
+      });
+
+      document.getElementById('btnAnterior').addEventListener('click', function () {
+        if (casoActual > 0) {
+          casoActual--;
+          renderCaso();
+        }
+      });
+
+      // --- Reintentar fases ---
+      document.getElementById('btnReintentar1').addEventListener('click', function () {
+        intentos[1] = 3;
+        renderFase1();
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('btnReintentar1').style.display = 'none';
+      });
+      document.getElementById('btnReintentar4').addEventListener('click', function () {
+        intentos[4] = 3;
+        renderFase4();
+        document.getElementById('feedback4').className = 'feedback';
+        document.getElementById('btnReintentar4').style.display = 'none';
+      });
+
+      // --- Pantalla final ---
+      function mostrarPantallaFinal() {
+        document.getElementById('tarjetaCaso').style.display = 'none';
+        document.getElementById('pantallaFinal').classList.add('visible');
+        var puntaje = resueltos.length;
+        document.getElementById('puntajeFinal').textContent = puntaje + ' / ' + casos.length;
+
+        var medalla = '🥉';
+        var mensaje = '';
+        if (puntaje === casos.length) {
+          medalla = '🏆';
+          mensaje = '¡Excelente! Has resuelto todos los casos del laboratorio. Dominas los teoremas del Residuo y del Factor.';
+        } else if (puntaje >= casos.length * 0.7) {
+          medalla = '🥈';
+          mensaje = '¡Buen trabajo! Has resuelto la mayoría de los casos. Repasa los que quedaron pendientes.';
+        } else {
+          medalla = '🥉';
+          mensaje = 'Has completado algunos casos. Te recomendamos repasar los teoremas y volver a intentarlo.';
+        }
+        document.getElementById('medallaFinal').textContent = medalla;
+        document.getElementById('mensajeFinal').textContent = mensaje;
+      }
+
+      document.getElementById('btnReiniciar').addEventListener('click', function () {
+        resueltos = [];
+        localStorage.removeItem(STORAGE_KEY);
+        casoActual = 0;
+        document.getElementById('tarjetaCaso').style.display = 'block';
+        document.getElementById('pantallaFinal').classList.remove('visible');
+        renderCaso();
+      });
+
+      // --- Progreso ---
+      function actualizarProgreso() {
+        var pct = (resueltos.length / casos.length) * 100;
+        document.getElementById('progresoFill').style.width = pct + '%';
+        document.getElementById('progresoFill').setAttribute('aria-valuenow', String(Math.round(pct)));
+        document.getElementById('progresoPuntaje').textContent = '✓ ' + resueltos.length + ' / ' + casos.length;
+      }
+
+      // --- Inicializar ---
+      document.addEventListener('DOMContentLoaded', function () {
+        renderCaso();
+      });
+    })();
+  </script>
+</body>
+</html>

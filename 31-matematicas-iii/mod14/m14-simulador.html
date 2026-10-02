@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Simulador de autoevaluación">
+  <title>Simulador de Autoevaluación — Módulo 14 | Matemáticas III</title>
+
+  <!-- MathJax 3 -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #e8eef5;
+      --accent-soft: #a9c1d9;
+      --accent-main: #5b7fa3;
+      --text-primary: #2c4966;
+      --success: #27ae60;
+      --success-text: #145a32;
+      --error: #c0392b;
+      --error-text: #78281f;
+      --card-bg: #ffffff;
+      --border-radius: 12px;
+      --text-dark: #1a2a3a;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(44, 73, 102, 0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: var(--text-primary);
+      color: var(--card-bg);
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    header .institution {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.9;
+      margin-bottom: 0.4rem;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .progress-container {
+      height: 6px;
+      background: var(--bg-base);
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: var(--accent-main);
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    .quiz-view,
+    .results-view {
+      padding: 1.5rem;
+    }
+
+    .quiz-view.hidden { display: none; }
+
+    .results-view {
+      display: none;
+      text-align: center;
+      padding: 2rem 1.5rem;
+    }
+
+    .results-view.visible { display: block; }
+
+    .question-meta {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--accent-main);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.8rem;
+    }
+
+    .question-text {
+      font-size: 1.05rem;
+      color: var(--text-primary);
+      margin-bottom: 1rem;
+      padding: 0.9rem 1rem;
+      background: var(--bg-base);
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent-main);
+    }
+
+    .options-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 1rem 0;
+    }
+
+    .options-list li {
+      margin-bottom: 0.5rem;
+    }
+
+    .option-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      background: var(--card-bg);
+      border: 2px solid var(--accent-soft);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .option-item:hover:not(.disabled) {
+      border-color: var(--accent-main);
+      background: var(--bg-base);
+    }
+
+    .option-item:focus {
+      outline: 2px solid var(--accent-main);
+      outline-offset: 2px;
+    }
+
+    .option-item.disabled { cursor: not-allowed; }
+
+    .option-item.es-correcta {
+      background: #d4edda;
+      border-color: var(--success);
+      color: var(--success-text);
+      font-weight: 600;
+    }
+
+    .option-item.es-incorrecta {
+      background: #f8d7da;
+      border-color: var(--error);
+      color: var(--error-text);
+    }
+
+    .feedback-box {
+      display: none;
+      background: var(--bg-base);
+      border-left: 4px solid var(--accent-main);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+
+    .feedback-box.visible { display: block; }
+
+    .btn-next {
+      display: none;
+      width: 100%;
+      background: var(--text-primary);
+      color: var(--card-bg);
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-next:hover { background: var(--accent-main); }
+    .btn-next:focus { outline: 2px solid var(--accent-main); outline-offset: 2px; }
+    .btn-next.visible { display: block; }
+
+    .results-view h2 {
+      color: var(--text-primary);
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .score-display {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent-main);
+      margin-bottom: 1rem;
+    }
+
+    .results-message {
+      font-size: 1rem;
+      color: var(--text-dark);
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      background: var(--bg-base);
+      border-radius: var(--border-radius);
+    }
+
+    .btn-restart {
+      background: var(--accent-main);
+      color: var(--card-bg);
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .btn-restart:hover { background: var(--text-primary); }
+    .btn-restart:focus { outline: 2px solid var(--text-primary); outline-offset: 2px; }
+
+    .footer-info {
+      padding: 1rem 1.5rem;
+      background: var(--bg-base);
+      border-top: 2px solid var(--accent-soft);
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 900px) {
+      .question-text { font-size: 1rem; }
+      .option-item { font-size: 0.9rem; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.15rem; }
+      .quiz-view, .results-view { padding: 1rem; }
+      .score-display { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="institution">Preparatoria Abierta</div>
+      <h1>Simulador de Autoevaluación — Módulo 14</h1>
+      <p>Teoremas del Residuo, del Factor y Graficación | Matemáticas III</p>
+    </header>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    </div>
+
+    <div id="quizView" class="quiz-view">
+      <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+      <div class="question-text" id="questionText">Cargando pregunta...</div>
+      <ul class="options-list" id="optionsList" role="list"></ul>
+      <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite"></div>
+      <button class="btn-next" id="btnNext" aria-label="Avanzar al siguiente reactivo">Siguiente Reactivo →</button>
+    </div>
+
+    <div id="resultsView" class="results-view">
+      <h2>Evaluación Finalizada</h2>
+      <div class="score-display" id="finalScore">0/10</div>
+      <div class="results-message" id="resultsMessage"></div>
+      <button class="btn-restart" id="btnRestart" aria-label="Reiniciar la evaluación">Intentar de nuevo</button>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Evaluar el dominio de los Teoremas del Residuo y del Factor, la división sintética y la graficación de funciones polinomiales.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // --- Utilidades ---
+      function limpiarLatex(texto) {
+        return String(texto)
+          .replace(/\$[^$]*\$/g, '')
+          .replace(/\\\\[a-zA-Z]+/g, '')
+          .replace(/\\[a-zA-Z]+/g, '')
+          .replace(/[{}]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      // --- Banco de 10 reactivos ---
+      var rawQuestions = [
+        {
+          pregunta: '¿Qué afirma el Teorema del Residuo?',
+          opciones: [
+            { texto: 'Si un polinomio $f(x)$ se divide por $x - c$, el residuo es $f(c)$.', correcta: true },
+            { texto: 'Si $f(c) = 0$, entonces $c$ es una cota superior.', correcta: false },
+            { texto: 'Todo polinomio de grado $n$ tiene $n$ raíces reales.', correcta: false },
+            { texto: 'La suma de las raíces es igual al término constante.', correcta: false }
+          ],
+          feedback: 'El Teorema del Residuo establece que $f(x) = (x - c) \\cdot q(x) + f(c)$.'
+        },
+        {
+          pregunta: '¿Cuál es el residuo de dividir $f(x) = x^3 + 2x^2 - 25x - 50$ entre $x - 5$?',
+          opciones: [
+            { texto: '$0$', correcta: true },
+            { texto: '$5$', correcta: false },
+            { texto: '$-25$', correcta: false },
+            { texto: '$50$', correcta: false }
+          ],
+          feedback: 'Aplicando división sintética con $c = 5$, el residuo es $f(5) = 0$.'
+        },
+        {
+          pregunta: '¿Qué afirma el Teorema del Factor?',
+          opciones: [
+            { texto: '$x - c$ es factor de $f(x)$ si y sólo si $f(c) = 0$.', correcta: true },
+            { texto: '$x - c$ es factor de $f(x)$ si $f(c) > 0$.', correcta: false },
+            { texto: 'Todo polinomio tiene al menos un factor lineal.', correcta: false },
+            { texto: 'El número de factores es igual al grado menos uno.', correcta: false }
+          ],
+          feedback: 'El Teorema del Factor es consecuencia directa del Teorema del Residuo: si $f(c) = 0$, entonces $x - c$ divide exactamente a $f(x)$.'
+        },
+        {
+          pregunta: 'Para $f(x) = x^3 - 4x^2 + 3x + 2$, ¿es $x - 2$ un factor?',
+          opciones: [
+            { texto: 'Sí, porque $f(2) = 0$.', correcta: true },
+            { texto: 'No, porque $f(2) \\neq 0$.', correcta: false },
+            { texto: 'Sí, porque el grado es 3.', correcta: false },
+            { texto: 'No, porque falta un término cuadrático.', correcta: false }
+          ],
+          feedback: 'Al evaluar $f(2) = 8 - 16 + 6 + 2 = 0$, se confirma que $x - 2$ es factor.'
+        },
+        {
+          pregunta: '¿Qué dice el Teorema Fundamental del Álgebra?',
+          opciones: [
+            { texto: 'Toda ecuación polinomial de grado mayor que cero tiene al menos una raíz real o compleja.', correcta: true },
+            { texto: 'Toda ecuación polinomial tiene sólo raíces reales.', correcta: false },
+            { texto: 'El número de raíces es igual al número de términos.', correcta: false },
+            { texto: 'Toda raíz es un número entero.', correcta: false }
+          ],
+          feedback: 'El Teorema Fundamental del Álgebra garantiza al menos una raíz en los complejos para todo polinomio de grado mayor que cero.'
+        },
+        {
+          pregunta: '¿Cuántas raíces (contando multiplicidades) tiene un polinomio de grado 4?',
+          opciones: [
+            { texto: '$4$', correcta: true },
+            { texto: '$3$', correcta: false },
+            { texto: '$2$', correcta: false },
+            { texto: 'Depende del término constante.', correcta: false }
+          ],
+          feedback: 'Un polinomio de grado $n$ tiene exactamente $n$ raíces en los números complejos, contando multiplicidades.'
+        },
+        {
+          pregunta: 'Si al aplicar división sintética con $c = 3 > 0$ todos los valores de la tercera fila son positivos, entonces:',
+          opciones: [
+            { texto: '$c = 3$ es cota superior de las raíces.', correcta: true },
+            { texto: '$c = 3$ es una raíz del polinomio.', correcta: false },
+            { texto: '$c = 3$ es cota inferior de las raíces.', correcta: false },
+            { texto: 'El polinomio no tiene raíces reales.', correcta: false }
+          ],
+          feedback: 'La condición de cota superior: $c > 0$ y todos los valores de la tercera fila positivos o cero.'
+        },
+        {
+          pregunta: 'Si al aplicar división sintética con $c = -6 < 0$ los signos de la tercera fila se alternan, entonces:',
+          opciones: [
+            { texto: '$c = -6$ es cota inferior de las raíces.', correcta: true },
+            { texto: '$c = -6$ es cota superior de las raíces.', correcta: false },
+            { texto: '$c = -6$ es una raíz del polinomio.', correcta: false },
+            { texto: 'El polinomio tiene 6 raíces.', correcta: false }
+          ],
+          feedback: 'La condición de cota inferior: $c < 0$ y los signos de la tercera fila alternados.'
+        },
+        {
+          pregunta: 'Para $f(x) = x^4 + x^3 - 18x^2 = x^2(x^2 + x - 18)$, ¿qué tipo de raíz es $x = 0$?',
+          opciones: [
+            { texto: 'Raíz doble: la gráfica toca pero no cruza el eje $X$.', correcta: true },
+            { texto: 'Raíz simple: la gráfica cruza el eje $X$.', correcta: false },
+            { texto: 'Raíz triple.', correcta: false },
+            { texto: 'No es raíz.', correcta: false }
+          ],
+          feedback: 'El factor $x^2$ indica una raíz doble en $x = 0$: la gráfica toca el eje $X$ pero no lo cruza.'
+        },
+        {
+          pregunta: 'Si un polinomio de grado 4 tiene todos sus valores $f(x) > 0$, ¿qué se concluye sobre sus raíces?',
+          opciones: [
+            { texto: 'Todas sus raíces son complejas.', correcta: true },
+            { texto: 'No tiene raíces.', correcta: false },
+            { texto: 'Tiene exactamente 2 raíces reales.', correcta: false },
+            { texto: 'Tiene 4 raíces reales.', correcta: false }
+          ],
+          feedback: 'Si la gráfica nunca toca el eje $X$, no hay raíces reales. En los complejos, tiene 4 raíces (grado 4).'
+        }
+      ];
+
+      // --- Estado ---
+      var questions = [];
+      var currentQuestionIndex = 0;
+      var score = 0;
+      var answered = false;
+
+      // --- Fisher-Yates ---
+      function shuffleArray(array) {
+        var arr = array.slice();
+        for (var i = arr.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = arr[i];
+          arr[i] = arr[j];
+          arr[j] = temp;
+        }
+        return arr;
+      }
+
+      // --- Inicializar quiz ---
+      function initQuiz() {
+        questions = shuffleArray(rawQuestions).map(function (q) {
+          return {
+            pregunta: q.pregunta,
+            opciones: shuffleArray(q.opciones),
+            feedback: q.feedback
+          };
+        });
+        currentQuestionIndex = 0;
+        score = 0;
+        answered = false;
+
+        document.getElementById('resultsView').classList.remove('visible');
+        document.getElementById('quizView').classList.remove('hidden');
+        updateProgressBar();
+        loadQuestion();
+      }
+
+      // --- Cargar pregunta ---
+      function loadQuestion() {
+        answered = false;
+
+        var q = questions[currentQuestionIndex];
+        document.getElementById('questionMeta').textContent =
+          'Reactivo ' + (currentQuestionIndex + 1) + ' de ' + questions.length;
+        document.getElementById('questionText').innerHTML = q.pregunta;
+
+        var ul = document.getElementById('optionsList');
+        ul.innerHTML = '';
+
+        q.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'option-item';
+          btn.setAttribute('type', 'button');
+          btn.setAttribute('role', 'button');
+          btn.setAttribute('tabindex', '0');
+          btn.setAttribute('aria-label', limpiarLatex(op.texto));
+          btn.innerHTML = op.texto;
+
+          btn.addEventListener('click', function () {
+            selectOption(op.correcta, btn);
+          });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectOption(op.correcta, btn);
+            }
+          });
+
+          li.appendChild(btn);
+          ul.appendChild(li);
+        });
+
+        var feedbackBox = document.getElementById('feedbackBox');
+        feedbackBox.classList.remove('visible');
+        feedbackBox.innerHTML = '';
+
+        var btnNext = document.getElementById('btnNext');
+        btnNext.classList.remove('visible');
+
+        renderMath(document.getElementById('quizView'));
+      }
+
+      // --- Seleccionar opción ---
+      function selectOption(isCorrect, selectedElement) {
+        if (answered) return;
+        answered = true;
+
+        var optionItems = document.querySelectorAll('.option-item');
+        optionItems.forEach(function (item) {
+          item.classList.add('disabled');
+          item.setAttribute('tabindex', '-1');
+          item.setAttribute('aria-disabled', 'true');
+        });
+
+        if (isCorrect) {
+          selectedElement.classList.add('es-correcta');
+          selectedElement.setAttribute('aria-label', 'Opción correcta');
+          score++;
+        } else {
+          selectedElement.classList.add('es-incorrecta');
+          selectedElement.setAttribute('aria-label', 'Opción incorrecta');
+          var q = questions[currentQuestionIndex];
+          optionItems.forEach(function (item, idx) {
+            if (q.opciones[idx].correcta) item.classList.add('es-correcta');
+          });
+        }
+
+        var feedbackBox = document.getElementById('feedbackBox');
+        feedbackBox.innerHTML = '<strong>Explicación:</strong> ' + questions[currentQuestionIndex].feedback;
+        feedbackBox.classList.add('visible');
+
+        var btnNext = document.getElementById('btnNext');
+        btnNext.textContent = (currentQuestionIndex === questions.length - 1)
+          ? 'Ver Resultados Finales →'
+          : 'Siguiente Reactivo →';
+        btnNext.classList.add('visible');
+        btnNext.focus();
+
+        renderMath(document.getElementById('quizView'));
+      }
+
+      // --- Barra de progreso ---
+      function updateProgressBar() {
+        var pct = (currentQuestionIndex / questions.length) * 100;
+        var bar = document.getElementById('progressBar');
+        bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+      }
+
+      // --- Siguiente ---
+      document.getElementById('btnNext').addEventListener('click', function () {
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          updateProgressBar();
+          loadQuestion();
+        } else {
+          showResults();
+        }
+      });
+
+      // --- Resultados ---
+      function showResults() {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressBar').setAttribute('aria-valuenow', '100');
+        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('resultsView').classList.add('visible');
+
+        document.getElementById('finalScore').textContent = score + '/' + questions.length;
+
+        var mensaje = '';
+        if (score === questions.length) {
+          mensaje = '¡Excelente dominio del módulo! Has respondido correctamente todos los reactivos. Estás listo para avanzar.';
+        } else if (score >= questions.length * 0.7) {
+          mensaje = '¡Buen trabajo! Has respondido correctamente la mayoría de los reactivos. Te recomendamos repasar los temas donde fallaste.';
+        } else {
+          mensaje = 'Es recomendable repasar los Teoremas del Residuo y del Factor, la división sintética y la graficación antes de continuar.';
+        }
+        document.getElementById('resultsMessage').textContent = mensaje;
+
+        renderMath(document.getElementById('resultsView'));
+      }
+
+      // --- Reiniciar ---
+      document.getElementById('btnRestart').addEventListener('click', function () {
+        initQuiz();
+      });
+
+      // --- Inicializar ---
+      document.addEventListener('DOMContentLoaded', function () {
+        initQuiz();
+      });
+    })();
+  </script>
+</body>
+</html>

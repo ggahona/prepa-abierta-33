@@ -12,7 +12,10 @@
                 inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']]
             },
-            svg: { fontCache: 'global' }
+            svg: { fontCache: 'global' },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+            }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -445,7 +448,7 @@
         </div>
 
         <!-- PANEL DE RESULTADOS -->
-        <div class="panel-resultados" role="region" aria-label="Desarrollo comparativo de los 3 métodos">
+        <div class="panel-resultados" id="panelResultados" role="region" aria-label="Desarrollo comparativo de los 3 métodos">
             <div class="mensaje-inicial" id="mensajeInicial">
                 ⚙️ Ingresa los coeficientes y presiona <strong>"Resolver con los 3 métodos"</strong><br>
                 para ver cómo el método gráfico, la factorización y la fórmula general<br>
@@ -555,7 +558,7 @@ function latexRaizSimplificada(n) {
     return formatearNumero(s.exterior) + '\\sqrt{' + s.interior + '}';
 }
 
-// Construye la expresión ax² + bx + c = 0
+// Construye la expresión ax² + bx + c = 0 (en LaTeX, sin $...$)
 function construirExpresion(a, b, c, sinIgual) {
     var s = '';
     if (casiIgual(a, 1)) s += 'x^2';
@@ -596,25 +599,21 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
 
-    // Blindaje: si a ≈ 0, no dibujar
     if (casiIgual(a, 0)) return;
 
     var ctx = canvas.getContext('2d');
     var W = canvas.width;
     var H = canvas.height;
 
-    // Configuración HiDPI
     var dpr = window.devicePixelRatio || 1;
     canvas.width = W * dpr;
     canvas.height = H * dpr;
     canvas.style.width = '100%';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    // Limpiar
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, W, H);
 
-    // Calcular rango de la gráfica
     var verticeX = -b / (2 * a);
     var verticeY = a * verticeX * verticeX + b * verticeX + c;
     var disc = b * b - 4 * a * c;
@@ -635,10 +634,9 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
         xMax = verticeX + 3;
     }
 
-    // Calcular y en los extremos
     var y1 = a * xMin * xMin + b * xMin + c;
     var y2 = a * xMax * xMax + b * xMax + c;
-    yMin = Math.min(verticeY, y1, y2);
+    yMin = Math.min(verticeY, y1, y2, 0);
     yMax = Math.max(verticeY, y1, y2, 0);
     var yPadding = Math.max(Math.abs(yMax - yMin), 1) * 0.2;
     yMin -= yPadding;
@@ -684,7 +682,7 @@ function dibujarMiniGrafica(canvasId, a, b, c) {
     }
     ctx.stroke();
 
-    // Raíces (si Δ ≥ 0)
+    // Raíces
     if (disc >= 0) {
         var sq2 = Math.sqrt(disc);
         var raices = casiIgual(disc, 0) ? [-b / (2 * a)] : [(-b + sq2) / (2 * a), (-b - sq2) / (2 * a)];
@@ -761,7 +759,6 @@ function construirColumnaFactorizacion(a, b, c) {
     if (casiIgual(c, 0)) {
         html += '<div class="paso"><span class="num-paso">1</span>Como $c = 0$, factorizamos directamente por $x$:</div>';
         if (casiIgual(b, 0)) {
-            // Caso ax² = 0 → x = 0 (doble)
             html += '<div style="text-align:center;padding:6px 0;">$$' + formatearNumero(a) + 'x^2 = 0$$</div>';
             html += '<div class="paso"><span class="num-paso">2</span>Dividiendo entre $' + formatearNumero(a) + '$: $x^2 = 0$.</div>';
             html += '<div class="resultado-metodo">' +
@@ -817,8 +814,6 @@ function construirColumnaFactorizacion(a, b, c) {
     var signoQ = q >= 0 ? '+ ' + formatearNumero(q) : '- ' + formatearNumero(-q);
     html += '<div style="text-align:center;padding:6px 0;">$$' + formatearNumero(a) + 'x^2 ' + signoP + 'x ' + signoQ + 'x ' + (c >= 0 ? '+ ' + formatearNumero(c) : '- ' + formatearNumero(-c)) + ' = 0$$</div>';
 
-    // Agrupación:
-    // (a x² + p x) + (q x + c)
     var g1 = mcd(a, p);
     var g2 = mcd(q, c);
     var A1 = a / g1;
@@ -841,7 +836,6 @@ function construirColumnaFactorizacion(a, b, c) {
     var raices = calcularRaices(a, b, c);
     var raicesHTML = '';
 
-    // Verificamos si los binomios coinciden (deben coincidir para factorizar)
     if (casiIgual(A1, A2) && casiIgual(B1, B2)) {
         var coefX = (A1 === 1) ? '' : (A1 === -1 ? '-' : formatearNumero(A1));
         html += '<div class="paso"><span class="num-paso">5</span>Sacamos factor común $(' + coefX + 'x ' + signoB1 + ')$:</div>';
@@ -994,7 +988,7 @@ function resolver() {
     // Dibujar mini-gráfica después de que MathJax haya terminado
     setTimeout(function() {
         dibujarMiniGrafica('canvas-grafico', a, b, c);
-    }, 100);
+    }, 200);
 }
 
 // =========================================
@@ -1039,8 +1033,9 @@ document.querySelectorAll('#in-a, #in-b, #in-c').forEach(function(input) {
 // =========================================
 // INICIALIZACIÓN
 // =========================================
-renderMath(document.body);
-
+window.addEventListener('load', function() {
+    renderMath(document.body);
+});
 </script>
 
 </body>

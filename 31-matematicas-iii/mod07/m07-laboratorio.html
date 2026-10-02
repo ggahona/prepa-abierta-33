@@ -553,13 +553,13 @@
             <!-- FASE 4 -->
             <div class="fase bloqueada" id="fase4">
                 <div class="fase-titulo">
-                    <span class="numero-fase">4</span> 🎯 Trampa CENEVAL
+                    <span class="numero-fase">4</span> 🎯 Error frecuente
                 </div>
                 <div class="fase-instruccion">
                     ¿Cuál es el error más frecuente que se comete en este tipo de caso?
                 </div>
                 <div class="contador-intentos" id="contadorFase4" aria-live="polite">Intento 1 de 3</div>
-                <div class="opciones-lista" id="opcionesFase4" role="group" aria-label="Opciones de trampa CENEVAL"></div>
+                <div class="opciones-lista" id="opcionesFase4" role="group" aria-label="Opciones de error frecuente"></div>
                 <button type="button" class="btn-reintentar" id="btnReintentar4">🔄 Reintentar</button>
                 <div class="feedback" id="feedback4" role="status" aria-live="polite"></div>
             </div>
@@ -583,7 +583,7 @@
     <div class="footer-info">
         <strong>Objetivo:</strong> Desarrollar estrategia matemática identificando el <strong>tipo de operación</strong>,
         la <strong>propiedad o identidad</strong> a aplicar, ejecutando el <strong>desarrollo algebraico</strong>
-        paso a paso, y reconociendo los <strong>errores típicos CENEVAL</strong> en operaciones con
+        paso a paso, y reconociendo los <strong>errores típicos</strong> en operaciones con
         números complejos en forma rectangular.
     </div>
 </div>
@@ -1329,10 +1329,9 @@ function mostrarPantallaFinal() {
     var medalla = document.getElementById('medallaFinal');
     var mensaje = document.getElementById('mensajeFinal');
 
-    // CORRECCIÓN: usar innerHTML para que MathJax procese las fórmulas
     if (completados === total) {
         medalla.textContent = '🏆';
-        mensaje.innerHTML = '¡Detective experto! Resolviste los 5 casos correctamente, identificaste las estrategias adecuadas y anticipaste las trampas CENEVAL. Dominas las operaciones con números complejos en forma rectangular.';
+        mensaje.innerHTML = '¡Detective experto! Resolviste los 5 casos correctamente, identificaste las estrategias adecuadas y anticipaste los errores frecuentes. Dominas las operaciones con números complejos en forma rectangular.';
     } else if (completados >= total * 0.7) {
         medalla.textContent = '🥈';
         mensaje.innerHTML = '¡Buen trabajo, detective! Completaste la mayoría de los casos. Repasa los que fallaste para consolidar tu dominio de la forma rectangular, el conjugado y la división de complejos.';

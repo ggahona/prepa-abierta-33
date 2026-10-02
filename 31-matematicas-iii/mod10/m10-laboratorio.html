@@ -993,48 +993,90 @@ function formatearNumero(n) {
     return parseFloat(n.toFixed(4)).toString();
 }
 
+/**
+ * Normaliza una factorización para compararla:
+ * - Quita espacios, asteriscos, puntos medios
+ * - Convierte ² a ^2
+ * - Reordena alfabéticamente los términos dentro de cada paréntesis
+ *   para que (2x-3) y (-3+2x) se consideren iguales.
+ */
 function normalizarFactorizacion(texto) {
-    return String(texto)
+    var s = String(texto)
         .trim()
         .replace(/\s+/g, '')
         .replace(/\*/g, '')
         .replace(/·/g, '')
-        .replace(/²/g, '^2');
+        .replace(/²/g, '^2')
+        .replace(/−/g, '-');
+
+    // Reordenar términos dentro de cada paréntesis (formato ax+b o x+a)
+    s = s.replace(/\(([^()]+)\)/g, function(_, interior) {
+        var terminos = interior.split(/(?=[+-])/).filter(Boolean);
+        terminos.sort();
+        return '(' + terminos.join('') + ')';
+    });
+
+    return s;
 }
 
+/**
+ * Verifica si la factorización del alumno es equivalente a la correcta.
+ * Acepta:
+ *  - (x-4)(x-4) y (x-4)^2
+ *  - (x-4)(x-4) y (x-4)(x-4) con términos en distinto orden
+ *  - (2x-3)(x+2) y (x+2)(2x-3)
+ *  - variantes con o sin espacios
+ */
 function verificarFactorizacion(usuario, correcta) {
     var u = normalizarFactorizacion(usuario);
     var c = normalizarFactorizacion(correcta);
 
     if (u === c) return true;
 
-    var regexCuadrado = /^\(([^)]+)\)\^2$/;
-    var matchU = u.match(regexCuadrado);
-    if (matchU) {
-        var uExpandido = '(' + matchU[1] + ')(' + matchU[1] + ')';
-        if (uExpandido === c) return true;
-    }
-    var matchC = c.match(regexCuadrado);
-    if (matchC) {
-        var cExpandido = '(' + matchC[1] + ')(' + matchC[1] + ')';
-        if (u === cExpandido) return true;
+    // Expandir (expr)^2 → (expr)(expr)
+    function expandirCuadrado(s) {
+        return s.replace(/\(([^()]+)\)\^2/g, '($1)($1)');
     }
 
-    var regexFactores = /^\(([^)]+)\)\(([^)]+)\)$/;
-    var matchFactorU = u.match(regexFactores);
-    var matchFactorC = c.match(regexFactores);
-    if (matchFactorU && matchFactorC) {
-        var u1 = matchFactorU[1], u2 = matchFactorU[2];
-        var c1 = matchFactorC[1], c2 = matchFactorC[2];
-        if ((u1 === c1 && u2 === c2) || (u1 === c2 && u2 === c1)) return true;
+    var uExp = expandirCuadrado(u);
+    var cExp = expandirCuadrado(c);
+
+    if (uExp === cExp) return true;
+
+    // Comparar como multiconjunto de factores
+    function extraerFactores(s) {
+        var factores = [];
+        var regex = /\(([^()]+)\)/g;
+        var m;
+        while ((m = regex.exec(s)) !== null) {
+            factores.push(m[1]);
+        }
+        factores.sort();
+        return factores;
     }
 
-    return false;
+    var fU = extraerFactores(uExp);
+    var fC = extraerFactores(cExp);
+
+    if (fU.length === 0 || fC.length === 0) return false;
+    if (fU.length !== fC.length) return false;
+
+    for (var i = 0; i < fU.length; i++) {
+        if (fU[i] !== fC[i]) return false;
+    }
+
+    return true;
 }
 
+/**
+ * Convierte un texto en número, aceptando:
+ *  - enteros y decimales (2, -3, 0.5, 3.5)
+ *  - fracciones (3/2, -5/3)
+ *  - el signo menos unicode (−)
+ */
 function parsearNumero(texto) {
     if (texto === null || texto === undefined) return NaN;
-    texto = String(texto).trim().replace(',', '.');
+    texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
     if (texto === '') return NaN;
     if (texto.indexOf('/') !== -1) {
         var partes = texto.split('/');
@@ -1161,7 +1203,7 @@ function renderizarOpciones(contenedorId, opciones, onSelect) {
 function renderizarInputs(contenedorId, campos) {
     var contenedor = document.getElementById(contenedorId);
     contenedor.innerHTML = '';
-    campos.forEach(function(campo, idx) {
+    campos.forEach(function(campo) {
         var wrapper = document.createElement('div');
         wrapper.className = 'input-wrapper';
         var idInput = contenedorId + '-' + campo.id;

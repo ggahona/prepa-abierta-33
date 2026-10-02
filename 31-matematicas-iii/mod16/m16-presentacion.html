@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Presentación didáctica">
+  <title>Módulo 16 — Raíces Imaginarias e Irracionales | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5; --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3; --color-primario: #2c4966;
+      --color-blanco: #ffffff; --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b; --color-exito: #27ae60;
+      --radio-borde: 8px; --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base); color: var(--color-texto-oscuro);
+      line-height: 1.6; min-height: 100vh; padding: 1.5rem;
+    }
+    .contenedor {
+      max-width: 900px; margin: 0 auto; background: var(--color-blanco);
+      border-radius: var(--radio-borde); box-shadow: var(--sombra-suave); overflow: hidden;
+    }
+    header {
+      background: var(--color-primario); color: var(--color-blanco);
+      padding: 1.5rem; text-align: center;
+    }
+    header .institucion {
+      font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em;
+      opacity: 0.9; margin-bottom: 0.4rem;
+    }
+    header h1 {
+      font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem;
+      line-height: 1.35; word-wrap: break-word;
+    }
+    header p { font-size: 0.9rem; opacity: 0.9; }
+    .progreso { height: 6px; background: var(--color-base); }
+    .progreso-barra {
+      height: 100%; background: var(--color-acento);
+      width: 0%; transition: width 0.4s ease;
+    }
+    main { padding: 1.5rem; min-height: 520px; }
+    .diapositiva { display: none; animation: fadeIn 0.3s ease; }
+    .diapositiva.activa { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .diapositiva h2 {
+      font-size: 1.25rem; color: var(--color-primario);
+      margin-bottom: 0.8rem; padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+    .diapositiva p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+    .math-block {
+      background: var(--color-base); padding: 0.9rem 1rem;
+      border-radius: var(--radio-borde); margin: 0.9rem 0;
+      overflow-x: auto; text-align: center;
+    }
+    .nota {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      padding: 0.7rem 1rem; border-radius: var(--radio-borde);
+      margin: 0.8rem 0; font-size: 0.9rem;
+    }
+    .alerta {
+      background: #fdecea;
+      border-left: 4px solid var(--color-error);
+      padding: 0.7rem 1rem; border-radius: var(--radio-borde);
+      margin: 0.8rem 0; font-size: 0.9rem;
+    }
+    .exito {
+      background: #eafaf1;
+      border-left: 4px solid var(--color-exito);
+      padding: 0.7rem 1rem; border-radius: var(--radio-borde);
+      margin: 0.8rem 0; font-size: 0.9rem;
+    }
+    .caja-interactiva {
+      background: var(--color-base);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde);
+      padding: 1rem; margin: 1rem 0;
+    }
+    .caja-interactiva h3 {
+      font-size: 1rem; color: var(--color-primario); margin-bottom: 0.5rem;
+    }
+    .caja-interactiva > p {
+      font-size: 0.85rem; margin-bottom: 0.7rem;
+    }
+    .grupo-inputs {
+      display: flex; flex-wrap: wrap; gap: 0.7rem;
+      align-items: flex-end; margin-bottom: 0.7rem;
+    }
+    .input-wrapper {
+      display: flex; flex-direction: column; gap: 0.2rem;
+    }
+    .input-wrapper label {
+      font-size: 0.8rem; color: var(--color-primario); font-weight: 600;
+    }
+    .input-wrapper input,
+    .input-wrapper select {
+      padding: 0.4rem 0.6rem;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px; font-size: 0.9rem;
+      font-family: inherit; background: var(--color-blanco);
+      color: var(--color-texto-oscuro); min-width: 100px;
+    }
+    .input-wrapper input:focus,
+    .input-wrapper select:focus {
+      outline: none; border-color: var(--color-acento);
+    }
+    .btn-primario {
+      background: var(--color-primario); color: var(--color-blanco);
+      border: none; padding: 0.45rem 1rem;
+      border-radius: 4px; font-size: 0.9rem;
+      font-family: inherit; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn-primario:hover { background: var(--color-acento); }
+    .btn-primario:focus { outline: 2px solid var(--color-acento); outline-offset: 2px; }
+    .resultado {
+      background: var(--color-blanco);
+      border: 1px solid var(--color-acento-suave);
+      border-radius: 4px; padding: 0.6rem 0.8rem;
+      font-size: 0.9rem; min-height: 2.2rem;
+    }
+    .resultado.error { border-color: var(--color-error); color: var(--color-error); }
+    .resultado.exito { border-color: var(--color-exito); }
+    .navegacion {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+    }
+    .navegacion button {
+      background: var(--color-primario); color: var(--color-blanco);
+      border: none; padding: 0.5rem 1rem;
+      border-radius: 4px; font-size: 0.9rem;
+      font-family: inherit; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .navegacion button:hover:not(:disabled) { background: var(--color-acento); }
+    .navegacion button:disabled {
+      background: var(--color-acento-suave); cursor: not-allowed; opacity: 0.6;
+    }
+    .navegacion .indicador {
+      font-size: 0.85rem; color: var(--color-primario); font-weight: 600;
+    }
+    .footer-info {
+      padding: 1rem 1.5rem; background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem; color: var(--color-primario);
+    }
+    @media (max-width: 900px) {
+      header h1 { font-size: 1.2rem; }
+      .grupo-inputs { flex-direction: column; align-items: stretch; }
+      .input-wrapper input,
+      .input-wrapper select { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      main { padding: 1rem; min-height: 460px; }
+      .diapositiva h2 { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Módulo 16 — Raíces Imaginarias e Irracionales</h1>
+      <p>Matemáticas III | Prepa Abierta 33</p>
+    </header>
+
+    <div class="progreso">
+      <div class="progreso-barra" id="progresoBarra"></div>
+    </div>
+
+    <main>
+      <!-- Diapositiva 1: Bienvenida -->
+      <div class="diapositiva activa" data-indice="0">
+        <h2>📘 Bienvenida al Módulo 16</h2>
+        <p>
+          Completarás el estudio de las raíces de funciones polinomiales: las
+          <strong>imaginarias</strong> (que aparecen por pares conjugados) y las
+          <strong>irracionales</strong> (que se aproximan con el método gráfico).
+        </p>
+        <div class="math-block">
+          $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+        </div>
+        <div class="nota">
+          <strong>💡 Propósito:</strong> Al terminar, podrás obtener todas las raíces
+          reales, imaginarias e irracionales de una función polinomial.
+        </div>
+      </div>
+
+      <!-- Diapositiva 2: Raíces imaginarias -->
+      <div class="diapositiva" data-indice="1">
+        <h2>1. Raíces Imaginarias</h2>
+        <p>
+          Las raíces imaginarias <strong>siempre aparecen por pares conjugados</strong>:
+          si $a + bi$ es raíz, entonces $a - bi$ también lo es.
+        </p>
+        <div class="math-block">
+          $$f(x) = x^3 - 5x^2 + 9x - 5 = 0$$
+        </div>
+        <p>
+          Al degradar con división sintética queda $x^2 - 4x + 5 = 0$. Con la fórmula general:
+        </p>
+        <div class="math-block">
+          $$x = \frac{4 \pm \sqrt{16 - 20}}{2} = \frac{4 \pm 2i}{2} = 2 \pm i$$
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🧮 Resolver cuadrática (fórmula general)</h3>
+          <p>Ingresa los coeficientes $a$, $b$, $c$ de $ax^2 + bx + c = 0$.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="ca">$a =$</label><input type="text" id="ca" value="1" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="cb">$b =$</label><input type="text" id="cb" value="-4" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="cc">$c =$</label><input type="text" id="cc" value="5" inputmode="decimal"></div>
+            <button class="btn-primario" id="btn-cuadratica">Resolver</button>
+          </div>
+          <div class="resultado" id="res-cuadratica" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 3: Raíces conjugadas -->
+      <div class="diapositiva" data-indice="2">
+        <h2>2. Teorema de las Raíces Conjugadas</h2>
+        <p>
+          Si un polinomio con <strong>coeficientes reales</strong> tiene una raíz
+          compleja $a + bi$, entonces su conjugada $a - bi$ también es raíz.
+        </p>
+        <div class="math-block">
+          $$a + bi \text{ es raíz} \quad \Longleftrightarrow \quad a - bi \text{ es raíz}$$
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error común:</strong> dar solo una raíz imaginaria como respuesta
+          cuando en realidad vienen en pares.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🔍 Verificador de pares conjugados</h3>
+          <p>Dada una raíz imaginaria, encuentra su conjugada.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="parte-real">Parte real:</label><input type="text" id="parte-real" value="2" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="parte-imag">Parte imaginaria:</label><input type="text" id="parte-imag" value="1" inputmode="decimal"></div>
+            <button class="btn-primario" id="btn-conjugada">Encontrar conjugada</button>
+          </div>
+          <div class="resultado" id="res-conjugada" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 4: Ejemplo grado 5 -->
+      <div class="diapositiva" data-indice="3">
+        <h2>3. Ejemplo con raíces mixtas</h2>
+        <p>
+          Resolver $x^5 - 8x^4 + 21x^3 - 12x^2 - 22x + 20 = 0$ combinando división
+          sintética y fórmula general.
+        </p>
+        <div class="nota">
+          <strong>Raíces encontradas por división sintética:</strong> $x = 2$, $x = -1$, $x = 1$.<br>
+          <strong>Degradada final:</strong> $x^2 - 6x + 10 = 0$.<br>
+          <strong>Fórmula general:</strong> $x = \frac{6 \pm \sqrt{-4}}{2} = 3 \pm i$.
+        </div>
+        <div class="exito">
+          <strong>✅ Conjunto solución:</strong> $\{2, -1, 1, 3+i, 3-i\}$
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🧮 Solución de cuadrática con discriminante negativo</h3>
+          <p>Resuelve $x^2 - 6x + 10 = 0$.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="ca2">$a =$</label><input type="text" id="ca2" value="1" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="cb2">$b =$</label><input type="text" id="cb2" value="-6" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="cc2">$c =$</label><input type="text" id="cc2" value="10" inputmode="decimal"></div>
+            <button class="btn-primario" id="btn-cuadratica2">Resolver</button>
+          </div>
+          <div class="resultado" id="res-cuadratica2" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 5: Demostración con Descartes -->
+      <div class="diapositiva" data-indice="4">
+        <h2>4. Demostrar que todas las raíces son imaginarias</h2>
+        <p>
+          Usamos la Regla de Descartes para demostrar que un polinomio no tiene raíces
+          reales positivas ni negativas, y como $f(0) \neq 0$, tampoco tiene raíz cero.
+        </p>
+        <div class="math-block">
+          $$f(x) = 2x^4 + 3x^2 + 1 = 0$$
+        </div>
+        <div class="nota">
+          <strong>Cambios en $f(x)$:</strong> $0$ → no hay raíces positivas.<br>
+          <strong>Cambios en $f(-x)$:</strong> $0$ → no hay raíces negativas.<br>
+          <strong>$f(0) = 1 \neq 0$</strong> → no hay raíz cero.<br>
+          <strong>Grado 4</strong> → debe tener 4 raíces, todas imaginarias.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🔢 Contador de cambios de signo</h3>
+          <p>Ingresa los coeficientes separados por comas.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="coefs-desc">Coeficientes:</label><input type="text" id="coefs-desc" value="2,0,3,0,1" inputmode="text"></div>
+            <button class="btn-primario" id="btn-contar-cambios">Contar cambios</button>
+          </div>
+          <div class="resultado" id="res-contar-cambios" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 6: Raíces irracionales -->
+      <div class="diapositiva" data-indice="5">
+        <h2>5. Raíces Irracionales — Método Gráfico</h2>
+        <p>
+          Cuando una ecuación tiene raíces irracionales, se aproximan con el método
+          gráfico (interpolación lineal): entre dos puntos muy cercanos, la gráfica se
+          considera una recta.
+        </p>
+        <div class="math-block">
+          $$x^3 - 2x^2 - 2 = 0$$
+        </div>
+        <div class="nota">
+          <strong>Paso 1:</strong> $f(2) = -2$ y $f(3) = 7$ → hay una raíz entre 2 y 3.<br>
+          <strong>Paso 2:</strong> Refinar con $f(2.3) = -0.413$ y $f(2.4) = 0.304$.<br>
+          <strong>Paso 3:</strong> Refinar con $f(2.35) = -0.067$ y $f(2.36) = 0.005$.<br>
+          <strong>Raíz aproximada:</strong> $x \approx 2.359$.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>📏 Interpolación lineal</h3>
+          <p>Dados dos puntos $(x_1, y_1)$ y $(x_2, y_2)$ con signos opuestos, aproxima la raíz.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="ix1">$x_1 =$</label><input type="text" id="ix1" value="2.35" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="iy1">$y_1 =$</label><input type="text" id="iy1" value="-0.067" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="ix2">$x_2 =$</label><input type="text" id="ix2" value="2.36" inputmode="decimal"></div>
+            <div class="input-wrapper"><label for="iy2">$y_2 =$</label><input type="text" id="iy2" value="0.005" inputmode="decimal"></div>
+            <button class="btn-primario" id="btn-interpolar">Interpolar</button>
+          </div>
+          <div class="resultado" id="res-interpolar" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 7: Refinamiento iterativo -->
+      <div class="diapositiva" data-indice="6">
+        <h2>6. Refinamiento Iterativo</h2>
+        <p>
+          Para obtener más cifras decimales, se repite el proceso: se evalúa la función
+          en valores cada vez más cercanos y se interpola.
+        </p>
+        <div class="nota">
+          <strong>Iteración 1:</strong> raíz entre 2 y 3 → aprox. 2.35.<br>
+          <strong>Iteración 2:</strong> raíz entre 2.35 y 2.36 → aprox. 2.359.<br>
+          <strong>Iteración 3:</strong> raíz entre 2.359 y 2.360 → aprox. 2.3593.
+        </div>
+        <div class="exito">
+          <strong>✅ Verificación:</strong> $f(2.3593) = -0.0000299 \approx 0$.
+        </div>
+
+        <div class="caja-interactiva">
+          <h3>🧮 Evaluador de polinomio</h3>
+          <p>Evalúa $f(x) = x^3 - 2x^2 - 2$ en un valor dado.</p>
+          <div class="grupo-inputs">
+            <div class="input-wrapper"><label for="eval-x">$x =$</label><input type="text" id="eval-x" value="2.3593" inputmode="decimal"></div>
+            <button class="btn-primario" id="btn-evaluar">Evaluar</button>
+          </div>
+          <div class="resultado" id="res-evaluar" role="status" aria-live="polite">El resultado aparecerá aquí...</div>
+        </div>
+      </div>
+
+      <!-- Diapositiva 8: Resumen -->
+      <div class="diapositiva" data-indice="7">
+        <h2>7. Casos especiales y errores frecuentes</h2>
+        <div class="alerta">
+          <strong>⚠️ Error 1:</strong> confundir raíces irracionales con imaginarias.
+          $\sqrt{2}$ es <strong>irracional real</strong>, no imaginario.
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error 2:</strong> no aplicar Descartes correctamente. Las potencias
+          pares <strong>no cambian de signo</strong> al evaluar $f(-x)$.
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error 3:</strong> dar solo una cifra decimal cuando se piden tres
+          o cuatro.
+        </div>
+        <div class="alerta">
+          <strong>⚠️ Error 4:</strong> no verificar que $f(r) \approx 0$ con la raíz
+          aproximada.
+        </div>
+      </div>
+
+      <!-- Diapositiva 9: Resumen -->
+      <div class="diapositiva" data-indice="8">
+        <h2>8. Resumen del Módulo</h2>
+        <div class="nota">
+          <strong>Ideas clave:</strong>
+          <ul style="margin: 0.5rem 0 0 1.2rem;">
+            <li>Las <strong>raíces imaginarias</strong> aparecen por pares conjugados:
+                si $a + bi$ es raíz, $a - bi$ también.</li>
+            <li>Se obtienen resolviendo la <strong>cuadrática degradada</strong> con
+                fórmula general cuando $\Delta < 0$.</li>
+            <li>La <strong>Regla de Descartes</strong> permite demostrar que un
+                polinomio solo tiene raíces imaginarias.</li>
+            <li>Las <strong>raíces irracionales</strong> se aproximan con el método
+                gráfico (interpolación lineal).</li>
+            <li>Cada iteración del método gráfico <strong>refina</strong> la
+                aproximación.</li>
+            <li>Siempre se debe <strong>verificar</strong> que $f(r) \approx 0$.</li>
+          </ul>
+        </div>
+        <div class="exito" style="text-align: center; margin-top: 1rem;">
+          <strong>🎉 ¡Felicidades!</strong> Has completado el Módulo 16.
+        </div>
+      </div>
+    </main>
+
+    <div class="navegacion">
+      <button id="btnAnterior" disabled>← Anterior</button>
+      <span class="indicador" id="indicador">Diapositiva 1 de 9</span>
+      <button id="btnSiguiente">Siguiente →</button>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Obtener todas las raíces (reales, imaginarias e irracionales) de funciones polinomiales mediante división sintética, fórmula general, Regla de Descartes y método gráfico.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var diapositivas = document.querySelectorAll('.diapositiva');
+      var total = diapositivas.length;
+      var actual = 0;
+      var btnAnterior = document.getElementById('btnAnterior');
+      var btnSiguiente = document.getElementById('btnSiguiente');
+      var indicador = document.getElementById('indicador');
+      var progresoBarra = document.getElementById('progresoBarra');
+
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(4)).toString();
+      }
+      function parsearNumero(texto) {
+        if (texto == null) return NaN;
+        texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+        if (texto === '') return NaN;
+        if (texto.indexOf('/') !== -1) {
+          var p = texto.split('/');
+          if (p.length !== 2) return NaN;
+          var n = parseFloat(p[0]), d = parseFloat(p[1]);
+          if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+          return n / d;
+        }
+        var x = parseFloat(texto);
+        return isNaN(x) ? NaN : x;
+      }
+
+      function mostrarDiapositiva(indice) {
+        diapositivas.forEach(function (d, i) {
+          d.classList.toggle('activa', i === indice);
+        });
+        actual = indice;
+        indicador.textContent = 'Diapositiva ' + (indice + 1) + ' de ' + total;
+        btnAnterior.disabled = (indice === 0);
+        btnSiguiente.disabled = (indice === total - 1);
+        progresoBarra.style.width = ((indice + 1) / total * 100) + '%';
+        renderMath(document.querySelector('.diapositiva.activa'));
+      }
+
+      btnAnterior.addEventListener('click', function () {
+        if (actual > 0) mostrarDiapositiva(actual - 1);
+      });
+      btnSiguiente.addEventListener('click', function () {
+        if (actual < total - 1) mostrarDiapositiva(actual + 1);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowLeft' && actual > 0) mostrarDiapositiva(actual - 1);
+        if (e.key === 'ArrowRight' && actual < total - 1) mostrarDiapositiva(actual + 1);
+      });
+
+      // --- Caja 1: Resolver cuadrática ---
+      document.getElementById('btn-cuadratica').addEventListener('click', function () {
+        resolverCuadratica('ca', 'cb', 'cc', 'res-cuadratica');
+      });
+      document.getElementById('btn-cuadratica2').addEventListener('click', function () {
+        resolverCuadratica('ca2', 'cb2', 'cc2', 'res-cuadratica2');
+      });
+
+      function resolverCuadratica(idA, idB, idC, idRes) {
+        var a = parsearNumero(document.getElementById(idA).value);
+        var b = parsearNumero(document.getElementById(idB).value);
+        var c = parsearNumero(document.getElementById(idC).value);
+        var res = document.getElementById(idRes);
+
+        if (isNaN(a) || isNaN(b) || isNaN(c)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa valores numéricos válidos.';
+          renderMath(res);
+          return;
+        }
+        if (Math.abs(a) < 1e-9) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Si $a = 0$, no es una ecuación cuadrática.';
+          renderMath(res);
+          return;
+        }
+
+        var disc = b * b - 4 * a * c;
+        var html = '<p>Discriminante: $\\Delta = ' + formatearNumero(disc) + '$</p>';
+
+        if (disc >= 0) {
+          var r1 = (-b + Math.sqrt(disc)) / (2 * a);
+          var r2 = (-b - Math.sqrt(disc)) / (2 * a);
+          html += '<p>$$x = \\frac{-(' + formatearNumero(b) + ') \\pm \\sqrt{' + formatearNumero(disc) + '}}{2 \\cdot ' + formatearNumero(a) + '}$$</p>';
+          html += '<p>Raíces reales: $x_1 = ' + formatearNumero(r1) + '$, $x_2 = ' + formatearNumero(r2) + '$</p>';
+          res.className = 'resultado exito';
+        } else {
+          var realPart = -b / (2 * a);
+          var imagPart = Math.sqrt(-disc) / (2 * a);
+          html += '<p>Como $\\Delta < 0$, las raíces son <strong>imaginarias conjugadas</strong>:</p>';
+          html += '<p>$$x = ' + formatearNumero(realPart) + ' \\pm ' + formatearNumero(imagPart) + 'i$$</p>';
+          html += '<p>$x_1 = ' + formatearNumero(realPart) + ' + ' + formatearNumero(imagPart) + 'i$ · $x_2 = ' + formatearNumero(realPart) + ' - ' + formatearNumero(imagPart) + 'i$</p>';
+          res.className = 'resultado exito';
+        }
+        res.innerHTML = html;
+        renderMath(res);
+      }
+
+      // --- Caja 2: Conjugada ---
+      document.getElementById('btn-conjugada').addEventListener('click', function () {
+        var re = parsearNumero(document.getElementById('parte-real').value);
+        var im = parsearNumero(document.getElementById('parte-imag').value);
+        var res = document.getElementById('res-conjugada');
+
+        if (isNaN(re) || isNaN(im)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa valores numéricos válidos.';
+          renderMath(res);
+          return;
+        }
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>Si $' + formatearNumero(re) + ' + ' + formatearNumero(im) + 'i$ es raíz,</p>' +
+          '<p>entonces $' + formatearNumero(re) + ' - ' + formatearNumero(im) + 'i$ también es raíz.</p>' +
+          '<p>Las raíces imaginarias aparecen <strong>por pares conjugados</strong>.</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 3: Contar cambios de signo ---
+      document.getElementById('btn-contar-cambios').addEventListener('click', function () {
+        var texto = document.getElementById('coefs-desc').value;
+        var res = document.getElementById('res-contar-cambios');
+        var partes = texto.split(',').map(function (s) { return parsearNumero(s); });
+
+        if (partes.some(isNaN)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa coeficientes separados por comas (ej. <code>2,0,3,0,1</code>).';
+          renderMath(res);
+          return;
+        }
+
+        function contarCambios(coefs) {
+          var cambios = 0;
+          var signos = coefs.filter(function (v) { return Math.abs(v) > 1e-9; })
+            .map(function (v) { return v > 0 ? 1 : -1; });
+          for (var i = 1; i < signos.length; i++) {
+            if (signos[i] !== signos[i - 1]) cambios++;
+          }
+          return cambios;
+        }
+
+        var cambiosF = contarCambios(partes);
+        var coefsFneg = partes.map(function (v, i) {
+          var grado = partes.length - 1 - i;
+          return grado % 2 === 1 ? -v : v;
+        });
+        var cambiosFneg = contarCambios(coefsFneg);
+
+        var signosF = partes.filter(function (v) { return Math.abs(v) > 1e-9; })
+          .map(function (v) { return v > 0 ? '+' : '−'; }).join(', ');
+        var signosFneg = coefsFneg.filter(function (v) { return Math.abs(v) > 1e-9; })
+          .map(function (v) { return v > 0 ? '+' : '−'; }).join(', ');
+
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p><strong>$f(x)$:</strong> signos $' + signosF + '$ → $' + cambiosF + '$ cambios</p>' +
+          '<p><strong>$f(-x)$:</strong> signos $' + signosFneg + '$ → $' + cambiosFneg + '$ cambios</p>' +
+          '<p>Máximo de raíces positivas: $' + cambiosF + '$ · Máximo de raíces negativas: $' + cambiosFneg + '$</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 4: Interpolación lineal ---
+      document.getElementById('btn-interpolar').addEventListener('click', function () {
+        var x1 = parsearNumero(document.getElementById('ix1').value);
+        var y1 = parsearNumero(document.getElementById('iy1').value);
+        var x2 = parsearNumero(document.getElementById('ix2').value);
+        var y2 = parsearNumero(document.getElementById('iy2').value);
+        var res = document.getElementById('res-interpolar');
+
+        if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa valores numéricos válidos.';
+          renderMath(res);
+          return;
+        }
+        if (y1 * y2 >= 0) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Los valores $y_1$ y $y_2$ deben tener signos opuestos para que haya una raíz entre ellos.';
+          renderMath(res);
+          return;
+        }
+
+        var xr = x1 - y1 * (x2 - x1) / (y2 - y1);
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>Interpolación lineal entre $(' + formatearNumero(x1) + ', ' + formatearNumero(y1) + ')$ y $(' + formatearNumero(x2) + ', ' + formatearNumero(y2) + ')$:</p>' +
+          '<p>$$x \\approx ' + formatearNumero(x1) + ' - ' + formatearNumero(y1) + ' \\cdot \\frac{' + formatearNumero(x2) + ' - ' + formatearNumero(x1) + '}{' + formatearNumero(y2) + ' - ' + formatearNumero(y1) + '}$$</p>' +
+          '<p>$$x \\approx ' + formatearNumero(xr) + '$$</p>';
+        renderMath(res);
+      });
+
+      // --- Caja 5: Evaluar polinomio ---
+      document.getElementById('btn-evaluar').addEventListener('click', function () {
+        var x = parsearNumero(document.getElementById('eval-x').value);
+        var res = document.getElementById('res-evaluar');
+
+        if (isNaN(x)) {
+          res.className = 'resultado error';
+          res.innerHTML = '⚠️ Ingresa un valor numérico válido.';
+          renderMath(res);
+          return;
+        }
+
+        var y = Math.pow(x, 3) - 2 * Math.pow(x, 2) - 2;
+        res.className = 'resultado exito';
+        res.innerHTML =
+          '<p>$$f(' + formatearNumero(x) + ') = (' + formatearNumero(x) + ')^3 - 2(' + formatearNumero(x) + ')^2 - 2$$</p>' +
+          '<p>$$f(' + formatearNumero(x) + ') = ' + formatearNumero(y) + '$$</p>' +
+          '<p>' + (Math.abs(y) < 0.001
+            ? '✅ El valor es prácticamente cero: es una buena aproximación de la raíz.'
+            : '💡 El valor no es cero, pero se acerca. Sigue refinando la aproximación.') + '</p>';
+        renderMath(res);
+      });
+
+      document.addEventListener('DOMContentLoaded', function () {
+        mostrarDiapositiva(0);
+      });
+    })();
+  </script>
+</body>
+</html>

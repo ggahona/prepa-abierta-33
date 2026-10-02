@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Simulador de autoevaluación">
+  <title>Simulador de Autoevaluación — Módulo 16 | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --bg-base: #e8eef5; --accent-soft: #a9c1d9;
+      --accent-main: #5b7fa3; --text-primary: #2c4966;
+      --success: #27ae60; --success-text: #145a32;
+      --error: #c0392b; --error-text: #78281f;
+      --card-bg: #ffffff; --border-radius: 12px; --text-dark: #1a2a3a;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-base); color: var(--text-dark);
+      line-height: 1.6; min-height: 100vh; padding: 1.5rem;
+    }
+    .container {
+      max-width: 820px; margin: 0 auto;
+      background: var(--card-bg); border-radius: var(--border-radius);
+      box-shadow: 0 4px 12px rgba(44, 73, 102, 0.1); overflow: hidden;
+    }
+    header {
+      background: var(--text-primary); color: var(--card-bg);
+      padding: 1.5rem; text-align: center;
+    }
+    header .institution {
+      font-size: 0.8rem; text-transform: uppercase;
+      letter-spacing: 0.1em; opacity: 0.9; margin-bottom: 0.4rem;
+    }
+    header h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem; }
+    header p { font-size: 0.9rem; opacity: 0.9; }
+    .progress-container { height: 6px; background: var(--bg-base); }
+    .progress-bar {
+      height: 100%; background: var(--accent-main);
+      width: 0%; transition: width 0.4s ease;
+    }
+    .quiz-view, .results-view { padding: 1.5rem; }
+    .quiz-view.hidden { display: none; }
+    .results-view {
+      display: none; text-align: center; padding: 2rem 1.5rem;
+    }
+    .results-view.visible { display: block; }
+    .question-meta {
+      font-size: 0.82rem; font-weight: 700;
+      color: var(--accent-main); text-transform: uppercase;
+      letter-spacing: 0.05em; margin-bottom: 0.8rem;
+    }
+    .question-text {
+      font-size: 1.05rem; color: var(--text-primary);
+      margin-bottom: 1rem; padding: 0.9rem 1rem;
+      background: var(--bg-base); border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent-main);
+    }
+    .options-list { list-style: none; padding: 0; margin: 0 0 1rem 0; }
+    .options-list li { margin-bottom: 0.5rem; }
+    .option-item {
+      display: block; width: 100%; text-align: left;
+      background: var(--card-bg); border: 2px solid var(--accent-soft);
+      border-radius: 8px; padding: 0.75rem 1rem;
+      font-size: 0.95rem; font-family: inherit;
+      color: var(--text-dark); cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .option-item:hover:not(.disabled) {
+      border-color: var(--accent-main); background: var(--bg-base);
+    }
+    .option-item:focus { outline: 2px solid var(--accent-main); outline-offset: 2px; }
+    .option-item.disabled { cursor: not-allowed; }
+    .option-item.es-correcta {
+      background: #d4edda; border-color: var(--success);
+      color: var(--success-text); font-weight: 600;
+    }
+    .option-item.es-incorrecta {
+      background: #f8d7da; border-color: var(--error); color: var(--error-text);
+    }
+    .feedback-box {
+      display: none; background: var(--bg-base);
+      border-left: 4px solid var(--accent-main);
+      border-radius: 8px; padding: 0.75rem 1rem;
+      font-size: 0.9rem; margin-bottom: 1rem; color: var(--text-dark);
+    }
+    .feedback-box.visible { display: block; }
+    .btn-next {
+      display: none; width: 100%;
+      background: var(--text-primary); color: var(--card-bg);
+      border: none; padding: 0.75rem 1rem;
+      border-radius: 8px; font-size: 1rem;
+      font-family: inherit; font-weight: 600;
+      cursor: pointer; transition: background 0.2s ease;
+    }
+    .btn-next:hover { background: var(--accent-main); }
+    .btn-next:focus { outline: 2px solid var(--accent-main); outline-offset: 2px; }
+    .btn-next.visible { display: block; }
+    .results-view h2 {
+      color: var(--text-primary); font-size: 1.4rem; margin-bottom: 1rem;
+    }
+    .score-display {
+      font-size: 3rem; font-weight: 700;
+      color: var(--accent-main); margin-bottom: 1rem;
+    }
+    .results-message {
+      font-size: 1rem; color: var(--text-dark);
+      margin-bottom: 1.5rem; padding: 1rem;
+      background: var(--bg-base); border-radius: var(--border-radius);
+    }
+    .btn-restart {
+      background: var(--accent-main); color: var(--card-bg);
+      border: none; padding: 0.75rem 1.5rem;
+      border-radius: 8px; font-size: 1rem;
+      font-family: inherit; font-weight: 600;
+      cursor: pointer; transition: background 0.2s ease;
+    }
+    .btn-restart:hover { background: var(--text-primary); }
+    .footer-info {
+      padding: 1rem 1.5rem; background: var(--bg-base);
+      border-top: 2px solid var(--accent-soft);
+      font-size: 0.85rem; color: var(--text-primary);
+    }
+    @media (max-width: 900px) {
+      .question-text { font-size: 1rem; }
+      .option-item { font-size: 0.9rem; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.15rem; }
+      .quiz-view, .results-view { padding: 1rem; }
+      .score-display { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="institution">Preparatoria Abierta</div>
+      <h1>Simulador de Autoevaluación — Módulo 16</h1>
+      <p>Raíces Imaginarias e Irracionales | Matemáticas III</p>
+    </header>
+
+    <div class="progress-container">
+      <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+    </div>
+
+    <div id="quizView" class="quiz-view">
+      <div class="question-meta" id="questionMeta">Reactivo 1 de 10</div>
+      <div class="question-text" id="questionText">Cargando pregunta...</div>
+      <ul class="options-list" id="optionsList" role="list"></ul>
+      <div class="feedback-box" id="feedbackBox" role="status" aria-live="polite"></div>
+      <button class="btn-next" id="btnNext" aria-label="Avanzar al siguiente reactivo">Siguiente Reactivo →</button>
+    </div>
+
+    <div id="resultsView" class="results-view">
+      <h2>Evaluación Finalizada</h2>
+      <div class="score-display" id="finalScore">0/10</div>
+      <div class="results-message" id="resultsMessage"></div>
+      <button class="btn-restart" id="btnRestart" aria-label="Reiniciar la evaluación">Intentar de nuevo</button>
+    </div>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Evaluar el dominio de las raíces imaginarias, la Regla de Descartes y el método gráfico de raíces irracionales.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      function limpiarLatex(texto) {
+        return String(texto)
+          .replace(/\$[^$]*\$/g, '')
+          .replace(/\\\\[a-zA-Z]+/g, '')
+          .replace(/\\[a-zA-Z]+/g, '')
+          .replace(/[{}]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+
+      var rawQuestions = [
+        {
+          pregunta: '¿Cómo aparecen las raíces imaginarias de un polinomio con coeficientes reales?',
+          opciones: [
+            { texto: 'En pares conjugados: si $a + bi$ es raíz, $a - bi$ también.', correcta: true },
+            { texto: 'Siempre solas, sin par.', correcta: false },
+            { texto: 'En grupos de tres.', correcta: false },
+            { texto: 'Solo si el grado es impar.', correcta: false }
+          ],
+          feedback: 'El Teorema de las Raíces Conjugadas garantiza que las raíces imaginarias aparecen por pares $a \\pm bi$.'
+        },
+        {
+          pregunta: 'Si $f(x) = x^3 - 5x^2 + 9x - 5$ y $x = 1$ es raíz, la degradada es $x^2 - 4x + 5 = 0$. ¿Cuál es el discriminante?',
+          opciones: [
+            { texto: '$-4$', correcta: true },
+            { texto: '$4$', correcta: false },
+            { texto: '$16$', correcta: false },
+            { texto: '$0$', correcta: false }
+          ],
+          feedback: '$\\Delta = (-4)^2 - 4(1)(5) = 16 - 20 = -4$.'
+        },
+        {
+          pregunta: 'Si $\\Delta < 0$ en una cuadrática $ax^2 + bx + c = 0$, ¿qué tipo de raíces tiene?',
+          opciones: [
+            { texto: 'Imaginarias conjugadas: $a \\pm bi$.', correcta: true },
+            { texto: 'Dos raíces reales distintas.', correcta: false },
+            { texto: 'Una raíz real doble.', correcta: false },
+            { texto: 'No tiene raíces.', correcta: false }
+          ],
+          feedback: 'Cuando $\\Delta < 0$, las raíces son complejas conjugadas: $x = \\frac{-b \\pm i\\sqrt{|\\Delta|}}{2a}$.'
+        },
+        {
+          pregunta: '¿Qué afirma la Regla de los Signos de Descartes?',
+          opciones: [
+            { texto: 'El número máximo de raíces positivas es igual a los cambios de signo en $f(x)$.', correcta: true },
+            { texto: 'El número exacto de raíces positivas.', correcta: false },
+            { texto: 'El número de factores de $a_0$.', correcta: false },
+            { texto: 'El número de raíces irracionales.', correcta: false }
+          ],
+          feedback: 'Descartes acota el número máximo: cambios en $f(x)$ → máximo positivas; cambios en $f(-x)$ → máximo negativas.'
+        },
+        {
+          pregunta: 'Si $f(x) = 2x^4 + 3x^2 + 1$ tiene 0 cambios de signo en $f(x)$ y 0 en $f(-x)$, ¿qué se concluye?',
+          opciones: [
+            { texto: 'No tiene raíces reales; las 4 raíces son imaginarias.', correcta: true },
+            { texto: 'Tiene 4 raíces reales.', correcta: false },
+            { texto: 'Tiene 2 raíces reales y 2 imaginarias.', correcta: false },
+            { texto: 'No tiene raíces.', correcta: false }
+          ],
+          feedback: 'Como es de grado 4 y no hay raíces reales positivas, negativas ni cero ($f(0) = 1$), todas son imaginarias.'
+        },
+        {
+          pregunta: '¿Qué es una raíz irracional?',
+          opciones: [
+            { texto: 'Una raíz real que no se puede expresar como fracción.', correcta: true },
+            { texto: 'Una raíz imaginaria.', correcta: false },
+            { texto: 'Una raíz compleja.', correcta: false },
+            { texto: 'Una raíz negativa.', correcta: false }
+          ],
+          feedback: 'Las raíces irracionales son reales pero no racionales, como $\\sqrt{2}$ o $\\sqrt{3}$.'
+        },
+        {
+          pregunta: '¿En qué se basa el método gráfico para aproximar raíces irracionales?',
+          opciones: [
+            { texto: 'En la interpolación lineal entre dos puntos cercanos.', correcta: true },
+            { texto: 'En la fórmula general.', correcta: false },
+            { texto: 'En la Regla de Descartes.', correcta: false },
+            { texto: 'En la factorización por agrupación.', correcta: false }
+          ],
+          feedback: 'Si dos puntos están muy próximos, la gráfica entre ellos se puede considerar una recta (interpolación lineal).'
+        },
+        {
+          pregunta: 'Si $f(2.35) = -0.067$ y $f(2.36) = 0.005$, ¿cuál es la raíz aproximada con 3 cifras?',
+          opciones: [
+            { texto: '$x \\approx 2.359$', correcta: true },
+            { texto: '$x \\approx 2.35$', correcta: false },
+            { texto: '$x \\approx 2.36$', correcta: false },
+            { texto: '$x \\approx 2.4$', correcta: false }
+          ],
+          feedback: 'Al interpolar entre los dos puntos, la raíz está en $x \\approx 2.359$.'
+        },
+        {
+          pregunta: '¿Cuál es el error más frecuente al demostrar con Descartes que todas las raíces son imaginarias?',
+          opciones: [
+            { texto: 'No verificar que $f(0) \\neq 0$ para descartar la raíz cero.', correcta: true },
+            { texto: 'No calcular el discriminante.', correcta: false },
+            { texto: 'No factorizar el polinomio.', correcta: false },
+            { texto: 'No usar la fórmula general.', correcta: false }
+          ],
+          feedback: 'Aunque no haya cambios de signo, hay que descartar $x = 0$ como raíz evaluando $f(0)$.'
+        },
+        {
+          pregunta: '¿Cuál es el error más frecuente al aplicar la Regla de Descartes en $f(-x)$?',
+          opciones: [
+            { texto: 'Olvidar que solo cambian de signo los términos de grado impar.', correcta: true },
+            { texto: 'No calcular el discriminante.', correcta: false },
+            { texto: 'No factorizar el polinomio.', correcta: false },
+            { texto: 'No usar la fórmula general.', correcta: false }
+          ],
+          feedback: 'Al evaluar $f(-x)$, solo los términos con potencia impar cambian de signo. Las potencias pares permanecen iguales.'
+        }
+      ];
+
+      var questions = [];
+      var currentQuestionIndex = 0;
+      var score = 0;
+      var answered = false;
+
+      function shuffleArray(array) {
+        var arr = array.slice();
+        for (var i = arr.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var temp = arr[i]; arr[i] = arr[j]; arr[j] = temp;
+        }
+        return arr;
+      }
+
+      function initQuiz() {
+        questions = shuffleArray(rawQuestions).map(function (q) {
+          return {
+            pregunta: q.pregunta,
+            opciones: shuffleArray(q.opciones),
+            feedback: q.feedback
+          };
+        });
+        currentQuestionIndex = 0;
+        score = 0;
+        answered = false;
+        document.getElementById('resultsView').classList.remove('visible');
+        document.getElementById('quizView').classList.remove('hidden');
+        updateProgressBar();
+        loadQuestion();
+      }
+
+      function loadQuestion() {
+        answered = false;
+        var q = questions[currentQuestionIndex];
+        document.getElementById('questionMeta').textContent =
+          'Reactivo ' + (currentQuestionIndex + 1) + ' de ' + questions.length;
+        document.getElementById('questionText').innerHTML = q.pregunta;
+
+        var ul = document.getElementById('optionsList');
+        ul.innerHTML = '';
+        q.opciones.forEach(function (op) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'option-item';
+          btn.setAttribute('type', 'button');
+          btn.setAttribute('role', 'button');
+          btn.setAttribute('tabindex', '0');
+          btn.setAttribute('aria-label', limpiarLatex(op.texto));
+          btn.innerHTML = op.texto;
+
+          btn.addEventListener('click', function () { selectOption(op.correcta, btn); });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              selectOption(op.correcta, btn);
+            }
+          });
+          li.appendChild(btn); ul.appendChild(li);
+        });
+
+        var fb = document.getElementById('feedbackBox');
+        fb.classList.remove('visible'); fb.innerHTML = '';
+        document.getElementById('btnNext').classList.remove('visible');
+        renderMath(document.getElementById('quizView'));
+      }
+
+      function selectOption(isCorrect, selectedElement) {
+        if (answered) return;
+        answered = true;
+
+        var optionItems = document.querySelectorAll('.option-item');
+        optionItems.forEach(function (item) {
+          item.classList.add('disabled');
+          item.setAttribute('tabindex', '-1');
+          item.setAttribute('aria-disabled', 'true');
+        });
+
+        if (isCorrect) {
+          selectedElement.classList.add('es-correcta');
+          selectedElement.setAttribute('aria-label', 'Opción correcta');
+          score++;
+        } else {
+          selectedElement.classList.add('es-incorrecta');
+          selectedElement.setAttribute('aria-label', 'Opción incorrecta');
+          var q = questions[currentQuestionIndex];
+          optionItems.forEach(function (item, idx) {
+            if (q.opciones[idx].correcta) item.classList.add('es-correcta');
+          });
+        }
+
+        var fb = document.getElementById('feedbackBox');
+        fb.innerHTML = '<strong>Explicación:</strong> ' + questions[currentQuestionIndex].feedback;
+        fb.classList.add('visible');
+
+        var btnNext = document.getElementById('btnNext');
+        btnNext.textContent = (currentQuestionIndex === questions.length - 1)
+          ? 'Ver Resultados Finales →'
+          : 'Siguiente Reactivo →';
+        btnNext.classList.add('visible');
+        btnNext.focus();
+
+        renderMath(document.getElementById('quizView'));
+      }
+
+      function updateProgressBar() {
+        var pct = (currentQuestionIndex / questions.length) * 100;
+        var bar = document.getElementById('progressBar');
+        bar.style.width = pct + '%';
+        bar.setAttribute('aria-valuenow', String(Math.round(pct)));
+      }
+
+      document.getElementById('btnNext').addEventListener('click', function () {
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          updateProgressBar();
+          loadQuestion();
+        } else {
+          showResults();
+        }
+      });
+
+      function showResults() {
+        document.getElementById('progressBar').style.width = '100%';
+        document.getElementById('progressBar').setAttribute('aria-valuenow', '100');
+        document.getElementById('quizView').classList.add('hidden');
+        document.getElementById('resultsView').classList.add('visible');
+        document.getElementById('finalScore').textContent = score + '/' + questions.length;
+
+        var mensaje = '';
+        if (score === questions.length) {
+          mensaje = '¡Excelente dominio del módulo! Has respondido correctamente todos los reactivos.';
+        } else if (score >= questions.length * 0.7) {
+          mensaje = '¡Buen trabajo! Has respondido correctamente la mayoría. Repasa los temas donde fallaste.';
+        } else {
+          mensaje = 'Es recomendable repasar las raíces imaginarias, la Regla de Descartes y el método gráfico antes de continuar.';
+        }
+        document.getElementById('resultsMessage').textContent = mensaje;
+        renderMath(document.getElementById('resultsView'));
+      }
+
+      document.getElementById('btnRestart').addEventListener('click', function () { initQuiz(); });
+      document.addEventListener('DOMContentLoaded', function () { initQuiz(); });
+    })();
+  </script>
+</body>
+</html>

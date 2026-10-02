@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="tipo-recurso" content="Laboratorio de práctica">
+  <title>Laboratorio: Raíces Imaginarias e Irracionales | Matemáticas III</title>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      },
+      svg: { fontCache: 'global' },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'] }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --color-base: #e8eef5; --color-acento-suave: #a9c1d9;
+      --color-acento: #5b7fa3; --color-primario: #2c4966;
+      --color-blanco: #ffffff; --color-texto-oscuro: #1a2a3a;
+      --color-error: #c0392b; --color-exito: #27ae60;
+      --radio-borde: 8px; --sombra-suave: 0 4px 6px rgba(44, 73, 102, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--color-base); color: var(--color-texto-oscuro);
+      line-height: 1.6; min-height: 100vh; padding: 1.5rem;
+    }
+    .contenedor {
+      max-width: 900px; margin: 0 auto;
+      background: var(--color-blanco);
+      border-radius: var(--radio-borde); box-shadow: var(--sombra-suave); overflow: hidden;
+    }
+    header {
+      background: var(--color-primario); color: var(--color-blanco);
+      padding: 1.5rem; text-align: center;
+    }
+    header .institucion {
+      font-size: 0.8rem; text-transform: uppercase;
+      letter-spacing: 0.1em; opacity: 0.9; margin-bottom: 0.4rem;
+    }
+    header h1 { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.3rem; }
+    header p { font-size: 0.9rem; opacity: 0.9; }
+    .barra-progreso-general {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.8rem 1.5rem; background: var(--color-base);
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+    .texto-progreso {
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--color-primario); white-space: nowrap;
+    }
+    .progreso-track {
+      flex: 1; height: 10px; background: var(--color-blanco);
+      border-radius: 5px; overflow: hidden;
+      border: 1px solid var(--color-acento-suave);
+    }
+    .progreso-fill {
+      height: 100%; background: var(--color-acento);
+      width: 0%; transition: width 0.4s ease;
+    }
+    main { padding: 1.5rem; }
+    .tarjeta-caso {
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: var(--radio-borde); padding: 1.2rem;
+    }
+    .meta-caso {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--color-acento-suave);
+    }
+    .numero-caso {
+      font-size: 0.9rem; font-weight: 600; color: var(--color-primario);
+    }
+    .nivel-caso {
+      font-size: 0.75rem; font-weight: 700;
+      padding: 0.2rem 0.6rem; border-radius: 12px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .nivel-caso.basico { background: #d4edda; color: #145a32; }
+    .nivel-caso.medio { background: #fff3cd; color: #7d6608; }
+    .nivel-caso.alto { background: #f8d7da; color: #78281f; }
+    .enunciado {
+      background: var(--color-base);
+      border-radius: var(--radio-borde);
+      padding: 1rem; margin-bottom: 1rem;
+    }
+    .etiqueta-caso {
+      font-size: 0.75rem; font-weight: 700;
+      color: var(--color-acento); text-transform: uppercase;
+      letter-spacing: 0.05em; margin-bottom: 0.4rem;
+    }
+    .expresion-caso {
+      margin-top: 0.6rem; padding: 0.5rem;
+      background: var(--color-blanco); border-radius: 4px;
+      text-align: center; font-size: 1.05rem;
+    }
+    .fase {
+      background: var(--color-base);
+      border-left: 4px solid var(--color-acento);
+      border-radius: var(--radio-borde);
+      padding: 1rem; margin-bottom: 1rem;
+      transition: opacity 0.3s;
+    }
+    .fase.bloqueada { opacity: 0.5; pointer-events: none; }
+    .fase.resuelta {
+      border-left-color: var(--color-exito); background: #f0faf4;
+    }
+    .fase-titulo {
+      font-size: 0.95rem; font-weight: 700;
+      color: var(--color-primario); margin-bottom: 0.6rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .fase-contador {
+      font-size: 0.75rem; color: var(--color-acento); font-weight: 600;
+    }
+    .opciones-lista { list-style: none; padding: 0; margin: 0.5rem 0; }
+    .opciones-lista li { margin-bottom: 0.4rem; }
+    .opcion {
+      display: block; width: 100%; text-align: left;
+      background: var(--color-blanco);
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 6px; padding: 0.6rem 0.8rem;
+      font-size: 0.88rem; font-family: inherit;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .opcion:hover:not(:disabled) {
+      border-color: var(--color-acento); background: var(--color-base);
+    }
+    .opcion:disabled { cursor: not-allowed; }
+    .opcion.correcta {
+      background: #d4edda; border-color: var(--color-exito);
+      color: #145a32; font-weight: 600;
+    }
+    .opcion.incorrecta {
+      background: #f8d7da; border-color: var(--color-error);
+      color: #78281f;
+    }
+    .input-grupo {
+      display: flex; flex-wrap: wrap; gap: 0.6rem;
+      align-items: flex-end; margin: 0.6rem 0;
+    }
+    .input-wrapper { display: flex; flex-direction: column; gap: 0.2rem; }
+    .input-wrapper label {
+      font-size: 0.78rem; color: var(--color-primario); font-weight: 600;
+    }
+    .input-wrapper input {
+      padding: 0.45rem 0.6rem;
+      border: 2px solid var(--color-acento-suave);
+      border-radius: 4px; font-size: 0.9rem;
+      font-family: inherit; background: var(--color-blanco);
+      color: var(--color-texto-oscuro); min-width: 120px;
+    }
+    .input-wrapper input:focus { outline: none; border-color: var(--color-acento); }
+    .btn-primario {
+      background: var(--color-primario); color: var(--color-blanco);
+      border: none; padding: 0.5rem 1rem;
+      border-radius: 4px; font-size: 0.88rem;
+      font-family: inherit; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn-primario:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-primario:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+    .btn-pista {
+      background: #fff3cd; color: #7d6608;
+      border: 2px solid #ffc107; padding: 0.4rem 0.8rem;
+      border-radius: 4px; font-size: 0.82rem;
+      font-family: inherit; cursor: pointer; margin-top: 0.4rem;
+    }
+    .btn-reintentar {
+      background: var(--color-blanco); color: var(--color-error);
+      border: 2px solid var(--color-error);
+      padding: 0.4rem 0.8rem; border-radius: 4px;
+      font-size: 0.82rem; font-family: inherit;
+      cursor: pointer; margin-top: 0.4rem;
+    }
+    .feedback {
+      margin-top: 0.6rem; padding: 0.6rem 0.8rem;
+      border-radius: 4px; font-size: 0.85rem; display: none;
+    }
+    .feedback.visible { display: block; }
+    .feedback.exito { background: #d4edda; color: #145a32; border-left: 3px solid var(--color-exito); }
+    .feedback.error { background: #f8d7da; color: #78281f; border-left: 3px solid var(--color-error); }
+    .feedback.pista { background: #fff3cd; color: #7d6608; border-left: 3px solid #ffc107; }
+    .navegacion-casos {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 1.2rem; padding-top: 1rem;
+      border-top: 2px solid var(--color-acento-suave);
+    }
+    .btn-navegacion {
+      background: var(--color-primario); color: var(--color-blanco);
+      border: none; padding: 0.5rem 1rem;
+      border-radius: 4px; font-size: 0.88rem;
+      font-family: inherit; cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .btn-navegacion:hover:not(:disabled) { background: var(--color-acento); }
+    .btn-navegacion:disabled { background: var(--color-acento-suave); cursor: not-allowed; }
+    .btn-navegacion.secundario {
+      background: var(--color-blanco); color: var(--color-primario);
+      border: 2px solid var(--color-acento-suave);
+    }
+    .btn-navegacion.secundario:hover:not(:disabled) { border-color: var(--color-acento); }
+    .indicador-caso {
+      font-size: 0.85rem; color: var(--color-primario); font-weight: 600;
+    }
+    .pantalla-final {
+      display: none; text-align: center; padding: 2rem 1rem;
+    }
+    .pantalla-final.visible { display: block; }
+    .medalla { font-size: 4rem; margin-bottom: 0.5rem; }
+    .pantalla-final h2 {
+      color: var(--color-primario); margin-bottom: 0.8rem;
+    }
+    .puntaje-final {
+      font-size: 2.5rem; font-weight: 700;
+      color: var(--color-acento); margin-bottom: 0.8rem;
+    }
+    .pantalla-final p {
+      font-size: 0.95rem; margin-bottom: 1rem; color: var(--color-texto-oscuro);
+    }
+    .footer-info {
+      padding: 1rem 1.5rem; background: var(--color-base);
+      border-top: 2px solid var(--color-acento-suave);
+      font-size: 0.85rem; color: var(--color-primario);
+    }
+    @media (max-width: 900px) {
+      .input-grupo { flex-direction: column; align-items: stretch; }
+      .input-wrapper input { width: 100%; }
+    }
+    @media (max-width: 600px) {
+      body { padding: 0.75rem; }
+      header { padding: 1rem; }
+      header h1 { font-size: 1.1rem; }
+      main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="contenedor">
+    <header>
+      <div class="institucion">Preparatoria Abierta</div>
+      <h1>Laboratorio: Raíces Imaginarias e Irracionales</h1>
+      <p>Laboratorio de práctica | Matemáticas III</p>
+    </header>
+
+    <div class="barra-progreso-general">
+      <span class="texto-progreso" id="progresoTexto">Caso 1 de 9</span>
+      <div class="progreso-track">
+        <div class="progreso-fill" id="progresoFill" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div>
+      </div>
+      <span class="texto-progreso" id="progresoPuntaje">✓ 0 / 9</span>
+    </div>
+
+    <main>
+      <div class="tarjeta-caso" id="tarjetaCaso">
+        <div class="meta-caso">
+          <div class="numero-caso" id="numeroCaso">Caso 1 de 9</div>
+          <div class="nivel-caso basico" id="nivelCaso">Básico</div>
+        </div>
+        <div class="enunciado" id="enunciadoCaso">
+          <div class="etiqueta-caso" id="etiquetaCaso">Caso</div>
+          <div id="textoEnunciado">Cargando caso...</div>
+          <div class="expresion-caso" id="expresionCaso"></div>
+        </div>
+
+        <div class="fase" id="fase1">
+          <div class="fase-titulo">
+            <span>🔍 Fase 1 — Diagnóstico</span>
+            <span class="fase-contador" id="contador1">Intentos: 3</span>
+          </div>
+          <p id="pregunta1"></p>
+          <ul class="opciones-lista" id="opciones1"></ul>
+          <button class="btn-reintentar" id="btnReintentar1" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback1"></div>
+        </div>
+
+        <div class="fase bloqueada" id="fase2">
+          <div class="fase-titulo">
+            <span>🧭 Fase 2 — Estrategia / Cálculo intermedio</span>
+            <span class="fase-contador" id="contador2">Intentos: 3</span>
+          </div>
+          <p id="pregunta2"></p>
+          <div class="input-grupo" id="inputs2"></div>
+          <button class="btn-primario" id="btnVerificar2">Verificar</button>
+          <button class="btn-pista" id="btnPista2">💡 Pista</button>
+          <div class="feedback" id="feedback2"></div>
+        </div>
+
+        <div class="fase bloqueada" id="fase3">
+          <div class="fase-titulo">
+            <span>⚙️ Fase 3 — Ejecución / Resultado</span>
+            <span class="fase-contador" id="contador3">Intentos: 3</span>
+          </div>
+          <p id="pregunta3"></p>
+          <div class="input-grupo" id="inputs3"></div>
+          <button class="btn-primario" id="btnVerificar3">Verificar</button>
+          <button class="btn-pista" id="btnPista3">💡 Pista</button>
+          <div class="feedback" id="feedback3"></div>
+        </div>
+
+        <div class="fase bloqueada" id="fase4">
+          <div class="fase-titulo">
+            <span>🎯 Fase 4 — Error frecuente</span>
+            <span class="fase-contador" id="contador4">Intentos: 3</span>
+          </div>
+          <p id="pregunta4"></p>
+          <ul class="opciones-lista" id="opciones4"></ul>
+          <button class="btn-reintentar" id="btnReintentar4" style="display:none;">🔄 Reintentar</button>
+          <div class="feedback" id="feedback4"></div>
+        </div>
+
+        <div class="navegacion-casos">
+          <button class="btn-navegacion secundario" id="btnAnterior">← Caso anterior</button>
+          <span class="indicador-caso" id="indicadorCaso">Caso 1 de 9</span>
+          <button class="btn-navegacion" id="btnSiguiente" disabled>Siguiente caso →</button>
+        </div>
+      </div>
+
+      <div class="pantalla-final" id="pantallaFinal">
+        <div class="medalla" id="medallaFinal">🏅</div>
+        <h2>¡Laboratorio completado!</h2>
+        <div class="puntaje-final" id="puntajeFinal">0 / 9</div>
+        <p id="mensajeFinal"></p>
+        <button class="btn-primario" id="btnReiniciar">🔄 Reiniciar laboratorio</button>
+      </div>
+    </main>
+
+    <div class="footer-info">
+      <strong>Objetivo:</strong> Aplicar la fórmula general, la Regla de Descartes y el método gráfico de interpolación para determinar raíces imaginarias e irracionales.
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var STORAGE_KEY = 'lab_mod16_resueltos';
+
+      function renderMath(elemento) {
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          MathJax.typesetPromise([elemento]).catch(function (err) { console.log(err); });
+        }
+      }
+      function formatearNumero(n) {
+        if (Math.abs(n - Math.round(n)) < 1e-9) return Math.round(n).toString();
+        return parseFloat(n.toFixed(4)).toString();
+      }
+      function parsearNumero(texto) {
+        if (texto == null) return NaN;
+        texto = String(texto).trim().replace(',', '.').replace(/−/g, '-');
+        if (texto === '') return NaN;
+        if (texto.indexOf('/') !== -1) {
+          var p = texto.split('/');
+          if (p.length !== 2) return NaN;
+          var n = parseFloat(p[0]), d = parseFloat(p[1]);
+          if (isNaN(n) || isNaN(d) || d === 0) return NaN;
+          return n / d;
+        }
+        var x = parseFloat(texto);
+        return isNaN(x) ? NaN : x;
+      }
+      function verificarAproximado(valor, correcto, tolerancia) {
+        tolerancia = tolerancia || 0.02;
+        return Math.abs(valor - correcto) < tolerancia;
+      }
+
+      var casos = [
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 1 · Raíces imaginarias',
+          enunciado: 'Encuentra todas las raíces de $x^3 - 5x^2 + 9x - 5 = 0$.',
+          expresion: '$$x^3 - 5x^2 + 9x - 5 = 0$$',
+          f1: {
+            pregunta: '¿Cuál es la primera raíz real que puedes probar con división sintética?',
+            opciones: [
+              { texto: '$x = 1$', correcta: true },
+              { texto: '$x = 5$', correcta: false },
+              { texto: '$x = -1$', correcta: false },
+              { texto: '$x = 0$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: al evaluar $f(1) = 0$, se confirma $x = 1$.',
+            feedbackErr: 'Prueba con divisores simples del término independiente.'
+          },
+          f2: {
+            pregunta: 'Después de dividir entre $x - 1$, la degradada es $x^2 - 4x + 5 = 0$. ¿Cuánto vale el discriminante $\\Delta$?',
+            inputs: [{ id: 'f2a', label: '$\\Delta =$', correcto: -4 }],
+            pista: 'Aplica $\\Delta = b^2 - 4ac$ con $a=1$, $b=-4$, $c=5$.',
+            feedbackOk: 'Correcto: $\\Delta = 16 - 20 = -4 < 0$.',
+            feedbackErr: 'Calcula $b^2 - 4ac$ con cuidado.'
+          },
+          f3: {
+            pregunta: '¿Cuáles son las raíces imaginarias? Escribe la parte real de la forma $a \\pm bi$.',
+            inputs: [{ id: 'f3a', label: 'Parte real $a$:', correcto: 2 }, { id: 'f3b', label: 'Parte imaginaria $b$:', correcto: 1 }],
+            pista: 'Usa la fórmula general con $\\Delta = -4$. Recuerda $\\sqrt{-4} = 2i$.',
+            feedbackOk: 'Correcto: las raíces son $2 + i$ y $2 - i$.',
+            feedbackErr: 'Aplica la fórmula general: $x = \\frac{4 \\pm 2i}{2} = 2 \\pm i$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente con raíces imaginarias?',
+            opciones: [
+              { texto: 'Dar solo una raíz imaginaria en lugar del par conjugado', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'Confundir raíces imaginarias con irracionales', correcta: false },
+              { texto: 'No factorizar el polinomio', correcta: false }
+            ],
+            feedbackOk: 'Correcto: las raíces imaginarias siempre vienen en pares conjugados.',
+            feedbackErr: 'El error más común es dar solo una raíz imaginaria.'
+          }
+        },
+        {
+          nivel: 'basico',
+          etiqueta: 'Caso 2 · Factor común y raíces imaginarias',
+          enunciado: 'Resuelve $3x^3 - 3 = 0$.',
+          expresion: '$$3x^3 - 3 = 0$$',
+          f1: {
+            pregunta: '¿Qué tipo de factorización puedes aplicar primero?',
+            opciones: [
+              { texto: 'Factor común y diferencia de cubos', correcta: true },
+              { texto: 'Trinomio cuadrado perfecto', correcta: false },
+              { texto: 'Suma de cubos', correcta: false },
+              { texto: 'No se puede factorizar', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $3(x^3 - 1) = 3(x - 1)(x^2 + x + 1)$.',
+            feedbackErr: 'Saca el 3 como factor común primero.'
+          },
+          f2: {
+            pregunta: 'Después de factorizar, ¿cuál es el valor de $a$ en la cuadrática $x^2 + x + 1 = 0$?',
+            inputs: [{ id: 'f2a', label: '$a =$', correcto: 1 }],
+            pista: 'Compara con $ax^2 + bx + c = 0$.',
+            feedbackOk: 'Correcto: $a = 1$.',
+            feedbackErr: 'El coeficiente de $x^2$ es 1.'
+          },
+          f3: {
+            pregunta: '¿Cuáles son las raíces imaginarias? Da la parte real $a$ y la parte imaginaria $b$.',
+            inputs: [{ id: 'f3a', label: 'Parte real $a$:', correcto: -0.5 }, { id: 'f3b', label: 'Parte imaginaria $b$:', correcto: 0.866 }],
+            pista: 'Aplica la fórmula general: $\\Delta = 1 - 4 = -3$, $\\sqrt{-3} = i\\sqrt{3}$.',
+            feedbackOk: 'Correcto: $x = -\\frac{1}{2} \\pm \\frac{\\sqrt{3}}{2}i$.',
+            feedbackErr: 'Usa la fórmula general con $a=1$, $b=1$, $c=1$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al resolver $3x^3 - 3 = 0$?',
+            opciones: [
+              { texto: 'No factorizar el 3 antes de usar diferencia de cubos', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'Olvidar el signo del término lineal', correcta: false },
+              { texto: 'No simplificar la fracción', correcta: false }
+            ],
+            feedbackOk: 'Correcto: siempre factoriza el coeficiente común primero.',
+            feedbackErr: 'El error más común es no factorizar el 3.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 3 · Raíces mixtas',
+          enunciado: 'Resuelve $x^4 - x^3 - x^2 - x - 2 = 0$ combinando división sintética y fórmula general.',
+          expresion: '$$x^4 - x^3 - x^2 - x - 2 = 0$$',
+          f1: {
+            pregunta: '¿Cuál es una raíz real evidente?',
+            opciones: [
+              { texto: '$x = -1$', correcta: true },
+              { texto: '$x = 2$', correcta: false },
+              { texto: '$x = 1$', correcta: false },
+              { texto: '$x = -2$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $f(-1) = 0$, así que $x = -1$ es raíz.',
+            feedbackErr: 'Prueba con valores simples y evalúa.'
+          },
+          f2: {
+            pregunta: 'Después de dividir entre $x + 1$, la degradada es $x^3 - 2x^2 + x - 2 = 0$. ¿Qué factor común puedes sacar por agrupación?',
+            inputs: [{ id: 'f2a', label: 'Factor común (grupo 1):', correcto: 'x^2', tipo: 'texto' }],
+            pista: 'Agrupa $x^3 - 2x^2$ y $x - 2$.',
+            feedbackOk: 'Correcto: $x^2(x - 2) + (x - 2) = (x - 2)(x^2 + 1)$.',
+            feedbackErr: 'El factor común del primer grupo es $x^2$.'
+          },
+          f3: {
+            pregunta: '¿Cuáles son las raíces de $x^2 + 1 = 0$? Da la parte imaginaria (positiva).',
+            inputs: [{ id: 'f3a', label: 'Parte imaginaria $b$:', correcto: 1 }],
+            pista: 'Despeja: $x^2 = -1$, entonces $x = \\pm i$.',
+            feedbackOk: 'Correcto: las raíces son $i$ y $-i$ (con $a = 0$, $b = 1$).',
+            feedbackErr: 'Resuelve $x^2 + 1 = 0$: $x = \\pm i$.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al combinar métodos?',
+            opciones: [
+              { texto: 'No seguir dividiendo hasta obtener una cuadrática', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'Olvidar los signos negativos', correcta: false },
+              { texto: 'No factorizar el 1', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que degradar hasta grado 2 para usar la fórmula general.',
+            feedbackErr: 'El error más común es detenerse antes de obtener una cuadrática.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 4 · Demostración con Descartes',
+          enunciado: 'Demuestra que $2x^4 + 3x^2 + 1 = 0$ tiene solo raíces imaginarias.',
+          expresion: '$$2x^4 + 3x^2 + 1 = 0$$',
+          f1: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(x) = 2x^4 + 3x^2 + 1$?',
+            opciones: [
+              { texto: '$0$', correcta: true },
+              { texto: '$1$', correcta: false },
+              { texto: '$2$', correcta: false },
+              { texto: '$3$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: todos los coeficientes son positivos, no hay cambios de signo.',
+            feedbackErr: 'Cuenta los cambios entre signos consecutivos.'
+          },
+          f2: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(-x)$?',
+            inputs: [{ id: 'f2a', label: 'Número de cambios:', correcto: 0 }],
+            pista: 'Como todas las potencias son pares, $f(-x) = f(x) = 2x^4 + 3x^2 + 1$.',
+            feedbackOk: 'Correcto: $f(-x)$ tampoco tiene cambios de signo.',
+            feedbackErr: 'Al cambiar $x$ por $-x$, las potencias pares no cambian de signo.'
+          },
+          f3: {
+            pregunta: 'Como $f(0) = 1 \\neq 0$ y no hay cambios de signo, ¿cuántas raíces imaginarias tiene?',
+            inputs: [{ id: 'f3a', label: 'Número de raíces imaginarias:', correcto: 4 }],
+            pista: 'El grado del polinomio es 4.',
+            feedbackOk: 'Correcto: las 4 raíces son imaginarias.',
+            feedbackErr: 'Un polinomio de grado 4 tiene 4 raíces. Si no hay reales, todas son imaginarias.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al demostrar con Descartes?',
+            opciones: [
+              { texto: 'No verificar que $f(0) \\neq 0$', correcta: true },
+              { texto: 'Confundir $f(x)$ con $f(-x)$', correcta: false },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'No factorizar el polinomio', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que descartar $x = 0$ como raíz antes de concluir.',
+            feedbackErr: 'El error más común es olvidar evaluar $f(0)$.'
+          }
+        },
+        {
+          nivel: 'medio',
+          etiqueta: 'Caso 5 · Aproximación de raíz irracional',
+          enunciado: 'Encuentra una raíz irracional de $x^3 - 2x^2 - 2 = 0$ en $2 < x < 3$.',
+          expresion: '$$x^3 - 2x^2 - 2 = 0$$',
+          f1: {
+            pregunta: 'Si $f(2) = -2$ y $f(3) = 7$, ¿entre qué enteros está la raíz?',
+            opciones: [
+              { texto: 'Entre 2 y 3', correcta: true },
+              { texto: 'Entre 1 y 2', correcta: false },
+              { texto: 'Entre 3 y 4', correcta: false },
+              { texto: 'Entre 0 y 1', correcta: false }
+            ],
+            feedbackOk: 'Correcto: el cambio de signo indica que la raíz está entre 2 y 3.',
+            feedbackErr: 'El cambio de signo te dice entre qué enteros está la raíz.'
+          },
+          f2: {
+            pregunta: 'Evalúa $f(2.3) = (2.3)^3 - 2(2.3)^2 - 2$. ¿Qué valor obtienes? (3 decimales)',
+            inputs: [{ id: 'f2a', label: '$f(2.3) =$', correcto: -0.413 }],
+            pista: 'Calcula paso a paso: $2.3^3 = 12.167$, $2.3^2 = 5.29$.',
+            feedbackOk: 'Correcto: $f(2.3) = -0.413$.',
+            feedbackErr: 'Sustituye con cuidado.'
+          },
+          f3: {
+            pregunta: 'Si $f(2.35) = -0.067$ y $f(2.36) = 0.005$, ¿cuál es la raíz aproximada con 3 cifras?',
+            inputs: [{ id: 'f3a', label: 'Raíz aproximada:', correcto: 2.359 }],
+            pista: 'Interpola: $x \\approx x_1 - y_1 \\cdot (x_2 - x_1)/(y_2 - y_1)$.',
+            feedbackOk: 'Correcto: $x \\approx 2.359$.',
+            feedbackErr: 'Usa la interpolación lineal entre los dos puntos.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aproximar raíces irracionales?',
+            opciones: [
+              { texto: 'No refinar suficientemente la tabulación', correcta: true },
+              { texto: 'Confundir la raíz con un número imaginario', correcta: false },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'No factorizar el polinomio', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que seguir refinando hasta obtener la precisión pedida.',
+            feedbackErr: 'El error más común es detenerse antes de la precisión pedida.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 6 · Raíces complejas y reales',
+          enunciado: 'Resuelve $x^4 - 2x^3 + x^2 + 2x - 2 = 0$.',
+          expresion: '$$x^4 - 2x^3 + x^2 + 2x - 2 = 0$$',
+          f1: {
+            pregunta: '¿Cuál es una raíz real entera evidente?',
+            opciones: [
+              { texto: '$x = 1$', correcta: true },
+              { texto: '$x = 2$', correcta: false },
+              { texto: '$x = -1$', correcta: false },
+              { texto: '$x = -2$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $f(1) = 1 - 2 + 1 + 2 - 2 = 0$.',
+            feedbackErr: 'Prueba con divisores del término independiente.'
+          },
+          f2: {
+            pregunta: 'Después de dividir entre $x - 1$, la degradada es $x^3 - x^2 + 2 = 0$. ¿Cuál es otra raíz real?',
+            inputs: [{ id: 'f2a', label: 'Otra raíz real:', correcto: -1 }],
+            pista: 'Evalúa $f(-1)$ en la degradada.',
+            feedbackOk: 'Correcto: $x = -1$ es raíz.',
+            feedbackErr: 'Prueba valores simples.'
+          },
+          f3: {
+            pregunta: 'La última degradada es $x^2 - 2x + 2 = 0$. ¿Cuáles son las raíces imaginarias? Da la parte real $a$ y la parte imaginaria $b$.',
+            inputs: [{ id: 'f3a', label: 'Parte real $a$:', correcto: 1 }, { id: 'f3b', label: 'Parte imaginaria $b$:', correcto: 1 }],
+            pista: 'Aplica la fórmula general: $\\Delta = 4 - 8 = -4$.',
+            feedbackOk: 'Correcto: $x = 1 \\pm i$.',
+            feedbackErr: 'Calcula $\\Delta$ y aplica la fórmula general.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente cuando hay raíces reales e imaginarias mezcladas?',
+            opciones: [
+              { texto: 'No degradar hasta grado 2 para usar la fórmula general', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'Confundir $f(x)$ con $f(-x)$', correcta: false },
+              { texto: 'No factorizar el 1', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que degradar hasta grado 2.',
+            feedbackErr: 'El error más común es detenerse antes.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 7 · Grado 5 con raíces mixtas',
+          enunciado: 'Resuelve $x^5 - 8x^4 + 21x^3 - 12x^2 - 22x + 20 = 0$.',
+          expresion: '$$x^5 - 8x^4 + 21x^3 - 12x^2 - 22x + 20 = 0$$',
+          f1: {
+            pregunta: '¿Cuál es la primera raíz real a probar?',
+            opciones: [
+              { texto: '$x = 2$', correcta: true },
+              { texto: '$x = 1$', correcta: false },
+              { texto: '$x = -2$', correcta: false },
+              { texto: '$x = 5$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: $f(2) = 0$, así que $x = 2$ es raíz.',
+            feedbackErr: 'Prueba con divisores del término independiente.'
+          },
+          f2: {
+            pregunta: 'Después de dividir entre $x - 2$, la degradada es $x^4 - 6x^3 + 9x^2 + 6x - 10 = 0$. ¿Cuál es otra raíz real?',
+            inputs: [{ id: 'f2a', label: 'Otra raíz real:', correcto: -1 }],
+            pista: 'Evalúa $f(-1)$ en la degradada.',
+            feedbackOk: 'Correcto: $x = -1$ es raíz.',
+            feedbackErr: 'Prueba con valores simples.'
+          },
+          f3: {
+            pregunta: 'Después de más divisiones, la cuadrática final es $x^2 - 6x + 10 = 0$. ¿Cuáles son las raíces imaginarias? Da $a$ y $b$ de $a \\pm bi$.',
+            inputs: [{ id: 'f3a', label: 'Parte real $a$:', correcto: 3 }, { id: 'f3b', label: 'Parte imaginaria $b$:', correcto: 1 }],
+            pista: 'Aplica la fórmula general: $\\Delta = 36 - 40 = -4$.',
+            feedbackOk: 'Correcto: $x = 3 \\pm i$.',
+            feedbackErr: 'Calcula $\\Delta$ y aplica la fórmula general.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente con polinomios de grado 5?',
+            opciones: [
+              { texto: 'No seguir dividiendo hasta obtener una cuadrática', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'No factorizar el 1', correcta: false },
+              { texto: 'Confundir $f(x)$ con $f(-x)$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que degradar hasta grado 2.',
+            feedbackErr: 'El error más común es detenerse antes.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 8 · Descartes con coeficientes grandes',
+          enunciado: 'Demuestra que $3x^4 + x^3 + x + 1 = 0$ solo tiene raíces imaginarias.',
+          expresion: '$$3x^4 + x^3 + x + 1 = 0$$',
+          f1: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(x)$?',
+            opciones: [
+              { texto: '$0$', correcta: true },
+              { texto: '$1$', correcta: false },
+              { texto: '$2$', correcta: false },
+              { texto: '$3$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: todos los coeficientes son positivos, no hay cambios.',
+            feedbackErr: 'Cuenta los cambios entre signos consecutivos.'
+          },
+          f2: {
+            pregunta: '¿Cuál es el polinomio $f(-x)$? Escribe los coeficientes separados por comas.',
+            inputs: [{ id: 'f2a', label: 'Coeficientes de $f(-x)$:', correcto: '3,-1,-1,1', tipo: 'texto' }],
+            pista: 'Cambia el signo de los términos con potencia impar.',
+            feedbackOk: 'Correcto: $f(-x) = 3x^4 - x^3 - x + 1$.',
+            feedbackErr: 'Cambia solo los signos de los términos de grado impar.'
+          },
+          f3: {
+            pregunta: '¿Cuántos cambios de signo tiene $f(-x)$?',
+            inputs: [{ id: 'f3a', label: 'Número de cambios:', correcto: 2 }],
+            pista: 'Signos de $f(-x)$: $+, -, -, +$.',
+            feedbackOk: 'Correcto: $f(-x)$ tiene 2 cambios de signo.',
+            feedbackErr: 'Cuenta con cuidado: $+ \\to -$ (cambio 1), $- \\to -$ (sin cambio), $- \\to +$ (cambio 2).'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al aplicar Descartes con coeficientes grandes?',
+            opciones: [
+              { texto: 'Confundir el signo de los términos de grado impar', correcta: true },
+              { texto: 'No factorizar el polinomio', correcta: false },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'No evaluar $f(0)$', correcta: false }
+            ],
+            feedbackOk: 'Correcto: hay que cambiar solo los signos de los términos impares.',
+            feedbackErr: 'El error más común es confundir qué términos cambian de signo.'
+          }
+        },
+        {
+          nivel: 'alto',
+          etiqueta: 'Caso 9 · Aproximación de 4 cifras',
+          enunciado: 'Encuentra una raíz de $x^3 + 4x^2 - 7 = 0$ en $1 < x < 2$ con 4 cifras decimales.',
+          expresion: '$$x^3 + 4x^2 - 7 = 0$$',
+          f1: {
+            pregunta: '¿Qué método usarás para aproximar la raíz?',
+            opciones: [
+              { texto: 'Método gráfico con interpolación lineal', correcta: true },
+              { texto: 'Fórmula general', correcta: false },
+              { texto: 'Regla de Descartes', correcta: false },
+              { texto: 'Factorización por agrupación', correcta: false }
+            ],
+            feedbackOk: 'Correcto: el método gráfico permite refinar iterativamente.',
+            feedbackErr: 'Para raíces irracionales se usa el método gráfico.'
+          },
+          f2: {
+            pregunta: 'Evalúa $f(1) = 1 + 4 - 7$. ¿Cuánto vale?',
+            inputs: [{ id: 'f2a', label: '$f(1) =$', correcto: -2 }],
+            pista: 'Sustituye $x = 1$.',
+            feedbackOk: 'Correcto: $f(1) = -2$.',
+            feedbackErr: 'Sustituye con cuidado.'
+          },
+          f3: {
+            pregunta: 'Si $f(1.15) \\approx -0.196$ y $f(1.16) \\approx -0.032$, ¿cuál es la raíz aproximada con 3 cifras?',
+            inputs: [{ id: 'f3a', label: 'Raíz aproximada:', correcto: 1.165 }],
+            pista: 'Interpola: $x \\approx x_1 - y_1 \\cdot (x_2 - x_1)/(y_2 - y_1)$.',
+            feedbackOk: 'Correcto: $x \\approx 1.165$.',
+            feedbackErr: 'Usa interpolación lineal.'
+          },
+          f4: {
+            pregunta: '¿Cuál es el error más frecuente al refinar la aproximación?',
+            opciones: [
+              { texto: 'No verificar que $f(r) \\approx 0$ con la raíz obtenida', correcta: true },
+              { texto: 'No calcular el discriminante', correcta: false },
+              { texto: 'Confundir $f(x)$ con $f(-x)$', correcta: false },
+              { texto: 'No factorizar el polinomio', correcta: false }
+            ],
+            feedbackOk: 'Correcto: siempre hay que verificar $f(r) \\approx 0$.',
+            feedbackErr: 'El error más común es no verificar la raíz.'
+          }
+        }
+      ];
+
+      var casoActual = 0;
+      var intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+      var resueltos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+      function renderCaso() {
+        var c = casos[casoActual];
+        document.getElementById('numeroCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('indicadorCaso').textContent = 'Caso ' + (casoActual + 1) + ' de ' + casos.length;
+        document.getElementById('nivelCaso').textContent = c.nivel.charAt(0).toUpperCase() + c.nivel.slice(1);
+        document.getElementById('nivelCaso').className = 'nivel-caso ' + c.nivel;
+        document.getElementById('etiquetaCaso').textContent = c.etiqueta;
+        document.getElementById('textoEnunciado').innerHTML = c.enunciado;
+        document.getElementById('expresionCaso').innerHTML = c.expresion;
+
+        intentos = { 1: 3, 2: 3, 3: 3, 4: 3 };
+        renderFase1(); renderFase2(); renderFase3(); renderFase4();
+
+        document.getElementById('fase1').classList.remove('bloqueada');
+        document.getElementById('fase2').classList.add('bloqueada');
+        document.getElementById('fase3').classList.add('bloqueada');
+        document.getElementById('fase4').classList.add('bloqueada');
+
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('feedback2').className = 'feedback';
+        document.getElementById('feedback3').className = 'feedback';
+        document.getElementById('feedback4').className = 'feedback';
+
+        document.getElementById('btnReintentar1').style.display = 'none';
+        document.getElementById('btnReintentar4').style.display = 'none';
+        document.getElementById('btnAnterior').disabled = (casoActual === 0);
+        document.getElementById('btnSiguiente').disabled = true;
+        actualizarProgreso();
+        renderMath(document.body);
+      }
+
+      function renderFase1() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta1').innerHTML = c.f1.pregunta;
+        document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+        var ul = document.getElementById('opciones1');
+        ul.innerHTML = '';
+        c.f1.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.addEventListener('click', function () { manejarOpcionFase1(idx, btn); });
+          li.appendChild(btn); ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase1(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback1');
+        var esCorrecta = c.f1.opciones[idx].correcta;
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f1.feedbackOk;
+          desbloquearFase(2);
+        } else {
+          btn.classList.add('incorrecta'); btn.disabled = true;
+          intentos[1]--;
+          document.getElementById('contador1').textContent = 'Intentos: ' + intentos[1];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f1.feedbackErr;
+          if (intentos[1] <= 0) document.getElementById('btnReintentar1').style.display = 'inline-block';
+        }
+        renderMath(fb);
+      }
+
+      function renderFase2() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta2').innerHTML = c.f2.pregunta;
+        document.getElementById('contador2').textContent = 'Intentos: ' + intentos[2];
+        var cont = document.getElementById('inputs2');
+        cont.innerHTML = '';
+        c.f2.inputs.forEach(function (inp) {
+          var w = document.createElement('div');
+          w.className = 'input-wrapper';
+          var l = document.createElement('label');
+          l.setAttribute('for', inp.id); l.innerHTML = inp.label;
+          var i = document.createElement('input');
+          i.type = 'text'; i.id = inp.id; i.setAttribute('inputmode', 'decimal');
+          w.appendChild(l); w.appendChild(i); cont.appendChild(w);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase3() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta3').innerHTML = c.f3.pregunta;
+        document.getElementById('contador3').textContent = 'Intentos: ' + intentos[3];
+        var cont = document.getElementById('inputs3');
+        cont.innerHTML = '';
+        c.f3.inputs.forEach(function (inp) {
+          var w = document.createElement('div');
+          w.className = 'input-wrapper';
+          var l = document.createElement('label');
+          l.setAttribute('for', inp.id); l.innerHTML = inp.label;
+          var i = document.createElement('input');
+          i.type = 'text'; i.id = inp.id; i.setAttribute('inputmode', 'decimal');
+          w.appendChild(l); w.appendChild(i); cont.appendChild(w);
+        });
+        renderMath(cont);
+      }
+
+      function renderFase4() {
+        var c = casos[casoActual];
+        document.getElementById('pregunta4').innerHTML = c.f4.pregunta;
+        document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+        var ul = document.getElementById('opciones4');
+        ul.innerHTML = '';
+        c.f4.opciones.forEach(function (op, idx) {
+          var li = document.createElement('li');
+          var btn = document.createElement('button');
+          btn.className = 'opcion';
+          btn.innerHTML = op.texto;
+          btn.addEventListener('click', function () { manejarOpcionFase4(idx, btn); });
+          li.appendChild(btn); ul.appendChild(li);
+        });
+        renderMath(ul);
+      }
+
+      function manejarOpcionFase4(idx, btn) {
+        var c = casos[casoActual];
+        var fb = document.getElementById('feedback4');
+        var esCorrecta = c.f4.opciones[idx].correcta;
+        if (esCorrecta) {
+          btn.classList.add('correcta');
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + c.f4.feedbackOk;
+          completarCaso();
+        } else {
+          btn.classList.add('incorrecta'); btn.disabled = true;
+          intentos[4]--;
+          document.getElementById('contador4').textContent = 'Intentos: ' + intentos[4];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + c.f4.feedbackErr;
+          if (intentos[4] <= 0) document.getElementById('btnReintentar4').style.display = 'inline-block';
+        }
+        renderMath(fb);
+      }
+
+      function desbloquearFase(num) {
+        var fase = document.getElementById('fase' + num);
+        if (fase) fase.classList.remove('bloqueada');
+      }
+
+      document.getElementById('btnVerificar2').addEventListener('click', function () { verificarFase(2); });
+      document.getElementById('btnVerificar3').addEventListener('click', function () { verificarFase(3); });
+
+      function verificarFase(num) {
+        var c = casos[casoActual];
+        var fase = c['f' + num];
+        var fb = document.getElementById('feedback' + num);
+        var todosCorrectos = true;
+
+        fase.inputs.forEach(function (inp) {
+          var input = document.getElementById(inp.id);
+          var valorUsuario = input.value;
+          var correcto;
+          if (inp.tipo === 'texto') {
+            var n = String(valorUsuario).trim().toLowerCase().replace(/\s+/g, '');
+            var cN = String(inp.correcto).trim().toLowerCase().replace(/\s+/g, '');
+            correcto = (n === cN);
+          } else {
+            var v = parsearNumero(valorUsuario);
+            correcto = verificarAproximado(v, inp.correcto);
+          }
+          if (!correcto) todosCorrectos = false;
+        });
+
+        if (todosCorrectos) {
+          fb.className = 'feedback exito visible';
+          fb.innerHTML = '✅ ' + fase.feedbackOk;
+          desbloquearFase(num + 1);
+        } else {
+          intentos[num]--;
+          document.getElementById('contador' + num).textContent = 'Intentos: ' + intentos[num];
+          fb.className = 'feedback error visible';
+          fb.innerHTML = '❌ ' + fase.feedbackErr;
+          if (intentos[num] <= 0) {
+            fb.innerHTML += '<br><br>⚠️ Se agotaron los intentos. Puedes continuar, pero el caso no se marcará como completado.';
+            desbloquearFase(num + 1);
+          }
+        }
+        renderMath(fb);
+      }
+
+      document.getElementById('btnPista2').addEventListener('click', function () {
+        var fb = document.getElementById('feedback2');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f2.pista;
+        renderMath(fb);
+      });
+      document.getElementById('btnPista3').addEventListener('click', function () {
+        var fb = document.getElementById('feedback3');
+        fb.className = 'feedback pista visible';
+        fb.innerHTML = '💡 ' + casos[casoActual].f3.pista;
+        renderMath(fb);
+      });
+
+      function completarCaso() {
+        if (resueltos.indexOf(casoActual) === -1) {
+          resueltos.push(casoActual);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(resueltos));
+        }
+        document.getElementById('btnSiguiente').disabled = false;
+        actualizarProgreso();
+      }
+
+      document.getElementById('btnSiguiente').addEventListener('click', function () {
+        if (casoActual < casos.length - 1) { casoActual++; renderCaso(); }
+        else mostrarPantallaFinal();
+      });
+      document.getElementById('btnAnterior').addEventListener('click', function () {
+        if (casoActual > 0) { casoActual--; renderCaso(); }
+      });
+      document.getElementById('btnReintentar1').addEventListener('click', function () {
+        intentos[1] = 3; renderFase1();
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('btnReintentar1').style.display = 'none';
+      });
+      document.getElementById('btnReintentar4').addEventListener('click', function () {
+        intentos[4] = 3; renderFase4();
+        document.getElementById('feedback4').className = 'feedback';
+        document.getElementById('btnReintentar4').style.display = 'none';
+      });
+
+      function mostrarPantallaFinal() {
+        document.getElementById('tarjetaCaso').style.display = 'none';
+        document.getElementById('pantallaFinal').classList.add('visible');
+        var p = resueltos.length;
+        document.getElementById('puntajeFinal').textContent = p + ' / ' + casos.length;
+        var m = '🥉', msg = '';
+        if (p === casos.length) { m = '🏆'; msg = '¡Excelente! Has resuelto todos los casos. Dominas raíces imaginarias e irracionales.'; }
+        else if (p >= casos.length * 0.7) { m = '🥈'; msg = '¡Buen trabajo! Has resuelto la mayoría. Repasa los pendientes.'; }
+        else { m = '🥉'; msg = 'Has completado algunos casos. Repasa los métodos y vuelve a intentarlo.'; }
+        document.getElementById('medallaFinal').textContent = m;
+        document.getElementById('mensajeFinal').textContent = msg;
+      }
+
+      document.getElementById('btnReiniciar').addEventListener('click', function () {
+        resueltos = []; localStorage.removeItem(STORAGE_KEY); casoActual = 0;
+        document.getElementById('tarjetaCaso').style.display = 'block';
+        document.getElementById('pantallaFinal').classList.remove('visible');
+        renderCaso();
+      });
+
+      function actualizarProgreso() {
+        var pct = (resueltos.length / casos.length) * 100;
+        document.getElementById('progresoFill').style.width = pct + '%';
+        document.getElementById('progresoFill').setAttribute('aria-valuenow', String(Math.round(pct)));
+        document.getElementById('progresoPuntaje').textContent = '✓ ' + resueltos.length + ' / ' + casos.length;
+      }
+
+      document.addEventListener('DOMContentLoaded', function () { renderCaso(); });
+    })();
+  </script>
+</body>
+</html>
